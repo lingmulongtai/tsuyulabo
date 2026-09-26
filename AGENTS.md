@@ -28,6 +28,23 @@ The owner cares about this more than anything else.
 - Never rewrite history that is already on `main`. Never force-push `main`.
 - Do not commit secrets, `.env`, build output, `node_modules`, `.venv`, or large data files.
 
+## Committing from the Codex sandbox
+
+Codex runs inside a workspace-write sandbox that cannot write to `.git`. So Codex does **not** run
+`git add` / `git commit`. Instead, as you finish each atomic step, append one line to
+`.codex-runs/commits.jsonl` (the folder is git-ignored):
+
+```json
+{"message": "feat(brain): add lif neuron population", "body": "optional details", "files": ["services/brain/src/tsuyu_brain/neuron.py", "services/brain/tests/test_neuron.py"]}
+```
+
+- Same rules as real commits: one logical change per entry, Conventional Commits, in the order you made them.
+- Commits are applied per **file**, so give each file to exactly one entry (the entry where it is
+  created or where its final content belongs). Design your steps around files: e.g. a module and its test.
+- List deleted and renamed files too. Do not list files under `.tools/`, `.uv/`, `.codex-runs/`.
+- The commander applies the plan with `scripts/agents/apply-commit-plan.py` (adds the Codex trailer).
+- Every changed file must be covered by some entry; uncovered files are flagged and not committed.
+
 ## Python
 
 - Python >= 3.12, uv workspace at the repo root (`pyproject.toml`). Each service is a package with a `src/` layout.
