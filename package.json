@@ -1,0 +1,17 @@
+{
+  "name": "tsuyulabo",
+  "private": true,
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w @tsuyulabo/web",
+    "build": "npm run build -w @tsuyulabo/web",
+    "lint": "npm run lint -w @tsuyulabo/web",
+    "typecheck": "npm run typecheck -w @tsuyulabo/web",
+    "test": "npm run test -w @tsuyulabo/web"
+  },
+  "engines": {
+    "node": ">=20.9"
+  }
+}
