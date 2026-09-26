@@ -1,0 +1,47 @@
+# OS / editors
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/*
+!.vscode/extensions.json
+.idea/
+
+# Node
+node_modules/
+.next/
+out/
+dist/
+coverage/
+*.tsbuildinfo
+.turbo/
+.vercel/
+npm-debug.log*
+playwright-report/
+test-results/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+.coverage
+htmlcov/
+
+# Env / secrets
+.env
+.env.*
+!.env.example
+
+# Data / artifacts
+data/raw/
+data/cache/
+*.sqlite3
+*.db
+eval-results/
+
+# Agent scratch
+.codex-runs/
