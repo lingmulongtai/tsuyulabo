@@ -37,12 +37,14 @@ fi
 # Everything Codex needs must live inside the workspace: the sandbox cannot read the home folder.
 mkdir -p .tools .codex-runs
 [ -f .tools/uv.exe ] || cp "$UV_BIN" .tools/uv.exe
-grep -qx '.tools/' .git/info/exclude 2>/dev/null || printf '.tools/\n.uv/\n.codex-runs/\n' >> .git/info/exclude
+grep -qx '.tools/' .git/info/exclude 2>/dev/null || printf '.tools/\n.uv/\n.codex-runs/\n.npm-cache/\n' >> .git/info/exclude
+grep -qx '.npm-cache/' .git/info/exclude || printf '.npm-cache/\n' >> .git/info/exclude
 WIN_CLONE="$(cygpath -w "$CLONE")"
 export UV_CACHE_DIR="$WIN_CLONE\\.uv\\cache"
 export UV_PYTHON_INSTALL_DIR="$WIN_CLONE\\.uv\\python"
 export UV_PYTHON_PREFERENCE=only-managed
 export UV_LINK_MODE=copy
+export npm_config_cache="$WIN_CLONE\\.npm-cache"
 
 BRIEF="docs/agent-tasks/$TASK.md"
 PROMPT="You are working in a clone of the Tsuyu Labo repo on branch $BRANCH.
