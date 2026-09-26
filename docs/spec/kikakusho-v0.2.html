@@ -1,0 +1,1642 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ツユラボ 企画書 v0.2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Kiwi+Maru:wght@400;500&family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #E8F2EF;
+  --surface: #FAFDFC;
+  --ink: #1E2C29;
+  --muted: #586B66;
+  --line: #C9DCD6;
+  --eye: #D7263D;
+  --banana: #E3AE35;
+  --leaf: #1F8579;
+  --ai: #5F4FCF;
+  --tint-eye: rgba(215, 38, 61, 0.08);
+  --tint-leaf: rgba(31, 133, 121, 0.10);
+  --tint-banana: rgba(227, 174, 53, 0.18);
+  --tint-ai: rgba(95, 79, 207, 0.09);
+  --stage: #F4FAF8;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0F1D1A; --surface: #162825; --ink: #E3EFEC; --muted: #9CB2AC; --line: #28423B;
+    --eye: #FF5C70; --banana: #F2C75C; --leaf: #4CC3B3; --ai: #A898FF;
+    --tint-eye: rgba(255, 92, 112, 0.12); --tint-leaf: rgba(76, 195, 179, 0.12);
+    --tint-banana: rgba(242, 199, 92, 0.14); --tint-ai: rgba(168, 152, 255, 0.13);
+    --stage: #DDEAE6;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0F1D1A; --surface: #162825; --ink: #E3EFEC; --muted: #9CB2AC; --line: #28423B;
+  --eye: #FF5C70; --banana: #F2C75C; --leaf: #4CC3B3; --ai: #A898FF;
+  --tint-eye: rgba(255, 92, 112, 0.12); --tint-leaf: rgba(76, 195, 179, 0.12);
+  --tint-banana: rgba(242, 199, 92, 0.14); --tint-ai: rgba(168, 152, 255, 0.13);
+  --stage: #DDEAE6;
+}
+:root { box-sizing: border-box; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+*, *::before, *::after { box-sizing: inherit; }
+html { scroll-padding-top: env(safe-area-inset-top, 0px); background: var(--bg); scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font-family: "Zen Maru Gothic", "Hiragino Maru Gothic ProN", "Hiragino Sans", "Yu Gothic", "Noto Sans JP", sans-serif;
+  font-size: 1rem; line-height: 1.85; -webkit-text-size-adjust: 100%;
+}
+svg { max-width: 100%; }
+a { color: inherit; }
+a:focus-visible, button:focus-visible { outline: 3px solid var(--ai); outline-offset: 2px; }
+.mono { font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+.kiwi { font-family: "Kiwi Maru", "Hiragino Mincho ProN", "Yu Mincho", serif; font-weight: 500; }
+.wrap { max-width: 1120px; margin: 0 auto; padding: 0 clamp(18px, 4vw, 40px); }
+p { margin: 0 0 1em; max-width: 42em; }
+h2 {
+  font-family: "Kiwi Maru", "Hiragino Mincho ProN", "Yu Mincho", serif; font-weight: 500;
+  font-size: clamp(1.6rem, 3.6vw, 2.3rem); line-height: 1.35; margin: 0 0 0.6em;
+  display: flex; align-items: baseline; gap: 0.5em; flex-wrap: wrap;
+}
+h2 .no { font-family: "Zen Maru Gothic", sans-serif; font-weight: 700; font-size: 0.85rem; background: var(--ink); color: var(--bg); border-radius: 999px; min-width: 2.1em; height: 2.1em; display: inline-grid; place-items: center; transform: translateY(-0.3em); }
+h3 { font-size: 1.12rem; font-weight: 700; line-height: 1.5; margin: 0 0 0.4em; }
+.lead { color: var(--muted); font-size: 1.05rem; margin-bottom: 2em; }
+.chapter { padding: clamp(56px, 8vw, 96px) 0; border-top: 1px solid var(--line); }
+.sub-block { margin-top: clamp(40px, 6vw, 60px); }
+.table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+table { border-collapse: collapse; width: 100%; font-size: 0.95rem; line-height: 1.7; }
+th, td { text-align: left; vertical-align: top; padding: 12px 14px; border-bottom: 1px solid var(--line); }
+thead th { border-bottom: 2px solid var(--ink); font-size: 0.9rem; }
+tbody th { font-weight: 700; }
+.badge { display: inline-block; font-size: 0.76rem; font-weight: 700; border-radius: 999px; padding: 0.05em 0.7em; white-space: nowrap; }
+.badge.real { background: var(--tint-leaf); color: var(--leaf); }
+.badge.model { background: var(--tint-banana); color: var(--ink); }
+.badge.show { color: var(--muted); border: 1px solid var(--line); }
+.badge.ai { background: var(--tint-ai); color: var(--ai); }
+button {
+  font: inherit; font-weight: 700; font-size: 0.92rem; color: var(--ink); background: transparent;
+  border: 1.5px solid var(--ink); border-radius: 999px; padding: 0.45em 1.1em; cursor: pointer;
+}
+button.primary { background: var(--ink); color: var(--bg); }
+button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+.note { font-size: 0.85rem; color: var(--muted); }
+
+/* ---------- character animation ---------- */
+.anim .bob { animation: bob 3.4s ease-in-out infinite alternate; }
+.anim .wl { transform-origin: 112px 140px; animation: flapL 2.2s ease-in-out infinite; }
+.anim .wr { transform-origin: 128px 140px; animation: flapR 2.2s ease-in-out infinite; }
+.anim .ant { transform-origin: 120px 72px; animation: sway 3s ease-in-out infinite; }
+@keyframes bob { from { transform: translateY(0); } to { transform: translateY(-6px); } }
+@keyframes flapL { 0%, 70%, 100% { transform: rotate(0); } 80% { transform: rotate(-9deg); } 90% { transform: rotate(3deg); } }
+@keyframes flapR { 0%, 70%, 100% { transform: rotate(0); } 80% { transform: rotate(9deg); } 90% { transform: rotate(-3deg); } }
+@keyframes sway { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(3deg); } }
+@media (prefers-reduced-motion: reduce) { .anim .bob, .anim .wl, .anim .wr, .anim .ant { animation: none; } }
+
+/* ---------- hero ---------- */
+.hero { padding: clamp(32px, 5vw, 64px) 0 clamp(40px, 6vw, 64px); }
+.hero-grid { display: grid; grid-template-columns: 1fr; gap: clamp(28px, 5vw, 56px); align-items: center; }
+@media (min-width: 940px) { .hero-grid { grid-template-columns: 1fr 1fr; } }
+.meta { color: var(--muted); font-size: 0.88rem; margin: 0 0 1.2em; }
+.meta .ver { display: inline-block; background: var(--eye); color: #fff; border-radius: 999px; padding: 0 0.7em; font-weight: 700; margin-right: 0.5em; }
+h1 { font-family: "Kiwi Maru", "Hiragino Mincho ProN", serif; font-weight: 500; font-size: clamp(3.6rem, 11vw, 6.6rem); line-height: 1; letter-spacing: 0.02em; margin: 0 0 0.25em; }
+.subtitle { font-size: clamp(1.2rem, 2.6vw, 1.55rem); font-weight: 700; line-height: 1.55; margin: 0 0 1em; max-width: 22em; }
+.hero-stage {
+  position: relative; border-radius: 36px; overflow: hidden; aspect-ratio: 1 / 1; max-width: 520px; margin: 0 auto; width: 100%;
+  background: radial-gradient(circle at 50% 42%, #FFFFFF 0%, #E4F4EF 42%, #BFE3D9 100%);
+  box-shadow: inset 0 0 0 1px rgba(30, 44, 41, 0.08);
+}
+.hero-stage::before { content: ""; position: absolute; left: 12%; right: 12%; bottom: 9%; height: 16%; border-radius: 50%; background: radial-gradient(ellipse, rgba(31, 133, 121, 0.22), transparent 70%); }
+.hero-stage .char { position: absolute; inset: 6% 8% 4%; }
+.hero-stage .char svg { width: 100%; height: 100%; }
+.spark { position: absolute; width: 18px; height: 18px; color: #FFFFFF; filter: drop-shadow(0 0 4px rgba(255, 214, 120, 0.9)); animation: twinkle 2.6s ease-in-out infinite; }
+.spark svg { width: 100%; height: 100%; display: block; }
+@keyframes twinkle { 0%, 100% { opacity: 0.2; transform: scale(0.6); } 50% { opacity: 1; transform: scale(1); } }
+@media (prefers-reduced-motion: reduce) { .spark { animation: none; opacity: 0.8; } }
+.dewdrop { position: absolute; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #FFFFFF, rgba(190, 235, 228, 0.6) 60%, rgba(120, 190, 180, 0.35)); box-shadow: inset -2px -3px 6px rgba(60, 130, 120, 0.25); }
+.stage-cap { text-align: center; font-size: 0.8rem; color: var(--muted); margin-top: 0.7em; }
+.changes { list-style: none; padding: 0; margin: 1.6em 0 0; display: grid; gap: 8px; }
+.changes li { display: grid; grid-template-columns: 7.5em 1fr; gap: 10px; font-size: 0.93rem; padding: 8px 0; border-bottom: 1px dashed var(--line); }
+.changes b { color: var(--eye); }
+.namecheck { margin-top: clamp(36px, 5vw, 52px); background: var(--surface); border: 1px solid var(--line); border-radius: 22px; padding: clamp(18px, 3vw, 26px); display: grid; grid-template-columns: 1fr; gap: 18px; }
+@media (min-width: 860px) { .namecheck { grid-template-columns: 1fr 1fr; } }
+.namecheck h3 { margin-bottom: 0.3em; }
+.namecheck ul { margin: 0; padding-left: 1.2em; font-size: 0.93rem; }
+.namecheck li { margin-bottom: 0.4em; }
+.verdict { font-weight: 700; color: var(--leaf); }
+.toc { margin-top: 26px; display: flex; flex-wrap: wrap; gap: 8px 8px; list-style: none; padding: 0; counter-reset: t; }
+.toc li { counter-increment: t; }
+.toc a { display: inline-block; text-decoration: none; font-size: 0.86rem; border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 0.3em 0.9em; }
+.toc a::before { content: counter(t) ". "; color: var(--muted); }
+
+/* ---------- loop overview ---------- */
+.loop3 { display: grid; grid-template-columns: 1fr; gap: 16px; align-items: stretch; }
+@media (min-width: 900px) { .loop3 { grid-template-columns: 1fr 1fr 1fr; } }
+.loopcard { background: var(--surface); border: 1.5px solid var(--line); border-radius: 22px; padding: 20px 22px; position: relative; }
+.loopcard .scale { font-family: "Kiwi Maru", serif; font-size: 2rem; line-height: 1.1; }
+.loopcard .scale small { display: block; font-family: "Zen Maru Gothic", sans-serif; font-size: 0.85rem; color: var(--muted); margin-top: 0.3em; }
+.loopcard ul { margin: 0.9em 0 0; padding-left: 1.1em; font-size: 0.94rem; }
+.loopcard li { margin-bottom: 0.35em; }
+.loopcard.day { border-top: 6px solid var(--banana); }
+.loopcard.week { border-top: 6px solid var(--eye); }
+.loopcard.ever { border-top: 6px solid var(--leaf); }
+.loop-foot { margin-top: 18px; font-weight: 500; }
+
+/* ---------- week table ---------- */
+table.week td.art, table.week th.art { width: 88px; }
+table.week .art div { width: 72px; height: 72px; background: var(--stage); border-radius: 16px; display: grid; place-items: center; }
+table.week .art svg { width: 90%; height: 90%; }
+table.week .day { white-space: nowrap; font-weight: 700; }
+table.week .day small { display: block; font-weight: 400; color: var(--muted); }
+table.week .mini { font-size: 0.85rem; color: var(--muted); }
+table.week tr.sun td, table.week tr.sun th { background: var(--tint-eye); }
+table.week { min-width: 700px; }
+
+/* ---------- phones ---------- */
+.times { display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 30px; }
+@media (min-width: 860px) { .times { grid-template-columns: repeat(3, 1fr); } }
+.time { border-radius: 18px; padding: 16px 18px; background: var(--surface); border: 1px solid var(--line); }
+.time .when { font-family: "Kiwi Maru", serif; font-size: 1.3rem; }
+.time .hours { font-size: 0.8rem; color: var(--muted); }
+.time ul { margin: 0.5em 0 0; padding-left: 1.1em; font-size: 0.92rem; }
+.phones { display: flex; gap: 14px; overflow-x: auto; padding: 6px 4px 18px; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
+.phone-wrap { flex: none; width: 248px; scroll-snap-align: start; }
+.phone { border-radius: 40px; padding: 10px; background: #1E2C29; box-shadow: 0 26px 50px -28px rgba(15, 40, 35, 0.6); }
+.screen { border-radius: 31px; overflow: hidden; background: #F4FAF8; color: #1E2C29; height: 540px; display: flex; flex-direction: column; font-size: 0.78rem; line-height: 1.5; position: relative; }
+.phone-cap { text-align: center; font-size: 0.85rem; font-weight: 700; margin-top: 0.7em; }
+.phone-cap small { display: block; font-weight: 400; color: var(--muted); }
+.sbar { display: flex; justify-content: space-between; align-items: center; gap: 4px; padding: 14px 12px 6px; font-weight: 700; white-space: nowrap; }
+.coins { display: flex; gap: 4px; font-size: 0.66rem; }
+.coin { display: inline-flex; align-items: center; gap: 3px; background: #FFFFFF; border-radius: 999px; padding: 1px 7px 1px 3px; border: 1px solid #DCE8E4; }
+.coin i { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+.coin.dew i { background: radial-gradient(circle at 35% 30%, #fff, #7FD1C6); }
+.coin.amber i { background: radial-gradient(circle at 35% 30%, #FFE7A8, #E08A1E); }
+.days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; padding: 4px 14px 8px; }
+.days span { text-align: center; font-size: 0.66rem; border-radius: 6px; padding: 2px 0; background: #E3EEEA; color: #586B66; }
+.days span.done { background: #CFE8E0; color: #1F8579; }
+.days span.now { background: #1E2C29; color: #FFFFFF; font-weight: 700; }
+.scene { position: relative; height: 176px; background: radial-gradient(circle at 50% 40%, #FFFFFF, #DFF1EC 70%); margin: 0 12px; border-radius: 20px; overflow: hidden; }
+.vial { position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); width: 112px; height: 112px; border: 3px solid #9DBBB4; border-top: none; border-radius: 0 0 38px 38px; background: linear-gradient(90deg, rgba(255,255,255,0.75), rgba(255,255,255,0.25) 45%, rgba(255,255,255,0.6)); }
+.vial .plug { position: absolute; top: -14px; left: -9px; right: -9px; height: 20px; border-radius: 9px; background: linear-gradient(#FBF7EE, #E9E1CF); border: 2px solid #C9BFA9; }
+.vial .food { position: absolute; bottom: 0; left: 0; right: 0; height: 34px; border-radius: 0 0 34px 34px; background: linear-gradient(#F6DA82, #E0B04A); }
+.vial .who { position: absolute; left: 50%; bottom: 18px; transform: translateX(-50%); width: 92px; }
+.vial .who svg { width: 100%; height: auto; display: block; }
+.memo-bubble { position: absolute; left: 8px; top: 8px; right: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; background: #FFFFFF; border-radius: 12px; padding: 6px 9px; font-size: 0.68rem; box-shadow: 0 4px 12px -6px rgba(0,0,0,0.25); }
+.memo-bubble b { color: #5F4FCF; }
+.chips { display: flex; gap: 6px; padding: 8px 14px 4px; flex-wrap: wrap; }
+.chips span { background: #FFFFFF; border: 1px solid #DCE8E4; border-radius: 999px; padding: 1px 8px; font-size: 0.68rem; }
+.todo { margin: 4px 14px; background: #FFFFFF; border-radius: 14px; padding: 7px 10px; border: 1px solid #E1ECE8; }
+.todo div { display: flex; justify-content: space-between; font-size: 0.7rem; padding: 1px 0; }
+.todo .ok { color: #1F8579; }
+.todo .next { color: #D7263D; font-weight: 700; }
+.actions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; padding: 8px 14px; }
+.actions span { text-align: center; background: #1E2C29; color: #FFFFFF; border-radius: 14px; padding: 8px 0 7px; font-weight: 700; font-size: 0.7rem; }
+.actions span:first-child { background: #D7263D; }
+.team { margin: 2px 14px 0; display: flex; align-items: center; gap: 6px; font-size: 0.66rem; color: #586B66; white-space: nowrap; }
+.team .face { width: 30px; height: 30px; background: #FFFFFF; border-radius: 50%; border: 1px solid #DCE8E4; overflow: hidden; }
+.team .face svg { width: 150%; height: 150%; margin: -12% 0 0 -25%; }
+.tabbar { margin-top: auto; display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid #DCE8E4; background: #FFFFFF; }
+.tabbar span { text-align: center; font-size: 0.68rem; font-weight: 700; padding: 9px 0 13px; color: #586B66; }
+.tabbar span.on { color: #D7263D; }
+.cook-head { padding: 12px 14px 4px; }
+.cook-head b { font-size: 0.95rem; }
+.cook-meta { display: flex; justify-content: space-between; padding: 0 14px 6px; font-size: 0.7rem; color: #586B66; }
+.grid8 { margin: 0 14px; display: grid; grid-template-columns: repeat(8, 1fr); gap: 2px; background: #D7E6E1; border-radius: 10px; padding: 4px; }
+.grid8 i { aspect-ratio: 1; border-radius: 4px; background: #F4FAF8; display: block; }
+.grid8 i.f { box-shadow: inset 0 -2px 0 rgba(0,0,0,0.15), inset 0 2px 0 rgba(255,255,255,0.5); }
+.grid8 i.clear { animation: clearGlow 1.4s ease-in-out infinite; }
+@keyframes clearGlow { 0%, 100% { filter: brightness(1); } 50% { filter: brightness(1.35); box-shadow: 0 0 8px #FFF3B0; } }
+@media (prefers-reduced-motion: reduce) { .grid8 i.clear { animation: none; filter: brightness(1.2); } }
+.combo { position: absolute; right: 18px; top: 150px; transform: rotate(-8deg); font-family: "Kiwi Maru", serif; font-size: 1.3rem; color: #D7263D; text-shadow: 0 2px 0 #FFFFFF, 0 0 12px rgba(255, 220, 120, 0.9); }
+.nexts { display: flex; gap: 10px; justify-content: center; padding: 10px 14px 4px; }
+.piece { display: grid; gap: 2px; }
+.piece i { width: 14px; height: 14px; border-radius: 3px; display: block; }
+.gauge { margin: 8px 14px 0; font-size: 0.7rem; }
+.gauge div { height: 9px; border-radius: 999px; background: #E3EEEA; overflow: hidden; margin-top: 3px; }
+.gauge div b { display: block; height: 100%; width: 78%; background: linear-gradient(90deg, #F6C443, #FF8A3D, #FF4D6D); border-radius: inherit; }
+.legend { display: flex; flex-wrap: wrap; gap: 5px; padding: 8px 14px; }
+.legend span { display: inline-flex; align-items: center; gap: 4px; font-size: 0.65rem; }
+.legend i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+.res { flex: 1; background: radial-gradient(circle at 50% 30%, #2E5750, #10201D 75%); color: #FFFFFF; display: flex; flex-direction: column; align-items: center; padding: 22px 16px 12px; text-align: center; }
+.res .wk { font-size: 0.72rem; opacity: 0.8; }
+.res h4 { font-family: "Kiwi Maru", serif; font-weight: 500; font-size: 1.2rem; margin: 2px 0 12px; }
+.rankring { width: 120px; height: 120px; border-radius: 50%; padding: 6px; background: conic-gradient(#FF6B8B, #FFC857, #7EE0A1, #5EC8F2, #A78BFA, #FF6B8B); box-shadow: 0 0 30px rgba(255, 200, 120, 0.45); }
+.rankring div { width: 100%; height: 100%; border-radius: 50%; background: #16302B; display: grid; place-items: center; font-family: "Kiwi Maru", serif; font-size: 1.9rem; }
+.res .pts { font-family: "IBM Plex Mono", monospace; font-size: 1.1rem; margin: 10px 0 4px; }
+.res .rows { width: 100%; font-size: 0.7rem; opacity: 0.9; margin-top: 6px; }
+.res .rows div { display: flex; justify-content: space-between; border-bottom: 1px dashed rgba(255,255,255,0.2); padding: 3px 0; }
+.res .rewards { display: flex; gap: 6px; margin-top: 12px; flex-wrap: wrap; justify-content: center; }
+.res .rewards span { background: rgba(255,255,255,0.12); border-radius: 10px; padding: 4px 8px; font-size: 0.7rem; }
+.res .cta { margin-top: auto; background: #FFFFFF; color: #1E2C29; border-radius: 999px; padding: 8px 18px; font-weight: 700; }
+.fr-card { margin: 12px 14px 8px; background: #FFFFFF; border-radius: 18px; border: 1px solid #DCE8E4; overflow: hidden; }
+.fr-top { background: linear-gradient(135deg, #FFE7A8, #FFC6D3); padding: 10px 12px; display: flex; gap: 10px; align-items: center; }
+.fr-top .av { width: 44px; height: 44px; border-radius: 50%; background: #FFFFFF; overflow: hidden; }
+.fr-top .av svg { width: 150%; height: 150%; margin: -10% 0 0 -25%; }
+.fr-top b { font-size: 0.95rem; display: block; }
+.fr-top small { font-size: 0.66rem; }
+.fr-stats { display: grid; grid-template-columns: repeat(3, 1fr); text-align: center; padding: 8px 4px; font-size: 0.66rem; color: #586B66; }
+.fr-stats b { display: block; color: #1E2C29; font-size: 0.92rem; }
+.showcase { margin: 0 14px; background: radial-gradient(circle at 50% 40%, #FFFFFF, #FFF4CF); border-radius: 18px; border: 2px solid #F2C94C; text-align: center; padding: 6px 8px 8px; position: relative; }
+.showcase svg { width: 118px; height: 118px; display: block; margin: 0 auto; }
+.showcase .tag { position: absolute; top: 8px; left: 8px; background: linear-gradient(90deg, #FF6B8B, #FFC857, #7EE0A1, #5EC8F2); color: #1E2C29; border-radius: 999px; padding: 0 8px; font-size: 0.62rem; font-weight: 700; }
+.fr-btns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; padding: 8px 14px; }
+.fr-btns span { text-align: center; border: 1.5px solid #1E2C29; border-radius: 12px; padding: 5px 0; font-weight: 700; font-size: 0.66rem; }
+.fr-rank { margin: 0 14px; font-size: 0.7rem; }
+.fr-rank div { display: flex; justify-content: space-between; padding: 4px 2px; border-bottom: 1px solid #E3EEEA; }
+.fr-rank div.me { color: #D7263D; font-weight: 700; }
+
+/* ---------- mini games ---------- */
+.games { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 14px; margin-bottom: 36px; }
+.game { background: var(--surface); border: 1.5px solid var(--line); border-radius: 18px; padding: 16px 18px; }
+.game .gt { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.game h3 { margin: 0; }
+.game .sec { font-size: 0.78rem; color: var(--muted); white-space: nowrap; }
+.game .how { font-weight: 500; margin: 0.4em 0 0.5em; }
+.game dl { margin: 0; font-size: 0.86rem; display: grid; grid-template-columns: max-content 1fr; gap: 2px 10px; }
+.game dt { color: var(--muted); }
+.game dd { margin: 0; }
+.luck { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.luck span { background: var(--tint-banana); border-radius: 999px; padding: 0.2em 0.9em; font-size: 0.86rem; }
+
+.demo-grid { display: grid; grid-template-columns: 1fr; gap: clamp(24px, 4vw, 44px); align-items: start; }
+@media (min-width: 920px) { .demo-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+.zip { background: #16302B; color: #FFFFFF; border-radius: 26px; padding: 18px; position: relative; overflow: hidden; max-width: 460px; margin: 0 auto; width: 100%; }
+.zip-head { display: flex; justify-content: space-between; align-items: center; font-weight: 700; }
+.zip-time { font-family: "IBM Plex Mono", monospace; background: rgba(255,255,255,0.12); padding: 1px 10px; border-radius: 999px; }
+.zip-teach { font-size: 0.85rem; opacity: 0.9; margin: 6px 0 12px; }
+.zip-teach b { color: #FFD66B; }
+.zip-board { position: relative; display: grid; grid-template-columns: repeat(var(--n), 1fr); gap: 5px; touch-action: none; user-select: none; -webkit-user-select: none; }
+.cell { aspect-ratio: 1; border-radius: 12px; background: rgba(255,255,255,0.08); position: relative; display: grid; place-items: center; cursor: pointer; transition: background 0.15s; }
+.cell.on { background: rgba(126, 224, 200, 0.28); }
+.cell.lit { background: rgba(255, 230, 140, 0.85); box-shadow: 0 0 16px rgba(255, 220, 120, 0.9); }
+.zip-svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
+.num { position: relative; z-index: 2; width: 58%; height: 58%; border-radius: 50%; display: grid; place-items: center; font-weight: 900; font-size: 1.05rem; background: #FFFFFF; color: #16302B; box-shadow: 0 3px 0 rgba(0,0,0,0.25); }
+.num.first { background: #FFD66B; }
+.num.last { background: #FF6B8B; color: #FFFFFF; }
+.num small { position: absolute; bottom: -1.35em; font-size: 0.58rem; font-weight: 700; color: #FFFFFF; white-space: nowrap; }
+.cell.bad { animation: bad 0.25s; }
+@keyframes bad { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
+.zip-foot { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+.zip button, .ecl button { color: #FFFFFF; border-color: rgba(255,255,255,0.7); font-size: 0.85rem; padding: 0.35em 0.9em; }
+.zip button.primary, .ecl button.primary { background: #FFFFFF; color: #16302B; border-color: #FFFFFF; }
+.zip-prog { font-size: 0.8rem; opacity: 0.85; }
+.zip-result { position: absolute; inset: 0; z-index: 5; background: radial-gradient(circle at 50% 45%, rgba(40, 80, 72, 0.85), rgba(10, 24, 21, 0.94)); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+.zip-result.show { opacity: 1; pointer-events: auto; }
+.zip-result .big { font-family: "Kiwi Maru", serif; font-size: 2.6rem; line-height: 1.1; transform: scale(0.4); }
+.zip-result.show .big { animation: pop 0.6s cubic-bezier(.2, 1.6, .4, 1) forwards; }
+@keyframes pop { to { transform: scale(1); } }
+.zip-result .perfect { font-family: "Zen Maru Gothic", sans-serif; font-weight: 900; font-size: 1rem; letter-spacing: 0.2em; background: linear-gradient(90deg, #FF6B8B, #FFC857, #7EE0A1, #5EC8F2, #A78BFA); -webkit-background-clip: text; background-clip: text; color: transparent; min-height: 1.4em; }
+.stars { font-size: 2rem; letter-spacing: 0.1em; margin: 6px 0; min-height: 1.3em; }
+.stars span { display: inline-block; color: rgba(255,255,255,0.2); transition: color 0.2s, transform 0.2s; }
+.stars span.got { color: #FFD66B; transform: scale(1.25); text-shadow: 0 0 12px rgba(255, 214, 107, 0.9); }
+.zip-result .what { font-weight: 700; margin: 4px 0 2px; }
+.zip-result .gain { font-size: 0.85rem; opacity: 0.85; margin-bottom: 14px; }
+.flash { position: absolute; inset: 0; background: #FFFFFF; opacity: 0; pointer-events: none; z-index: 6; }
+.flash.go { animation: flash 0.7s ease-out; }
+@keyframes flash { 0% { opacity: 0; } 12% { opacity: 0.9; } 100% { opacity: 0; } }
+.pt { position: absolute; width: 9px; height: 9px; border-radius: 50%; background: var(--c); z-index: 7; pointer-events: none; animation: pt 0.95s cubic-bezier(.1, .7, .3, 1) forwards; }
+.pt.sq { border-radius: 2px; }
+@keyframes pt { to { transform: translate(var(--dx), var(--dy)) rotate(260deg) scale(0.2); opacity: 0; } }
+.demo-side h3 { margin-top: 0; }
+.demo-side ol { padding-left: 1.3em; font-size: 0.95rem; }
+.demo-side li { margin-bottom: 0.4em; }
+
+/* eclosion demo */
+.ecl { background: #10201D; color: #FFFFFF; border-radius: 26px; padding: 18px; max-width: 460px; margin: 0 auto; width: 100%; }
+.ecl-top { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 0.82rem; margin-bottom: 10px; }
+.ecl-top button[aria-pressed="true"] { background: #FFFFFF; color: #10201D; }
+.ecl-stage { position: relative; aspect-ratio: 1 / 1; border-radius: 20px; overflow: hidden; background: radial-gradient(circle at 50% 55%, #2E5750, #10201D 72%); }
+.ecl-glow { position: absolute; inset: 8%; border-radius: 50%; opacity: 0; transition: opacity 0.35s, background 0.35s; background: radial-gradient(circle, var(--g, #FFFFFF) 0%, transparent 62%); }
+.ecl-glow.on { opacity: 1; }
+.ecl-glow.rainbow { background: conic-gradient(from 0deg, #FF6B8B, #FFC857, #7EE0A1, #5EC8F2, #A78BFA, #FF6B8B); filter: blur(22px); animation: spin 2s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.ecl-pupa { position: absolute; left: 50%; top: 50%; width: 58%; transform: translate(-50%, -50%); transition: opacity 0.2s; }
+.ecl-pupa svg { width: 100%; height: auto; display: block; }
+.ecl-pupa.shake { animation: shake 0.28s linear infinite; }
+.ecl-pupa.shake.hard { animation-duration: 0.14s; }
+@keyframes shake { 0%, 100% { transform: translate(-50%, -50%) rotate(0); } 25% { transform: translate(-51%, -50%) rotate(-4deg); } 75% { transform: translate(-49%, -50%) rotate(4deg); } }
+.ecl-cut { position: absolute; left: -100%; top: 12%; width: 100%; background: linear-gradient(90deg, #5F4FCF, #A898FF); padding: 10px 16px; font-weight: 700; z-index: 3; transition: left 0.35s cubic-bezier(.2, .9, .3, 1); box-shadow: 0 6px 20px rgba(0,0,0,0.4); }
+.ecl-cut.show { left: 0; }
+.ecl-card { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; z-index: 4; padding: 12px; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+.ecl-card.show { opacity: 1; pointer-events: auto; }
+.ecl-card .etier { font-family: "Kiwi Maru", serif; font-size: 1.5rem; line-height: 1.2; }
+.ecl-card .etier.rb { background: linear-gradient(90deg, #FF6B8B, #FFC857, #7EE0A1, #5EC8F2, #A78BFA); -webkit-background-clip: text; background-clip: text; color: transparent; font-size: 1.9rem; }
+.ecl-card .who { width: 52%; }
+.ecl-card .who svg { width: 100%; height: auto; display: block; }
+.ecl-card .stars { font-size: 1.5rem; margin: 0; }
+.ecl-card .info { font-size: 0.82rem; opacity: 0.9; }
+.tchips { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; margin-top: 6px; }
+.tchips span { background: rgba(255,255,255,0.14); border-radius: 999px; padding: 1px 9px; font-size: 0.74rem; }
+.ecl-foot { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; gap: 8px; flex-wrap: wrap; }
+.odds { width: 100%; margin-top: 12px; font-size: 0.78rem; color: rgba(255,255,255,0.85); }
+.odds th, .odds td { border-bottom: 1px solid rgba(255,255,255,0.15); padding: 5px 6px; }
+.odds thead th { border-bottom-color: rgba(255,255,255,0.4); }
+.dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px; vertical-align: -1px; }
+
+/* ---------- friends ---------- */
+.two { display: grid; grid-template-columns: 1fr; gap: clamp(28px, 4vw, 48px); }
+@media (min-width: 880px) { .two { grid-template-columns: 1fr 1fr; } }
+.flist { list-style: none; margin: 0; padding: 0; }
+.flist li { padding: 12px 0; border-bottom: 1px solid var(--line); }
+.flist b { display: block; }
+.flist span { color: var(--muted); font-size: 0.92rem; }
+.comp { display: grid; gap: 12px; }
+.comp div { background: var(--surface); border: 1.5px solid var(--line); border-radius: 16px; padding: 14px 16px; }
+.comp h4 { margin: 0 0 0.2em; font-size: 1.02rem; }
+.comp p { margin: 0; font-size: 0.9rem; color: var(--muted); }
+.comp .when { font-size: 0.75rem; color: var(--eye); font-weight: 700; }
+.rule { margin-top: 18px; border-left: 4px solid var(--eye); padding: 0.3em 0 0.3em 1em; font-weight: 500; }
+
+/* ---------- character sheet ---------- */
+.chara { display: grid; grid-template-columns: 1fr; gap: clamp(24px, 4vw, 48px); align-items: center; }
+@media (min-width: 920px) { .chara { grid-template-columns: 1fr 1fr; } }
+.sheet { position: relative; max-width: 480px; margin: 0 auto; width: 100%; aspect-ratio: 1 / 1; border-radius: 30px; background: radial-gradient(circle at 50% 42%, #FFFFFF 0%, #E8F5F1 50%, #CFE9E2 100%); }
+.sheet .art { position: absolute; inset: 0; }
+.sheet .art svg { width: 100%; height: 100%; }
+.mk { position: absolute; width: 24px; height: 24px; margin: -12px 0 0 -12px; border-radius: 50%; background: #1E2C29; color: #FFFFFF; font-size: 0.75rem; font-weight: 700; display: grid; place-items: center; box-shadow: 0 0 0 3px #FFFFFF; }
+.cnotes { counter-reset: n; list-style: none; padding: 0; margin: 0; }
+.cnotes li { counter-increment: n; position: relative; padding: 0 0 12px 36px; }
+.cnotes li::before { content: counter(n); position: absolute; left: 0; top: 0.15em; width: 24px; height: 24px; border-radius: 50%; background: var(--ink); color: var(--bg); font-size: 0.75rem; font-weight: 700; display: grid; place-items: center; }
+.cnotes b { display: block; }
+.cnotes span { color: var(--muted); font-size: 0.9rem; }
+.palette { display: flex; flex-wrap: wrap; gap: 10px; margin: 14px 0 0; }
+.palette span { display: inline-flex; align-items: center; gap: 6px; font-size: 0.85rem; }
+.palette i { width: 22px; height: 22px; border-radius: 7px; display: inline-block; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1); }
+.lineup { list-style: none; padding: 0; margin: 28px 0 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+@media (min-width: 640px) { .lineup { grid-template-columns: repeat(4, 1fr); } }
+@media (min-width: 980px) { .lineup { grid-template-columns: repeat(7, 1fr); } }
+.lineup li { text-align: center; }
+.lineup .pic { background: var(--stage); border-radius: 18px; aspect-ratio: 1 / 1; }
+.lineup .pic svg { width: 100%; height: 100%; display: block; }
+.lineup b { display: block; font-size: 0.9rem; margin-top: 0.4em; }
+.lineup small { color: var(--muted); font-size: 0.75rem; }
+
+/* ---------- shiori ---------- */
+.chat { background: var(--surface); border: 1px solid var(--line); border-radius: 22px; padding: 18px; }
+.msg-you { margin-left: auto; max-width: 85%; background: var(--ink); color: var(--bg); padding: 0.7em 1em; border-radius: 18px 18px 4px 18px; font-weight: 700; width: fit-content; }
+.msg-ai { margin-top: 14px; display: grid; grid-template-columns: 40px 1fr; gap: 10px; }
+.avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--tint-ai); border: 2px solid var(--ai); display: grid; place-items: center; font-family: "Kiwi Maru", serif; color: var(--ai); }
+.bubble { background: var(--bg); border-radius: 4px 18px 18px 18px; padding: 0.8em 1em; font-size: 0.94rem; }
+.bubble p { margin: 0 0 0.6em; }
+.ev { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 0.6em; }
+.ev span { font-size: 0.74rem; border: 1px solid var(--ai); color: var(--ai); border-radius: 6px; padding: 0.05em 0.5em; }
+.caution { font-size: 0.8rem; color: var(--eye); font-weight: 700; margin: 0; }
+.promise { background: var(--tint-ai); border-radius: 18px; padding: 18px 20px; margin-top: 18px; }
+.promise h3 { color: var(--ai); }
+.promise ol { margin: 0; padding-left: 1.3em; font-size: 0.94rem; }
+
+/* ---------- cards generic ---------- */
+.cards3 { display: grid; grid-template-columns: 1fr; gap: 16px; }
+@media (min-width: 880px) { .cards3 { grid-template-columns: repeat(3, 1fr); } }
+.card { background: var(--surface); border: 1.5px solid var(--line); border-radius: 18px; padding: 18px 20px; }
+.card h3 { margin-top: 0; }
+.card ul { margin: 0; padding-left: 1.2em; font-size: 0.93rem; }
+.card li { margin-bottom: 0.4em; }
+.card.hl { border-color: var(--eye); }
+.price { font-family: "Kiwi Maru", serif; font-size: 1.6rem; }
+.price small { font-family: "Zen Maru Gothic", sans-serif; font-size: 0.8rem; color: var(--muted); }
+
+/* ---------- architecture ---------- */
+.arch-wrap { display: grid; grid-template-columns: 1fr; gap: 28px; align-items: start; }
+@media (min-width: 920px) { .arch-wrap { grid-template-columns: 2.1fr 1fr; } }
+.tier { background: var(--surface); border: 1.5px solid var(--line); border-radius: 14px; padding: 12px 16px; }
+.tier h4 { margin: 0 0 0.1em; font-size: 1rem; }
+.tier p { margin: 0; font-size: 0.87rem; color: var(--muted); }
+.tier.ai { border-color: var(--ai); background: var(--tint-ai); }
+.tier.brain { border-color: var(--leaf); background: var(--tint-leaf); }
+.tier.data { border-style: dashed; }
+.conn { text-align: center; font-size: 0.8rem; color: var(--muted); padding: 8px 0; }
+.conn::before { content: ""; display: block; width: 2px; height: 12px; background: var(--line); margin: 0 auto 4px; }
+.row3, .row2 { display: grid; grid-template-columns: 1fr; gap: 10px; }
+@media (min-width: 720px) { .row3 { grid-template-columns: repeat(3, 1fr); } .row2 { grid-template-columns: repeat(2, 1fr); } }
+.side { border-top: 2px solid var(--ink); padding-top: 1em; }
+.side dl { margin: 0; }
+.side dt { font-weight: 700; margin-top: 0.8em; }
+.side dt:first-child { margin-top: 0; }
+.side dd { margin: 0.1em 0 0; font-size: 0.9rem; color: var(--muted); }
+.bullets { margin: 0; padding-left: 1.2em; font-size: 0.94rem; }
+.bullets li { margin-bottom: 0.45em; }
+
+/* ---------- roadmap ---------- */
+.roadmap { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr; gap: 18px; }
+@media (min-width: 900px) { .roadmap { grid-template-columns: repeat(3, 1fr); } }
+.roadmap > li { background: var(--surface); border: 1.5px solid var(--line); border-radius: 18px; padding: 18px 20px; display: flex; flex-direction: column; }
+.roadmap > li:first-child { border-color: var(--eye); }
+.roadmap .phase { font-size: 0.82rem; color: var(--muted); }
+.roadmap h3 { font-family: "Kiwi Maru", serif; font-weight: 500; font-size: 1.35rem; margin: 0.1em 0 0.5em; }
+.roadmap ul { margin: 0 0 1em; padding-left: 1.2em; font-size: 0.93rem; }
+.roadmap .goal { margin-top: auto; padding-top: 0.8em; border-top: 1px dashed var(--line); font-size: 0.9rem; }
+
+.two > *, .loop3 > *, .demo-grid > *, .chara > *, .arch-wrap > *, .hero-grid > *, .cards3 > *, .row2 > *, .row3 > * { min-width: 0; }
+footer { border-top: 1px solid var(--line); padding: 32px 0 52px; font-size: 0.84rem; color: var(--muted); }
+footer p { max-width: none; margin: 0 0 0.4em; }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <p class="meta"><span class="ver">v0.2</span>企画書（2026年9月）企画：Ryuta Suzuki</p>
+        <h1>ツユラボ</h1>
+        <p class="subtitle">本物のハエの脳で育つ。毎週1匹、卵から育てる育成研究ゲーム。</p>
+        <p>朝・昼・夜にごはんを作り、パズルでしつけ、1週間で卵を成虫まで育てる。日曜の夜は羽化と研究発表会。育てた子は研究チームに加わり、フレンドと競い、次の世代へつながっていく。</p>
+        <p class="note">名前の由来：ショウジョウバエの学名 <i>Drosophila</i> は、ギリシャ語で「露を好むもの」。</p>
+        <ul class="changes" aria-label="v0.2で変わったこと">
+          <li><b>キャラクター</b>ツユを描き直した。光と影、質感、本物のハエの特徴を入れたデザインに。</li>
+          <li><b>1週間サイクル</b>月曜に卵、日曜に羽化。毎週1匹を育てきる、ポケモンスリープ型の研究ループに。</li>
+          <li><b>ミニゲーム</b>お世話はすべて数秒〜30秒のパズルに。実際に遊べるデモを2つ入れた。</li>
+          <li><b>厳選と対戦</b>素質・特性・サブスキル・系統。フレンド機能と非同期の競技。</li>
+          <li><b>課金とサーバー</b>通貨、パス、ショップ、法律面、サーバー構成と費用の目安を追加。</li>
+        </ul>
+      </div>
+      <div>
+        <div class="hero-stage" id="heroStage">
+          <div class="char" data-art="adult" data-anim="1" data-label="ツユ（オス、野生型）"></div>
+        </div>
+        <p class="stage-cap">ツユ（オス、野生型）。キャラクターは企画用の1パターン。</p>
+      </div>
+    </div>
+
+    <div class="namecheck">
+      <div>
+        <h3>名前「ツユラボ」の確認</h3>
+        <p class="verdict">ウェブ検索の範囲では、「ツユラボ」という名前のゲームやアプリは見つからなかった。</p>
+        <ul>
+          <li>Instagramに <span class="mono">@tsuyu.lab</span>（「TSUYU」という香り・化粧品ブランド）がある。ジャンルは違うが、SNSのIDは別の形にする必要がある。</li>
+          <li>「ツユ」単体は、音楽ユニット「TUYU（ツユ）」やめんつゆと検索でぶつかる。宣伝では「ツユラボ」の一語で使う。</li>
+        </ul>
+      </div>
+      <div>
+        <h3>公開前にやること</h3>
+        <ul>
+          <li>特許庁の J-PlatPat で商標を確認。ゲームなら主に第9類（ゲームソフト）と第41類（オンラインゲームの提供）。</li>
+          <li>ドメインとSNSのIDの空きを確認（例：<span class="mono">tsuyulab</span>）。</li>
+          <li>正式リリースを決めたら、商標出願を検討する。</li>
+        </ul>
+      </div>
+    </div>
+
+    <ol class="toc" aria-label="目次">
+      <li><a href="#c1">ゲームのしくみ</a></li>
+      <li><a href="#c2">1週間の研究</a></li>
+      <li><a href="#c3">1日の流れと画面</a></li>
+      <li><a href="#c4">お世話ミニゲーム</a></li>
+      <li><a href="#c5">羽化と厳選</a></li>
+      <li><a href="#c6">フレンドと競技</a></li>
+      <li><a href="#c7">演出と音</a></li>
+      <li><a href="#c8">キャラクター</a></li>
+      <li><a href="#c9">参考にしたゲーム</a></li>
+      <li><a href="#c10">研究員シオリ</a></li>
+      <li><a href="#c11">AIを自分で作る</a></li>
+      <li><a href="#c12">本物と演出</a></li>
+      <li><a href="#c13">課金とビジネス</a></li>
+      <li><a href="#c14">サーバーと技術</a></li>
+      <li><a href="#c15">ロードマップ</a></li>
+    </ol>
+  </div>
+</header>
+
+<main>
+  <!-- 1 -->
+  <section class="chapter" id="c1">
+    <div class="wrap">
+      <h2><span class="no">1</span>ゲームのしくみ</h2>
+      <p class="lead">3つの時間の単位が重なっている。毎日のお世話が週の結果になり、週の結果がずっと残るコレクションになる。</p>
+      <div class="loop3">
+        <div class="loopcard day">
+          <div class="scale">毎日<small>朝・昼・夜の3回、1回2〜3分</small></div>
+          <ul>
+            <li>ごはんづくり（ブロックパズル）</li>
+            <li>しつけ（回路つなぎパズル）</li>
+            <li>そうじ、温度あわせ</li>
+            <li>夜は「おやすみ」でいっしょにねる</li>
+          </ul>
+        </div>
+        <div class="loopcard week">
+          <div class="scale">毎週<small>月曜に卵、日曜の夜に羽化</small></div>
+          <ul>
+            <li>1匹を卵 → 幼虫 → さなぎ → 成虫まで育てる</li>
+            <li>日曜の夜に研究発表会でランクが決まる</li>
+            <li>ランクが高いほど、羽化で良い素質や突然変異が出やすい</li>
+          </ul>
+        </div>
+        <div class="loopcard ever">
+          <div class="scale">ずっと<small>成虫は飼育室に残り続ける</small></div>
+          <ul>
+            <li>研究チームに入れて、材料を集めてもらう</li>
+            <li>レベル上げ、サブスキル、とくいワザ</li>
+            <li>図鑑、研究ランク、交配で次の世代</li>
+            <li>フレンドに見せる、競技に出す</li>
+          </ul>
+        </div>
+      </div>
+      <p class="loop-foot">育成期間は1週間でコンパクトに。成虫になってからが長く遊べる本番、という二段構え。</p>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section class="chapter" id="c2">
+    <div class="wrap">
+      <h2><span class="no">2</span>1週間の研究（月〜日）</h2>
+      <p class="lead">本物のショウジョウバエは、25℃で卵から成虫まで約10日。ゲームでは同じ順番のまま、1週間に縮めている。</p>
+      <div class="table-scroll">
+        <table class="week">
+          <thead><tr><th scope="col">日</th><th scope="col" class="art">すがた</th><th scope="col">なにをする</th><th scope="col">本物の話（シオリが教えてくれる）</th></tr></thead>
+          <tbody>
+            <tr><th scope="row" class="day">月<small>1日目</small></th><td class="art"><div data-art="egg"></div></td><td>卵が届く。<b>温度あわせ</b>と<b>寝床（えさ）づくり</b>。夜にふ化の演出。</td><td class="mini">卵の上の2本の細い突起は、呼吸のための管。</td></tr>
+            <tr><th scope="row" class="day">火<small>2日目</small></th><td class="art"><div data-art="larva"></div></td><td>1齢幼虫。朝昼晩のごはん、そうじ、<b>はじめてのしつけ</b>。</td><td class="mini">幼虫も匂いとごほうびを結びつけて覚えられる。</td></tr>
+            <tr><th scope="row" class="day">水<small>3日目</small></th><td class="art"><div data-art="larva"></div></td><td>2齢幼虫。脱皮の演出。しつけの本番。</td><td class="mini">幼虫の脳は約3,000ニューロン。配線図が公開されている。</td></tr>
+            <tr><th scope="row" class="day">木<small>4日目</small></th><td class="art"><div data-art="larva"></div></td><td>3齢幼虫。<b>食べざかり</b>でごはんの効果1.5倍。</td><td class="mini">体が透けていて、おなかの中が見える。</td></tr>
+            <tr><th scope="row" class="day">金<small>5日目</small></th><td class="art"><div data-art="larva"></div></td><td>えさから出て歩きまわる。夜に<b>さなぎの場所えらび</b>。</td><td class="mini">本物の3齢幼虫も、さなぎになる前にえさを離れてさまよう。</td></tr>
+            <tr><th scope="row" class="day">土<small>6日目</small></th><td class="art"><div data-art="pupa"></div></td><td>さなぎ。温度あわせと見守りだけ。<b>羽化の予兆</b>が出はじめる。</td><td class="mini">羽化が近づくと、殻ごしに赤い目が透けて見える。</td></tr>
+            <tr class="sun"><th scope="row" class="day">日<small>7日目</small></th><td class="art"><div data-art="adult"></div></td><td>大成功が出やすい日。夜に<b>羽化</b>と<b>研究発表会</b>。成虫は飼育室へ。</td><td class="mini">羽化したては羽がくしゃくしゃで、体の色も薄い。</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">お世話を忘れると「ケアミス」になり、発表会で減点される。たまごっちと同じく、ずっと放っておくと育ちが悪くなる。</p>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section class="chapter" id="c3">
+    <div class="wrap">
+      <h2><span class="no">3</span>1日の流れと画面</h2>
+      <p class="lead">1日3回、開く理由をつくる。やることは画面の「きょうのやること」に全部出る。</p>
+      <div class="times">
+        <div class="time"><div class="when">朝</div><div class="hours">4:00〜11:59</div><ul><li>「おはよう」で睡眠ボーナスを受け取る</li><li>シオリの「夜の観察メモ」を読む</li><li>朝ごはんづくり</li></ul></div>
+        <div class="time"><div class="when">昼</div><div class="hours">12:00〜17:59</div><ul><li>昼ごはんづくり</li><li>しつけ（1日3回まで）</li><li>「今日の回路」でフレンドとタイム勝負</li></ul></div>
+        <div class="time"><div class="when">夜</div><div class="hours">18:00〜3:59</div><ul><li>夜ごはんづくり</li><li>そうじ（びんの引っ越し）</li><li>「おやすみ」で消灯。いっしょにねる</li></ul></div>
+      </div>
+
+      <div class="phones" aria-label="画面イメージ">
+        <div class="phone-wrap">
+          <div class="phone"><div class="screen">
+            <div class="sbar"><span>研究3日目</span><span class="coins"><span class="coin dew"><i></i>1,240</span><span class="coin amber"><i></i>60</span></span></div>
+            <div class="days"><span class="done">月</span><span class="done">火</span><span class="now">水</span><span>木</span><span>金</span><span>土</span><span>日</span></div>
+            <div class="scene">
+              <div class="memo-bubble"><b>シオリ</b>　昨夜の睡眠は約4時間</div>
+              <div class="vial"><div class="plug"></div><div class="food"></div><div class="who" data-art="larva"></div></div>
+            </div>
+            <div class="chips"><span>2齢幼虫</span><span>おなか 70%</span><span>きれい 45%</span><span>ごきげん</span></div>
+            <div class="todo">
+              <div class="ok"><span>朝ごはん</span><span>済</span></div>
+              <div class="next"><span>しつけ</span><span>あと2回</span></div>
+              <div><span>夜ごはん</span><span>18:00から</span></div>
+              <div><span>おやすみ</span><span>23:00ごろ</span></div>
+            </div>
+            <div class="actions"><span>ごはん</span><span>しつけ</span><span>そうじ</span><span>ねる</span></div>
+            <div class="team"><span>チーム</span><div class="face" data-art="adult"></div><div class="face" data-art="adult|yellow|f"></div><div class="face" data-art="adult|white"></div><span>採集中…</span></div>
+            <div class="tabbar"><span class="on">おせわ</span><span>チーム</span><span>図鑑</span><span>フレンド</span></div>
+          </div></div>
+          <p class="phone-cap">ホーム<small>やることと、押すボタンが一目でわかる</small></p>
+        </div>
+
+        <div class="phone-wrap">
+          <div class="phone"><div class="screen">
+            <div class="cook-head"><b>昼ごはんづくり</b></div>
+            <div class="cook-meta"><span>テーマ：フルーツ</span><span class="mono">おいしさ 2,480</span></div>
+            <div class="grid8" id="grid8"></div>
+            <div class="combo">コンボ×3</div>
+            <div class="nexts" id="nexts"></div>
+            <div class="gauge">大成功ゲージ<div><b></b></div></div>
+            <div class="legend" id="legend"></div>
+            <div class="tabbar"><span class="on">おせわ</span><span>チーム</span><span>図鑑</span><span>フレンド</span></div>
+          </div></div>
+          <p class="phone-cap">ごはんづくり<small>材料ブロックを置いて、列をそろえて消す</small></p>
+        </div>
+
+        <div class="phone-wrap">
+          <div class="phone"><div class="screen">
+            <div class="res">
+              <div class="wk">第12週</div>
+              <h4>研究発表会</h4>
+              <div class="rankring"><div>にじ</div></div>
+              <div class="pts">18,420 pt</div>
+              <div class="rows">
+                <div><span>ごはん（大成功 4回）</span><span>9,800</span></div>
+                <div><span>しつけ（★★★ 6回）</span><span>5,120</span></div>
+                <div><span>お世話</span><span>3,500</span></div>
+                <div><span>ケアミス</span><span>0</span></div>
+              </div>
+              <div class="rewards"><span>しずく ×3,000</span><span>研究ポイント +420</span><span>突然変異 率アップ</span></div>
+              <div class="cta">羽化を見る</div>
+            </div>
+          </div></div>
+          <p class="phone-cap">研究発表会<small>日曜の夜。1週間の結果とランク</small></p>
+        </div>
+
+        <div class="phone-wrap">
+          <div class="phone"><div class="screen">
+            <div class="fr-card">
+              <div class="fr-top"><div class="av" data-art="adult|ebony"></div><div><b>ゆうき</b><small>称号「バナナ博士」</small></div></div>
+              <div class="fr-stats"><div><b>18</b>研究ランク</div><div><b>42/120</b>図鑑</div><div><b>3週</b>連続にじ</div></div>
+            </div>
+            <div class="showcase"><span class="tag">突然変異</span><div data-art="adult|yellow|f"></div><b>ぴかり　★★★★★</b></div>
+            <div class="fr-btns"><span>いいね</span><span>おすそわけ</span><span>お見合い</span></div>
+            <div class="fr-rank">
+              <b>今週の迷路レース（フレンド）</b>
+              <div><span>1　ゆうき</span><span class="mono">12.4秒</span></div>
+              <div class="me"><span>2　あなた</span><span class="mono">13.1秒</span></div>
+              <div><span>3　みお</span><span class="mono">15.8秒</span></div>
+            </div>
+            <div class="tabbar"><span>おせわ</span><span>チーム</span><span>図鑑</span><span class="on">フレンド</span></div>
+          </div></div>
+          <p class="phone-cap">フレンド<small>自慢の1匹、プロフィール、ランキング</small></p>
+        </div>
+      </div>
+      <p class="note">画面はすべてイメージ。数値は例。</p>
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section class="chapter" id="c4">
+    <div class="wrap">
+      <h2><span class="no">4</span>お世話ミニゲーム</h2>
+      <p class="lead">お世話はすべて、数秒で遊べるパズルかタイミングゲーム。うまくできるほど効果が大きく、ときどき運で大当たりが出る。</p>
+      <div class="games">
+        <div class="game"><div class="gt"><h3>ごはんづくり</h3><span class="sec">朝・昼・夜　30秒</span></div><p class="how">材料ブロックを置いて、列をそろえて消すパズル。</p><dl><dt>効果</dt><dd>成長ポイント、おなか</dd><dt>運</dt><dd>大成功（日曜は出やすい）</dd></dl></div>
+        <div class="game"><div class="gt"><h3>しつけ</h3><span class="sec">1日3回　5〜20秒</span></div><p class="how">数字の順に、全部のマスを一筆書きでつなぐ回路パズル。</p><dl><dt>効果</dt><dd>好き・苦手を覚える、とくいワザ</dd><dt>運</dt><dd>ひらめき（学習2倍）</dd></dl></div>
+        <div class="game"><div class="gt"><h3>そうじ</h3><span class="sec">1日1回　5秒</span></div><p class="how">びんをトントンと叩いて、新しいびんへ引っ越す。タイミング勝負。</p><dl><dt>効果</dt><dd>きれい度、ケアミス防止</dd><dt>本物</dt><dd>研究室でも定期的にびんを替える</dd></dl></div>
+        <div class="game"><div class="gt"><h3>温度あわせ</h3><span class="sec">卵・さなぎ　5秒</span></div><p class="how">ゆれる針を、ちょうどいい範囲で止める。</p><dl><dt>効果</dt><dd>成長の順調さ、素質</dd><dt>本物</dt><dd>温度で成長の速さが変わる</dd></dl></div>
+        <div class="game"><div class="gt"><h3>さなぎの場所えらび</h3><span class="sec">金曜の夜　10秒</span></div><p class="how">3つの候補から選ぶ。シオリのヒントつきの運試し。</p><dl><dt>効果</dt><dd>羽化の成功度</dd><dt>運</dt><dd>当たりで素質アップ</dd></dl></div>
+        <div class="game"><div class="gt"><h3>今日の回路</h3><span class="sec">毎日1問　30秒</span></div><p class="how">全員に同じ問題が出る大きめの回路パズル。</p><dl><dt>効果</dt><dd>しずく、フレンドとタイム勝負</dd><dt>しかけ</dt><dd>本物の神経の経路から作る</dd></dl></div>
+      </div>
+      <h3>運の要素</h3>
+      <div class="luck"><span>ごはんの大成功</span><span>しつけのひらめき</span><span>羽化の突然変異</span><span>素質の★</span><span>採集のレアドロップ</span><span>研究所のおてんき（出やすい材料が変わる）</span></div>
+
+      <div class="sub-block demo-grid">
+        <div>
+          <div class="zip" id="zip">
+            <div class="zip-head"><span>しつけ：回路つなぎ</span><span class="zip-time" id="zipTime">0.0秒</span></div>
+            <div class="zip-teach" id="zipTeach"></div>
+            <div class="zip-board" id="zipBoard"></div>
+            <div class="zip-foot">
+              <span class="zip-prog" id="zipProg"></span>
+              <span><button type="button" id="zipReset">やり直す</button> <button type="button" id="zipNext">次の問題</button> <button type="button" id="zipSound" aria-pressed="true">音あり</button></span>
+            </div>
+            <div class="zip-result" id="zipResult" aria-live="polite">
+              <div class="perfect" id="zipPerfect"></div>
+              <div class="big">覚えた！</div>
+              <div class="stars" id="zipStars"><span>★</span><span>★</span><span>★</span></div>
+              <div class="what" id="zipWhat"></div>
+              <div class="gain" id="zipGain"></div>
+              <div><button type="button" class="primary" id="zipAgain">もう一度</button> <button type="button" id="zipNext2">次の問題</button></div>
+            </div>
+            <div class="flash" id="zipFlash"></div>
+          </div>
+        </div>
+        <div class="demo-side">
+          <h3>遊んでみて：しつけの回路パズル</h3>
+          <ol>
+            <li>黄色い「1」からスタート。指（マウス）でなぞる。</li>
+            <li>数字の順番どおりに通って、全部のマスを埋める。</li>
+            <li>最後の赤い数字が「ごほうび」。つながったら覚える。</li>
+          </ol>
+          <p>速くきれいに解くほど★が増え、脳の中でキノコ体のつながりが強く変わる。つまり「覚える強さ」がパズルの腕で決まる。1問5〜20秒。</p>
+          <p class="note">戻りたいときは、前のマスへなぞり戻すか、途中のマスをタップ。音が出るので注意。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section class="chapter" id="c5">
+    <div class="wrap">
+      <h2><span class="no">5</span>羽化と厳選</h2>
+      <p class="lead">日曜の夜の羽化が、1週間でいちばん盛り上がる瞬間。週のランクが高いほど、良い結果が出やすい。</p>
+      <div class="demo-grid">
+        <div>
+          <div class="ecl" id="ecl">
+            <div class="ecl-top"><span>今週のランク：</span>
+              <button type="button" data-rank="silver" aria-pressed="false">シルバー</button>
+              <button type="button" data-rank="gold" aria-pressed="true">ゴールド</button>
+              <button type="button" data-rank="rainbow" aria-pressed="false">にじ</button>
+            </div>
+            <div class="ecl-stage" id="eclStage">
+              <div class="ecl-glow" id="eclGlow"></div>
+              <div class="ecl-pupa" id="eclPupa" data-art="pupa"></div>
+              <div class="ecl-cut" id="eclCut">シオリ「これは……！？」</div>
+              <div class="ecl-card" id="eclCard" aria-live="polite"></div>
+              <div class="flash" id="eclFlash"></div>
+            </div>
+            <div class="ecl-foot"><button type="button" class="primary" id="eclGo">羽化させる</button><span class="note" style="color:rgba(255,255,255,.7)">デモなので何度でも</span></div>
+            <table class="odds"><thead><tr><th scope="col">予兆の色</th><th scope="col">結果</th><th scope="col">確率</th></tr></thead><tbody id="eclOdds"></tbody></table>
+          </div>
+        </div>
+        <div class="demo-side">
+          <h3>遊んでみて：羽化の演出</h3>
+          <p>さなぎがゆれて、光の色が白 → 青 → 金 → 虹と上がっていくほどアツい。虹まで行くと突然変異（めずらしい系統）が確定。</p>
+          <p>ランクを変えると確率が変わる。1週間がんばったことが、そのまま「当たりやすさ」になるしくみ。確率はすべて公開する。</p>
+          <p class="note">本番では1週間に1回。お金を払って回すことはできない。</p>
+        </div>
+      </div>
+
+      <div class="sub-block">
+        <h3>1匹の強さを決めるもの</h3>
+        <div class="table-scroll">
+          <table style="min-width:680px">
+            <thead><tr><th scope="col">要素</th><th scope="col">決まり方</th><th scope="col">あとから変わる？</th><th scope="col">区分</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">素質 ★1〜5</th><td>羽化で決まる。週のランクが高いほど高い★が出やすい。レベルの上限が決まる。</td><td>変わらない（厳選の対象）</td><td><span class="badge show">ゲーム</span></td></tr>
+              <tr><th scope="row">生まれつきの特性</th><td>羽化でランダムに2つ。右曲がりぐせ、光が大好き、匂いにするどい、度胸がある、など。</td><td>変わらない（厳選の対象）</td><td><span class="badge real">本物がもと</span></td></tr>
+              <tr><th scope="row">好き・苦手、とくいワザ</th><td>しつけで覚える。つながりが一定を超えると「バナナさがし」などのワザになる。</td><td>しつけ直せる</td><td><span class="badge real">本物のしくみ</span></td></tr>
+              <tr><th scope="row">レベル</th><td>研究チームでの活動と、しずくで上がる。</td><td>上がる</td><td><span class="badge show">ゲーム</span></td></tr>
+              <tr><th scope="row">サブスキル</th><td>レベル10・25・50で解放。中身はランダム（採集量アップ、大成功率アップなど）。</td><td>変わらない（厳選の対象）</td><td><span class="badge show">ゲーム</span></td></tr>
+              <tr><th scope="row">系統（見た目）</th><td>親から、本物の遺伝のしかたで受け継ぐ。まれに突然変異。</td><td>交配でねらう</td><td><span class="badge real">本物のしくみ</span></td></tr>
+              <tr><th scope="row">性別</th><td>羽化で決まる（半々）。オスとメスで、使う脳の配線図が違う。</td><td>変わらない</td><td><span class="badge real">本物</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="note">生まれつきの特性は、遺伝子が同じハエでも1匹ずつ曲がる方向にクセがある、という研究がもと。脳モデルのパラメータを少しずつずらして作る。このクセは親から子へ受け継がれにくいとされるので、ゲームでも遺伝しない（だから厳選に運が入る）。</p>
+      </div>
+
+      <div class="sub-block cards3">
+        <div class="card"><h3>研究チーム（最大5匹）</h3><p>成虫をチームに入れると、時間ごとに材料としずくを集めてくる。量は、レベル、サブスキル、そして「何を好きに育てたか」で変わる。バナナ好きに育てた子はバナナをよく見つける。</p></div>
+        <div class="card"><h3>レベル上げ</h3><p>しずくと活動の経験でレベルが上がる。上限は素質の★で決まる。げんきは、あなたが「おやすみ」から「おはよう」までねると回復する。</p></div>
+        <div class="card"><h3>交配と次の世代</h3><p>2匹を選ぶと、次の週の卵ができる。白い目のように性別で伝わり方が変わる「伴性遺伝」も本物どおり。狙った系統を作るのが、コレクションの楽しみ。</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 -->
+  <section class="chapter" id="c6">
+    <div class="wrap">
+      <h2><span class="no">6</span>フレンドと競技</h2>
+      <p class="lead">ゲーム内のフレンド機能で、他の人の飼育室をのぞけて、競える。対戦はすべて非同期なので、時間を合わせる必要がない。</p>
+      <div class="two">
+        <div>
+          <h3>フレンドでできること</h3>
+          <ul class="flist">
+            <li><b>飼育室をのぞく</b><span>フレンドのチームと、今週育てている子を見られる。</span></li>
+            <li><b>自慢の1匹とプロフィール</b><span>称号、背景、フレーム、研究ランク、図鑑の達成率を飾れる。自分をアピールする場所。</span></li>
+            <li><b>いいねと、おすそわけ</b><span>1日1回、材料を送れる。送った側にも研究ポイント。</span></li>
+            <li><b>お見合い</b><span>フレンドの成虫と交配して、両方に卵が届く。</span></li>
+            <li><b>お知らせ</b><span>「ゆうきさんの子が、にじランクで羽化しました」</span></li>
+          </ul>
+        </div>
+        <div>
+          <h3>競技</h3>
+          <div class="comp">
+            <div><span class="when">毎日</span><h4>今日の回路</h4><p>全員に同じパズル。フレンドの中でタイムを競う。</p></div>
+            <div><span class="when">毎週末</span><h4>迷路レース</h4><p>同じ迷路に、自分の成虫を送り出す。どこにどの匂いを置くかの作戦を立てると、脳のシミュレーションで走りが決まる。しつけと特性が効く。</p></div>
+            <div><span class="when">毎週</span><h4>見た目コンテスト</h4><p>お題に合わせて、飾った飼育室と自慢の1匹を出す。フレンドの投票で決まる。</p></div>
+            <div><span class="when">あとで追加</span><h4>なわばりずもう</h4><p>オスどうしの押し合い。本物のオスも、なわばりをめぐって小競り合いをする。</p></div>
+          </div>
+          <p class="rule">競技の結果に、お金で買ったものは一切効かない。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 -->
+  <section class="chapter" id="c7">
+    <div class="wrap">
+      <h2><span class="no">7</span>演出と音</h2>
+      <p class="lead">うまくいったときは、とにかく気持ちよく。期待度を色でそろえて、どの場面でも「来るぞ」がわかるようにする。</p>
+      <div class="table-scroll">
+        <table style="min-width:640px">
+          <thead><tr><th scope="col">場面</th><th scope="col">見た目</th><th scope="col">音と振動</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">マスを進む、タップ</th><td>ぷよんと弾む、光の粒</td><td>一歩ごとに音程が上がる「ポッ」</td></tr>
+            <tr><th scope="row">パズルクリア</th><td>光の波が回路を走る、星が1つずつ出る</td><td>和音のアルペジオ</td></tr>
+            <tr><th scope="row">大成功</th><td>画面フラッシュ、しずくが弾ける、金色の文字</td><td>ファンファーレ、短い振動</td></tr>
+            <tr><th scope="row">羽化の予兆</th><td>さなぎがゆれる、光の色が上がる（白 → 青 → 金 → 虹）</td><td>色に合わせて音が上がる、振動が強くなる</td></tr>
+            <tr><th scope="row">突然変異、★5</th><td>シオリのカットイン、虹のバースト、図鑑登録のスタンプ</td><td>専用のジングル</td></tr>
+            <tr><th scope="row">研究発表会</th><td>ランクのバッジが落ちてくる、紙吹雪</td><td>ドラムロールから決め音</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="sub-block cards3">
+        <div class="card"><h3>期待度の色は全部共通</h3><p>白 &lt; 青 &lt; 金 &lt; 虹。ごはん、しつけ、羽化、発表会で同じ並び。一度覚えれば、どこでもドキドキできる。</p></div>
+        <div class="card"><h3>ときどき外れる予兆</h3><p>金まで行って止まることもある。外れがあるから、虹が出たときに盛り上がる。長い演出は2回目からスキップできる。</p></div>
+        <div class="card"><h3>作り方</h3><p>画面の演出はPixiJS（WebGL）のパーティクル、ツユの動きはRiveのアニメーション、音はWeb Audio。スマホアプリ版では振動も使う。</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8 -->
+  <section class="chapter" id="c8">
+    <div class="wrap">
+      <h2><span class="no">8</span>キャラクター</h2>
+      <p class="lead">かわいさの理由を、本物のショウジョウバエから取ってくる。デフォルメしても、見る人が見れば「本当にハエだ」とわかるように。</p>
+      <div class="chara">
+        <div class="sheet">
+          <div class="art" data-art="adult" data-label="ツユの設定画"></div>
+          <span class="mk" style="left:29%;top:40%">1</span>
+          <span class="mk" style="left:62.5%;top:41%">2</span>
+          <span class="mk" style="left:50%;top:17%">3</span>
+          <span class="mk" style="left:36%;top:15%">4</span>
+          <span class="mk" style="left:61%;top:6%">5</span>
+          <span class="mk" style="left:50%;top:71%">6</span>
+          <span class="mk" style="left:50%;top:87%">7</span>
+          <span class="mk" style="left:14%;top:48%">8</span>
+        </div>
+        <div>
+          <ol class="cnotes">
+            <li><b>大きな赤い複眼</b><span>光沢と、細かい粒（個眼）の質感。</span></li>
+            <li><b>黒目は「偽瞳孔」</b><span>本物の複眼でも、見る向きによって黒い点が見える。これを黒目として使っている。</span></li>
+            <li><b>頭の上の3つの点は「単眼」</b><span>本物のハエにもある、小さな目。</span></li>
+            <li><b>羽毛のような触角</b><span>本物の触角の先にある、枝分かれした毛（アリスタ）。</span></li>
+            <li><b>アホ毛は「剛毛」</b><span>ショウジョウバエの特徴の太い毛。</span></li>
+            <li><b>前脚を合わせるポーズ</b><span>本物がよくする、前脚をこすり合わせる身づくろい。</span></li>
+            <li><b>オスはおしりが黒い</b><span>本物のオスの特徴。メスはしま模様だけ。</span></li>
+            <li><b>虹色の羽</b><span>透明な羽に、光の干渉で虹色の模様が出る。これも本物の現象。</span></li>
+          </ol>
+          <div class="palette" aria-label="色">
+            <span><i style="background:#EDBB76"></i>こはく色の体</span>
+            <span><i style="background:#E3243C"></i>ルビー色の目</span>
+            <span><i style="background:linear-gradient(135deg,#CDEFF5,#FFD2EC,#D6F4CE)"></i>虹の羽</span>
+            <span><i style="background:#BFE3D9"></i>露のミント</span>
+          </div>
+          <p class="note" style="margin-top:14px">光は左上から。影、縁の照り返し、接地影をつける。輪郭は黒ではなく、その部分の濃い色で描く。</p>
+        </div>
+      </div>
+      <ul class="lineup" aria-label="系統と性別のバリエーション">
+        <li><div class="pic" data-art="adult"></div><b>野生型オス</b><small>Canton-S</small></li>
+        <li><div class="pic" data-art="adult|wild|f"></div><b>野生型メス</b><small>おしりはしま模様</small></li>
+        <li><div class="pic" data-art="adult|white"></div><b>白い目</b><small>white</small></li>
+        <li><div class="pic" data-art="adult|yellow"></div><b>黄色い体</b><small>yellow</small></li>
+        <li><div class="pic" data-art="adult|ebony"></div><b>黒い体</b><small>ebony</small></li>
+        <li><div class="pic" data-art="adult|curly"></div><b>縮れ羽</b><small>Curly、飛ぶのが苦手</small></li>
+        <li><div class="pic" data-art="adult|vestigial"></div><b>小さな羽</b><small>vestigial、飛べない</small></li>
+      </ul>
+      <p class="note" style="margin-top:18px">製品版では、プロのイラストレーターによる描き起こしと、表情差分（ごきげん、はらぺこ、ねむい、びっくり、覚えた！）、系統ごとの細かい違い、Riveでの動きを用意する。</p>
+    </div>
+  </section>
+
+  <!-- 9 -->
+  <section class="chapter" id="c9">
+    <div class="wrap">
+      <h2><span class="no">9</span>参考にしたゲーム</h2>
+      <p class="lead">見た目や名前はまねしない。遊びの「しくみ」を、ハエの研究という題材に置き換えて取り込む。</p>
+      <div class="two">
+        <div>
+          <h3>たまごっちでできること</h3>
+          <div class="table-scroll">
+            <table style="min-width:420px">
+              <thead><tr><th scope="col">たまごっち</th><th scope="col">ツユラボでは</th></tr></thead>
+              <tbody>
+                <tr><td>ごはんとおやつをあげる</td><td>朝昼晩のごはんづくり、おやつの砂糖水</td></tr>
+                <tr><td>うんちをそうじする</td><td>びんの引っ越し（ハエもびんを汚す）</td></tr>
+                <tr><td>病気になったら薬</td><td>カビやダニへの対策（研究室の本当の悩み）</td></tr>
+                <tr><td>電気を消して寝かせる</td><td>「おやすみ」で消灯、いっしょにねる</td></tr>
+                <tr><td>わがままをしかる（しつけ）</td><td>回路パズルで好き・苦手を教える</td></tr>
+                <tr><td>ミニゲームで遊ぶ</td><td>お世話がすべてミニゲーム</td></tr>
+                <tr><td>お世話の良し悪しで大人の姿が変わる</td><td>週のランクで素質と突然変異が変わる</td></tr>
+                <tr><td>結婚して次の世代へ</td><td>交配で次の週の卵</td></tr>
+                <tr><td>通信で友だちと遊ぶ</td><td>フレンド、お見合い、競技</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div>
+          <h3>ポケモンスリープから</h3>
+          <div class="table-scroll">
+            <table style="min-width:420px">
+              <thead><tr><th scope="col">ポケモンスリープ</th><th scope="col">ツユラボでは</th></tr></thead>
+              <tbody>
+                <tr><td>1週間ごとにカビゴンを育てて評価</td><td>1週間で1匹を卵から育て、日曜に研究発表会</td></tr>
+                <tr><td>朝昼晩の料理、大成功</td><td>朝昼晩のごはんづくり（パズル）、大成功</td></tr>
+                <tr><td>ポケモンのおてつだい</td><td>研究チームの成虫が材料を採集</td></tr>
+                <tr><td>レベル、サブスキル、せいかく</td><td>レベル、サブスキル、生まれつきの特性</td></tr>
+                <tr><td>厳選</td><td>素質★と特性の厳選、交配で系統をねらう</td></tr>
+                <tr><td>寝顔図鑑とリサーチランク</td><td>行動図鑑、系統図鑑、研究ランク</td></tr>
+                <tr><td>睡眠の計測</td><td>「おやすみ」「おはよう」で体内時計ゲージ</td></tr>
+                <tr><td>ダイヤとプレミアムパス</td><td>こはくと研究パス</td></tr>
+                <tr><td>フレンド</td><td>飼育室の訪問、おすそわけ、お見合い</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <p class="note" style="margin-top:14px">いっしょにねる：夜に「おやすみ」、朝に「おはよう」。毎日同じくらいの時間にねると「体内時計ゲージ」がたまり、チームのげんきが回復する。ハエの体内時計はノーベル賞（2017年）につながった研究の題材でもある。</p>
+    </div>
+  </section>
+
+  <!-- 10 -->
+  <section class="chapter" id="c10">
+    <div class="wrap">
+      <h2><span class="no">10</span>研究員シオリ</h2>
+      <p class="lead">ゲームの案内役で、研究の相棒。ツユの代わりに喋るのではなく、観察して、測って、説明する。</p>
+      <div class="two">
+        <div>
+          <ul class="flist">
+            <li><b>朝の観察メモ</b><span>夜のあいだの様子と、睡眠ボーナスを伝える。</span></li>
+            <li><b>しつけのコーチ</b><span>「今週の迷路は匂いがカギ。バナナを覚えさせると有利かも」</span></li>
+            <li><b>研究発表会の司会</b><span>1週間をふり返り、ランクを発表する。</span></li>
+            <li><b>「なんで？」に答える</b><span>ツユのコピーで実験してから、根拠つきで答える。</span></li>
+            <li><b>図鑑の解説</b><span>本物の研究の話を、短く楽しく。</span></li>
+          </ul>
+        </div>
+        <div>
+          <div class="chat">
+            <div class="msg-you">なんでこの子、りんご酢のときだけ離れていくの？</div>
+            <div class="msg-ai">
+              <div class="avatar" aria-hidden="true">シ</div>
+              <div class="bubble">
+                <p>火曜の夜、りんご酢の匂いのしつけで「にがいごはん」を3回覚えています。コピーで試したら、りんご酢から離れたのは20回中15回でした。</p>
+                <div class="ev mono"><span>しつけ #0412〜0414</span><span>実験 #c-19</span></div>
+                <p class="caution">ゲーム内のモデルで測った結果です。本物のハエの気持ちではありません。</p>
+              </div>
+            </div>
+          </div>
+          <div class="promise">
+            <h3>シオリの約束</h3>
+            <ol>
+              <li>ツユの気持ちを代弁しない。「悲しんでいます」ではなく「動きが減っています」と言う。</li>
+              <li>すべての説明に、記録か実験のIDをつける。実在しないIDの文は表示しない。</li>
+              <li>実験はいつもコピーで。本物のツユは変えない。</li>
+              <li>シオリ自身がAIであることを隠さない。</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11 -->
+  <section class="chapter" id="c11">
+    <div class="wrap">
+      <h2><span class="no">11</span>AIを自分で作る</h2>
+      <p class="lead">既製品のAPIを呼ぶだけで終わらせない。ゲームの中身になるAIを6つ、最初から自分で作り、全部を数字で評価する。</p>
+      <div class="table-scroll">
+        <table style="min-width:760px">
+          <thead><tr><th scope="col">AI</th><th scope="col">ゲームでの役割</th><th scope="col">自分で作るところ</th><th scope="col">評価のしかた</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">脳エンジン</th><td>ツユの行動のもとになる神経活動を計算する</td><td>スパイキング・ニューラルネットのシミュレータをPyTorchで一から書く。部分回路の切り出しも自作</td><td>既存の研究用モデルと同じ回路で結果を比べる。「砂糖でMN9、影でDNp01が反応する」を自動テスト</td></tr>
+            <tr><th scope="row">学習ルール</th><td>しつけで好き・苦手が変わる</td><td>ドーパミンでキノコ体のつながりが変わるルール。パズルの★を学習の強さに変換</td><td>しつけ後に匂いテストをして、好みが狙いどおり変わるか</td></tr>
+            <tr><th scope="row">個体差ジェネレーター</th><td>生まれつきの特性を作る</td><td>脳モデルのパラメータを分布からずらし、特性として読める形にする</td><td>同じ特性の個体が、同じ傾向の行動をするか</td></tr>
+            <tr><th scope="row">行動デコーダー</th><td>神経活動を「歩く・食べる・逃げる」などの行動とアニメに変える</td><td>分類モデルを学習（ロジスティック回帰 → 小さなニューラルネット）。学習データも自分で作る</td><td>正解率と混同行列。本物の配線とシャッフルした配線での差</td></tr>
+            <tr><th scope="row">研究員シオリ</th><td>メモ、コーチ、発表会、「なんで？」</td><td>フレームワークに頼らないエージェントの処理、道具（ツール）の設計、根拠IDの検証、論文検索（RAG）、モデルの使い分け</td><td>育成記録から問題と正解を自動生成して正答率を測る。根拠の検証率と1回答あたりのコスト</td></tr>
+            <tr><th scope="row">パズル生成と難易度推定</th><td>毎日の問題を作り、ちょうどいい難しさにする</td><td>神経の経路から問題を自動生成し、ソルバーで解けることを確認。プレイ記録から解く時間を予測するモデル</td><td>予測した時間と実際の時間のずれ</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="sub-block cards3">
+        <div class="card"><h3>評価はCIで自動</h3><p>プルリクエストのたびに、脳のテスト、デコーダーの正解率、シオリの正答率を計測してコメントする。下がったらマージしない。</p></div>
+        <div class="card"><h3>コストも自分で下げる</h3><p>シオリの日誌は夜にまとめて作り、軽いモデルを使う。将来は、日誌用の小さな言語モデルを自分で追加学習させて置き換える。</p></div>
+        <div class="card"><h3>面接で言えること</h3><p>「生物の神経回路をもとにしたシミュレータ、自作の学習モデル、LLMエージェントを1つのゲームに組み込み、すべてを自動評価で管理しました」</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 12 -->
+  <section class="chapter" id="c12">
+    <div class="wrap">
+      <h2><span class="no">12</span>本物と演出の線引き</h2>
+      <p class="lead">アプリの中でもバッジで区別して見せる。</p>
+      <div class="table-scroll">
+        <table style="min-width:600px">
+          <thead><tr><th scope="col">区分</th><th scope="col">中身</th></tr></thead>
+          <tbody>
+            <tr><td><span class="badge real">本物のデータ</span></td><td>神経の配線（幼虫、成虫のオスとメス）。学習がキノコ体で起きること。成長の順番。系統の見た目と遺伝のしかた。</td></tr>
+            <tr><td><span class="badge model">モデル</span></td><td>ニューロンの動き方（単純化）、学習ルール、神経活動から行動への変換、生まれつきの特性の作り方。</td></tr>
+            <tr><td><span class="badge show">ゲーム</span></td><td>1週間に縮めた成長、成虫が飼育室にずっといること、パズル、レベル、★、サブスキル、デフォルメした見た目。</td></tr>
+            <tr><td><span class="badge ai">AI</span></td><td>研究員シオリはLLMを使ったキャラクター。ツユ自身は言葉を話さない。</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- 13 -->
+  <section class="chapter" id="c13">
+    <div class="wrap">
+      <h2><span class="no">13</span>課金とビジネス</h2>
+      <p class="lead">基本無料。お金を払うと便利に、きれいに、たくさん遊べる。でも強さと競技の結果は買えない。</p>
+      <div class="cards3">
+        <div class="card">
+          <h3>通貨は2つ</h3>
+          <ul>
+            <li><b>しずく</b>（無料）：採集や発表会で手に入る。レベル上げとショップに使う。</li>
+            <li><b>こはく</b>（有料）：お金で買う。ログインやイベントで少しもらえる。</li>
+          </ul>
+        </div>
+        <div class="card hl">
+          <h3>研究パス（月額）</h3>
+          <p class="price">480円<small>／月（仮）</small></p>
+          <ul>
+            <li>毎日こはくがもらえる</li>
+            <li>発表会の報酬が増える（見た目としずく）</li>
+            <li>シオリへの質問回数が増える</li>
+            <li>脳ビューアの詳しい表示、写真のフィルター</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>シーズンパス</h3>
+          <p>1〜2か月ごとのテーマ（例：梅雨の研究所）。無料の報酬ルートと、有料の報酬ルート。報酬は見た目が中心。</p>
+        </div>
+      </div>
+      <div class="sub-block two">
+        <div>
+          <h3>こはくで買えるもの</h3>
+          <ul class="bullets">
+            <li><b>見た目</b>：飼育びんのデザイン、背景、寝床のかざり、ツユの帽子やリボン、シオリの衣装、プロフィールの称号やフレーム、アルバムのかざり</li>
+            <li><b>便利</b>：飼育室の枠を増やす、材料袋を大きくする、レシピ帳のページ、写真アルバムの容量</li>
+            <li><b>ちょっと楽</b>：そうじの自動化チケット、ごはんの材料セット</li>
+          </ul>
+        </div>
+        <div>
+          <h3>売らないもの</h3>
+          <ul class="bullets">
+            <li>素質、特性、突然変異の確率、しつけの回数</li>
+            <li>競技の結果に効くもの</li>
+            <li>お金で回すガチャ</li>
+          </ul>
+          <h3 style="margin-top:1em">守るルール</h3>
+          <ul class="bullets">
+            <li>こはくは資金決済法の「前払式支払手段」にあたる。未使用残高を管理し、一定額（1,000万円）を超えたら届出と保証金の供託が必要</li>
+            <li>特定商取引法の表示、未成年の課金上限、確率の公開（無料の運要素も）</li>
+            <li>アプリストア経由の課金には15〜30%の手数料がかかる</li>
+          </ul>
+        </div>
+      </div>
+      <div class="sub-block">
+        <h3>見る数字</h3>
+        <p>継続率（1日後・7日後・30日後）、朝昼夜3回ログインの達成率、1週間の完走率、課金率とパスの継続率、1人あたりのLLMとサーバーの費用、シオリの回答の根拠検証率。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 14 -->
+  <section class="chapter" id="c14">
+    <div class="wrap">
+      <h2><span class="no">14</span>サーバーと技術</h2>
+      <p class="lead">基本方針は「サーバーが正しさを決める」「重い計算は後ろに回す」「1匹ごとに持つデータは小さく」。</p>
+      <div class="arch-wrap">
+        <div>
+          <div class="tier"><h4>アプリ（Next.js、TypeScript）</h4><p>画面はReact、ゲームの場面と演出はPixiJS、キャラの動きはRive。最初はWeb（PWA）、次にCapacitorでiOS・Androidアプリにする。</p></div>
+          <div class="conn">操作を送る ／ 結果を受け取る（REST と WebSocket）</div>
+          <div class="tier"><h4>ゲームAPI（FastAPI）</h4><p>ログイン確認、報酬の計算、パズルの答え合わせ、通貨の出し入れ。すべてサーバー側で決める。</p></div>
+          <div class="conn">ジョブを積む（Redis のキュー）</div>
+          <div class="row3">
+            <div class="tier brain"><h4>脳ワーカー</h4><p>部分回路のシミュレーション、迷路レースの計算、行動デコーダー</p></div>
+            <div class="tier ai"><h4>シオリワーカー</h4><p>質問への回答、夜の日誌のまとめ作成、論文検索</p></div>
+            <div class="tier"><h4>定期ジョブ</h4><p>日曜夜の発表会の集計、毎日の問題の配信、通知</p></div>
+          </div>
+          <div class="conn">読む ／ 書く</div>
+          <div class="row2">
+            <div class="tier data"><h4>Postgres ＋ pgvector</h4><p>ユーザー、フレンド、個体、学習した重み、出来事の記録、通貨の台帳、論文</p></div>
+            <div class="tier data"><h4>Redis、ストレージ</h4><p>ランキング、回数制限、キュー。レースのリプレイと画像はストレージとCDN</p></div>
+          </div>
+        </div>
+        <aside class="side">
+          <h3>外部サービス</h3>
+          <dl>
+            <dt>ログイン</dt><dd>Firebase Auth または Supabase Auth</dd>
+            <dt>課金</dt><dd>アプリ内課金とサブスクの管理に RevenueCat。レシートはサーバーで検証</dd>
+            <dt>通知</dt><dd>Firebase Cloud Messaging（「ごはんの時間です」）</dd>
+            <dt>LLM</dt><dd>API経由。自前のゲートウェイで、モデルの使い分けとキャッシュをする</dd>
+            <dt>監視</dt><dd>Sentry（エラー）、Langfuse（LLM）、PostHog（遊ばれ方の分析）</dd>
+          </dl>
+        </aside>
+      </div>
+
+      <div class="sub-block two">
+        <div>
+          <h3>ずるを防ぐしくみ</h3>
+          <ul class="bullets">
+            <li>時間はサーバーの時計で数える。端末の時計を進めても成長しない</li>
+            <li>パズルは、サーバーが出した問題の番号と操作の記録を送り、サーバーで答え合わせする</li>
+            <li>報酬と通貨の増減は、すべてサーバーの台帳に記録（複式の台帳で、有料通貨の残高も正確に）</li>
+            <li>同じ操作の二重送信は無視する（操作ごとにIDをつける）</li>
+          </ul>
+        </div>
+        <div>
+          <h3>脳の計算を安くするしくみ</h3>
+          <ul class="bullets">
+            <li>16万ニューロンの配線はみんなで共通。読み取り専用で、ワーカーのメモリに1回だけ載せる</li>
+            <li>1匹ごとに保存するのは、生まれつきのパラメータ、学習で変わった重み、出来事の記録だけ</li>
+            <li>普段は、匂い、逃避、食べる、といった部分回路だけを計算。同じ条件の結果はキャッシュ</li>
+            <li>時間の経過はアプリを開いたときにまとめて計算。24時間動かし続けない</li>
+            <li>将来は脳の計算をスマホ側（WebGPU）に移して、サーバー代を下げる</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="sub-block">
+        <h3>段階ごとの構成と費用の目安</h3>
+        <div class="table-scroll">
+          <table style="min-width:720px">
+            <thead><tr><th scope="col">段階</th><th scope="col">規模</th><th scope="col">構成</th><th scope="col">月額の目安</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">ポートフォリオ版</th><td>〜100人</td><td>Vercel、Cloud Run（APIとワーカー）、Neon などの小さなPostgres、Upstash Redis</td><td>0〜3,000円 ＋ LLM代</td></tr>
+              <tr><th scope="row">β版</th><td>〜3,000人</td><td>Cloud Run（常時1台）、Cloud SQL（小）、Redis、Cloud Scheduler、Sentry</td><td>1〜3万円 ＋ LLM代</td></tr>
+              <tr><th scope="row">正式版</th><td>数万人〜</td><td>Cloud Run の自動スケール、Cloud SQL の冗長化と読み取り専用コピー、CDN、脳の計算をスマホ側へ</td><td>利用者数しだい（1人あたりの費用を指標にする）</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="note">費用は目安で、実測して見直す。LLM代は、日誌を夜にまとめて作る、軽いモデル中心、質問回数の上限、で1人1日数円以内を目標にする。</p>
+      </div>
+
+      <div class="sub-block two">
+        <div>
+          <h3>開発の流れ（CI/CD）</h3>
+          <ul class="bullets">
+            <li><span class="mono">docker compose up</span> で、アプリ、API、ワーカー、Postgres、Redis が手元で動く</li>
+            <li>GitHub Actions：型チェック、テスト、脳のテスト、AIの評価、画面の自動操作テスト（Playwright）</li>
+            <li>リリース前に負荷試験（k6）</li>
+            <li>コンテナを作って Cloud Run へ自動デプロイ。プルリクエストごとにプレビュー環境</li>
+          </ul>
+        </div>
+        <div>
+          <h3>データの出どころ</h3>
+          <ul class="bullets">
+            <li>成虫の配線図を前処理して、部分回路ごとの小さな行列ファイルにする。版番号をつけて管理</li>
+            <li>パズル生成や分析には DuckDB を使う</li>
+            <li>配線図データは CC-BY。アプリ内と README に出典を明記</li>
+            <li>睡眠などの生活データは最小限。使うかどうかは本人が選ぶ</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 15 -->
+  <section class="chapter" id="c15">
+    <div class="wrap">
+      <h2><span class="no">15</span>ロードマップ</h2>
+      <p class="lead">最初のフェーズだけで、1週間を最後まで遊べるゲームとして完結させる。</p>
+      <ol class="roadmap">
+        <li>
+          <span class="phase">フェーズ1　約8週間</span>
+          <h3>ポートフォリオ版</h3>
+          <ul>
+            <li>1週間の育成（卵 → 成虫）と研究発表会</li>
+            <li>ごはんづくり、しつけ、そうじ、温度あわせ</li>
+            <li>羽化の演出と、素質・特性</li>
+            <li>研究チームの採集とレベル</li>
+            <li>行動図鑑、シオリ（メモ、発表会、なんで？）</li>
+            <li>フレンド（追加、飼育室を見る）</li>
+            <li>脳エンジン、デコーダー、評価をCIに。Webで公開</li>
+          </ul>
+          <p class="goal"><strong>ゴール：</strong>公開URL、プレイ動画、AIの評価結果の表</p>
+        </li>
+        <li>
+          <span class="phase">フェーズ2　さらに3か月</span>
+          <h3>β版</h3>
+          <ul>
+            <li>系統、交配、系統図鑑</li>
+            <li>今日の回路、迷路レース、ランキング</li>
+            <li>いっしょにねる（体内時計ゲージ）</li>
+            <li>アプリ化とプッシュ通知</li>
+            <li>演出と音を作り込む、キャラクターの描き起こし</li>
+          </ul>
+          <p class="goal"><strong>ゴール：</strong>友人や学内でテストし、継続率を測る</p>
+        </li>
+        <li>
+          <span class="phase">フェーズ3</span>
+          <h3>正式版</h3>
+          <ul>
+            <li>こはく、研究パス、シーズンパス、ショップ</li>
+            <li>メスの脳、見た目コンテスト、なわばりずもう</li>
+            <li>脳の計算をスマホ側へ</li>
+            <li>日誌用の小さな言語モデルを自前で学習</li>
+            <li>商標の出願、ストア公開</li>
+          </ul>
+          <p class="goal"><strong>ゴール：</strong>ストアで公開</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>データ：成虫オスは MaleCNS v1.0（FlyEM／HHMI Janelia、University of Cambridge、MRC Laboratory of Molecular Biology、Google Research、CC-BY、Berg et al., 2026, Cell）。幼虫は Winding et al., 2023, Science。メスは BANC（Bates et al., 2026, Nature）を想定。</p>
+    <p>この企画書の画面、数値、価格はイメージです。たまごっち、ポケモンスリープはそれぞれの権利者の商標です。</p>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var RM = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ================= characters ================= */
+  var WILD = {
+    head: ['#FBE3B6', '#EDBB76', '#C88A43', '#9C6428'],
+    body: ['#F4C98A', '#DC9D52', '#A96A2D', '#8A5422'],
+    stripe: '#5E3515',
+    eye: ['#FF8C8C', '#E3243C', '#A50E25', '#6E0716'],
+    pupil: '#1B0307',
+    leg: '#4A2F1C'
+  };
+  var STR = {
+    wild: {},
+    white: { eye: ['#FFFFFF', '#F4EFE7', '#D8CDBD', '#A89880'], pupil: '#7C6F62' },
+    yellow: { head: ['#FFF6CF', '#F6DA6A', '#D9B437', '#B08E1E'], body: ['#FFF1B8', '#F2D35B', '#CFA92E', '#A8871C'], stripe: '#B8862A', leg: '#7A5A22' },
+    ebony: { head: ['#A48C77', '#6E5642', '#4A3828', '#2E2016'], body: ['#8E735C', '#5A4636', '#3A2B20', '#231810'], stripe: '#1A110B', leg: '#1E140D' },
+    curly: { wings: 'curly' },
+    vestigial: { wings: 'vestigial' }
+  };
+  var UID = 0;
+  function merge(a, b) { var o = {}, k; for (k in a) o[k] = a[k]; for (k in b) o[k] = b[k]; return o; }
+
+  function wingSet(p, type) {
+    var L = 'M112 140 C92 118 50 92 30 106 C14 118 28 148 60 158 C84 166 104 156 112 140 Z';
+    var R = 'M128 140 C148 118 190 92 210 106 C226 118 212 148 180 158 C156 166 136 156 128 140 Z';
+    var vL = '<path d="M110 140 Q72 118 36 110"/><path d="M110 143 Q74 138 40 136"/><path d="M109 147 Q84 156 62 154"/>';
+    var vR = '<path d="M130 140 Q168 118 204 110"/><path d="M130 143 Q166 138 200 136"/><path d="M131 147 Q156 156 178 154"/>';
+    if (type === 'vestigial') {
+      L = 'M112 140 C104 130 88 126 82 134 C76 142 86 152 96 150 C104 148 108 146 112 140 Z';
+      R = 'M128 140 C136 130 152 126 158 134 C164 142 154 152 144 150 C136 148 132 146 128 140 Z';
+      vL = '<path d="M108 140 Q96 136 88 138"/>'; vR = '<path d="M132 140 Q144 136 152 138"/>';
+    }
+    var hlL = type === 'vestigial' ? '' : '<path d="M44 110 Q70 104 96 124" stroke="#fff" stroke-width="3" opacity=".75" fill="none" stroke-linecap="round"/>';
+    var hlR = type === 'vestigial' ? '' : '<path d="M196 110 Q170 104 144 124" stroke="#fff" stroke-width="3" opacity=".75" fill="none" stroke-linecap="round"/>';
+    var tL = type === 'curly' ? ' transform="rotate(36 112 140)"' : '';
+    var tR = type === 'curly' ? ' transform="rotate(-36 128 140)"' : '';
+    return '<g class="wl"><g' + tL + '><path d="' + L + '" fill="url(#' + p + 'w)" stroke="#8DB9B6" stroke-width="2"/><g stroke="#9FC9C5" stroke-width="1.3" fill="none" opacity=".9">' + vL + '</g>' + hlL + '</g></g>' +
+           '<g class="wr"><g' + tR + '><path d="' + R + '" fill="url(#' + p + 'w)" stroke="#8DB9B6" stroke-width="2"/><g stroke="#9FC9C5" stroke-width="1.3" fill="none" opacity=".9">' + vR + '</g>' + hlR + '</g></g>';
+  }
+
+  function tsuyu(o) {
+    o = o || {};
+    var s = merge(WILD, STR[o.strain] || {});
+    var wings = s.wings || 'normal';
+    var male = o.sex !== 'f';
+    var p = 'ts' + (++UID);
+    var h = s.head, b = s.body, e = s.eye, leg = s.leg;
+    var d = '';
+    d += '<defs>';
+    d += '<radialGradient id="' + p + 'h" cx=".38" cy=".3" r=".78"><stop offset="0" stop-color="' + h[0] + '"/><stop offset=".55" stop-color="' + h[1] + '"/><stop offset="1" stop-color="' + h[2] + '"/></radialGradient>';
+    d += '<radialGradient id="' + p + 'b" cx=".35" cy=".28" r=".85"><stop offset="0" stop-color="' + b[0] + '"/><stop offset=".55" stop-color="' + b[1] + '"/><stop offset="1" stop-color="' + b[2] + '"/></radialGradient>';
+    d += '<radialGradient id="' + p + 'e" cx=".4" cy=".32" r=".75"><stop offset="0" stop-color="' + e[0] + '"/><stop offset=".42" stop-color="' + e[1] + '"/><stop offset=".85" stop-color="' + e[2] + '"/><stop offset="1" stop-color="' + e[3] + '"/></radialGradient>';
+    d += '<radialGradient id="' + p + 'pp"><stop offset="0" stop-color="' + s.pupil + '" stop-opacity=".95"/><stop offset=".72" stop-color="' + s.pupil + '" stop-opacity=".9"/><stop offset="1" stop-color="' + s.pupil + '" stop-opacity="0"/></radialGradient>';
+    d += '<linearGradient id="' + p + 'w" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".95"/><stop offset=".35" stop-color="#CDEFF5" stop-opacity=".72"/><stop offset=".6" stop-color="#FFD2EC" stop-opacity=".58"/><stop offset=".82" stop-color="#D6F4CE" stop-opacity=".58"/><stop offset="1" stop-color="#FFEBB8" stop-opacity=".55"/></linearGradient>';
+    d += '<pattern id="' + p + 'f" width="6" height="5.4" patternUnits="userSpaceOnUse"><circle cx="1.5" cy="1.4" r="1.05" fill="#fff" fill-opacity=".2"/><circle cx="4.5" cy="4.1" r="1.05" fill="#fff" fill-opacity=".2"/></pattern>';
+    d += '<filter id="' + p + 'bl" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="4"/></filter>';
+    d += '<filter id="' + p + 'bs" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.2"/></filter>';
+    d += '<clipPath id="' + p + 'ac"><ellipse cx="120" cy="168" rx="42" ry="38"/></clipPath>';
+    d += '</defs>';
+    d += '<ellipse cx="120" cy="221" rx="58" ry="8" fill="#1E2C29" opacity=".2" filter="url(#' + p + 'bl)"/>';
+    d += '<g class="bob">';
+    d += wingSet(p, wings);
+    d += '<g stroke="' + leg + '" stroke-width="5" stroke-linecap="round" fill="none"><path d="M100 170 Q78 180 70 202"/><path d="M108 186 Q96 202 98 214"/><path d="M140 170 Q162 180 170 202"/><path d="M132 186 Q144 202 142 214"/></g>';
+    d += '<g fill="' + leg + '"><circle cx="70" cy="203" r="4.3"/><circle cx="98" cy="215" r="4.3"/><circle cx="170" cy="203" r="4.3"/><circle cx="142" cy="215" r="4.3"/></g>';
+    d += '<ellipse cx="120" cy="168" rx="42" ry="38" fill="url(#' + p + 'b)" stroke="' + b[3] + '" stroke-width="2.5"/>';
+    d += '<g clip-path="url(#' + p + 'ac)"><path d="M72 166 Q120 184 168 166" stroke="' + s.stripe + '" stroke-width="8" fill="none" opacity=".85"/><path d="M74 183 Q120 201 166 183" stroke="' + s.stripe + '" stroke-width="9" fill="none" opacity=".85"/>' + (male ? '<ellipse cx="120" cy="207" rx="36" ry="14" fill="' + s.stripe + '" opacity=".92"/>' : '<path d="M80 198 Q120 214 160 198" stroke="' + s.stripe + '" stroke-width="7" fill="none" opacity=".8"/>') + '</g>';
+    d += '<ellipse cx="104" cy="152" rx="14" ry="6" transform="rotate(-20 104 152)" fill="#fff" opacity=".35"/>';
+    d += '<ellipse cx="120" cy="142" rx="36" ry="9" fill="#4A2A10" opacity=".3" filter="url(#' + p + 'bs)"/>';
+    d += '<g stroke="' + leg + '" stroke-width="5" stroke-linecap="round" fill="none"><path d="M104 146 Q92 162 110 170"/><path d="M136 146 Q148 162 130 170"/></g>';
+    d += '<circle cx="113" cy="170" r="5.2" fill="' + leg + '"/><circle cx="127" cy="170" r="5.2" fill="' + leg + '"/>';
+    d += '<circle cx="111.5" cy="168.5" r="1.6" fill="#fff" opacity=".5"/><circle cx="125.5" cy="168.5" r="1.6" fill="#fff" opacity=".5"/>';
+    d += '<ellipse cx="120" cy="88" rx="62" ry="54" fill="url(#' + p + 'h)" stroke="' + h[3] + '" stroke-width="2.5"/>';
+    d += '<ellipse cx="98" cy="52" rx="24" ry="9" transform="rotate(-18 98 52)" fill="#fff" opacity=".4"/>';
+    d += '<path d="M166 52 Q186 78 178 112" stroke="#fff" stroke-width="3" opacity=".45" fill="none" stroke-linecap="round"/>';
+    d += '<g stroke="' + leg + '" stroke-width="2.4" stroke-linecap="round" fill="none"><path d="M110 38 Q106 22 96 16"/><path d="M130 38 Q134 22 144 16"/></g>';
+    d += '<g stroke="' + e[3] + '" stroke-width=".8"><circle cx="120" cy="45" r="3.4" fill="' + e[1] + '"/><circle cx="112.5" cy="52" r="2.9" fill="' + e[1] + '"/><circle cx="127.5" cy="52" r="2.9" fill="' + e[1] + '"/></g>';
+    d += '<g fill="#fff"><circle cx="119" cy="44" r="1"/><circle cx="111.7" cy="51.2" r=".9"/><circle cx="126.7" cy="51.2" r=".9"/></g>';
+    d += '<g transform="rotate(-8 84 92)"><ellipse cx="84" cy="92" rx="30" ry="35" fill="url(#' + p + 'e)" stroke="' + e[3] + '" stroke-width="2.5"/><ellipse cx="84" cy="92" rx="29" ry="34" fill="url(#' + p + 'f)"/></g>';
+    d += '<g transform="rotate(8 156 92)"><ellipse cx="156" cy="92" rx="30" ry="35" fill="url(#' + p + 'e)" stroke="' + e[3] + '" stroke-width="2.5"/><ellipse cx="156" cy="92" rx="29" ry="34" fill="url(#' + p + 'f)"/></g>';
+    d += '<ellipse cx="91" cy="100" rx="11" ry="14" fill="url(#' + p + 'pp)"/><ellipse cx="149" cy="100" rx="11" ry="14" fill="url(#' + p + 'pp)"/><g fill="#fff" opacity=".9"><circle cx="87" cy="95" r="2.3"/><circle cx="145" cy="95" r="2.3"/></g>';
+    d += '<g fill="#fff"><ellipse cx="74" cy="75" rx="10" ry="7" transform="rotate(-25 74 75)" opacity=".95"/><circle cx="99" cy="113" r="3.6" opacity=".85"/><circle cx="68" cy="93" r="1.8" opacity=".7"/>';
+    d += '<ellipse cx="146" cy="75" rx="10" ry="7" transform="rotate(-25 146 75)" opacity=".95"/><circle cx="171" cy="113" r="3.6" opacity=".85"/><circle cx="140" cy="93" r="1.8" opacity=".7"/></g>';
+    d += '<g stroke="' + e[0] + '" stroke-width="2" opacity=".55" fill="none" stroke-linecap="round"><path d="M108 70 Q116 92 106 118"/><path d="M180 70 Q188 92 178 118"/></g>';
+    d += '<g filter="url(#' + p + 'bs)" fill="#FF7F98" opacity=".55"><ellipse cx="104" cy="127" rx="10" ry="5.5"/><ellipse cx="136" cy="127" rx="10" ry="5.5"/></g>';
+    d += '<path d="M114 129 Q120 135 126 129" stroke="#6B3A17" stroke-width="2.4" fill="none" stroke-linecap="round"/>';
+    d += '<g class="ant"><ellipse cx="112" cy="72" rx="5" ry="6" fill="' + h[1] + '" stroke="' + h[3] + '" stroke-width="1.5"/><ellipse cx="128" cy="72" rx="5" ry="6" fill="' + h[1] + '" stroke="' + h[3] + '" stroke-width="1.5"/>';
+    d += '<g stroke="' + leg + '" stroke-width="1.8" stroke-linecap="round" fill="none"><path d="M111 68 Q104 50 90 42"/><path d="M129 68 Q136 50 150 42"/></g><g stroke="' + leg + '" stroke-width="1.1" stroke-linecap="round" fill="none" opacity=".8"><path d="M106 58 l-4 1 M102 52.5 l-4 -1 M98 48 l-3 -2 M106 58 l3 -3 M102 52.5 l2 -3.5 M98 48 l1 -3.5"/>';
+    d += '<path d="M134 58 l4 1 M138 52.5 l4 -1 M142 48 l3 -2 M134 58 l-3 -3 M138 52.5 l-2 -3.5 M142 48 l-1 -3.5"/></g>';
+    d += '<circle cx="90" cy="42" r="2.3" fill="' + leg + '"/><circle cx="150" cy="42" r="2.3" fill="' + leg + '"/></g>';
+    d += '</g>';
+    return '<svg viewBox="0 0 240 240"' + (o.anim ? ' class="anim"' : '') + ' role="img" aria-label="' + (o.label || 'ツユ') + '">' + d + '</svg>';
+  }
+
+  function eggSVG() {
+    var p = 'eg' + (++UID);
+    return '<svg viewBox="0 0 240 240" role="img" aria-label="卵"><defs>' +
+      '<radialGradient id="' + p + 'g" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#FFFFFF"/><stop offset=".6" stop-color="#F5EFE3"/><stop offset="1" stop-color="#D8CCB6"/></radialGradient>' +
+      '<radialGradient id="' + p + 'f" cx=".5" cy=".3" r=".8"><stop offset="0" stop-color="#FBE08A"/><stop offset="1" stop-color="#D9A93A"/></radialGradient>' +
+      '<linearGradient id="' + p + 'i" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFD2EC"/><stop offset=".5" stop-color="#CDEFF5"/><stop offset="1" stop-color="#FFEBB8"/></linearGradient>' +
+      '<filter id="' + p + 'b" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3"/></filter></defs>' +
+      '<ellipse cx="120" cy="206" rx="80" ry="18" fill="url(#' + p + 'f)" stroke="#C9962A" stroke-width="2"/>' +
+      '<g fill="#E9BF55"><circle cx="78" cy="204" r="3"/><circle cx="150" cy="211" r="2.5"/><circle cx="172" cy="201" r="2.2"/><circle cx="100" cy="212" r="2"/></g>' +
+      '<ellipse cx="122" cy="194" rx="34" ry="7" fill="#7A5A1A" opacity=".3" filter="url(#' + p + 'b)"/>' +
+      '<path d="M110 84 Q102 58 88 44" stroke="#CFC3AC" stroke-width="7" stroke-linecap="round" fill="none"/><path d="M110 84 Q102 58 88 44" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" fill="none"/>' +
+      '<path d="M126 82 Q130 56 144 42" stroke="#CFC3AC" stroke-width="7" stroke-linecap="round" fill="none"/><path d="M126 82 Q130 56 144 42" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" fill="none"/>' +
+      '<ellipse cx="120" cy="138" rx="36" ry="58" transform="rotate(-8 120 138)" fill="url(#' + p + 'g)" stroke="#B9AC94" stroke-width="2.5"/>' +
+      '<ellipse cx="104" cy="118" rx="9" ry="22" transform="rotate(-8 104 118)" fill="#fff" opacity=".9"/>' +
+      '<path d="M142 112 Q152 142 140 172" stroke="url(#' + p + 'i)" stroke-width="5" opacity=".7" fill="none" stroke-linecap="round"/></svg>';
+  }
+  function larvaSVG() {
+    var p = 'lv' + (++UID);
+    return '<svg viewBox="0 0 240 240" role="img" aria-label="幼虫"><defs>' +
+      '<radialGradient id="' + p + 'g" cx=".35" cy=".3" r=".85"><stop offset="0" stop-color="#FFFFFF"/><stop offset=".55" stop-color="#FBF4E4"/><stop offset="1" stop-color="#E3D1AE"/></radialGradient>' +
+      '<filter id="' + p + 'b" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3"/></filter></defs>' +
+      '<ellipse cx="124" cy="192" rx="72" ry="9" fill="#1E2C29" opacity=".18" filter="url(#' + p + 'b)"/>' +
+      '<path d="M50 150 C50 122 78 112 120 112 C164 112 196 122 198 148 C200 174 168 184 122 184 C78 184 50 178 50 150 Z" fill="url(#' + p + 'g)" stroke="#BDAA86" stroke-width="2.5"/>' +
+      '<path d="M86 154 Q126 138 176 150" stroke="#CDB68C" stroke-width="12" opacity=".35" fill="none" stroke-linecap="round"/>' +
+      '<g stroke="#D6C29C" stroke-width="2" fill="none" opacity=".9"><path d="M78 118 Q72 150 78 180"/><path d="M98 114 Q92 150 98 183"/><path d="M118 113 Q112 150 118 184"/><path d="M138 113 Q132 150 138 184"/><path d="M158 115 Q152 150 158 182"/><path d="M177 120 Q172 150 177 177"/></g>' +
+      '<ellipse cx="114" cy="124" rx="36" ry="5" fill="#fff" opacity=".85"/>' +
+      '<path d="M52 146 L39 149 L52 154 Z" fill="#2A1E14"/>' +
+      '<circle cx="65" cy="138" r="3.6" fill="#2A1E14"/><circle cx="64" cy="137" r="1.1" fill="#fff"/>' +
+      '<ellipse cx="74" cy="159" rx="8" ry="4.5" fill="#FF8FA3" opacity=".5" filter="url(#' + p + 'b)"/>' +
+      '<path d="M56 160 Q60 164 65 161" stroke="#6B3A17" stroke-width="2" fill="none" stroke-linecap="round"/>' +
+      '<g fill="#B98A4E"><circle cx="197" cy="143" r="3"/><circle cx="197" cy="153" r="3"/></g></svg>';
+  }
+  function pupaSVG() {
+    var p = 'pu' + (++UID);
+    return '<svg viewBox="0 0 240 240" role="img" aria-label="さなぎ"><defs>' +
+      '<radialGradient id="' + p + 'g" cx=".38" cy=".3" r=".85"><stop offset="0" stop-color="#F0C78A"/><stop offset=".55" stop-color="#C38D4E"/><stop offset="1" stop-color="#8B5728"/></radialGradient>' +
+      '<filter id="' + p + 'b" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3"/></filter></defs>' +
+      '<ellipse cx="120" cy="214" rx="44" ry="8" fill="#1E2C29" opacity=".2" filter="url(#' + p + 'b)"/>' +
+      '<g stroke="#6E4320" stroke-width="4" stroke-linecap="round"><path d="M104 50 L92 26"/><path d="M136 50 L148 26"/></g>' +
+      '<circle cx="91" cy="24" r="3.6" fill="#6E4320"/><circle cx="149" cy="24" r="3.6" fill="#6E4320"/>' +
+      '<path d="M120 42 C150 42 164 72 162 122 C160 178 148 208 120 208 C92 208 80 178 78 122 C76 72 90 42 120 42 Z" fill="url(#' + p + 'g)" stroke="#6E4320" stroke-width="2.5"/>' +
+      '<g filter="url(#' + p + 'b)" fill="#C8243A" opacity=".5"><ellipse cx="104" cy="80" rx="12" ry="10"/><ellipse cx="136" cy="80" rx="12" ry="10"/></g>' +
+      '<g stroke="#E7C08A" stroke-width="6" opacity=".35" fill="none" stroke-linecap="round"><path d="M98 110 Q90 140 102 162"/><path d="M142 110 Q150 140 138 162"/></g>' +
+      '<g stroke="#9C6A35" stroke-width="2.5" fill="none" opacity=".75"><path d="M82 120 Q120 132 158 120"/><path d="M82 142 Q120 154 158 142"/><path d="M84 164 Q120 176 156 164"/><path d="M90 186 Q120 196 150 186"/></g>' +
+      '<ellipse cx="100" cy="88" rx="8" ry="24" transform="rotate(-6 100 88)" fill="#fff" opacity=".45"/></svg>';
+  }
+  function artFor(spec, el) {
+    var parts = spec.split('|');
+    var kind = parts[0];
+    if (kind === 'egg') return eggSVG();
+    if (kind === 'larva') return larvaSVG();
+    if (kind === 'pupa') return pupaSVG();
+    return tsuyu({ strain: parts[1] || 'wild', sex: parts[2] || 'm', anim: el && el.getAttribute('data-anim') === '1', label: el && el.getAttribute('data-label') });
+  }
+  document.querySelectorAll('[data-art]').forEach(function (el) {
+    el.innerHTML = artFor(el.getAttribute('data-art'), el);
+  });
+
+  /* hero sparkles and dew */
+  var stage = document.getElementById('heroStage');
+  var starPath = '<svg viewBox="0 0 20 20"><path d="M10 0 C11 7 13 9 20 10 C13 11 11 13 10 20 C9 13 7 11 0 10 C7 9 9 7 10 0 Z" fill="currentColor"/></svg>';
+  [[14, 18, 0], [82, 14, 0.8], [88, 58, 1.6], [10, 62, 1.1], [70, 82, 0.4]].forEach(function (s) {
+    var sp = document.createElement('span');
+    sp.className = 'spark'; sp.style.left = s[0] + '%'; sp.style.top = s[1] + '%'; sp.style.animationDelay = s[2] + 's';
+    sp.innerHTML = starPath; stage.appendChild(sp);
+  });
+  [[20, 30, 16], [76, 30, 10], [84, 74, 14], [16, 80, 9]].forEach(function (s) {
+    var dw = document.createElement('span');
+    dw.className = 'dewdrop'; dw.style.left = s[0] + '%'; dw.style.top = s[1] + '%'; dw.style.width = s[2] + 'px'; dw.style.height = s[2] * 1.15 + 'px';
+    stage.appendChild(dw);
+  });
+
+  /* cooking mock */
+  var ING = { Y: ['#F2C94C', 'バナナ'], R: ['#E5484D', 'りんご'], G: ['#8E6BD8', 'ぶどう'], B: ['#E6D5B4', '酵母'], A: ['#9ED8E6', '寒天'] };
+  var rows = ['BB..AA.Y', 'BB..AA.Y', '....G..Y', 'RRR.G...', '..R.GGYY', '..R....Y', 'YYYGGYYY', 'A..BB...'];
+  var g8 = document.getElementById('grid8');
+  rows.forEach(function (r, ri) {
+    r.split('').forEach(function (ch) {
+      var i = document.createElement('i');
+      if (ING[ch]) { i.className = 'f' + (ri === 6 ? ' clear' : ''); i.style.background = ING[ch][0]; }
+      g8.appendChild(i);
+    });
+  });
+  var pieces = [[['Y', 'Y'], ['Y', '.']], [['R', 'R', 'R']], [['G'], ['G'], ['B']]];
+  var nx = document.getElementById('nexts');
+  pieces.forEach(function (pc) {
+    var d = document.createElement('div'); d.className = 'piece';
+    d.style.gridTemplateColumns = 'repeat(' + pc[0].length + ', 14px)';
+    pc.forEach(function (row) { row.forEach(function (ch) { var i = document.createElement('i'); i.style.background = ING[ch] ? ING[ch][0] : 'transparent'; d.appendChild(i); }); });
+    nx.appendChild(d);
+  });
+  var lg = document.getElementById('legend');
+  Object.keys(ING).forEach(function (k) { var s = document.createElement('span'); s.innerHTML = '<i style="background:' + ING[k][0] + '"></i>' + ING[k][1]; lg.appendChild(s); });
+
+  /* ================= sound ================= */
+  var Sound = {
+    ctx: null, on: true,
+    init: function () {
+      if (!this.ctx) { var AC = window.AudioContext || window.webkitAudioContext; if (AC) this.ctx = new AC(); }
+      if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume();
+    },
+    tone: function (f, t0, dur, type, vol) {
+      if (!this.on || !this.ctx) return;
+      var c = this.ctx, o = c.createOscillator(), g = c.createGain(), s = c.currentTime + (t0 || 0);
+      o.type = type || 'triangle'; o.frequency.value = f;
+      g.gain.setValueAtTime(0.0001, s);
+      g.gain.exponentialRampToValueAtTime(vol || 0.1, s + 0.012);
+      g.gain.exponentialRampToValueAtTime(0.0001, s + (dur || 0.15));
+      o.connect(g); g.connect(c.destination); o.start(s); o.stop(s + (dur || 0.15) + 0.05);
+    },
+    arp: function (fs, step, dur, type, vol) { var self = this; fs.forEach(function (f, i) { self.tone(f, i * step, dur, type, vol); }); },
+    chord: function (fs, t0, dur, type, vol) { var self = this; fs.forEach(function (f) { self.tone(f, t0, dur, type, vol); }); }
+  };
+  function buzz(p) { if (navigator.vibrate) { try { navigator.vibrate(p); } catch (e) {} } }
+  function burst(host, x, y, n, colors) {
+    if (RM) return;
+    for (var k = 0; k < n; k++) {
+      var s = document.createElement('span');
+      var a = Math.random() * Math.PI * 2, r = 60 + Math.random() * 110;
+      s.className = 'pt' + (k % 3 === 0 ? ' sq' : '');
+      s.style.left = x + 'px'; s.style.top = y + 'px';
+      s.style.setProperty('--dx', Math.cos(a) * r + 'px');
+      s.style.setProperty('--dy', Math.sin(a) * r + 'px');
+      s.style.setProperty('--c', colors[k % colors.length]);
+      host.appendChild(s);
+      (function (el) { setTimeout(function () { el.remove(); }, 1000); })(s);
+    }
+  }
+  function flash(el) { if (RM) return; el.classList.remove('go'); void el.offsetWidth; el.classList.add('go'); }
+
+  /* ================= zip puzzle ================= */
+  var PUZ = [
+    { teach: '<b>バナナの匂い</b> ＋ <b>あまいごほうび</b>', what: 'バナナの匂いが好きになった', cp: { '0,0': 1, '1,3': 2, '4,1': 3, '3,4': 4, '4,2': 5 } },
+    { teach: '<b>青い光の合図</b> ＋ <b>あまいごほうび</b>', what: '青い光を見ると寄ってくるようになった', cp: { '2,2': 1, '2,3': 2, '0,0': 3, '4,4': 4, '4,0': 5 } },
+    { teach: '<b>りんご酢の匂い</b> ＋ <b>にがいごはん</b>', what: 'りんご酢の匂いが苦手になった', cp: { '0,4': 1, '4,4': 2, '0,0': 3, '4,0': 4, '4,2': 5 } }
+  ];
+  var N = 5, zipI = 0, cpOf = {}, maxK = 0, path = [], dragging = false, done = false, t0 = 0, timer = null;
+  var zip = document.getElementById('zip'), board = document.getElementById('zipBoard');
+  var tEl = document.getElementById('zipTime'), prog = document.getElementById('zipProg');
+  var resEl = document.getElementById('zipResult'), overlay = null;
+  var PENT = [0, 2, 4, 7, 9];
+
+  function buildZip() {
+    var P = PUZ[zipI]; cpOf = {}; maxK = 0; path = []; done = false; dragging = false;
+    stopTimer(); tEl.textContent = '0.0秒';
+    resEl.classList.remove('show');
+    document.getElementById('zipTeach').innerHTML = '教えること：' + P.teach;
+    board.innerHTML = ''; board.style.setProperty('--n', N);
+    for (var r = 0; r < N; r++) for (var c = 0; c < N; c++) {
+      var i = r * N + c, cell = document.createElement('div');
+      cell.className = 'cell'; cell.dataset.i = i;
+      var k = P.cp[r + ',' + c];
+      if (k) { cpOf[i] = k; if (k > maxK) maxK = k; }
+      board.appendChild(cell);
+    }
+    Object.keys(cpOf).forEach(function (i) {
+      var k = cpOf[i], num = document.createElement('span');
+      num.className = 'num' + (k === 1 ? ' first' : '') + (k === maxK ? ' last' : '');
+      num.innerHTML = k + (k === 1 ? '<small>スタート</small>' : k === maxK ? '<small>ごほうび</small>' : '');
+      board.children[i].appendChild(num);
+    });
+    overlay = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    overlay.setAttribute('class', 'zip-svg'); overlay.setAttribute('viewBox', '0 0 ' + N * 100 + ' ' + N * 100); overlay.setAttribute('preserveAspectRatio', 'none');
+    overlay.innerHTML = '<defs><linearGradient id="zipG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFD66B"/><stop offset=".5" stop-color="#7EE0C8"/><stop offset="1" stop-color="#FF6B8B"/></linearGradient></defs><polyline id="zipLine" fill="none" stroke="url(#zipG)" stroke-width="34" stroke-linecap="round" stroke-linejoin="round" opacity=".9"/>';
+    board.appendChild(overlay);
+    renderZip();
+  }
+  function center(i) { var r = Math.floor(i / N), c = i % N; return (c * 100 + 50) + ',' + (r * 100 + 50); }
+  function renderZip() {
+    for (var i = 0; i < N * N; i++) board.children[i].classList.toggle('on', path.indexOf(i) >= 0);
+    var line = overlay.querySelector('#zipLine');
+    line.setAttribute('points', path.map(center).join(' '));
+    var visited = path.filter(function (i) { return cpOf[i]; }).length;
+    prog.textContent = 'マス ' + path.length + '/' + N * N + '　数字 ' + visited + '/' + maxK;
+  }
+  function nextK() { return path.filter(function (i) { return cpOf[i]; }).length + 1; }
+  function adj(a, b) { var ra = Math.floor(a / N), ca = a % N, rb = Math.floor(b / N), cb = b % N; return Math.abs(ra - rb) + Math.abs(ca - cb) === 1; }
+  function startTimer() {
+    t0 = performance.now(); stopTimer();
+    timer = setInterval(function () { tEl.textContent = ((performance.now() - t0) / 1000).toFixed(1) + '秒'; }, 100);
+  }
+  function stopTimer() { if (timer) { clearInterval(timer); timer = null; } }
+  function stepSound(n) { var s = n % 15; Sound.tone(392 * Math.pow(2, (12 * Math.floor(s / 5) + PENT[s % 5]) / 12), 0, 0.1, 'sine', 0.07); }
+  function bad(i) { var c = board.children[i]; c.classList.remove('bad'); void c.offsetWidth; c.classList.add('bad'); Sound.tone(150, 0, 0.12, 'square', 0.03); }
+  function tryStep(i) {
+    if (done) return;
+    if (!path.length) { if (cpOf[i] === 1) { path = [i]; startTimer(); stepSound(0); renderZip(); } else bad(i); return; }
+    var last = path[path.length - 1];
+    if (i === last) return;
+    if (path.length > 1 && i === path[path.length - 2]) { path.pop(); renderZip(); return; }
+    if (path.indexOf(i) >= 0 || !adj(last, i)) return;
+    if (cpOf[i] && cpOf[i] !== nextK()) { bad(i); return; }
+    path.push(i); stepSound(path.length - 1); renderZip();
+    if (path.length === N * N && cpOf[i] === maxK) win();
+  }
+  function cellFromEvent(e) {
+    var el = document.elementFromPoint(e.clientX, e.clientY);
+    var c = el && el.closest ? el.closest('.cell') : null;
+    return c && board.contains(c) ? +c.dataset.i : null;
+  }
+  board.addEventListener('pointerdown', function (e) {
+    e.preventDefault(); Sound.init();
+    var i = cellFromEvent(e); if (i === null || done) return;
+    var pos = path.indexOf(i);
+    if (pos >= 0 && pos < path.length - 1) { path = path.slice(0, pos + 1); renderZip(); }
+    else tryStep(i);
+    dragging = true;
+    try { board.setPointerCapture(e.pointerId); } catch (err) {}
+  });
+  board.addEventListener('pointermove', function (e) { if (!dragging) return; var i = cellFromEvent(e); if (i !== null) tryStep(i); });
+  ['pointerup', 'pointercancel'].forEach(function (ev) { board.addEventListener(ev, function () { dragging = false; }); });
+
+  function win() {
+    done = true; dragging = false; stopTimer();
+    var secs = (performance.now() - t0) / 1000;
+    var stars = secs < 12 ? 3 : secs < 25 ? 2 : 1;
+    var P = PUZ[zipI];
+    path.forEach(function (i, n) { setTimeout(function () { board.children[i].classList.add('lit'); }, RM ? 0 : n * 26); });
+    Sound.arp([523, 659, 784, 1047, 1319], 0.07, 0.3, 'triangle', 0.1);
+    setTimeout(function () {
+      var rect = zip.getBoundingClientRect(), br = board.getBoundingClientRect();
+      burst(zip, br.left - rect.left + br.width / 2, br.top - rect.top + br.height / 2, 34, ['#FFD66B', '#FF6B8B', '#7EE0C8', '#A78BFA', '#FFFFFF']);
+      flash(document.getElementById('zipFlash'));
+      buzz([25, 30, 25]);
+      document.getElementById('zipPerfect').textContent = stars === 3 ? 'PERFECT' : '';
+      document.getElementById('zipWhat').textContent = P.what;
+      document.getElementById('zipGain').textContent = 'タイム ' + secs.toFixed(1) + '秒　つながりの強さ +' + (stars * 12) + '%';
+      var ss = document.querySelectorAll('#zipStars span');
+      ss.forEach(function (s) { s.classList.remove('got'); });
+      resEl.classList.add('show');
+      for (var k = 0; k < stars; k++) {
+        (function (k) { setTimeout(function () { ss[k].classList.add('got'); Sound.tone([1047, 1319, 1568][k], 0, 0.25, 'triangle', 0.12); }, 450 + k * 280); })(k);
+      }
+      if (stars === 3) setTimeout(function () { Sound.chord([523, 659, 784, 1047], 0, 0.9, 'sine', 0.07); burst(zip, rect.width / 2, rect.height / 2, 24, ['#FFD66B', '#FFFFFF', '#FFC857']); }, 450 + 3 * 280);
+    }, RM ? 0 : path.length * 26 + 80);
+  }
+  document.getElementById('zipReset').addEventListener('click', buildZip);
+  document.getElementById('zipAgain').addEventListener('click', buildZip);
+  function nextPuzzle() { zipI = (zipI + 1) % PUZ.length; buildZip(); }
+  document.getElementById('zipNext').addEventListener('click', nextPuzzle);
+  document.getElementById('zipNext2').addEventListener('click', nextPuzzle);
+  var sBtn = document.getElementById('zipSound');
+  sBtn.addEventListener('click', function () { Sound.on = !Sound.on; sBtn.setAttribute('aria-pressed', String(Sound.on)); sBtn.textContent = Sound.on ? '音あり' : '音なし'; });
+  buildZip();
+
+  /* ================= eclosion demo ================= */
+  var ODDS = { silver: [60, 30, 9, 1], gold: [40, 38, 18, 4], rainbow: [20, 40, 30, 10] };
+  var TIERS = [
+    { name: 'ノーマル', color: '#FFFFFF', label: '白', res: '素質 ★1〜2', stars: [1, 2] },
+    { name: 'グッド', color: '#7FC8FF', label: '青', res: '素質 ★3', stars: [3] },
+    { name: 'スーパー', color: '#FFD54A', label: '金', res: '素質 ★4', stars: [4] },
+    { name: '突然変異！', color: 'rainbow', label: '虹', res: '★5 ＋ めずらしい系統', stars: [5] }
+  ];
+  var MUT = [['white', '白い目'], ['yellow', '黄色い体'], ['ebony', '黒い体'], ['curly', '縮れ羽'], ['vestigial', '小さな羽']];
+  var TRAITS = ['右曲がりぐせ', '左曲がりぐせ', '光が大好き', '匂いにするどい', '度胸がある', 'よく歩く', 'のんびりや', '食いしんぼう'];
+  var rank = 'gold', busyE = false;
+  var glow = document.getElementById('eclGlow'), pupa = document.getElementById('eclPupa'), cut = document.getElementById('eclCut'), card = document.getElementById('eclCard');
+  var oddsBody = document.getElementById('eclOdds');
+  function renderOdds() {
+    oddsBody.innerHTML = TIERS.map(function (t, i) {
+      var dot = t.color === 'rainbow' ? 'background:conic-gradient(#FF6B8B,#FFC857,#7EE0A1,#5EC8F2,#A78BFA,#FF6B8B)' : 'background:' + t.color;
+      return '<tr><td><span class="dot" style="' + dot + '"></span>' + t.label + '</td><td>' + t.res + '</td><td class="mono">' + ODDS[rank][i] + '%</td></tr>';
+    }).join('');
+  }
+  document.querySelectorAll('[data-rank]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      if (busyE) return;
+      rank = b.getAttribute('data-rank');
+      document.querySelectorAll('[data-rank]').forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); });
+      renderOdds();
+    });
+  });
+  renderOdds();
+  function roll() { var r = Math.random() * 100, acc = 0, o = ODDS[rank]; for (var i = 0; i < o.length; i++) { acc += o[i]; if (r < acc) return i; } return 0; }
+  function pick(a) { return a[Math.floor(Math.random() * a.length)]; }
+  function setGlow(t) {
+    glow.classList.remove('rainbow');
+    if (TIERS[t].color === 'rainbow') { glow.classList.add('rainbow'); }
+    else glow.style.setProperty('--g', TIERS[t].color);
+    glow.classList.add('on');
+  }
+  function resetEcl() {
+    glow.classList.remove('on', 'rainbow'); cut.classList.remove('show');
+    card.classList.remove('show'); card.innerHTML = '';
+    pupa.style.opacity = '1'; pupa.classList.remove('shake', 'hard');
+  }
+  document.getElementById('eclGo').addEventListener('click', function () {
+    if (busyE) return; busyE = true; Sound.init(); resetEcl();
+    var t = roll(), step = RM ? 60 : 520, at = RM ? 0 : 700;
+    if (!RM) pupa.classList.add('shake');
+    for (var z = 0; z < 4; z++) Sound.tone(98 + z * 6, z * 0.15, 0.14, 'sawtooth', 0.03);
+    var notes = [440, 587, 740, 988];
+    for (var k = 0; k <= t; k++) {
+      (function (k) {
+        setTimeout(function () {
+          setGlow(k); Sound.tone(notes[k], 0, 0.28, 'triangle', 0.11);
+          if (k >= 2) pupa.classList.add('hard');
+          if (k >= 2) buzz(30);
+          if (k === 3) { cut.classList.add('show'); Sound.arp([988, 1175, 1480], 0.06, 0.2, 'square', 0.04); }
+        }, at + k * step);
+      })(k);
+    }
+    var end = at + t * step + (t === 3 ? (RM ? 60 : 1100) : (RM ? 60 : 650));
+    setTimeout(function () {
+      cut.classList.remove('show');
+      flash(document.getElementById('eclFlash'));
+      pupa.classList.remove('shake', 'hard'); pupa.style.opacity = '0';
+      var mut = t === 3 ? pick(MUT) : null;
+      var sex = Math.random() < 0.5 ? 'm' : 'f';
+      var starsN = pick(TIERS[t].stars);
+      var tr = TRAITS.slice().sort(function () { return Math.random() - 0.5; }).slice(0, 2);
+      var starStr = '';
+      for (var s = 0; s < 5; s++) starStr += '<span>★</span>';
+      card.innerHTML = '<div class="etier' + (t === 3 ? ' rb' : '') + '" style="' + (t < 3 ? 'color:' + TIERS[t].color : '') + '">' + TIERS[t].name + '</div>' +
+        '<div class="who">' + tsuyu({ strain: mut ? mut[0] : 'wild', sex: sex, anim: true, label: '羽化したハエ' }) + '</div>' +
+        '<div class="stars">' + starStr + '</div>' +
+        '<div class="info">' + (sex === 'm' ? 'オス' : 'メス') + '　' + (mut ? mut[1] : '野生型') + '</div>' +
+        '<div class="tchips">' + tr.map(function (x) { return '<span>' + x + '</span>'; }).join('') + '</div>';
+      card.classList.add('show');
+      Sound.chord(t === 3 ? [523, 659, 784, 1047, 1319] : [523, 659, 784], 0, t === 3 ? 1.2 : 0.6, 'triangle', 0.07);
+      var rect = document.getElementById('eclStage').getBoundingClientRect();
+      if (t >= 2) burst(document.getElementById('eclStage'), rect.width / 2, rect.height / 2, t === 3 ? 44 : 22, t === 3 ? ['#FF6B8B', '#FFC857', '#7EE0A1', '#5EC8F2', '#A78BFA'] : ['#FFD54A', '#FFFFFF']);
+      var ss = card.querySelectorAll('.stars span');
+      for (var q = 0; q < starsN; q++) {
+        (function (q) { setTimeout(function () { ss[q].classList.add('got'); Sound.tone(880 + q * 180, 0, 0.18, 'triangle', 0.1); }, 350 + q * 200); })(q);
+      }
+      setTimeout(function () { busyE = false; }, 400 + starsN * 200);
+    }, end);
+  });
+})();
+</script>
+</body>
+</html>
