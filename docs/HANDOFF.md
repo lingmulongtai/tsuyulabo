@@ -4,9 +4,14 @@
 
 ## いまの状態（サマリー）
 
-- 日付: 2026-09-27
-- フェーズ: W0（土台づくり）
-- 次にやること: W1 のタスクを Codex に並列で投げる（下の「タスク一覧」）
+- 日付: 2026-09-27（午前）
+- フェーズ: W1 ほぼ完了 → W2 進行中
+- main にあるもの: 仕様一式、uv / npm workspaces、Next.js 16 の雛形、デザインシステム・キャラ・ホーム画面（モック）、
+  パズルの TS エンジンと音、Python のゲームルール（domain）と共有 fixtures、API の土台（DB・認証・時計・冪等性・台帳）
+- 次にやること: 走っている Codex タスクの結果をマージ（下の表）。Claude はミニゲーム画面（`feat/web-games`）→ 羽化・発表会の画面 →
+  API クライアントで画面をつなぐ。
+- ローカルで pytest が `PermissionError: ...\Temp\pytest-of-lingm` になるときは `PYTEST_DEBUG_TEMPROOT=/c/Users/lingm/.cache/pytest-tmp` を付ける
+  （Codex のサンドボックスが作った一時フォルダの権限のせい）。
 
 ## オーナーの希望（2026-09-27 の指示）
 
@@ -43,12 +48,17 @@ git push
 
 | id | 内容 | 担当 | ブランチ | 状態 |
 | --- | --- | --- | --- | --- |
-| W0-scaffold | uv / npm workspaces、Next.js と FastAPI の雛形 | Claude | main | 進行中 |
-| W1-brain | 脳エンジン（specs/brain.md） | Codex | feat/brain-engine | 未着手 |
-| W1-domain | ゲームルールとパズルの Python 実装（specs/game-rules.md, puzzles.md） | Codex | feat/game-domain | 未着手 |
-| W1-api-core | API の土台（DB、認証、時計、冪等性、台帳） | Codex | feat/api-core | 未着手 |
-| W1-web-puzzles | パズルの TS エンジン | Codex | feat/web-puzzles | 未着手 |
-| W1-design | デザインシステム、キャラクター、ホーム画面 | Claude | feat/web-design | 未着手 |
+| W0-scaffold | uv / npm workspaces、Next.js と FastAPI の雛形 | Claude | main | 完了 |
+| W1-brain | 脳エンジン（specs/brain.md） | Codex | feat/brain-engine | 実行中 |
+| W1-domain | ゲームルールとパズルの Python 実装（specs/game-rules.md, puzzles.md） | Codex | feat/game-domain | マージ済み |
+| W1-api-core | API の土台（DB、認証、時計、冪等性、台帳） | Codex | feat/api-core | マージ済み |
+| W1-web-puzzles | パズルの TS エンジン、音、振動 | Codex | feat/web-puzzles | マージ済み |
+| W1-design | デザインシステム、キャラクター、ホーム画面 | Claude | feat/web-design | マージ済み |
+| W2-infra | docker compose、Dockerfile、CI | Codex | feat/infra | 実行中 |
+| W2-api-game | ゲームのエンドポイント（domain + DB + 脳） | Codex | feat/api-game | 実行中 |
+| W2-shiori-worker | シオリのエージェントと arq ワーカー | Codex | feat/shiori-worker | 実行中 |
+| W2-puzzle-parity | TS のパズル検証を Python と完全一致させる | Codex | fix/puzzle-parity | 実行中 |
+| W2-web-games | ミニゲーム画面（ごはん、しつけ、そうじ、温度、場所えらび） | Claude | feat/web-games | 進行中 |
 
 ## 決めたこと（理由つき）
 
