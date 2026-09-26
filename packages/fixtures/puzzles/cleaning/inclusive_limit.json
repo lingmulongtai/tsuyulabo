@@ -1,0 +1,31 @@
+{
+  "kind": "cleaning",
+  "description": "inclusive limit",
+  "params": {
+    "period_ms": 1000,
+    "taps": 3,
+    "zone": {
+      "center": 0.5,
+      "perfect": 0.06,
+      "good": 0.15
+    },
+    "phase": 0
+  },
+  "submission": {
+    "taps": [
+      250,
+      750,
+      10000
+    ],
+    "elapsed_ms": 10000
+  },
+  "expected": {
+    "valid": true,
+    "score": 73,
+    "grades": [
+      "perfect",
+      "perfect",
+      "miss"
+    ]
+  }
+}

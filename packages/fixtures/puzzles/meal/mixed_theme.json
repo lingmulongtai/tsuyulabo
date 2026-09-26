@@ -1,0 +1,49 @@
+{
+  "kind": "meal",
+  "description": "mixed theme",
+  "params": {
+    "rows": 8,
+    "cols": 8,
+    "time_limit_ms": 30000,
+    "hand_size": 3,
+    "theme": "banana",
+    "pieces": [
+      {
+        "shape": "i4h",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "i4h",
+        "ingredient": "apple"
+      },
+      {
+        "shape": "i4h",
+        "ingredient": "banana"
+      }
+    ]
+  },
+  "submission": {
+    "moves": [
+      {
+        "p": 0,
+        "r": 0,
+        "c": 0,
+        "t": 0
+      },
+      {
+        "p": 1,
+        "r": 0,
+        "c": 4,
+        "t": 1
+      }
+    ],
+    "elapsed_ms": 30000
+  },
+  "expected": {
+    "valid": true,
+    "score": 168,
+    "lines": 1,
+    "max_combo": 1,
+    "theme_cells": 4
+  }
+}

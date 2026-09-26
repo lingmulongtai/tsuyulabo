@@ -1,0 +1,100 @@
+{
+  "kind": "meal",
+  "description": "late move",
+  "params": {
+    "rows": 8,
+    "cols": 8,
+    "time_limit_ms": 30000,
+    "hand_size": 3,
+    "theme": "banana",
+    "pieces": [
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      }
+    ]
+  },
+  "submission": {
+    "moves": [
+      {
+        "p": 0,
+        "r": 0,
+        "c": 0,
+        "t": 31501
+      }
+    ],
+    "elapsed_ms": 31501
+  },
+  "expected": {
+    "valid": false,
+    "reason": "time_exceeded"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "kind": "temperature",
+  "description": "miss",
+  "params": {
+    "period_ms": 1600,
+    "center_c": 25.0,
+    "amp_c": 7.0,
+    "phase": 0
+  },
+  "submission": {
+    "stop_ms": 100,
+    "elapsed_ms": 100
+  },
+  "expected": {
+    "valid": true,
+    "score": 46,
+    "grade": "miss"
+  }
+}

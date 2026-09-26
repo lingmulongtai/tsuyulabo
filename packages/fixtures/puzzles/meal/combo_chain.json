@@ -1,0 +1,85 @@
+{
+  "kind": "meal",
+  "description": "24 cells + 100+150+200 line scores + 24*15 theme",
+  "params": {
+    "rows": 8,
+    "cols": 8,
+    "time_limit_ms": 30000,
+    "hand_size": 3,
+    "theme": "banana",
+    "pieces": [
+      {
+        "shape": "i4h",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "i4h",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "i4h",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "i4h",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "i4h",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "i4h",
+        "ingredient": "banana"
+      }
+    ]
+  },
+  "submission": {
+    "moves": [
+      {
+        "p": 0,
+        "r": 0,
+        "c": 0,
+        "t": 0
+      },
+      {
+        "p": 1,
+        "r": 1,
+        "c": 0,
+        "t": 1
+      },
+      {
+        "p": 2,
+        "r": 2,
+        "c": 0,
+        "t": 2
+      },
+      {
+        "p": 3,
+        "r": 0,
+        "c": 4,
+        "t": 3
+      },
+      {
+        "p": 4,
+        "r": 1,
+        "c": 4,
+        "t": 4
+      },
+      {
+        "p": 5,
+        "r": 2,
+        "c": 4,
+        "t": 5
+      }
+    ],
+    "elapsed_ms": 30000
+  },
+  "expected": {
+    "valid": true,
+    "score": 834,
+    "lines": 3,
+    "max_combo": 3,
+    "theme_cells": 24
+  }
+}

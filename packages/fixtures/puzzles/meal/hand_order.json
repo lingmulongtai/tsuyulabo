@@ -1,0 +1,121 @@
+{
+  "kind": "meal",
+  "description": "hand order",
+  "params": {
+    "rows": 8,
+    "cols": 8,
+    "time_limit_ms": 30000,
+    "hand_size": 3,
+    "theme": "banana",
+    "pieces": [
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      }
+    ]
+  },
+  "submission": {
+    "moves": [
+      {
+        "p": 2,
+        "r": 0,
+        "c": 0,
+        "t": 0
+      },
+      {
+        "p": 0,
+        "r": 0,
+        "c": 1,
+        "t": 1
+      },
+      {
+        "p": 1,
+        "r": 0,
+        "c": 2,
+        "t": 2
+      },
+      {
+        "p": 5,
+        "r": 0,
+        "c": 3,
+        "t": 3
+      }
+    ],
+    "elapsed_ms": 30000
+  },
+  "expected": {
+    "valid": true,
+    "score": 4,
+    "lines": 0,
+    "max_combo": 0,
+    "theme_cells": 0
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "kind": "cleaning",
+  "description": "same time",
+  "params": {
+    "period_ms": 1000,
+    "taps": 3,
+    "zone": {
+      "center": 0.5,
+      "perfect": 0.06,
+      "good": 0.15
+    },
+    "phase": 0
+  },
+  "submission": {
+    "taps": [
+      250,
+      250,
+      750
+    ],
+    "elapsed_ms": 750
+  },
+  "expected": {
+    "valid": false,
+    "reason": "non_monotonic_time"
+  }
+}

@@ -1,0 +1,187 @@
+{
+  "kind": "meal",
+  "description": "15 placed cells + 300 for two lines + 15*15 theme; intersection counted once",
+  "params": {
+    "rows": 8,
+    "cols": 8,
+    "time_limit_ms": 30000,
+    "hand_size": 3,
+    "theme": "banana",
+    "pieces": [
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      }
+    ]
+  },
+  "submission": {
+    "moves": [
+      {
+        "p": 0,
+        "r": 0,
+        "c": 1,
+        "t": 0
+      },
+      {
+        "p": 1,
+        "r": 0,
+        "c": 2,
+        "t": 1
+      },
+      {
+        "p": 2,
+        "r": 0,
+        "c": 3,
+        "t": 2
+      },
+      {
+        "p": 3,
+        "r": 0,
+        "c": 4,
+        "t": 3
+      },
+      {
+        "p": 4,
+        "r": 0,
+        "c": 5,
+        "t": 4
+      },
+      {
+        "p": 5,
+        "r": 0,
+        "c": 6,
+        "t": 5
+      },
+      {
+        "p": 6,
+        "r": 0,
+        "c": 7,
+        "t": 6
+      },
+      {
+        "p": 7,
+        "r": 1,
+        "c": 0,
+        "t": 7
+      },
+      {
+        "p": 8,
+        "r": 2,
+        "c": 0,
+        "t": 8
+      },
+      {
+        "p": 9,
+        "r": 3,
+        "c": 0,
+        "t": 9
+      },
+      {
+        "p": 10,
+        "r": 4,
+        "c": 0,
+        "t": 10
+      },
+      {
+        "p": 11,
+        "r": 5,
+        "c": 0,
+        "t": 11
+      },
+      {
+        "p": 12,
+        "r": 6,
+        "c": 0,
+        "t": 12
+      },
+      {
+        "p": 13,
+        "r": 7,
+        "c": 0,
+        "t": 13
+      },
+      {
+        "p": 14,
+        "r": 0,
+        "c": 0,
+        "t": 14
+      }
+    ],
+    "elapsed_ms": 30000
+  },
+  "expected": {
+    "valid": true,
+    "score": 540,
+    "lines": 2,
+    "max_combo": 1,
+    "theme_cells": 15
+  }
+}

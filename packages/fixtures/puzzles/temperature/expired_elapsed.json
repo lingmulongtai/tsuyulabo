@@ -1,0 +1,18 @@
+{
+  "kind": "temperature",
+  "description": "expired elapsed",
+  "params": {
+    "period_ms": 1600,
+    "center_c": 25.0,
+    "amp_c": 7.0,
+    "phase": 0
+  },
+  "submission": {
+    "stop_ms": 100,
+    "elapsed_ms": 600001
+  },
+  "expected": {
+    "valid": false,
+    "reason": "time_exceeded"
+  }
+}

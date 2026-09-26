@@ -1,0 +1,26 @@
+{
+  "kind": "cleaning",
+  "description": "time backwards",
+  "params": {
+    "period_ms": 1000,
+    "taps": 3,
+    "zone": {
+      "center": 0.5,
+      "perfect": 0.06,
+      "good": 0.15
+    },
+    "phase": 0
+  },
+  "submission": {
+    "taps": [
+      750,
+      250,
+      1250
+    ],
+    "elapsed_ms": 1250
+  },
+  "expected": {
+    "valid": false,
+    "reason": "non_monotonic_time"
+  }
+}
