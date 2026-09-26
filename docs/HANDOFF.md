@@ -18,21 +18,26 @@
 
 ## Codex の動かし方
 
-- CLI: `C:\Users\lingm\.codex\.sandbox-bin\codex.exe`（PATH には入っていない）
+- CLI: Codex デスクトップアプリ同梱の `codex.exe`（`(Get-AppxPackage OpenAI.Codex).InstallLocation\app\resources\codex.exe`）。
+  `~/.codex/.sandbox-bin/codex.exe` は古くて今のモデルを使えない。
 - 1タスク = 1クローン = 1ブランチ。クローンは OneDrive の外: `C:\Users\lingm\dev\tsuyulabo-agents\<task>`
-- 実行例（Git Bash）:
+- Codex は **workspace-write サンドボックス**で動かす。サンドボックス無効化（`--dangerously-bypass-approvals-and-sandbox`）は
+  Claude Code の自動モードで拒否された。サンドボックスは `.git` に書けないので、Codex はコミットせず
+  `.codex-runs/commits.jsonl` にコミット計画を書く → Claude が `apply-commit-plan.py` でアトミックコミットにする（AGENTS.md 参照）。
+- サンドボックスはホームフォルダを読めないので、uv は各クローンの `.tools/uv.exe`、キャッシュと Python は `.uv/` に置く（スクリプトが自動でやる）。
+- 手順（Git Bash、本体リポジトリで）:
 
 ```bash
-CODEX=~/.codex/.sandbox-bin/codex.exe
-$CODEX exec -C /c/Users/lingm/dev/tsuyulabo-agents/<task> \
-  -s workspace-write -c sandbox_workspace_write.network_access=true \
-  -c model_reasoning_effort=high \
-  -o /c/Users/lingm/dev/tsuyulabo-agents/<task>.last.md \
-  "$(cat prompt.md)" > /c/Users/lingm/dev/tsuyulabo-agents/<task>.log 2>&1
+scripts/agents/run-codex.sh W1-brain feat/brain-engine high      # 実行（数十分）
+python scripts/agents/apply-commit-plan.py /c/Users/lingm/dev/tsuyulabo-agents/W1-brain
+git fetch /c/Users/lingm/dev/tsuyulabo-agents/W1-brain feat/brain-engine
+git merge --no-ff FETCH_HEAD -m "merge: brain engine (W1-brain)"
+git push
 ```
 
-- 終わったら本体のリポジトリで `git fetch <clone path> <branch>` → `git merge --no-ff` → `git push`。
 - プロンプトは `docs/agent-tasks/<task>.md` に保存してからコミットする（何を頼んだかを残す）。
+- uv はこのマシンだと既定の AppData の場所で壊れる。`UV_CACHE_DIR=~/.cache/uv`、`UV_PYTHON_INSTALL_DIR=~/.local/uv-python`、
+  `UV_PYTHON_PREFERENCE=only-managed` を設定して `~/bin/uv.exe` を使う。
 
 ## タスク一覧
 
