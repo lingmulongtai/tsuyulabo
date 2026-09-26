@@ -1,0 +1,231 @@
+# ミニゲーム（パズル）仕様
+
+サーバーが問題（`params`）を出し、クライアントは遊んだ**操作の記録**（`submission`）を送る。サーバーが同じルールで再生して採点する。クライアントの採点は表示用。
+
+- Python 実装: `services/api/src/tsuyulabo_api/domain/puzzles/`
+- TypeScript 実装: `apps/web/src/game/puzzles/`
+- 共有ゴールデンテスト: `packages/fixtures/puzzles/<kind>/*.json`（形式は最後に記載）。Python 側が生成し、両方のテストが読む。
+
+## 共通
+
+- 問題は `POST /v1/puzzles` で発行。`puzzle_id`（UUID）、`kind`、`params`、`issued_at`、`expires_at`（発行から 10 分）を返す。
+- `POST /v1/puzzles/{puzzle_id}/submit` で提出。**有効な提出は 1 回だけ**。無効な提出（ルール違反）は 422 を返し、問題は開いたまま。
+- 時刻 `t` はすべて「クライアントが遊び始めてからのミリ秒」。単調非減少であること。
+- ずる対策: サーバーの壁時計で `submit時刻 - issued_at >= 最後の t - 2000ms` を満たさない提出は無効（実時間より速く遊んだことになる）。
+- 乱数は Python の `random.Random(seed)`。`seed` はサーバーだけが持ち、`params` には入れない（問題の中身そのものを渡す）。
+
+## 1. ごはんづくり `meal`（ブロックパズル、30秒）
+
+### params
+
+```json
+{
+  "rows": 8, "cols": 8,
+  "time_limit_ms": 30000,
+  "hand_size": 3,
+  "theme": "banana",
+  "pieces": [ { "shape": "l3a", "ingredient": "banana" }, ... 90 個 ]
+}
+```
+
+- 材料 `ingredient`: `banana`, `apple`, `grape`, `yeast`, `agar`。`theme` はこの中から 1 つ（研究所のおてんき）。
+- 形 `shape`（回転なし。オフセットは `[dr, dc]`、左上が `[0,0]`）:
+
+| id | セル |
+| --- | --- |
+| `m1` | `[0,0]` |
+| `d2h` | `[0,0] [0,1]` |
+| `d2v` | `[0,0] [1,0]` |
+| `i3h` | `[0,0] [0,1] [0,2]` |
+| `i3v` | `[0,0] [1,0] [2,0]` |
+| `l3a` | `[0,0] [1,0] [1,1]` |
+| `l3b` | `[0,0] [0,1] [1,0]` |
+| `l3c` | `[0,0] [0,1] [1,1]` |
+| `l3d` | `[0,1] [1,0] [1,1]` |
+| `o4` | `[0,0] [0,1] [1,0] [1,1]` |
+| `i4h` | `[0,0] [0,1] [0,2] [0,3]` |
+| `i4v` | `[0,0] [1,0] [2,0] [3,0]` |
+| `t4` | `[0,0] [0,1] [0,2] [1,1]` |
+| `l4` | `[0,0] [1,0] [2,0] [2,1]` |
+| `s4` | `[0,1] [0,2] [1,0] [1,1]` |
+| `i5h` | `[0,0] … [0,4]` |
+| `i5v` | `[0,0] … [4,0]` |
+| `o9` | 3×3 全部 |
+
+- 生成時の重み: `m1` 4, `d2h/d2v` 各 4, `i3h/i3v` 各 3, `l3a..d` 各 3, `o4` 3, `i4h/i4v` 各 2, `t4` 2, `l4` 2, `s4` 2, `i5h/i5v` 各 1, `o9` 1。材料は theme が 30%、残り 4 種が 17.5% ずつ。
+
+### 手札
+
+- `pieces` を先頭から 3 個ずつ配る。手札 k = `pieces[3k .. 3k+2]`。
+- 手札の 3 個は好きな順に置ける。3 個とも置いたら次の 3 個が配られる。
+
+### submission
+
+```json
+{ "moves": [ { "p": 0, "r": 3, "c": 2, "t": 1840 }, ... ], "elapsed_ms": 30000 }
+```
+
+- `p` は `pieces` の添字。今の手札に含まれ、まだ置いていないこと。
+- 置くセルがすべて盤内かつ空であること。`t <= time_limit_ms + 1500`。
+
+### 置いたあとの処理と採点
+
+1. ピースのセルに材料を置く。
+2. 埋まった行と列を**同時に**判定し、すべて消す（交差セルは 1 回だけ数える）。
+3. 採点（1 手ごと）:
+   - `cells` = ピースのセル数
+   - `L` = 消えた行 + 列の本数
+   - `line_score` = `100 * L * (L + 1) / 2`（1本 100, 2本 300, 3本 600, 4本 1000 …）
+   - `combo`: 1 本以上消した手が続いた回数（最初の消去で 1）。何も消さない手で 0 に戻る。
+   - `multiplier` = `1 + 0.5 * (combo - 1)`（消去がない手では 0 扱いで line_score も 0）
+   - `theme_bonus` = 消えたセルのうち材料が `theme` のもの × 15
+   - `move_score` = `cells + floor(line_score * multiplier) + theme_bonus`
+4. `score` = Σ `move_score`。
+
+### result（サーバー → クライアント）
+
+```json
+{ "score": 2480, "lines": 11, "max_combo": 3, "theme_cells": 20,
+  "great_success": true, "effects": { "growth": 24.8, "hunger": 60 } }
+```
+
+- 大成功の確率 `p = min(0.35, 0.04 + score / 12000) + team_great_bonus`、7日目は `p * 2`、上限 0.6。サーバーが抽選。
+- 成長ポイント `growth = score / 100`（`larva3` の日は ×1.5）。大成功で成長ポイントも ×2。
+
+## 2. しつけ `training`（回路つなぎ、5〜20秒）
+
+数字の順に、全部のマスを一筆書きでつなぐ。
+
+### 発行リクエスト（プレイヤーが教える内容を選ぶ）
+
+```json
+{ "kind": "training", "cue": "banana", "valence": "reward" }
+```
+
+- `cue`: `banana`（バナナの匂い）, `apple_vinegar`（りんご酢の匂い）, `yeast`（酵母の匂い）, `grape`（ぶどうの匂い）, `blue_light`（青い光の合図）
+- `valence`: `reward`（あまいごほうび）, `punish`（にがいごはん）
+
+### params
+
+```json
+{ "n": 5, "checkpoints": [ { "cell": 0, "k": 1 }, { "cell": 8, "k": 2 }, ... ], "cue": "banana", "valence": "reward" }
+```
+
+- マス番号 `cell = r * n + c`。
+- `n`: 2〜3日目は 5、4〜7日目は 6。チェックポイント数 `K`: n=5 → 5、n=6 → 7。
+- 生成: ランダムなハミルトン路（Warnsdorff 法 + ランダムなタイブレーク + 行き詰まったらやり直し）を作り、`k=1` を先頭、`k=K` を末尾、残りを路の上にほぼ等間隔（±1 のゆらぎ）で置く。解が 1 つとは限らない（どの正しい路でも合格）。
+
+### submission
+
+```json
+{ "path": [0, 1, 6, 5, ...], "elapsed_ms": 9800 }
+```
+
+### 判定
+
+- `path` の長さが `n*n`、重複なし、隣り合うマスは上下左右に隣接。
+- `path[0]` が `k=1` のマス、最後が `k=K` のマス、チェックポイントのマスが `k` の昇順に現れる。
+- ★: `s = n*n / 25` として、`elapsed_ms < 12000*s` → 3、`< 25000*s` → 2、それ以外 → 1。
+
+### result
+
+```json
+{ "stars": 3, "hirameki": false, "learning_strength": 0.36, "skill_unlocked": null,
+  "association": { "cue": "banana", "valence": "reward", "value": 0.52 } }
+```
+
+- ひらめき: 10%（★3 なら 15%）。学習の強さ `learning_strength = stars * 0.12`、ひらめきで ×2。
+- `association.value` は脳エンジンで学習したあとの好み（-1 苦手 〜 +1 好き）。
+- とくいワザ: 好みの絶対値が 0.6 を超えたら解放（`banana` 好き → `banana_search` 「バナナさがし」など。一覧は `domain/constants.py`）。
+
+## 3. そうじ `cleaning`（タイミング、5秒）
+
+びんをトントンと 3 回叩く。
+
+### params
+
+```json
+{ "period_ms": 1400, "taps": 3, "zone": { "center": 0.5, "perfect": 0.06, "good": 0.15 }, "phase": 0.27 }
+```
+
+- `period_ms`: 2日目 1400、3日目 1300、4日目 1200、5日目 1100。
+- マーカー位置（0〜1 の三角波）: `u = (t / period_ms + phase) mod 1`、`x = u < 0.5 ? 2u : 2 - 2u`。
+
+### submission
+
+```json
+{ "taps": [820, 1650, 2430], "elapsed_ms": 2500 }
+```
+
+- ちょうど `taps` 回、狭義単調増加、`t <= 10000`。
+
+### 採点
+
+- 各タップ: `d = |x(t) - center|`。`d <= perfect` → perfect 34 点、`d <= good` → good 22 点、それ以外 miss 5 点。
+- `score = min(100, 合計)`。`grades: ["perfect", "good", "miss"]` も返す。
+
+## 4. 温度あわせ `temperature`（5秒）
+
+ゆれる針を 25℃ 付近で止める。
+
+### params
+
+```json
+{ "period_ms": 1600, "center_c": 25.0, "amp_c": 7.0, "phase": 0.61 }
+```
+
+- 針の温度: `temp(t) = center_c + amp_c * sin(2π * (t / period_ms + phase))`。
+
+### submission
+
+```json
+{ "stop_ms": 2210, "elapsed_ms": 2210 }
+```
+
+### 採点
+
+- `score = max(0, round(100 - |temp - 25| * 20))`。`grade`: 90 以上 perfect、60 以上 good、それ未満 miss。
+
+## 5. さなぎの場所えらび `pupation_site`（10秒）
+
+### params
+
+```json
+{ "options": [
+    { "id": "a", "label": "びんの壁の上のほう", "detail": "乾いていて、えさから遠い" },
+    { "id": "b", "label": "えさの表面", "detail": "しめっていて、やわらかい" },
+    { "id": "c", "label": "ふたのすぐ下", "detail": "明るくて、風が通る" } ],
+  "hint": "本物の3齢幼虫は、えさから離れた乾いた場所でさなぎになることが多いよ。" }
+```
+
+- 当たりはサーバーだけが知る。シオリのヒントは 70% の確率で当たりを指す内容、30% で別の候補を指す。
+- 候補の並びと文言は毎回シャッフル（文言のプールは `domain/constants.py`）。
+
+### submission / result
+
+```json
+{ "choice": "a" }
+```
+
+```json
+{ "hit": true, "effects": { "eclosion_bonus": true } }
+```
+
+## ゴールデンテスト（fixtures）の形式
+
+`packages/fixtures/puzzles/<kind>/<name>.json`
+
+```json
+{
+  "kind": "meal",
+  "description": "2 lines cleared at once with combo",
+  "params": { ... },
+  "submission": { ... },
+  "expected": { "valid": true, "score": 1234, "lines": 2, "max_combo": 1, "theme_cells": 5 }
+}
+```
+
+- 抽選（大成功、ひらめき、当たり）は fixtures に含めない。決定的な部分（妥当性と得点）だけを比べる。
+- 無効な例も入れる（`"expected": { "valid": false, "reason": "cell_occupied" }`）。`reason` の値は両実装で共通:
+  `not_in_hand`, `already_placed`, `out_of_bounds`, `cell_occupied`, `time_exceeded`, `non_monotonic_time`,
+  `wrong_length`, `not_adjacent`, `revisit`, `bad_start`, `bad_end`, `checkpoint_order`, `wrong_tap_count`.
