@@ -55,3 +55,11 @@ need the job plumbing), `docs/specs/game-rules.md`, `docs/specs/puzzles.md`, the
 
 - `uv run pytest services/api` passes (the domain tests too), ruff clean, `apps/web/src/lib/api/openapi.json`
   exported. Atomic commit plan entries (one per service/router + its tests).
+
+## Note: the brain engine may not be on main yet
+
+`services/brain` (branch `feat/brain-engine`) is still being written in parallel. If `tsuyu_brain.api` does not
+exist in your clone, code against the façade described in `docs/agent-tasks/W1-brain.md` (item 9) through a
+thin adapter module in your package (e.g. `brain_adapter.py`) with a deterministic fake used by your tests.
+Import `tsuyu_brain.api` lazily inside the adapter so the code runs either way. The commander will wire the
+real engine after both branches merge.

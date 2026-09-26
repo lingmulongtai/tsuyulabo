@@ -54,3 +54,11 @@ models; no Redis needed). Mark the eval run `@pytest.mark.eval`.
 
 `uv run pytest services/shiori services/worker` and `-m eval` pass; ruff clean; `python -m tsuyu_shiori.eval`
 writes the report. Atomic commit plan entries.
+
+## Note: the brain engine may not be on main yet
+
+`services/brain` (branch `feat/brain-engine`) is still being written in parallel. If `tsuyu_brain.api` does not
+exist in your clone, code against the façade described in `docs/agent-tasks/W1-brain.md` (item 9) through a
+thin adapter module in your package (e.g. `brain_adapter.py`) with a deterministic fake used by your tests.
+Import `tsuyu_brain.api` lazily inside the adapter so the code runs either way. The commander will wire the
+real engine after both branches merge.
