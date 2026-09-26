@@ -1,0 +1,48 @@
+[project]
+name = "tsuyulabo-workspace"
+version = "0.1.0"
+description = "Tsuyu Labo monorepo (Python workspace root)"
+requires-python = ">=3.12"
+dependencies = [
+    "tsuyulabo-api",
+    "tsuyu-brain",
+    "tsuyu-shiori",
+    "tsuyu-worker",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3",
+    "pytest-asyncio>=0.24",
+    "ruff>=0.8",
+    "mypy>=1.13",
+]
+
+[tool.uv]
+package = false
+
+[tool.uv.workspace]
+members = ["services/api", "services/brain", "services/shiori", "services/worker"]
+
+[tool.uv.sources]
+tsuyulabo-api = { workspace = true }
+tsuyu-brain = { workspace = true }
+tsuyu-shiori = { workspace = true }
+tsuyu-worker = { workspace = true }
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+markers = ["eval: slow evaluation tests (run in CI eval job)"]
+addopts = "-m 'not eval'"
