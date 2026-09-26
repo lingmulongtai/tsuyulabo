@@ -45,4 +45,4 @@ select = ["E", "F", "I", "B", "UP", "SIM"]
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 markers = ["eval: slow evaluation tests (run in CI eval job)"]
-addopts = "-m 'not eval'"
+addopts = "-m 'not eval' --import-mode=importlib"
