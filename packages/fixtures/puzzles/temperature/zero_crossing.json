@@ -1,0 +1,19 @@
+{
+  "kind": "temperature",
+  "description": "zero crossing",
+  "params": {
+    "period_ms": 1600,
+    "center_c": 25.0,
+    "amp_c": 7.0,
+    "phase": 0
+  },
+  "submission": {
+    "stop_ms": 0,
+    "elapsed_ms": 0
+  },
+  "expected": {
+    "valid": true,
+    "score": 100,
+    "grade": "perfect"
+  }
+}

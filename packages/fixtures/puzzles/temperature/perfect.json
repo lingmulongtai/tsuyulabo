@@ -1,0 +1,19 @@
+{
+  "kind": "temperature",
+  "description": "perfect",
+  "params": {
+    "period_ms": 1600,
+    "center_c": 25.0,
+    "amp_c": 7.0,
+    "phase": 0
+  },
+  "submission": {
+    "stop_ms": 10,
+    "elapsed_ms": 10
+  },
+  "expected": {
+    "valid": true,
+    "score": 95,
+    "grade": "perfect"
+  }
+}

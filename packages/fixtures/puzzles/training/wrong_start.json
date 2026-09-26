@@ -1,0 +1,65 @@
+{
+  "kind": "training",
+  "description": "wrong start",
+  "params": {
+    "n": 5,
+    "checkpoints": [
+      {
+        "cell": 4,
+        "k": 1
+      },
+      {
+        "cell": 13,
+        "k": 2
+      },
+      {
+        "cell": 7,
+        "k": 3
+      },
+      {
+        "cell": 11,
+        "k": 4
+      },
+      {
+        "cell": 6,
+        "k": 5
+      }
+    ],
+    "cue": "banana",
+    "valence": "reward"
+  },
+  "submission": {
+    "path": [
+      6,
+      1,
+      0,
+      5,
+      10,
+      11,
+      16,
+      15,
+      20,
+      21,
+      22,
+      17,
+      12,
+      7,
+      2,
+      3,
+      8,
+      13,
+      18,
+      23,
+      24,
+      19,
+      14,
+      9,
+      4
+    ],
+    "elapsed_ms": 1000
+  },
+  "expected": {
+    "valid": false,
+    "reason": "bad_start"
+  }
+}

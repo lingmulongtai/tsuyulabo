@@ -1,0 +1,19 @@
+{
+  "kind": "temperature",
+  "description": "good",
+  "params": {
+    "period_ms": 1600,
+    "center_c": 25.0,
+    "amp_c": 7.0,
+    "phase": 0
+  },
+  "submission": {
+    "stop_ms": 50,
+    "elapsed_ms": 50
+  },
+  "expected": {
+    "valid": true,
+    "score": 73,
+    "grade": "good"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "kind": "cleaning",
+  "description": "late tap",
+  "params": {
+    "period_ms": 1000,
+    "taps": 3,
+    "zone": {
+      "center": 0.5,
+      "perfect": 0.06,
+      "good": 0.15
+    },
+    "phase": 0
+  },
+  "submission": {
+    "taps": [
+      250,
+      750,
+      10001
+    ],
+    "elapsed_ms": 10001
+  },
+  "expected": {
+    "valid": false,
+    "reason": "time_exceeded"
+  }
+}

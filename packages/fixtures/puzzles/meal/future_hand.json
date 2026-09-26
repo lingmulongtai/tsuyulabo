@@ -1,0 +1,100 @@
+{
+  "kind": "meal",
+  "description": "future hand",
+  "params": {
+    "rows": 8,
+    "cols": 8,
+    "time_limit_ms": 30000,
+    "hand_size": 3,
+    "theme": "banana",
+    "pieces": [
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      },
+      {
+        "shape": "m1",
+        "ingredient": "banana"
+      }
+    ]
+  },
+  "submission": {
+    "moves": [
+      {
+        "p": 3,
+        "r": 0,
+        "c": 0,
+        "t": 0
+      }
+    ],
+    "elapsed_ms": 30000
+  },
+  "expected": {
+    "valid": false,
+    "reason": "not_in_hand"
+  }
+}

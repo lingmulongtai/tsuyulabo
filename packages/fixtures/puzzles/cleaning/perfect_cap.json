@@ -1,0 +1,31 @@
+{
+  "kind": "cleaning",
+  "description": "perfect cap",
+  "params": {
+    "period_ms": 1000,
+    "taps": 3,
+    "zone": {
+      "center": 0.5,
+      "perfect": 0.06,
+      "good": 0.15
+    },
+    "phase": 0
+  },
+  "submission": {
+    "taps": [
+      250,
+      750,
+      1250
+    ],
+    "elapsed_ms": 1250
+  },
+  "expected": {
+    "valid": true,
+    "score": 100,
+    "grades": [
+      "perfect",
+      "perfect",
+      "perfect"
+    ]
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "kind": "cleaning",
+  "description": "too many",
+  "params": {
+    "period_ms": 1000,
+    "taps": 3,
+    "zone": {
+      "center": 0.5,
+      "perfect": 0.06,
+      "good": 0.15
+    },
+    "phase": 0
+  },
+  "submission": {
+    "taps": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "elapsed_ms": 4
+  },
+  "expected": {
+    "valid": false,
+    "reason": "wrong_tap_count"
+  }
+}

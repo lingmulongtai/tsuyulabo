@@ -1,0 +1,65 @@
+{
+  "kind": "training",
+  "description": "day2 25000ms",
+  "params": {
+    "n": 5,
+    "checkpoints": [
+      {
+        "cell": 4,
+        "k": 1
+      },
+      {
+        "cell": 13,
+        "k": 2
+      },
+      {
+        "cell": 7,
+        "k": 3
+      },
+      {
+        "cell": 11,
+        "k": 4
+      },
+      {
+        "cell": 6,
+        "k": 5
+      }
+    ],
+    "cue": "banana",
+    "valence": "reward"
+  },
+  "submission": {
+    "path": [
+      4,
+      9,
+      14,
+      19,
+      24,
+      23,
+      18,
+      13,
+      8,
+      3,
+      2,
+      7,
+      12,
+      17,
+      22,
+      21,
+      20,
+      15,
+      16,
+      11,
+      10,
+      5,
+      0,
+      1,
+      6
+    ],
+    "elapsed_ms": 25000
+  },
+  "expected": {
+    "valid": true,
+    "stars": 1
+  }
+}
