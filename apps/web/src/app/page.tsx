@@ -3,6 +3,8 @@ import Link from "next/link";
 import { HomeScreen } from "@/components/home/HomeScreen";
 import { AppShell } from "@/components/shell/AppShell";
 import { BreedingStart } from "@/components/breeding/BreedingStart";
+import { FlyArt } from "@/components/art/FlyArt";
+import { Card } from "@/components/ui/primitives";
 import { QueryState } from "@/components/ui/QueryState";
 import { useHome } from "@/lib/api/hooks";
 
