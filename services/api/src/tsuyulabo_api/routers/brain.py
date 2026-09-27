@@ -4,11 +4,13 @@ from typing import Literal
 
 from fastapi import APIRouter, BackgroundTasks, Query, Request
 from pydantic import BaseModel, ConfigDict, Field
+from starlette.concurrency import run_in_threadpool
 from tsuyulabo_api.db.base import new_id
 from tsuyulabo_api.db.models import Adult, Week
 from tsuyulabo_api.errors import APIError
 from tsuyulabo_api.routers.zukan import BEHAVIORS
 from tsuyulabo_api.services import week as week_service
+from tsuyulabo_api.services.brain_activity import ActivityCache, BrainActivity, Scenario
 from tsuyulabo_api.services.brain_state import snapshot as brain_snapshot
 from tsuyulabo_api.services.clock import game_now
 from tsuyulabo_api.services.dispatch import enqueue
@@ -57,6 +59,24 @@ async def behavior(
         if observed in BEHAVIORS:
             user.observed_behaviors = sorted(set(user.observed_behaviors) | {observed})
     return probabilities
+
+
+@router.get("/{fly_id}/brain/activity", response_model=BrainActivity)
+async def activity(
+    fly_id: str,
+    request: Request,
+    user: CurrentUser,
+    session: Session,
+    clock: CurrentClock,
+    brain: Brain,
+    scenario: Scenario = "sugar",
+) -> BrainActivity:
+    """Observe a copy of an owned adult or active week's larva, in 20 equal windows."""
+    snapshot, _ = await fly_state(fly_id, user, session, clock)
+    if not hasattr(request.app.state, "brain_activity_cache"):
+        request.app.state.brain_activity_cache = ActivityCache()
+    cache: ActivityCache = request.app.state.brain_activity_cache
+    return await run_in_threadpool(cache.get, brain, user.id, fly_id, snapshot, scenario)
 
 
 @router.post("/{fly_id}/experiments", status_code=202)
