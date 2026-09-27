@@ -14,8 +14,7 @@
 - 実行中: W5-media（README のスクリーンショットとプレイ動画。ローカルの web :3000 と API :8000 を使う）
 - MaleCNS v1.0 の生データ（約 1.1 GB、オーナー許可済み）は `C:\Users\lingm\dev\tsuyulabo-agents\W3-malecns\data\raw\malecns-v1.0\`
   （W4-malecns-calibrate のクローンにもコピー）。git には入れない
-- **Codex の使用量が上限に達した（2026-09-27 11:26 頃）。リセットは 2026-10-04 05:01。** それまでは Claude だけで進める
-  （`scripts/agents/run-codex.sh` は使えない）。
+- Codex の使用量は 11:26 頃に一度上限に達したが、オーナーが同日リセットした（再開済み）。
 - オーナーが帰宅後にやること: Codex のサンドボックス設定、Vercel CLI のログイン
 - ローカルで pytest が `PermissionError: ...\Temp\pytest-of-lingm` になるときは `PYTEST_DEBUG_TEMPROOT=/c/Users/lingm/.cache/pytest-tmp` を付ける
   （Codex のサンドボックスが作った一時フォルダの権限のせい）。
@@ -73,6 +72,10 @@ git push
 | W4-names | 成虫の名前の自動生成と名前の変更 | Codex | feat/adult-names | マージ済み |
 | W4-e2e | Playwright で1週間を通しでプレイ（ローカルで 2.8 分で合格） | Codex | feat/e2e | マージ済み |
 | W5-media | README 用のスクリーンショットとプレイ動画（Codex が途中で上限。Claude が引き継ぎ） | Codex → Claude | feat/media | 進行中 |
+| W5-deploy | Vercel と Cloud Run のデプロイ設定、手順書 `docs/deploy.md`（実デプロイはオーナー） | Codex | feat/deploy | マージ済み |
+| W5-daily-circuit | 今日の回路（全員同じ問題、フレンドのタイムランキング） | Codex | feat/daily-circuit | マージ済み |
+| W5-breeding | 交配と本物の遺伝（伴性遺伝、Cy のホモ致死）、系統図鑑 | Codex | feat/breeding | マージ済み |
+| W5-decoder | MaleCNS のデコーダーを 85% 以上に | Codex | feat/malecns-decoder | 実行中 |
 | W3-web-app | API クライアント、フック、ホームとごはんの接続、残りの画面 | Codex | feat/web-app | マージ済み |
 | W3-malecns | MaleCNS v1.0 から回路を作って評価（3/6 合格、既定は toy-v0 のまま） | Codex | feat/malecns | マージ済み |
 
@@ -100,3 +103,6 @@ git push
   4. 次: しつけ・そうじ・温度・場所えらびの画面、羽化と発表会の画面、API クライアントで画面をつなぐ、Vercel デプロイ。
 
 - 2026-09-27 Claude: リポジトリ作成。企画書、開発計画、仕様（game-rules / puzzles / api / brain / shiori）、AGENTS.md を追加。
+- 2026-09-27 昼 Claude: スクリーンショット撮影で「羽化後にシオリへの質問が失敗する」バグを発見・修正（最新の週にフォールバック）。
+  発表会のランクのしきい値が低すぎた（上手に遊ぶと 8.2 万点、にじは 1.6 万点から）ので 2.5 万 / 4.5 万 / 7 万に変更。
+  並列ブランチで同じ Alembic リビジョン 0006 ができたので、genetics を 0007 に振り直した。
