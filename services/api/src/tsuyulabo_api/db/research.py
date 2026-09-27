@@ -43,6 +43,7 @@ class Job(Base):
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
     user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True)
     kind: Mapped[str] = mapped_column(String(80))
+    params: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, server_default="{}")
     status: Mapped[str] = mapped_column(String(16), default="pending")
     result: Mapped[dict[str, Any] | None] = mapped_column(JSON)
     error: Mapped[dict[str, Any] | None] = mapped_column(JSON)
