@@ -1,4 +1,11 @@
-"""Pure Python facade for the game API and Shiori's copy-only experiments."""
+"""Pure Python facade for the game API and Shiori's copy-only experiments.
+
+Persist ``FlyState.to_bytes()`` and restore with ``FlyState.from_bytes(blob)``.
+The versioned UTF-8 JSON codec includes BrainParams and 400 little-endian float16
+KC weights (base64); it never contains executable objects or shared wiring.
+Store ``state.params.to_dict()`` alongside the blob for queryable parameters.
+Sex values passed to ``generate_individual`` are lower-case ``m`` / ``f``.
+"""
 
 from __future__ import annotations
 
@@ -17,10 +24,13 @@ from tsuyu_brain.learning import (
     new_fly_state,
     preference_index,
 )
+from tsuyu_brain.params import BrainParams, default_params
 
 __all__ = [
     "BehaviorContext",
     "FlyState",
+    "BrainParams",
+    "default_params",
     "generate_individual",
     "new_fly_state",
     "apply_training",
