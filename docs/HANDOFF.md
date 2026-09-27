@@ -132,3 +132,7 @@ git push
     難しい研究だけ gpt-6-astra、簡単な作業は gpt-6-luna。
   - W8 を投入: Capacitor Android + CI で APK + GitHub プレリリース（sol）、見た目コンテスト（sol、migration 0011）、
     なわばりずもう（sol、migration 0012 → マージ時に 0011 の後ろへ）、MaleCNS デコーダー改善（astra）。
+- 2026-09-27 夕方 Claude: W8-android / W8-sumo / W8-contest をマージ（マイグレーションは 0010 → 0011 コンテスト → 0012 ずもう）。
+  Android の CI は 4 回目で成功（setup-android をやめてランナーの SDK を使う、Gradle の versionName の括弧、JDK 21）。
+  **プレリリース v0.1.0-alpha.1 を公開**: https://github.com/lingmulongtai/tsuyulabo/releases/tag/v0.1.0-alpha.1
+  （デバッグ署名 APK 4.3 MB。アプリは Vercel の公開デモを読み込む）。次のアルファは docs/releases/<tag>.md を書いてから `v0.1.0-alpha.N` タグを push。
