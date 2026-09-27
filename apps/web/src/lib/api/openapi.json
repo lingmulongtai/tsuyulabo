@@ -137,6 +137,112 @@
         "title": "AskRequest",
         "type": "object"
       },
+      "BoutReplay": {
+        "properties": {
+          "adult_id": {
+            "title": "Adult Id",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "opponent_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Opponent Id"
+          },
+          "opponent_name": {
+            "title": "Opponent Name",
+            "type": "string"
+          },
+          "replay": {
+            "$ref": "#/components/schemas/SumoResult"
+          },
+          "reward": {
+            "title": "Reward",
+            "type": "integer"
+          },
+          "won": {
+            "title": "Won",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "adult_id",
+          "opponent_id",
+          "opponent_name",
+          "won",
+          "reward",
+          "created_at",
+          "replay"
+        ],
+        "title": "BoutReplay",
+        "type": "object"
+      },
+      "BoutSummary": {
+        "properties": {
+          "adult_id": {
+            "title": "Adult Id",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "opponent_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Opponent Id"
+          },
+          "opponent_name": {
+            "title": "Opponent Name",
+            "type": "string"
+          },
+          "reward": {
+            "title": "Reward",
+            "type": "integer"
+          },
+          "won": {
+            "title": "Won",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "adult_id",
+          "opponent_id",
+          "opponent_name",
+          "won",
+          "reward",
+          "created_at"
+        ],
+        "title": "BoutSummary",
+        "type": "object"
+      },
       "BrainActivity": {
         "properties": {
           "duration_ms": {
@@ -181,6 +287,81 @@
           "duration_ms"
         ],
         "title": "BrainActivity",
+        "type": "object"
+      },
+      "Challenger": {
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "level": {
+            "title": "Level",
+            "type": "integer"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "owner_name": {
+            "title": "Owner Name",
+            "type": "string"
+          },
+          "strain": {
+            "title": "Strain",
+            "type": "string"
+          },
+          "traits": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Traits",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "strain",
+          "level",
+          "traits",
+          "owner_name"
+        ],
+        "title": "Challenger",
+        "type": "object"
+      },
+      "Challenges": {
+        "properties": {
+          "males": {
+            "items": {
+              "$ref": "#/components/schemas/Challenger"
+            },
+            "title": "Males",
+            "type": "array"
+          },
+          "opponents": {
+            "items": {
+              "$ref": "#/components/schemas/Challenger"
+            },
+            "title": "Opponents",
+            "type": "array"
+          },
+          "remaining": {
+            "title": "Remaining",
+            "type": "integer"
+          },
+          "streak": {
+            "title": "Streak",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "males",
+          "opponents",
+          "remaining",
+          "streak"
+        ],
+        "title": "Challenges",
         "type": "object"
       },
       "CircadianResponse": {
@@ -1517,6 +1698,25 @@
         "title": "SleepEndResponse",
         "type": "object"
       },
+      "StartBout": {
+        "additionalProperties": false,
+        "properties": {
+          "adult_id": {
+            "title": "Adult Id",
+            "type": "string"
+          },
+          "opponent_id": {
+            "title": "Opponent Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "adult_id",
+          "opponent_id"
+        ],
+        "title": "StartBout",
+        "type": "object"
+      },
       "StartWeekRequest": {
         "additionalProperties": false,
         "properties": {
@@ -1618,6 +1818,77 @@
           "subscribed"
         ],
         "title": "SubscriptionResponse",
+        "type": "object"
+      },
+      "SumoFrame": {
+        "properties": {
+          "actions": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Actions",
+            "type": "array"
+          },
+          "positions": {
+            "items": {
+              "type": "number"
+            },
+            "title": "Positions",
+            "type": "array"
+          },
+          "push": {
+            "items": {
+              "type": "number"
+            },
+            "title": "Push",
+            "type": "array"
+          },
+          "retreats": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Retreats",
+            "type": "array"
+          },
+          "tick": {
+            "title": "Tick",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "tick",
+          "positions",
+          "actions",
+          "push",
+          "retreats"
+        ],
+        "title": "SumoFrame",
+        "type": "object"
+      },
+      "SumoResult": {
+        "properties": {
+          "frames": {
+            "items": {
+              "$ref": "#/components/schemas/SumoFrame"
+            },
+            "title": "Frames",
+            "type": "array"
+          },
+          "reason": {
+            "title": "Reason",
+            "type": "string"
+          },
+          "winner": {
+            "title": "Winner",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "winner",
+          "reason",
+          "frames"
+        ],
+        "title": "SumoResult",
         "type": "object"
       },
       "TeamRequest": {
@@ -3470,6 +3741,133 @@
           }
         },
         "summary": "Start"
+      }
+    },
+    "/v1/sumo/bouts": {
+      "get": {
+        "operationId": "history_v1_sumo_bouts_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/BoutSummary"
+                  },
+                  "title": "Response History V1 Sumo Bouts Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "History"
+      },
+      "post": {
+        "operationId": "start_v1_sumo_bouts_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Idempotency-Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StartBout"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BoutReplay"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Start"
+      }
+    },
+    "/v1/sumo/bouts/{bout_id}": {
+      "get": {
+        "operationId": "replay_v1_sumo_bouts__bout_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "bout_id",
+            "required": true,
+            "schema": {
+              "title": "Bout Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BoutReplay"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Replay"
+      }
+    },
+    "/v1/sumo/challenges": {
+      "get": {
+        "operationId": "challenges_v1_sumo_challenges_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Challenges"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Challenges"
       }
     },
     "/v1/team": {
