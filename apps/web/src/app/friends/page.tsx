@@ -9,6 +9,7 @@ import { Button, Card, SectionTitle } from "@/components/ui/primitives";
 import { ErrorCard, QueryState } from "@/components/ui/QueryState";
 import { useAddFriend, useFriends, useMe, useNotifications, useRemoveFriend } from "@/lib/api/hooks";
 import { notificationText } from "@/lib/display";
+import { MatingInbox } from "@/components/friends/MatingInbox";
 
 export default function FriendsPage() {
   const me = useMe();
@@ -22,6 +23,7 @@ export default function FriendsPage() {
   return <AppShell><CareFrame title="フレンドの研究室" subtitle="育ったツユを見せあおう">
     <DailyCircuitCard />
     <RaceCard />
+    <MatingInbox />
     <QueryState query={me}>{data => <Card className="space-y-3 p-5 text-center">
       <h2 className="font-kiwi">あなたのフレンドコード</h2><p className="select-all font-mono text-3xl tracking-widest">{data.friend_code}</p>
       <Button tone="leaf" size="sm" onClick={async () => { try { await navigator.clipboard.writeText(data.friend_code); setCopyMessage("コピーしました！"); } catch { setCopyMessage("コードを長押ししてコピーしてください。"); } }}>コードをコピー</Button>
