@@ -5,7 +5,8 @@ FastAPI。ベースパス `/v1`。OpenAPI は `/openapi.json`（Web の型はこ
 ## 原則
 
 - **サーバーが正しさを決める**: 時刻、採点、報酬、通貨、乱数はすべてサーバー。
-- **冪等性**: 状態を変える `POST` / `PUT` / `DELETE` はすべて `Idempotency-Key` ヘッダー（UUID）必須。同じユーザー・同じキーの再送には、保存しておいた最初のレスポンス（ステータスとボディ）をそのまま返す。キーの保持は 24 時間。
+- **冪等性**: 状態を変える `POST` / `PUT` / `PATCH` / `DELETE` はすべて `Idempotency-Key` ヘッダー（UUID）必須。同じユーザー・同じキー・同じリクエストの再送には、保存しておいた最初のレスポンス（ステータスとボディ）をそのまま返す。メソッド、パス、クエリ文字列、本文のバイト列のいずれかが違う場合は 409 `idempotency_key_reused`。キーの保持はサーバー実時刻で 24 時間。
+- **入力制限**: 更新リクエストの本文は 64 KiB まで（超過は 413 `payload_too_large`）。チャンク転送でも受信中に制限する。JSON の NaN / Infinity / 数値オーバーフローは 422 `validation_error`。
 - **台帳**: 通貨の増減は `ledger_entries` に複式で記録（`user:<id>:shizuku` と `system:rewards` など）。残高は `ledger_accounts.balance` にキャッシュし、台帳と一致することをテストで保証。
 - **遅延評価**: ステータスの減少、ケアミス、採集は読み出し時に「前回計算した時刻」から「今」までをまとめて計算して保存する。
 - **エラー形式**:
@@ -20,6 +21,7 @@ FastAPI。ベースパス `/v1`。OpenAPI は `/openapi.json`（Web の型はこ
 
 - `POST /v1/auth/guest` → ゲストユーザーを作り、JWT（HS256、`sub` = user_id、有効期限 90 日）を返す。
 - 以降は `Authorization: Bearer <token>`。
+- 本番では API と worker に `TSUYU_ENV=production` と、ランダムに生成した 32 バイト以上の `JWT_SECRET` を設定する。短い値や既定の開発用シークレットでは起動を拒否する。`TSUYU_ENV` は `development`（既定）、`test`、`production` のいずれか。
 - 本番では Supabase Auth / Firebase Auth の ID トークン検証に差し替える（`auth/provider.py` にインターフェースを切る）。
 
 ## エンドポイント
@@ -115,6 +117,8 @@ FastAPI。ベースパス `/v1`。OpenAPI は `/openapi.json`（Web の型はこ
 | POST | `/v1/friends/{user_id}/gift` | `{ "material": "banana", "amount": 5 }`（1日1回） |
 | GET | `/v1/notifications` | お知らせ（「ゆうきさんの子が、にじランクで羽化しました」） |
 
+フレンド飼育室は公開専用の応答を使う。`user` は `id`, `display_name`、成虫は `id`, `name`, `sex`, `strain`, `stars`, `level` のみ。`team` は `members` のみで、各成虫に `slot` を加える。育成中の `week` は `stage`, `research_day`, `fly`、`fly` は `hunger`, `cleanliness`, `mood_label` のみ。採集袋、残高、経験値、好み・遺伝子・脳状態、週 ID、詳細な時刻やケア履歴は公開しない。フレンド関係は本人用の成虫・個体・ジョブ等へのアクセス権を与えない。
+
 ### シオリ
 
 | メソッド | パス | 説明 |
@@ -136,7 +140,9 @@ FastAPI。ベースパス `/v1`。OpenAPI は `/openapi.json`（Web の型はこ
 | --- | --- | --- |
 | GET | `/v1/dev/time` | 今のオフセット |
 | POST | `/v1/dev/time/advance` | `{ "to": "next_slot" \| "next_day" \| "eclosion" }` または `{ "hours": 3 }` |
-| POST | `/v1/dev/time/reset` | オフセットを 0 に |
+| POST | `/v1/dev/time/reset` | オフセットを 0 に（育成週・睡眠・いいね・ギフトの記録がある場合、非ゼロのオフセットの巻き戻しは 409 `time_reversed`） |
+
+時刻の前進は正方向のみで、累積オフセットは DB の符号付き 32 ビット整数の範囲内。リセット制限は終了済みの週にも適用し、古い日付の回数制限や交配履歴を再利用させない。やり直す場合は新しい開発用ゲストを使う。
 
 ## データモデル（主要テーブル）
 
@@ -150,6 +156,8 @@ FastAPI。ベースパス `/v1`。OpenAPI は `/openapi.json`（Web の型はこ
 - `inventory`（user_id, material, amount）
 - `ledger_accounts`（id, owner, currency, balance）/ `ledger_entries`（id, tx_id, account_id, amount, reason, ref, created_at）
 - `idempotency_keys`（user_id, key, method, path, status_code, response JSON, created_at）
+
+  `path` はマイグレーションなしでリクエスト識別を強化するため、パス先頭最大 420 文字と `#sha256=<完全なリクエスト識別情報のハッシュ>` を保存する。指紋のない旧レコードは安全に本文を照合できないため、保持期間内の再送を 409 とする。旧版・新版を同時運用しないこと。
 - `friendships`（user_id, friend_id, created_at）/ `likes`（from, to, day）/ `gifts`（from, to, material, amount, day）
 - `notifications`（id, user_id, kind, payload, created_at, read_at）
 - `sleep_sessions`（id, user_id, started_at, ended_at, bonus）
