@@ -9,7 +9,31 @@ import torch
 from torch import Tensor
 
 from tsuyu_brain.behavior import FEATURES, LABELS
+from tsuyu_brain.connectome.malecns_outputs import EXTRA_OUTPUTS
 from tsuyu_brain.decoder.dataset import Dataset
+from tsuyu_brain.decoder.features import WINDOWS
+
+
+def checkpoint_features(version: str) -> tuple[str, ...]:
+    """Bind checkpoints to exact versioned output ordering, including time bins."""
+    if version == "toy-v0":
+        return FEATURES
+    if version != "malecns-v1.0":
+        raise ValueError("unsupported decoder checkpoint version")
+    return (
+        *FEATURES,
+        *(f"{group}:window_{i}" for group in FEATURES for i in range(WINDOWS)),
+        *(
+            f"{contrast}:window_{i}"
+            for contrast in ("right-left", "approach-avoid")
+            for i in range(WINDOWS)
+        ),
+        *(
+            f"{group}:{field}"
+            for group in EXTRA_OUTPUTS
+            for field in ("mean", *(f"window_{i}" for i in range(WINDOWS)))
+        ),
+    )
 
 
 @dataclass
@@ -18,6 +42,7 @@ class Decoder:
     mean: Tensor
     scale: Tensor
     weights: list[Tensor]
+    version: str = "toy-v0"
 
     def logits(self, features: Tensor) -> Tensor:
         values = (features - self.mean) / self.scale
@@ -31,16 +56,15 @@ class Decoder:
             return self.logits(features).softmax(dim=-1)
 
     def save(self, path: str | Path) -> None:
-        if self.mean.numel() != len(FEATURES):
-            raise ValueError(
-                "only the promoted toy feature schema can be saved as a game checkpoint"
-            )
+        features = checkpoint_features(self.version)
+        if self.mean.numel() != len(features):
+            raise ValueError("decoder feature schema does not match its connectome version")
         path = Path(path)
         path.parent.mkdir(parents=True, exist_ok=True)
         torch.save(
             {
-                "version": "toy-v0",
-                "features": FEATURES,
+                "version": self.version,
+                "features": features,
                 "labels": LABELS,
                 "kind": self.kind,
                 "mean": self.mean,
@@ -51,15 +75,22 @@ class Decoder:
         )
 
     @classmethod
-    def load(cls, path: str | Path) -> Decoder:
+    def load(cls, path: str | Path, *, version: str | None = None) -> Decoder:
         payload = torch.load(path, map_location="cpu", weights_only=True)
         if (
-            payload["version"] != "toy-v0"
-            or tuple(payload["features"]) != FEATURES
+            (version is not None and payload["version"] != version)
+            or tuple(payload["features"]) != checkpoint_features(payload["version"])
+            or payload["mean"].numel() != len(payload["features"])
             or tuple(payload["labels"]) != LABELS
         ):
             raise ValueError("incompatible decoder checkpoint")
-        return cls(payload["kind"], payload["mean"], payload["scale"], payload["weights"])
+        return cls(
+            payload["kind"],
+            payload["mean"],
+            payload["scale"],
+            payload["weights"],
+            payload["version"],
+        )
 
 
 def train_decoder(
@@ -79,7 +110,9 @@ def train_decoder(
                 torch.zeros(n_out, requires_grad=True),
             ]
         )
-    model = Decoder(kind, data.features.mean(0), data.features.std(0).clamp_min(1), weights)
+    model = Decoder(
+        kind, data.features.mean(0), data.features.std(0).clamp_min(1), weights, data.version
+    )
     # Large host thread pools dominate the tiny optimizer operations.
     threads = torch.get_num_threads()
     try:
