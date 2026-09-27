@@ -169,6 +169,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/flies/{fly_id}/brain/activity": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Activity
+         * @description Observe a copy of an owned adult or active week's larva, in 20 equal windows.
+         */
+        get: operations["activity_v1_flies__fly_id__brain_activity_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/flies/{fly_id}/experiments": {
         parameters: {
             query?: never;
@@ -602,6 +622,40 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** ActivityEdge */
+        ActivityEdge: {
+            /** Post Group */
+            post_group: string;
+            /** Pre Group */
+            pre_group: string;
+            /**
+             * Sign
+             * @enum {string}
+             */
+            sign: "excitatory" | "inhibitory";
+            /**
+             * Weight Sum
+             * @description Signed learned wiring sum before individual gains
+             */
+            weight_sum: number;
+        };
+        /** ActivityGroup */
+        ActivityGroup: {
+            /** Circuit */
+            circuit: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "sensory" | "inter" | "output" | "modulatory";
+            /** Name */
+            name: string;
+            /**
+             * Rates
+             * @description Mean firing rate per neuron in Hz, one per window
+             */
+            rates: number[];
+        };
         /** AddFriend */
         AddFriend: {
             /** Friend Code */
@@ -618,6 +672,20 @@ export interface components {
         AskRequest: {
             /** Question */
             question: string;
+        };
+        /** BrainActivity */
+        BrainActivity: {
+            /** Duration Ms */
+            duration_ms: number;
+            /** Edges */
+            edges: components["schemas"]["ActivityEdge"][];
+            /** Groups */
+            groups: components["schemas"]["ActivityGroup"][];
+            /**
+             * Scenario
+             * @enum {string}
+             */
+            scenario: "rest" | "sugar" | "bitter" | "sugar+bitter" | "looming" | "light_left" | "light_right" | "antenna_touch" | "liked_odor" | "disliked_odor";
         };
         /** ExperimentRequest */
         ExperimentRequest: {
@@ -1258,6 +1326,39 @@ export interface operations {
                     "application/json": {
                         [key: string]: number;
                     };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    activity_v1_flies__fly_id__brain_activity_get: {
+        parameters: {
+            query?: {
+                scenario?: "rest" | "sugar" | "bitter" | "sugar+bitter" | "looming" | "light_left" | "light_right" | "antenna_touch" | "liked_odor" | "disliked_odor";
+            };
+            header?: never;
+            path: {
+                fly_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BrainActivity"];
                 };
             };
             /** @description Validation Error */
