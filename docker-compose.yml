@@ -1,0 +1,108 @@
+name: tsuyulabo
+
+x-backend-environment: &backend-environment
+  DATABASE_URL: ${DATABASE_URL:-postgresql+asyncpg://tsuyu:tsuyu-dev-only@postgres:5432/tsuyulabo}
+  REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
+  JWT_SECRET: ${JWT_SECRET:-tsuyulabo-local-development-only-change-in-production}
+  TSUYU_DEV_TOOLS: ${TSUYU_DEV_TOOLS:-1}
+  BRAIN_MODE: ${BRAIN_MODE:-queue}
+  CORS_ORIGINS: ${CORS_ORIGINS:-["http://localhost:3000"]}
+  ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+  OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-tsuyu}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-tsuyu-dev-only}
+      POSTGRES_DB: ${POSTGRES_DB:-tsuyulabo}
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "127.0.0.1:6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+
+  migrate:
+    build:
+      context: .
+      dockerfile: services/api/Dockerfile
+    environment: *backend-environment
+    command: ["alembic", "-c", "services/api/alembic.ini", "upgrade", "head"]
+    restart: "no"
+    healthcheck:
+      disable: true
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  api:
+    build:
+      context: .
+      dockerfile: services/api/Dockerfile
+    environment: *backend-environment
+    ports:
+      - "127.0.0.1:8000:8000"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
+
+  worker:
+    build:
+      context: .
+      dockerfile: services/worker/Dockerfile
+    environment: *backend-environment
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
+
+  web:
+    image: node:22-slim
+    working_dir: /app
+    init: true
+    environment:
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
+      NEXT_PUBLIC_DEV_TOOLS: ${NEXT_PUBLIC_DEV_TOOLS:-1}
+      NEXT_TELEMETRY_DISABLED: "1"
+    command: ["sh", "-c", "npm ci && npm run dev --workspace=@tsuyulabo/web -- --hostname 0.0.0.0"]
+    ports:
+      - "127.0.0.1:3000:3000"
+    volumes:
+      - .:/app
+      - web-node-modules:/app/node_modules
+      - web-workspace-node-modules:/app/apps/web/node_modules
+      - web-next:/app/apps/web/.next
+      - web-npm-cache:/root/.npm
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  postgres-data:
+  redis-data:
+  web-node-modules:
+  web-workspace-node-modules:
+  web-next:
+  web-npm-cache:
