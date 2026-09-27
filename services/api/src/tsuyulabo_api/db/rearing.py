@@ -37,6 +37,9 @@ class LarvaState(Base):
     stage: Mapped[str] = mapped_column(String(24), default="egg")
     miss_keys: Mapped[list[list[Any]]] = mapped_column(JSON, default=list, server_default="[]")
     brain_snapshot: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, server_default="{}")
+    brain_params: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, server_default="{}")
+    learned_weights: Mapped[bytes | None] = mapped_column(LargeBinary)
+    preferences: Mapped[dict[str, float]] = mapped_column(JSON, default=dict, server_default="{}")
     skills: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, server_default="{}")
 
 
