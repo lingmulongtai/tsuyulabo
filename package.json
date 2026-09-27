@@ -2,7 +2,8 @@
   "name": "tsuyulabo",
   "private": true,
   "workspaces": [
-    "apps/*"
+    "apps/web",
+    "apps/mobile"
   ],
   "scripts": {
     "dev": "npm run dev -w @tsuyulabo/web",
