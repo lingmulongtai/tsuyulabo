@@ -9,7 +9,8 @@
 - main にあるもの: 仕様一式、脳エンジン（toy-v0）、ゲームルール、ゲーム API の全エンドポイント（脳はアダプター経由）、
   シオリ（Mock で動くエージェント、根拠の検証、RAG）と arq ワーカー、docker compose・Dockerfile・CI、
   Web: デザインシステム、ホーム（モック）、ごはん・しつけのミニゲーム（練習モード）、羽化の演出（デモ）、研究発表会（デモ）
-- テスト（昼の時点）: Python 317 件、Web 183 件。ruff / typecheck / lint も通過
+- テスト: Python 328 件（+ eval 8 件）、Web 183 件。ruff / typecheck / lint も通過
+- `docker compose up` の Postgres + Redis + API + ワーカーで、卵→パズル→時間スキップ→しつけ（ワーカーで学習）→シオリの回答まで通ることを `scripts/smoke_api.py` で確認済み
 - 実行中の Codex: W3-integration（本物の脳を API とワーカーにつなぐ）、W3-web-app（API クライアントと残りの画面）、
   W3-malecns（本物の配線データから回路を作る）
 - MaleCNS v1.0 の生データ（約 1.1 GB、オーナー許可済み）は `C:\Users\lingm\dev\tsuyulabo-agents\W3-malecns\data\raw\malecns-v1.0\`。git には入れない
@@ -63,7 +64,10 @@ git push
 | W2-shiori-worker | シオリのエージェントと arq ワーカー | Codex | feat/shiori-worker | マージ済み |
 | W2-puzzle-parity | TS のパズル検証を Python と完全一致させる | Codex | fix/puzzle-parity | マージ済み |
 | W2-web-games | ごはん・しつけの画面、羽化の演出、研究発表会 | Claude | feat/web-games, feat/web-screens | マージ済み |
-| W3-integration | 本物の脳を API とワーカーに接続、報酬の下限、研究ランク | Codex | feat/integration | 実行中 |
+| W3-integration | 本物の脳を API とワーカーに接続、報酬の下限、研究ランク | Codex | feat/integration | マージ済み（docker compose で通し確認済み） |
+| W4-brain-viewer | 神経活動の API と脳ビューア画面 | Codex | feat/brain-viewer | 実行中 |
+| W4-wire-screens | しつけ・発表会・羽化の画面を API に接続、ホームの発表会導線 | Codex | feat/wire-screens | W3-web-app のあとで開始 |
+| W4-e2e | Playwright で1週間を通しでプレイ | Codex | feat/e2e | W4-wire-screens のあとで開始 |
 | W3-web-app | API クライアント、フック、ホームとごはんの接続、残りの画面 | Codex | feat/web-app | 実行中 |
 | W3-malecns | MaleCNS v1.0 から回路を作って評価 | Codex | feat/malecns | 実行中 |
 
