@@ -2,7 +2,10 @@
 # Run one Codex task brief in its own clone (outside OneDrive) on its own branch, inside Codex's
 # workspace-write sandbox.
 #
-#   scripts/agents/run-codex.sh <task-id> <branch> [reasoning-effort]
+#   scripts/agents/run-codex.sh <task-id> <branch> [reasoning-effort] [model]
+#
+# Model tiers (keep usage down): gpt-6-luna for easy or mechanical work, gpt-6-sol (default) for
+# normal features, gpt-6-astra only for hard research. Effort defaults to medium.
 #
 # The sandbox cannot write to .git, so Codex does not commit. It writes a commit plan to
 # .codex-runs/commits.jsonl and scripts/agents/apply-commit-plan.py turns that into atomic commits.
@@ -14,7 +17,8 @@ MAIN_REPO="$(cd "$(dirname "$0")/../.." && pwd)"
 
 TASK="$1"
 BRANCH="$2"
-EFFORT="${3:-high}"
+EFFORT="${3:-medium}"
+MODEL="${4:-gpt-6-sol}"
 AGENTS_DIR="${AGENTS_DIR:-/c/Users/lingm/dev/tsuyulabo-agents}"
 REPO_URL="${REPO_URL:-https://github.com/lingmulongtai/tsuyulabo.git}"
 CLONE="$AGENTS_DIR/$TASK"
@@ -71,6 +75,7 @@ $(cat "$BRIEF")"
 "$CODEX" exec -C "$CLONE" \
   -s workspace-write \
   -c sandbox_workspace_write.network_access=true \
+  -m "$MODEL" \
   -c model_reasoning_effort="$EFFORT" \
   -o "$AGENTS_DIR/$TASK.last.md" \
   "$PROMPT" < /dev/null > "$AGENTS_DIR/$TASK.log" 2>&1
