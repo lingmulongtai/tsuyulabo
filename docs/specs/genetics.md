@@ -68,8 +68,45 @@ store genotype, mutation and last parental-use boundary on Adult. Eclosion retur
 the adult genotype, phenotypes and mutation, plus `lethal_redraws`. Adult list and
 detail include genotype and phenotypes. `GET /v1/zukan` discovers expressed traits
 only (including historical legacy strains), never hidden carrier alleles.
-`POST /v1/weeks/friend-mating` is an authenticated, idempotent 501 stub pending
-friend consent and eligibility rules.
+## Friend mating (お見合い)
+
+`POST /v1/weeks/friend-mating` accepts `{friend_id, adult_id, friend_adult_id}`.
+The proposer owns the first adult, the friend owns the second, and their sexes
+must differ. Only registered friends can propose or accept. A proposal expires
+exactly 48 hours after creation (at the boundary it cannot be accepted/declined).
+The shared clock is the later of the two players' game clocks, including dev
+offsets. Dev time cannot be reset after either player participates in a proposal.
+One proposal per adult pair per shared calendar week (Monday 04:00 JST), including
+declined/expired proposals and proposals in the opposite direction. Proposing
+checks parental availability but does not reserve or consume it.
+
+`GET /v1/weeks/friend-mating` returns `{incoming, outgoing}` with IDs, participant
+names, parent names/IDs, status and expiry. Only the recipient can call
+`POST /v1/weeks/friend-mating/{id}/accept` or `/decline`. Accept rechecks friendship,
+ownership and both parents' availability in the shared week at acceptance. It
+marks both parents used for that week, sharing the limit with ordinary breeding;
+last-use boundaries never move backwards. Two sequential independent draws from
+the server RNG use `domain/genetics.py` with the same mother and father, including
+lethal redraws. Each owner gets one pending egg. Acceptance is allowed during an
+active week. Decline/expiry consumes no parents. Stale competing proposals fail
+acceptance if either parent has since been used. Both users receive notifications
+on proposal, acceptance and decline; expired status is evaluated when read.
+
+`GET /v1/weeks/pending-eggs` returns only the owner's unused eggs (ID, proposal ID,
+parent IDs/names, received time). `POST /v1/weeks` additionally accepts
+`{pending_egg_id}` mutually exclusive with `parents`. Starting consumes the egg
+once and copies its stored genotype, parents and lethal redraw count to the week;
+an active week returns 409 without consuming it. Pending eggs do not expire and
+remain usable after unfriending. Egg sex/genotype/redraws stay hidden until
+eclosion. All writes and notifications are transactional and idempotent. Pair
+actions lock both users in ID order to serialize with other social/breeding work.
+No purchase, currency, item or paid benefit changes eligibility or inheritance.
+
+`GET /v1/weeks/friend-mating/options/{friend_id}` provides the friend's adult
+IDs/names, sex, genotype and availability solely for the mating picker. This is
+an explicit, friendship-gated genetics disclosure for predicting offspring; the
+ordinary public lab allowlist and owner-only adult endpoints remain unchanged.
+The client uses the existing Punnett helper and displays model limitations.
 
 ## Web
 
@@ -79,3 +116,7 @@ A small pure TS mirror enumerates Punnett outcomes, combines equal phenotypes,
 and normalizes probabilities after excluding Cy/Cy. It labels the model's limits
 and shows both sexes and all phenotypes, including carrier explanations. Adult
 detail shows every locus (`w/w`, `w/Y`, `Cy/+`, etc.) and a 本物 badge.
+Friend lab adult cards offer お見合いを申し込む, an opposite-sex own-adult picker
+and offspring prediction. Friends shows incoming accept/decline cards and outgoing
+status. Home without a running week offers pending eggs beside the normal and
+breeding choices; starting another egg leaves pending eggs available.
