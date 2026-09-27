@@ -12,11 +12,27 @@
     ],
     "feeding_interneuron": [
       69,
-      111
+      162
     ],
     "MN9": [
-      111,
-      113
+      162,
+      164
+    ],
+    "MN6": [
+      164,
+      166
+    ],
+    "MN11D": [
+      166,
+      169
+    ],
+    "MN11V": [
+      169,
+      171
+    ],
+    "MN12D": [
+      171,
+      173
     ]
   },
   "signs": [
@@ -93,24 +109,6 @@
     1.0,
     1.0,
     1.0,
-    -1.0,
-    -1.0,
-    1.0,
-    1.0,
-    1.0,
-    -1.0,
-    1.0,
-    1.0,
-    1.0,
-    1.0,
-    1.0,
-    -1.0,
-    -1.0,
-    -1.0,
-    -1.0,
-    -1.0,
-    -1.0,
-    1.0,
     1.0,
     1.0,
     1.0,
@@ -118,7 +116,30 @@
     -1.0,
     1.0,
     1.0,
+    1.0,
     -1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    -1.0,
+    1.0,
+    1.0,
+    -1.0,
+    -1.0,
+    -1.0,
+    -1.0,
+    -1.0,
+    -1.0,
+    -1.0,
+    -1.0,
+    1.0,
+    1.0,
+    1.0,
+    -1.0,
+    -1.0,
+    1.0,
     -1.0,
     -1.0,
     -1.0,
@@ -127,9 +148,64 @@
     -1.0,
     -1.0,
     -1.0,
+    -1.0,
+    1.0,
     1.0,
     -1.0,
     -1.0,
+    1.0,
+    1.0,
+    -1.0,
+    -1.0,
+    -1.0,
+    -1.0,
+    -1.0,
+    -1.0,
+    1.0,
+    1.0,
+    1.0,
+    -1.0,
+    -1.0,
+    -1.0,
+    -1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    -1.0,
+    -1.0,
+    -1.0,
+    1.0,
+    1.0,
+    -1.0,
+    -1.0,
+    -1.0,
+    -1.0,
+    1.0,
+    -1.0,
+    -1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    -1.0,
+    -1.0,
+    -1.0,
+    -1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
     1.0,
     1.0,
     1.0
@@ -139,7 +215,11 @@
     "Gr66a"
   ],
   "output_groups": [
-    "MN9"
+    "MN9",
+    "MN6",
+    "MN11D",
+    "MN11V",
+    "MN12D"
   ],
   "projections": [
     [
@@ -183,12 +263,96 @@
       "MN9"
     ],
     [
+      "feeding_interneuron",
+      "MN6"
+    ],
+    [
+      "feeding_interneuron",
+      "MN11D"
+    ],
+    [
+      "feeding_interneuron",
+      "MN11V"
+    ],
+    [
+      "feeding_interneuron",
+      "MN12D"
+    ],
+    [
       "MN9",
       "feeding_interneuron"
     ],
     [
       "MN9",
       "MN9"
+    ],
+    [
+      "MN9",
+      "MN6"
+    ],
+    [
+      "MN6",
+      "feeding_interneuron"
+    ],
+    [
+      "MN6",
+      "MN9"
+    ],
+    [
+      "MN6",
+      "MN6"
+    ],
+    [
+      "MN11D",
+      "feeding_interneuron"
+    ],
+    [
+      "MN11D",
+      "MN11D"
+    ],
+    [
+      "MN11D",
+      "MN11V"
+    ],
+    [
+      "MN11D",
+      "MN12D"
+    ],
+    [
+      "MN11V",
+      "feeding_interneuron"
+    ],
+    [
+      "MN11V",
+      "MN11D"
+    ],
+    [
+      "MN11V",
+      "MN11V"
+    ],
+    [
+      "MN11V",
+      "MN12D"
+    ],
+    [
+      "MN12D",
+      "feeding_interneuron"
+    ],
+    [
+      "MN12D",
+      "MN9"
+    ],
+    [
+      "MN12D",
+      "MN11D"
+    ],
+    [
+      "MN12D",
+      "MN11V"
+    ],
+    [
+      "MN12D",
+      "MN12D"
     ]
   ],
   "tonic": {},
@@ -888,6 +1052,16 @@
       "sign": 1.0
     },
     {
+      "bodyId": 12035,
+      "type": "AN17A008",
+      "instance": "AN17A008_R",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
       "bodyId": 19480,
       "type": "ANXXX462a",
       "instance": "ANXXX462a_R",
@@ -901,6 +1075,26 @@
       "bodyId": 514625,
       "type": "ANXXX462a",
       "instance": "ANXXX462a_L",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 15286,
+      "type": "DNg47",
+      "instance": "DNg47_R",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 66284,
+      "type": "DNg47",
+      "instance": "DNg47_L",
       "predicted_nt": "acetylcholine",
       "consensus_nt": "acetylcholine",
       "effective_nt": "acetylcholine",
@@ -1048,6 +1242,26 @@
       "sign": -1.0
     },
     {
+      "bodyId": 11570,
+      "type": "GNG037",
+      "instance": "GNG037_R",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 13048,
+      "type": "GNG037",
+      "instance": "GNG037_L",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
       "bodyId": 43293,
       "type": "GNG041",
       "instance": "GNG041_L",
@@ -1088,9 +1302,129 @@
       "sign": -1.0
     },
     {
+      "bodyId": 18125,
+      "type": "GNG055",
+      "instance": "GNG055_R",
+      "predicted_nt": "gaba",
+      "consensus_nt": "gaba",
+      "effective_nt": "gaba",
+      "nt_source": "predicted_nt",
+      "sign": -1.0
+    },
+    {
+      "bodyId": 18585,
+      "type": "GNG055",
+      "instance": "GNG055_L",
+      "predicted_nt": "gaba",
+      "consensus_nt": "gaba",
+      "effective_nt": "gaba",
+      "nt_source": "predicted_nt",
+      "sign": -1.0
+    },
+    {
+      "bodyId": 14289,
+      "type": "GNG057",
+      "instance": "GNG057_R",
+      "predicted_nt": "glutamate",
+      "consensus_nt": "glutamate",
+      "effective_nt": "glutamate",
+      "nt_source": "predicted_nt",
+      "sign": -1.0
+    },
+    {
       "bodyId": 524610,
       "type": "GNG057",
       "instance": "GNG057_L",
+      "predicted_nt": "glutamate",
+      "consensus_nt": "glutamate",
+      "effective_nt": "glutamate",
+      "nt_source": "predicted_nt",
+      "sign": -1.0
+    },
+    {
+      "bodyId": 65528,
+      "type": "GNG059",
+      "instance": "GNG059_R",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 16267,
+      "type": "GNG065",
+      "instance": "GNG065_R",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 16695,
+      "type": "GNG065",
+      "instance": "GNG065_L",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 121521030,
+      "type": "GNG072",
+      "instance": "GNG072_L",
+      "predicted_nt": "gaba",
+      "consensus_nt": "gaba",
+      "effective_nt": "gaba",
+      "nt_source": "predicted_nt",
+      "sign": -1.0
+    },
+    {
+      "bodyId": 15944,
+      "type": "GNG074",
+      "instance": "GNG074_L",
+      "predicted_nt": "gaba",
+      "consensus_nt": "gaba",
+      "effective_nt": "gaba",
+      "nt_source": "predicted_nt",
+      "sign": -1.0
+    },
+    {
+      "bodyId": 16397,
+      "type": "GNG076",
+      "instance": "GNG076_L",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 11896,
+      "type": "GNG087",
+      "instance": "GNG087_R",
+      "predicted_nt": "glutamate",
+      "consensus_nt": "glutamate",
+      "effective_nt": "glutamate",
+      "nt_source": "predicted_nt",
+      "sign": -1.0
+    },
+    {
+      "bodyId": 12811,
+      "type": "GNG087",
+      "instance": "GNG087_L",
+      "predicted_nt": "glutamate",
+      "consensus_nt": "glutamate",
+      "effective_nt": "glutamate",
+      "nt_source": "predicted_nt",
+      "sign": -1.0
+    },
+    {
+      "bodyId": 12900,
+      "type": "GNG087",
+      "instance": "GNG087_R",
       "predicted_nt": "glutamate",
       "consensus_nt": "glutamate",
       "effective_nt": "glutamate",
@@ -1116,6 +1450,46 @@
       "effective_nt": "acetylcholine",
       "nt_source": "predicted_nt",
       "sign": 1.0
+    },
+    {
+      "bodyId": 13363,
+      "type": "GNG090",
+      "instance": "GNG090_R",
+      "predicted_nt": "gaba",
+      "consensus_nt": "gaba",
+      "effective_nt": "gaba",
+      "nt_source": "predicted_nt",
+      "sign": -1.0
+    },
+    {
+      "bodyId": 12999,
+      "type": "GNG096",
+      "instance": "GNG096_R",
+      "predicted_nt": "gaba",
+      "consensus_nt": "gaba",
+      "effective_nt": "gaba",
+      "nt_source": "predicted_nt",
+      "sign": -1.0
+    },
+    {
+      "bodyId": 11231,
+      "type": "GNG107",
+      "instance": "GNG107_R",
+      "predicted_nt": "gaba",
+      "consensus_nt": "gaba",
+      "effective_nt": "gaba",
+      "nt_source": "predicted_nt",
+      "sign": -1.0
+    },
+    {
+      "bodyId": 11484,
+      "type": "GNG107",
+      "instance": "GNG107_L",
+      "predicted_nt": "gaba",
+      "consensus_nt": "gaba",
+      "effective_nt": "gaba",
+      "nt_source": "predicted_nt",
+      "sign": -1.0
     },
     {
       "bodyId": 26764,
@@ -1188,6 +1562,96 @@
       "sign": -1.0
     },
     {
+      "bodyId": 11388,
+      "type": "GNG145",
+      "instance": "GNG145_L",
+      "predicted_nt": "gaba",
+      "consensus_nt": "gaba",
+      "effective_nt": "gaba",
+      "nt_source": "predicted_nt",
+      "sign": -1.0
+    },
+    {
+      "bodyId": 13561,
+      "type": "GNG145",
+      "instance": "GNG145_R",
+      "predicted_nt": "gaba",
+      "consensus_nt": "gaba",
+      "effective_nt": "gaba",
+      "nt_source": "predicted_nt",
+      "sign": -1.0
+    },
+    {
+      "bodyId": 11772,
+      "type": "GNG147",
+      "instance": "GNG147_R",
+      "predicted_nt": "glutamate",
+      "consensus_nt": "glutamate",
+      "effective_nt": "glutamate",
+      "nt_source": "predicted_nt",
+      "sign": -1.0
+    },
+    {
+      "bodyId": 512277,
+      "type": "GNG155",
+      "instance": "GNG155_L",
+      "predicted_nt": "glutamate",
+      "consensus_nt": "glutamate",
+      "effective_nt": "glutamate",
+      "nt_source": "predicted_nt",
+      "sign": -1.0
+    },
+    {
+      "bodyId": 523780,
+      "type": "GNG155",
+      "instance": "GNG155_R",
+      "predicted_nt": "glutamate",
+      "consensus_nt": "glutamate",
+      "effective_nt": "glutamate",
+      "nt_source": "predicted_nt",
+      "sign": -1.0
+    },
+    {
+      "bodyId": 556022,
+      "type": "GNG165",
+      "instance": "GNG165_L",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 17121,
+      "type": "GNG170",
+      "instance": "GNG170_R",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 516297,
+      "type": "GNG170",
+      "instance": "GNG170_L",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 13823,
+      "type": "GNG173",
+      "instance": "GNG173_L",
+      "predicted_nt": "gaba",
+      "consensus_nt": "gaba",
+      "effective_nt": "gaba",
+      "nt_source": "predicted_nt",
+      "sign": -1.0
+    },
+    {
       "bodyId": 15285,
       "type": "GNG173",
       "instance": "GNG173_R",
@@ -1228,9 +1692,59 @@
       "sign": 1.0
     },
     {
+      "bodyId": 17006,
+      "type": "GNG187",
+      "instance": "GNG187_R",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 17129,
+      "type": "GNG187",
+      "instance": "GNG187_L",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 18080,
+      "type": "GNG192",
+      "instance": "GNG192_R",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 18645,
+      "type": "GNG192",
+      "instance": "GNG192_L",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
       "bodyId": 567143,
       "type": "GNG208",
       "instance": "GNG208_R",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 73405,
+      "type": "GNG209",
+      "instance": "GNG209_L",
       "predicted_nt": "acetylcholine",
       "consensus_nt": "acetylcholine",
       "effective_nt": "acetylcholine",
@@ -1258,9 +1772,69 @@
       "sign": -1.0
     },
     {
+      "bodyId": 12991,
+      "type": "GNG221",
+      "instance": "GNG221_R",
+      "predicted_nt": "gaba",
+      "consensus_nt": "gaba",
+      "effective_nt": "gaba",
+      "nt_source": "predicted_nt",
+      "sign": -1.0
+    },
+    {
+      "bodyId": 31018,
+      "type": "GNG232",
+      "instance": "GNG232_R",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 89638,
+      "type": "GNG232",
+      "instance": "GNG232_L",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 19576,
+      "type": "GNG241",
+      "instance": "GNG241_R",
+      "predicted_nt": "glutamate",
+      "consensus_nt": "glutamate",
+      "effective_nt": "glutamate",
+      "nt_source": "predicted_nt",
+      "sign": -1.0
+    },
+    {
+      "bodyId": 45834,
+      "type": "GNG254",
+      "instance": "GNG254_R",
+      "predicted_nt": "gaba",
+      "consensus_nt": "gaba",
+      "effective_nt": "gaba",
+      "nt_source": "predicted_nt",
+      "sign": -1.0
+    },
+    {
       "bodyId": 32102,
       "type": "GNG297",
       "instance": "GNG297_M",
+      "predicted_nt": "gaba",
+      "consensus_nt": "gaba",
+      "effective_nt": "gaba",
+      "nt_source": "predicted_nt",
+      "sign": -1.0
+    },
+    {
+      "bodyId": 520816,
+      "type": "GNG298",
+      "instance": "GNG298_M",
       "predicted_nt": "gaba",
       "consensus_nt": "gaba",
       "effective_nt": "gaba",
@@ -1298,6 +1872,66 @@
       "sign": -1.0
     },
     {
+      "bodyId": 40374,
+      "type": "GNG407",
+      "instance": "GNG407_R",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 11248,
+      "type": "GNG467",
+      "instance": "GNG467_L",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 11650,
+      "type": "GNG467",
+      "instance": "GNG467_R",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 15030,
+      "type": "GNG467",
+      "instance": "GNG467_R",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 523516,
+      "type": "GNG467",
+      "instance": "GNG467_L",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 17282,
+      "type": "GNG468",
+      "instance": "GNG468_L",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
       "bodyId": 514753,
       "type": "GNG568",
       "instance": "GNG568_L",
@@ -1306,6 +1940,46 @@
       "effective_nt": "acetylcholine",
       "nt_source": "predicted_nt",
       "sign": 1.0
+    },
+    {
+      "bodyId": 15612,
+      "type": "GNG592",
+      "instance": "GNG592_R",
+      "predicted_nt": "glutamate",
+      "consensus_nt": "glutamate",
+      "effective_nt": "glutamate",
+      "nt_source": "predicted_nt",
+      "sign": -1.0
+    },
+    {
+      "bodyId": 513146,
+      "type": "GNG592",
+      "instance": "GNG592_L",
+      "predicted_nt": "glutamate",
+      "consensus_nt": "glutamate",
+      "effective_nt": "glutamate",
+      "nt_source": "predicted_nt",
+      "sign": -1.0
+    },
+    {
+      "bodyId": 522428,
+      "type": "GNG592",
+      "instance": "GNG592_R",
+      "predicted_nt": "glutamate",
+      "consensus_nt": "glutamate",
+      "effective_nt": "glutamate",
+      "nt_source": "predicted_nt",
+      "sign": -1.0
+    },
+    {
+      "bodyId": 12296,
+      "type": "SMP545",
+      "instance": "SMP545_R",
+      "predicted_nt": "gaba",
+      "consensus_nt": "gaba",
+      "effective_nt": "gaba",
+      "nt_source": "predicted_nt",
+      "sign": -1.0
     },
     {
       "bodyId": 10331,
@@ -1323,6 +1997,96 @@
       "instance": "MN9_R",
       "predicted_nt": "acetylcholine",
       "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 519667,
+      "type": "MN6",
+      "instance": "MN6_R",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 924612,
+      "type": "MN6",
+      "instance": "MN6_L",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 11269,
+      "type": "MN11D",
+      "instance": "MN11D_R",
+      "predicted_nt": "unclear",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "consensus_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 11393,
+      "type": "MN11D",
+      "instance": "MN11D_R",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 551398,
+      "type": "MN11D",
+      "instance": "MN11D_L",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 49829,
+      "type": "MN11V",
+      "instance": "MN11V_L",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 492462351,
+      "type": "MN11V",
+      "instance": "MN11V_R",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 14237,
+      "type": "MN12D",
+      "instance": "MN12D_L",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "unclear",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 440899,
+      "type": "MN12D",
+      "instance": "MN12D_R",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "unclear",
       "effective_nt": "acetylcholine",
       "nt_source": "predicted_nt",
       "sign": 1.0

@@ -37,6 +37,114 @@
     "visual": [
       955,
       987
+    ],
+    "MBON02": [
+      987,
+      989
+    ],
+    "MBON07": [
+      989,
+      993
+    ],
+    "MBON08": [
+      993,
+      993
+    ],
+    "MBON09": [
+      993,
+      997
+    ],
+    "MBON10": [
+      997,
+      1006
+    ],
+    "MBON13": [
+      1006,
+      1008
+    ],
+    "MBON15": [
+      1008,
+      1012
+    ],
+    "MBON16": [
+      1012,
+      1014
+    ],
+    "MBON17": [
+      1014,
+      1016
+    ],
+    "MBON18": [
+      1016,
+      1018
+    ],
+    "MBON19": [
+      1018,
+      1022
+    ],
+    "MBON20": [
+      1022,
+      1024
+    ],
+    "MBON21": [
+      1024,
+      1026
+    ],
+    "MBON22": [
+      1026,
+      1028
+    ],
+    "MBON23": [
+      1028,
+      1030
+    ],
+    "MBON24": [
+      1030,
+      1032
+    ],
+    "MBON25": [
+      1032,
+      1034
+    ],
+    "MBON26": [
+      1034,
+      1036
+    ],
+    "MBON27": [
+      1036,
+      1038
+    ],
+    "MBON28": [
+      1038,
+      1040
+    ],
+    "MBON29": [
+      1040,
+      1042
+    ],
+    "MBON30": [
+      1042,
+      1044
+    ],
+    "MBON31": [
+      1044,
+      1046
+    ],
+    "MBON32": [
+      1046,
+      1048
+    ],
+    "MBON33": [
+      1048,
+      1050
+    ],
+    "MBON34": [
+      1050,
+      1052
+    ],
+    "MBON35": [
+      1052,
+      1054
     ]
   },
   "signs": [
@@ -1026,7 +1134,74 @@
     -1.0,
     -1.0,
     -1.0,
-    -1.0
+    -1.0,
+    -1.0,
+    -1.0,
+    -1.0,
+    -1.0,
+    -1.0,
+    -1.0,
+    -1.0,
+    -1.0,
+    -1.0,
+    -1.0,
+    -1.0,
+    -1.0,
+    -1.0,
+    -1.0,
+    -1.0,
+    -1.0,
+    -1.0,
+    -1.0,
+    -1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    -1.0,
+    -1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    -1.0,
+    -1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    -1.0,
+    -1.0,
+    -1.0,
+    -1.0,
+    -1.0,
+    -1.0,
+    1.0,
+    1.0,
+    -1.0,
+    -1.0,
+    1.0,
+    1.0
   ],
   "input_groups": [
     "ORN",
@@ -1036,7 +1211,34 @@
   ],
   "output_groups": [
     "MBON_ap",
-    "MBON_av"
+    "MBON_av",
+    "MBON02",
+    "MBON07",
+    "MBON08",
+    "MBON09",
+    "MBON10",
+    "MBON13",
+    "MBON15",
+    "MBON16",
+    "MBON17",
+    "MBON18",
+    "MBON19",
+    "MBON20",
+    "MBON21",
+    "MBON22",
+    "MBON23",
+    "MBON24",
+    "MBON25",
+    "MBON26",
+    "MBON27",
+    "MBON28",
+    "MBON29",
+    "MBON30",
+    "MBON31",
+    "MBON32",
+    "MBON33",
+    "MBON34",
+    "MBON35"
   ],
   "projections": [
     [
@@ -1064,6 +1266,14 @@
       "APL"
     ],
     [
+      "PN",
+      "MBON18"
+    ],
+    [
+      "PN",
+      "MBON22"
+    ],
+    [
       "KC",
       "PN"
     ],
@@ -1092,6 +1302,110 @@
       "PPL1"
     ],
     [
+      "KC",
+      "MBON02"
+    ],
+    [
+      "KC",
+      "MBON07"
+    ],
+    [
+      "KC",
+      "MBON09"
+    ],
+    [
+      "KC",
+      "MBON10"
+    ],
+    [
+      "KC",
+      "MBON13"
+    ],
+    [
+      "KC",
+      "MBON15"
+    ],
+    [
+      "KC",
+      "MBON16"
+    ],
+    [
+      "KC",
+      "MBON17"
+    ],
+    [
+      "KC",
+      "MBON18"
+    ],
+    [
+      "KC",
+      "MBON19"
+    ],
+    [
+      "KC",
+      "MBON20"
+    ],
+    [
+      "KC",
+      "MBON21"
+    ],
+    [
+      "KC",
+      "MBON22"
+    ],
+    [
+      "KC",
+      "MBON23"
+    ],
+    [
+      "KC",
+      "MBON24"
+    ],
+    [
+      "KC",
+      "MBON25"
+    ],
+    [
+      "KC",
+      "MBON26"
+    ],
+    [
+      "KC",
+      "MBON27"
+    ],
+    [
+      "KC",
+      "MBON28"
+    ],
+    [
+      "KC",
+      "MBON29"
+    ],
+    [
+      "KC",
+      "MBON30"
+    ],
+    [
+      "KC",
+      "MBON31"
+    ],
+    [
+      "KC",
+      "MBON32"
+    ],
+    [
+      "KC",
+      "MBON33"
+    ],
+    [
+      "KC",
+      "MBON34"
+    ],
+    [
+      "KC",
+      "MBON35"
+    ],
+    [
       "APL",
       "PN"
     ],
@@ -1120,6 +1434,110 @@
       "PPL1"
     ],
     [
+      "APL",
+      "MBON02"
+    ],
+    [
+      "APL",
+      "MBON07"
+    ],
+    [
+      "APL",
+      "MBON09"
+    ],
+    [
+      "APL",
+      "MBON10"
+    ],
+    [
+      "APL",
+      "MBON13"
+    ],
+    [
+      "APL",
+      "MBON15"
+    ],
+    [
+      "APL",
+      "MBON16"
+    ],
+    [
+      "APL",
+      "MBON17"
+    ],
+    [
+      "APL",
+      "MBON18"
+    ],
+    [
+      "APL",
+      "MBON19"
+    ],
+    [
+      "APL",
+      "MBON20"
+    ],
+    [
+      "APL",
+      "MBON21"
+    ],
+    [
+      "APL",
+      "MBON22"
+    ],
+    [
+      "APL",
+      "MBON23"
+    ],
+    [
+      "APL",
+      "MBON24"
+    ],
+    [
+      "APL",
+      "MBON25"
+    ],
+    [
+      "APL",
+      "MBON26"
+    ],
+    [
+      "APL",
+      "MBON27"
+    ],
+    [
+      "APL",
+      "MBON28"
+    ],
+    [
+      "APL",
+      "MBON29"
+    ],
+    [
+      "APL",
+      "MBON30"
+    ],
+    [
+      "APL",
+      "MBON31"
+    ],
+    [
+      "APL",
+      "MBON32"
+    ],
+    [
+      "APL",
+      "MBON33"
+    ],
+    [
+      "APL",
+      "MBON34"
+    ],
+    [
+      "APL",
+      "MBON35"
+    ],
+    [
       "MBON_ap",
       "KC"
     ],
@@ -1144,6 +1562,106 @@
       "PPL1"
     ],
     [
+      "MBON_ap",
+      "MBON02"
+    ],
+    [
+      "MBON_ap",
+      "MBON07"
+    ],
+    [
+      "MBON_ap",
+      "MBON09"
+    ],
+    [
+      "MBON_ap",
+      "MBON10"
+    ],
+    [
+      "MBON_ap",
+      "MBON13"
+    ],
+    [
+      "MBON_ap",
+      "MBON15"
+    ],
+    [
+      "MBON_ap",
+      "MBON16"
+    ],
+    [
+      "MBON_ap",
+      "MBON17"
+    ],
+    [
+      "MBON_ap",
+      "MBON18"
+    ],
+    [
+      "MBON_ap",
+      "MBON19"
+    ],
+    [
+      "MBON_ap",
+      "MBON20"
+    ],
+    [
+      "MBON_ap",
+      "MBON21"
+    ],
+    [
+      "MBON_ap",
+      "MBON22"
+    ],
+    [
+      "MBON_ap",
+      "MBON23"
+    ],
+    [
+      "MBON_ap",
+      "MBON24"
+    ],
+    [
+      "MBON_ap",
+      "MBON25"
+    ],
+    [
+      "MBON_ap",
+      "MBON26"
+    ],
+    [
+      "MBON_ap",
+      "MBON28"
+    ],
+    [
+      "MBON_ap",
+      "MBON29"
+    ],
+    [
+      "MBON_ap",
+      "MBON30"
+    ],
+    [
+      "MBON_ap",
+      "MBON31"
+    ],
+    [
+      "MBON_ap",
+      "MBON32"
+    ],
+    [
+      "MBON_ap",
+      "MBON33"
+    ],
+    [
+      "MBON_ap",
+      "MBON34"
+    ],
+    [
+      "MBON_ap",
+      "MBON35"
+    ],
+    [
       "MBON_av",
       "KC"
     ],
@@ -1168,6 +1686,106 @@
       "PPL1"
     ],
     [
+      "MBON_av",
+      "MBON02"
+    ],
+    [
+      "MBON_av",
+      "MBON07"
+    ],
+    [
+      "MBON_av",
+      "MBON09"
+    ],
+    [
+      "MBON_av",
+      "MBON10"
+    ],
+    [
+      "MBON_av",
+      "MBON13"
+    ],
+    [
+      "MBON_av",
+      "MBON15"
+    ],
+    [
+      "MBON_av",
+      "MBON17"
+    ],
+    [
+      "MBON_av",
+      "MBON18"
+    ],
+    [
+      "MBON_av",
+      "MBON19"
+    ],
+    [
+      "MBON_av",
+      "MBON20"
+    ],
+    [
+      "MBON_av",
+      "MBON21"
+    ],
+    [
+      "MBON_av",
+      "MBON22"
+    ],
+    [
+      "MBON_av",
+      "MBON23"
+    ],
+    [
+      "MBON_av",
+      "MBON24"
+    ],
+    [
+      "MBON_av",
+      "MBON25"
+    ],
+    [
+      "MBON_av",
+      "MBON26"
+    ],
+    [
+      "MBON_av",
+      "MBON27"
+    ],
+    [
+      "MBON_av",
+      "MBON28"
+    ],
+    [
+      "MBON_av",
+      "MBON29"
+    ],
+    [
+      "MBON_av",
+      "MBON30"
+    ],
+    [
+      "MBON_av",
+      "MBON31"
+    ],
+    [
+      "MBON_av",
+      "MBON32"
+    ],
+    [
+      "MBON_av",
+      "MBON33"
+    ],
+    [
+      "MBON_av",
+      "MBON34"
+    ],
+    [
+      "MBON_av",
+      "MBON35"
+    ],
+    [
       "PAM",
       "KC"
     ],
@@ -1192,6 +1810,86 @@
       "PPL1"
     ],
     [
+      "PAM",
+      "MBON02"
+    ],
+    [
+      "PAM",
+      "MBON07"
+    ],
+    [
+      "PAM",
+      "MBON09"
+    ],
+    [
+      "PAM",
+      "MBON10"
+    ],
+    [
+      "PAM",
+      "MBON13"
+    ],
+    [
+      "PAM",
+      "MBON20"
+    ],
+    [
+      "PAM",
+      "MBON21"
+    ],
+    [
+      "PAM",
+      "MBON22"
+    ],
+    [
+      "PAM",
+      "MBON23"
+    ],
+    [
+      "PAM",
+      "MBON24"
+    ],
+    [
+      "PAM",
+      "MBON25"
+    ],
+    [
+      "PAM",
+      "MBON26"
+    ],
+    [
+      "PAM",
+      "MBON27"
+    ],
+    [
+      "PAM",
+      "MBON29"
+    ],
+    [
+      "PAM",
+      "MBON30"
+    ],
+    [
+      "PAM",
+      "MBON31"
+    ],
+    [
+      "PAM",
+      "MBON32"
+    ],
+    [
+      "PAM",
+      "MBON33"
+    ],
+    [
+      "PAM",
+      "MBON34"
+    ],
+    [
+      "PAM",
+      "MBON35"
+    ],
+    [
       "PPL1",
       "KC"
     ],
@@ -1214,6 +1912,1566 @@
     [
       "PPL1",
       "PPL1"
+    ],
+    [
+      "PPL1",
+      "MBON09"
+    ],
+    [
+      "PPL1",
+      "MBON10"
+    ],
+    [
+      "PPL1",
+      "MBON13"
+    ],
+    [
+      "PPL1",
+      "MBON15"
+    ],
+    [
+      "PPL1",
+      "MBON16"
+    ],
+    [
+      "PPL1",
+      "MBON18"
+    ],
+    [
+      "PPL1",
+      "MBON19"
+    ],
+    [
+      "PPL1",
+      "MBON20"
+    ],
+    [
+      "PPL1",
+      "MBON21"
+    ],
+    [
+      "PPL1",
+      "MBON25"
+    ],
+    [
+      "PPL1",
+      "MBON27"
+    ],
+    [
+      "PPL1",
+      "MBON28"
+    ],
+    [
+      "PPL1",
+      "MBON29"
+    ],
+    [
+      "PPL1",
+      "MBON30"
+    ],
+    [
+      "PPL1",
+      "MBON31"
+    ],
+    [
+      "PPL1",
+      "MBON32"
+    ],
+    [
+      "PPL1",
+      "MBON33"
+    ],
+    [
+      "PPL1",
+      "MBON34"
+    ],
+    [
+      "PPL1",
+      "MBON35"
+    ],
+    [
+      "MBON02",
+      "KC"
+    ],
+    [
+      "MBON02",
+      "APL"
+    ],
+    [
+      "MBON02",
+      "MBON_ap"
+    ],
+    [
+      "MBON02",
+      "MBON_av"
+    ],
+    [
+      "MBON02",
+      "PAM"
+    ],
+    [
+      "MBON02",
+      "MBON02"
+    ],
+    [
+      "MBON02",
+      "MBON07"
+    ],
+    [
+      "MBON02",
+      "MBON09"
+    ],
+    [
+      "MBON02",
+      "MBON13"
+    ],
+    [
+      "MBON02",
+      "MBON15"
+    ],
+    [
+      "MBON02",
+      "MBON16"
+    ],
+    [
+      "MBON02",
+      "MBON17"
+    ],
+    [
+      "MBON02",
+      "MBON18"
+    ],
+    [
+      "MBON02",
+      "MBON19"
+    ],
+    [
+      "MBON02",
+      "MBON21"
+    ],
+    [
+      "MBON02",
+      "MBON24"
+    ],
+    [
+      "MBON02",
+      "MBON28"
+    ],
+    [
+      "MBON07",
+      "KC"
+    ],
+    [
+      "MBON07",
+      "APL"
+    ],
+    [
+      "MBON07",
+      "MBON_ap"
+    ],
+    [
+      "MBON07",
+      "MBON_av"
+    ],
+    [
+      "MBON07",
+      "PAM"
+    ],
+    [
+      "MBON07",
+      "MBON02"
+    ],
+    [
+      "MBON07",
+      "MBON07"
+    ],
+    [
+      "MBON07",
+      "MBON18"
+    ],
+    [
+      "MBON07",
+      "MBON24"
+    ],
+    [
+      "MBON09",
+      "KC"
+    ],
+    [
+      "MBON09",
+      "APL"
+    ],
+    [
+      "MBON09",
+      "MBON_ap"
+    ],
+    [
+      "MBON09",
+      "MBON_av"
+    ],
+    [
+      "MBON09",
+      "PAM"
+    ],
+    [
+      "MBON09",
+      "PPL1"
+    ],
+    [
+      "MBON09",
+      "MBON02"
+    ],
+    [
+      "MBON09",
+      "MBON09"
+    ],
+    [
+      "MBON09",
+      "MBON10"
+    ],
+    [
+      "MBON09",
+      "MBON15"
+    ],
+    [
+      "MBON09",
+      "MBON20"
+    ],
+    [
+      "MBON09",
+      "MBON21"
+    ],
+    [
+      "MBON09",
+      "MBON22"
+    ],
+    [
+      "MBON09",
+      "MBON24"
+    ],
+    [
+      "MBON09",
+      "MBON25"
+    ],
+    [
+      "MBON09",
+      "MBON26"
+    ],
+    [
+      "MBON09",
+      "MBON27"
+    ],
+    [
+      "MBON09",
+      "MBON29"
+    ],
+    [
+      "MBON09",
+      "MBON30"
+    ],
+    [
+      "MBON09",
+      "MBON31"
+    ],
+    [
+      "MBON09",
+      "MBON33"
+    ],
+    [
+      "MBON09",
+      "MBON34"
+    ],
+    [
+      "MBON09",
+      "MBON35"
+    ],
+    [
+      "MBON10",
+      "KC"
+    ],
+    [
+      "MBON10",
+      "APL"
+    ],
+    [
+      "MBON10",
+      "MBON_ap"
+    ],
+    [
+      "MBON10",
+      "MBON_av"
+    ],
+    [
+      "MBON10",
+      "PAM"
+    ],
+    [
+      "MBON10",
+      "PPL1"
+    ],
+    [
+      "MBON10",
+      "MBON09"
+    ],
+    [
+      "MBON10",
+      "MBON10"
+    ],
+    [
+      "MBON10",
+      "MBON13"
+    ],
+    [
+      "MBON10",
+      "MBON15"
+    ],
+    [
+      "MBON10",
+      "MBON24"
+    ],
+    [
+      "MBON10",
+      "MBON26"
+    ],
+    [
+      "MBON10",
+      "MBON27"
+    ],
+    [
+      "MBON10",
+      "MBON31"
+    ],
+    [
+      "MBON13",
+      "KC"
+    ],
+    [
+      "MBON13",
+      "APL"
+    ],
+    [
+      "MBON13",
+      "MBON_ap"
+    ],
+    [
+      "MBON13",
+      "MBON_av"
+    ],
+    [
+      "MBON13",
+      "PAM"
+    ],
+    [
+      "MBON13",
+      "PPL1"
+    ],
+    [
+      "MBON13",
+      "MBON02"
+    ],
+    [
+      "MBON13",
+      "MBON10"
+    ],
+    [
+      "MBON13",
+      "MBON15"
+    ],
+    [
+      "MBON13",
+      "MBON16"
+    ],
+    [
+      "MBON13",
+      "MBON17"
+    ],
+    [
+      "MBON13",
+      "MBON18"
+    ],
+    [
+      "MBON13",
+      "MBON19"
+    ],
+    [
+      "MBON13",
+      "MBON23"
+    ],
+    [
+      "MBON13",
+      "MBON24"
+    ],
+    [
+      "MBON13",
+      "MBON28"
+    ],
+    [
+      "MBON13",
+      "MBON29"
+    ],
+    [
+      "MBON13",
+      "MBON31"
+    ],
+    [
+      "MBON15",
+      "MBON_ap"
+    ],
+    [
+      "MBON15",
+      "MBON_av"
+    ],
+    [
+      "MBON15",
+      "PAM"
+    ],
+    [
+      "MBON15",
+      "PPL1"
+    ],
+    [
+      "MBON15",
+      "MBON09"
+    ],
+    [
+      "MBON15",
+      "MBON10"
+    ],
+    [
+      "MBON15",
+      "MBON13"
+    ],
+    [
+      "MBON15",
+      "MBON15"
+    ],
+    [
+      "MBON15",
+      "MBON21"
+    ],
+    [
+      "MBON15",
+      "MBON26"
+    ],
+    [
+      "MBON15",
+      "MBON28"
+    ],
+    [
+      "MBON15",
+      "MBON31"
+    ],
+    [
+      "MBON15",
+      "MBON33"
+    ],
+    [
+      "MBON16",
+      "KC"
+    ],
+    [
+      "MBON16",
+      "APL"
+    ],
+    [
+      "MBON16",
+      "MBON_av"
+    ],
+    [
+      "MBON16",
+      "PAM"
+    ],
+    [
+      "MBON16",
+      "PPL1"
+    ],
+    [
+      "MBON16",
+      "MBON16"
+    ],
+    [
+      "MBON16",
+      "MBON17"
+    ],
+    [
+      "MBON16",
+      "MBON18"
+    ],
+    [
+      "MBON16",
+      "MBON19"
+    ],
+    [
+      "MBON16",
+      "MBON23"
+    ],
+    [
+      "MBON16",
+      "MBON28"
+    ],
+    [
+      "MBON17",
+      "KC"
+    ],
+    [
+      "MBON17",
+      "APL"
+    ],
+    [
+      "MBON17",
+      "MBON_ap"
+    ],
+    [
+      "MBON17",
+      "MBON02"
+    ],
+    [
+      "MBON17",
+      "MBON16"
+    ],
+    [
+      "MBON17",
+      "MBON17"
+    ],
+    [
+      "MBON17",
+      "MBON18"
+    ],
+    [
+      "MBON17",
+      "MBON19"
+    ],
+    [
+      "MBON17",
+      "MBON23"
+    ],
+    [
+      "MBON17",
+      "MBON24"
+    ],
+    [
+      "MBON17",
+      "MBON28"
+    ],
+    [
+      "MBON18",
+      "PN"
+    ],
+    [
+      "MBON18",
+      "KC"
+    ],
+    [
+      "MBON18",
+      "MBON_ap"
+    ],
+    [
+      "MBON18",
+      "MBON_av"
+    ],
+    [
+      "MBON18",
+      "PAM"
+    ],
+    [
+      "MBON18",
+      "PPL1"
+    ],
+    [
+      "MBON18",
+      "MBON02"
+    ],
+    [
+      "MBON18",
+      "MBON16"
+    ],
+    [
+      "MBON18",
+      "MBON17"
+    ],
+    [
+      "MBON18",
+      "MBON18"
+    ],
+    [
+      "MBON18",
+      "MBON19"
+    ],
+    [
+      "MBON18",
+      "MBON23"
+    ],
+    [
+      "MBON18",
+      "MBON24"
+    ],
+    [
+      "MBON18",
+      "MBON28"
+    ],
+    [
+      "MBON19",
+      "MBON_ap"
+    ],
+    [
+      "MBON19",
+      "MBON_av"
+    ],
+    [
+      "MBON19",
+      "PPL1"
+    ],
+    [
+      "MBON19",
+      "MBON16"
+    ],
+    [
+      "MBON19",
+      "MBON17"
+    ],
+    [
+      "MBON19",
+      "MBON19"
+    ],
+    [
+      "MBON19",
+      "MBON23"
+    ],
+    [
+      "MBON19",
+      "MBON28"
+    ],
+    [
+      "MBON20",
+      "KC"
+    ],
+    [
+      "MBON20",
+      "APL"
+    ],
+    [
+      "MBON20",
+      "MBON_ap"
+    ],
+    [
+      "MBON20",
+      "MBON_av"
+    ],
+    [
+      "MBON20",
+      "PAM"
+    ],
+    [
+      "MBON20",
+      "PPL1"
+    ],
+    [
+      "MBON20",
+      "MBON09"
+    ],
+    [
+      "MBON20",
+      "MBON21"
+    ],
+    [
+      "MBON20",
+      "MBON25"
+    ],
+    [
+      "MBON20",
+      "MBON27"
+    ],
+    [
+      "MBON20",
+      "MBON29"
+    ],
+    [
+      "MBON20",
+      "MBON30"
+    ],
+    [
+      "MBON20",
+      "MBON31"
+    ],
+    [
+      "MBON20",
+      "MBON33"
+    ],
+    [
+      "MBON20",
+      "MBON34"
+    ],
+    [
+      "MBON20",
+      "MBON35"
+    ],
+    [
+      "MBON21",
+      "KC"
+    ],
+    [
+      "MBON21",
+      "APL"
+    ],
+    [
+      "MBON21",
+      "MBON_ap"
+    ],
+    [
+      "MBON21",
+      "MBON_av"
+    ],
+    [
+      "MBON21",
+      "PAM"
+    ],
+    [
+      "MBON21",
+      "PPL1"
+    ],
+    [
+      "MBON21",
+      "MBON09"
+    ],
+    [
+      "MBON21",
+      "MBON15"
+    ],
+    [
+      "MBON21",
+      "MBON20"
+    ],
+    [
+      "MBON21",
+      "MBON21"
+    ],
+    [
+      "MBON21",
+      "MBON26"
+    ],
+    [
+      "MBON21",
+      "MBON27"
+    ],
+    [
+      "MBON21",
+      "MBON29"
+    ],
+    [
+      "MBON21",
+      "MBON30"
+    ],
+    [
+      "MBON21",
+      "MBON32"
+    ],
+    [
+      "MBON21",
+      "MBON34"
+    ],
+    [
+      "MBON21",
+      "MBON35"
+    ],
+    [
+      "MBON22",
+      "PN"
+    ],
+    [
+      "MBON22",
+      "KC"
+    ],
+    [
+      "MBON22",
+      "APL"
+    ],
+    [
+      "MBON22",
+      "MBON_ap"
+    ],
+    [
+      "MBON22",
+      "MBON_av"
+    ],
+    [
+      "MBON22",
+      "PAM"
+    ],
+    [
+      "MBON22",
+      "PPL1"
+    ],
+    [
+      "MBON22",
+      "MBON02"
+    ],
+    [
+      "MBON22",
+      "MBON09"
+    ],
+    [
+      "MBON22",
+      "MBON10"
+    ],
+    [
+      "MBON22",
+      "MBON15"
+    ],
+    [
+      "MBON22",
+      "MBON20"
+    ],
+    [
+      "MBON22",
+      "MBON22"
+    ],
+    [
+      "MBON22",
+      "MBON24"
+    ],
+    [
+      "MBON22",
+      "MBON26"
+    ],
+    [
+      "MBON22",
+      "MBON28"
+    ],
+    [
+      "MBON22",
+      "MBON29"
+    ],
+    [
+      "MBON22",
+      "MBON30"
+    ],
+    [
+      "MBON22",
+      "MBON31"
+    ],
+    [
+      "MBON23",
+      "APL"
+    ],
+    [
+      "MBON23",
+      "MBON_ap"
+    ],
+    [
+      "MBON23",
+      "MBON_av"
+    ],
+    [
+      "MBON23",
+      "PAM"
+    ],
+    [
+      "MBON23",
+      "MBON02"
+    ],
+    [
+      "MBON23",
+      "MBON07"
+    ],
+    [
+      "MBON23",
+      "MBON18"
+    ],
+    [
+      "MBON23",
+      "MBON19"
+    ],
+    [
+      "MBON23",
+      "MBON24"
+    ],
+    [
+      "MBON24",
+      "KC"
+    ],
+    [
+      "MBON24",
+      "APL"
+    ],
+    [
+      "MBON24",
+      "MBON_ap"
+    ],
+    [
+      "MBON24",
+      "MBON_av"
+    ],
+    [
+      "MBON24",
+      "PAM"
+    ],
+    [
+      "MBON24",
+      "PPL1"
+    ],
+    [
+      "MBON24",
+      "MBON02"
+    ],
+    [
+      "MBON24",
+      "MBON09"
+    ],
+    [
+      "MBON24",
+      "MBON13"
+    ],
+    [
+      "MBON24",
+      "MBON18"
+    ],
+    [
+      "MBON24",
+      "MBON22"
+    ],
+    [
+      "MBON24",
+      "MBON23"
+    ],
+    [
+      "MBON24",
+      "MBON28"
+    ],
+    [
+      "MBON24",
+      "MBON30"
+    ],
+    [
+      "MBON24",
+      "MBON34"
+    ],
+    [
+      "MBON25",
+      "KC"
+    ],
+    [
+      "MBON25",
+      "APL"
+    ],
+    [
+      "MBON25",
+      "MBON_ap"
+    ],
+    [
+      "MBON25",
+      "MBON_av"
+    ],
+    [
+      "MBON25",
+      "PAM"
+    ],
+    [
+      "MBON25",
+      "PPL1"
+    ],
+    [
+      "MBON25",
+      "MBON20"
+    ],
+    [
+      "MBON25",
+      "MBON21"
+    ],
+    [
+      "MBON25",
+      "MBON25"
+    ],
+    [
+      "MBON25",
+      "MBON30"
+    ],
+    [
+      "MBON25",
+      "MBON32"
+    ],
+    [
+      "MBON25",
+      "MBON34"
+    ],
+    [
+      "MBON25",
+      "MBON35"
+    ],
+    [
+      "MBON26",
+      "MBON_ap"
+    ],
+    [
+      "MBON26",
+      "MBON_av"
+    ],
+    [
+      "MBON26",
+      "PAM"
+    ],
+    [
+      "MBON26",
+      "PPL1"
+    ],
+    [
+      "MBON26",
+      "MBON02"
+    ],
+    [
+      "MBON26",
+      "MBON07"
+    ],
+    [
+      "MBON26",
+      "MBON10"
+    ],
+    [
+      "MBON26",
+      "MBON13"
+    ],
+    [
+      "MBON26",
+      "MBON21"
+    ],
+    [
+      "MBON26",
+      "MBON22"
+    ],
+    [
+      "MBON26",
+      "MBON24"
+    ],
+    [
+      "MBON26",
+      "MBON26"
+    ],
+    [
+      "MBON26",
+      "MBON27"
+    ],
+    [
+      "MBON26",
+      "MBON30"
+    ],
+    [
+      "MBON26",
+      "MBON31"
+    ],
+    [
+      "MBON26",
+      "MBON32"
+    ],
+    [
+      "MBON27",
+      "MBON_av"
+    ],
+    [
+      "MBON27",
+      "PAM"
+    ],
+    [
+      "MBON27",
+      "PPL1"
+    ],
+    [
+      "MBON27",
+      "MBON10"
+    ],
+    [
+      "MBON27",
+      "MBON26"
+    ],
+    [
+      "MBON27",
+      "MBON27"
+    ],
+    [
+      "MBON27",
+      "MBON29"
+    ],
+    [
+      "MBON27",
+      "MBON30"
+    ],
+    [
+      "MBON27",
+      "MBON31"
+    ],
+    [
+      "MBON27",
+      "MBON32"
+    ],
+    [
+      "MBON28",
+      "KC"
+    ],
+    [
+      "MBON28",
+      "APL"
+    ],
+    [
+      "MBON28",
+      "MBON_ap"
+    ],
+    [
+      "MBON28",
+      "PAM"
+    ],
+    [
+      "MBON28",
+      "MBON02"
+    ],
+    [
+      "MBON28",
+      "MBON15"
+    ],
+    [
+      "MBON28",
+      "MBON16"
+    ],
+    [
+      "MBON28",
+      "MBON17"
+    ],
+    [
+      "MBON28",
+      "MBON18"
+    ],
+    [
+      "MBON28",
+      "MBON22"
+    ],
+    [
+      "MBON28",
+      "MBON24"
+    ],
+    [
+      "MBON28",
+      "MBON28"
+    ],
+    [
+      "MBON29",
+      "APL"
+    ],
+    [
+      "MBON29",
+      "MBON_ap"
+    ],
+    [
+      "MBON29",
+      "MBON_av"
+    ],
+    [
+      "MBON29",
+      "PAM"
+    ],
+    [
+      "MBON29",
+      "PPL1"
+    ],
+    [
+      "MBON29",
+      "MBON09"
+    ],
+    [
+      "MBON29",
+      "MBON13"
+    ],
+    [
+      "MBON29",
+      "MBON20"
+    ],
+    [
+      "MBON29",
+      "MBON21"
+    ],
+    [
+      "MBON29",
+      "MBON22"
+    ],
+    [
+      "MBON29",
+      "MBON24"
+    ],
+    [
+      "MBON29",
+      "MBON26"
+    ],
+    [
+      "MBON29",
+      "MBON27"
+    ],
+    [
+      "MBON29",
+      "MBON29"
+    ],
+    [
+      "MBON29",
+      "MBON30"
+    ],
+    [
+      "MBON29",
+      "MBON33"
+    ],
+    [
+      "MBON29",
+      "MBON34"
+    ],
+    [
+      "MBON29",
+      "MBON35"
+    ],
+    [
+      "MBON30",
+      "KC"
+    ],
+    [
+      "MBON30",
+      "APL"
+    ],
+    [
+      "MBON30",
+      "MBON_ap"
+    ],
+    [
+      "MBON30",
+      "MBON_av"
+    ],
+    [
+      "MBON30",
+      "PAM"
+    ],
+    [
+      "MBON30",
+      "PPL1"
+    ],
+    [
+      "MBON30",
+      "MBON09"
+    ],
+    [
+      "MBON30",
+      "MBON15"
+    ],
+    [
+      "MBON30",
+      "MBON20"
+    ],
+    [
+      "MBON30",
+      "MBON21"
+    ],
+    [
+      "MBON30",
+      "MBON24"
+    ],
+    [
+      "MBON30",
+      "MBON25"
+    ],
+    [
+      "MBON30",
+      "MBON26"
+    ],
+    [
+      "MBON30",
+      "MBON27"
+    ],
+    [
+      "MBON30",
+      "MBON29"
+    ],
+    [
+      "MBON30",
+      "MBON30"
+    ],
+    [
+      "MBON30",
+      "MBON32"
+    ],
+    [
+      "MBON30",
+      "MBON34"
+    ],
+    [
+      "MBON30",
+      "MBON35"
+    ],
+    [
+      "MBON31",
+      "KC"
+    ],
+    [
+      "MBON31",
+      "APL"
+    ],
+    [
+      "MBON31",
+      "MBON_ap"
+    ],
+    [
+      "MBON31",
+      "MBON_av"
+    ],
+    [
+      "MBON31",
+      "PAM"
+    ],
+    [
+      "MBON31",
+      "PPL1"
+    ],
+    [
+      "MBON31",
+      "MBON09"
+    ],
+    [
+      "MBON31",
+      "MBON10"
+    ],
+    [
+      "MBON31",
+      "MBON20"
+    ],
+    [
+      "MBON31",
+      "MBON26"
+    ],
+    [
+      "MBON31",
+      "MBON27"
+    ],
+    [
+      "MBON31",
+      "MBON31"
+    ],
+    [
+      "MBON31",
+      "MBON32"
+    ],
+    [
+      "MBON31",
+      "MBON33"
+    ],
+    [
+      "MBON31",
+      "MBON35"
+    ],
+    [
+      "MBON32",
+      "KC"
+    ],
+    [
+      "MBON32",
+      "APL"
+    ],
+    [
+      "MBON32",
+      "MBON_ap"
+    ],
+    [
+      "MBON32",
+      "MBON_av"
+    ],
+    [
+      "MBON32",
+      "PAM"
+    ],
+    [
+      "MBON32",
+      "PPL1"
+    ],
+    [
+      "MBON32",
+      "MBON10"
+    ],
+    [
+      "MBON32",
+      "MBON20"
+    ],
+    [
+      "MBON32",
+      "MBON21"
+    ],
+    [
+      "MBON32",
+      "MBON26"
+    ],
+    [
+      "MBON32",
+      "MBON27"
+    ],
+    [
+      "MBON32",
+      "MBON30"
+    ],
+    [
+      "MBON32",
+      "MBON31"
+    ],
+    [
+      "MBON32",
+      "MBON33"
+    ],
+    [
+      "MBON32",
+      "MBON35"
+    ],
+    [
+      "MBON33",
+      "KC"
+    ],
+    [
+      "MBON33",
+      "APL"
+    ],
+    [
+      "MBON33",
+      "MBON_ap"
+    ],
+    [
+      "MBON33",
+      "MBON_av"
+    ],
+    [
+      "MBON33",
+      "PAM"
+    ],
+    [
+      "MBON33",
+      "PPL1"
+    ],
+    [
+      "MBON33",
+      "MBON09"
+    ],
+    [
+      "MBON33",
+      "MBON10"
+    ],
+    [
+      "MBON33",
+      "MBON20"
+    ],
+    [
+      "MBON33",
+      "MBON25"
+    ],
+    [
+      "MBON33",
+      "MBON26"
+    ],
+    [
+      "MBON33",
+      "MBON32"
+    ],
+    [
+      "MBON33",
+      "MBON35"
+    ],
+    [
+      "MBON34",
+      "MBON_ap"
+    ],
+    [
+      "MBON34",
+      "PAM"
+    ],
+    [
+      "MBON34",
+      "PPL1"
+    ],
+    [
+      "MBON34",
+      "MBON20"
+    ],
+    [
+      "MBON34",
+      "MBON21"
+    ],
+    [
+      "MBON34",
+      "MBON24"
+    ],
+    [
+      "MBON34",
+      "MBON25"
+    ],
+    [
+      "MBON34",
+      "MBON26"
+    ],
+    [
+      "MBON34",
+      "MBON27"
+    ],
+    [
+      "MBON34",
+      "MBON29"
+    ],
+    [
+      "MBON34",
+      "MBON34"
+    ],
+    [
+      "MBON34",
+      "MBON35"
+    ],
+    [
+      "MBON35",
+      "MBON_ap"
+    ],
+    [
+      "MBON35",
+      "MBON_av"
+    ],
+    [
+      "MBON35",
+      "PAM"
+    ],
+    [
+      "MBON35",
+      "PPL1"
+    ],
+    [
+      "MBON35",
+      "MBON09"
+    ],
+    [
+      "MBON35",
+      "MBON10"
+    ],
+    [
+      "MBON35",
+      "MBON20"
+    ],
+    [
+      "MBON35",
+      "MBON26"
+    ],
+    [
+      "MBON35",
+      "MBON27"
+    ],
+    [
+      "MBON35",
+      "MBON29"
+    ],
+    [
+      "MBON35",
+      "MBON30"
+    ],
+    [
+      "MBON35",
+      "MBON31"
+    ],
+    [
+      "MBON35",
+      "MBON32"
+    ],
+    [
+      "MBON35",
+      "MBON33"
     ]
   ],
   "tonic": {},
@@ -11091,6 +13349,676 @@
       "effective_nt": "histamine",
       "nt_source": "predicted_nt",
       "sign": -1.0
+    },
+    {
+      "bodyId": 522444,
+      "type": "MBON02",
+      "instance": "MBON02(B2B'2a)_R",
+      "predicted_nt": "glutamate",
+      "consensus_nt": "glutamate",
+      "effective_nt": "glutamate",
+      "nt_source": "predicted_nt",
+      "sign": -1.0
+    },
+    {
+      "bodyId": 522749,
+      "type": "MBON02",
+      "instance": "MBON02(B2B'2a)_L",
+      "predicted_nt": "glutamate",
+      "consensus_nt": "glutamate",
+      "effective_nt": "glutamate",
+      "nt_source": "predicted_nt",
+      "sign": -1.0
+    },
+    {
+      "bodyId": 12859,
+      "type": "MBON07",
+      "instance": "MBON07(a1)_R",
+      "predicted_nt": "glutamate",
+      "consensus_nt": "glutamate",
+      "effective_nt": "glutamate",
+      "nt_source": "predicted_nt",
+      "sign": -1.0
+    },
+    {
+      "bodyId": 15626,
+      "type": "MBON07",
+      "instance": "MBON07(a1)_L",
+      "predicted_nt": "glutamate",
+      "consensus_nt": "glutamate",
+      "effective_nt": "glutamate",
+      "nt_source": "predicted_nt",
+      "sign": -1.0
+    },
+    {
+      "bodyId": 18603,
+      "type": "MBON07",
+      "instance": "MBON07(a1)_L",
+      "predicted_nt": "glutamate",
+      "consensus_nt": "glutamate",
+      "effective_nt": "glutamate",
+      "nt_source": "predicted_nt",
+      "sign": -1.0
+    },
+    {
+      "bodyId": 515338,
+      "type": "MBON07",
+      "instance": "MBON07(a1)_R",
+      "predicted_nt": "glutamate",
+      "consensus_nt": "glutamate",
+      "effective_nt": "glutamate",
+      "nt_source": "predicted_nt",
+      "sign": -1.0
+    },
+    {
+      "bodyId": 18713,
+      "type": "MBON09",
+      "instance": "MBON09(y3B'1)_L",
+      "predicted_nt": "gaba",
+      "consensus_nt": "gaba",
+      "effective_nt": "gaba",
+      "nt_source": "predicted_nt",
+      "sign": -1.0
+    },
+    {
+      "bodyId": 19267,
+      "type": "MBON09",
+      "instance": "MBON09(y3B'1)_L",
+      "predicted_nt": "gaba",
+      "consensus_nt": "gaba",
+      "effective_nt": "gaba",
+      "nt_source": "predicted_nt",
+      "sign": -1.0
+    },
+    {
+      "bodyId": 21242,
+      "type": "MBON09",
+      "instance": "MBON09(y3B'1)_R",
+      "predicted_nt": "gaba",
+      "consensus_nt": "gaba",
+      "effective_nt": "gaba",
+      "nt_source": "predicted_nt",
+      "sign": -1.0
+    },
+    {
+      "bodyId": 523060,
+      "type": "MBON09",
+      "instance": "MBON09(y3B'1)_R",
+      "predicted_nt": "gaba",
+      "consensus_nt": "gaba",
+      "effective_nt": "gaba",
+      "nt_source": "predicted_nt",
+      "sign": -1.0
+    },
+    {
+      "bodyId": 39608,
+      "type": "MBON10",
+      "instance": "MBON10(B'1)_L",
+      "predicted_nt": "gaba",
+      "consensus_nt": "gaba",
+      "effective_nt": "gaba",
+      "nt_source": "predicted_nt",
+      "sign": -1.0
+    },
+    {
+      "bodyId": 49262,
+      "type": "MBON10",
+      "instance": "MBON10(B'1)_R",
+      "predicted_nt": "gaba",
+      "consensus_nt": "gaba",
+      "effective_nt": "gaba",
+      "nt_source": "predicted_nt",
+      "sign": -1.0
+    },
+    {
+      "bodyId": 70924,
+      "type": "MBON10",
+      "instance": "MBON10(B'1)_L",
+      "predicted_nt": "gaba",
+      "consensus_nt": "gaba",
+      "effective_nt": "gaba",
+      "nt_source": "predicted_nt",
+      "sign": -1.0
+    },
+    {
+      "bodyId": 133427,
+      "type": "MBON10",
+      "instance": "MBON10(B'1)_R",
+      "predicted_nt": "gaba",
+      "consensus_nt": "gaba",
+      "effective_nt": "gaba",
+      "nt_source": "predicted_nt",
+      "sign": -1.0
+    },
+    {
+      "bodyId": 524733,
+      "type": "MBON10",
+      "instance": "MBON10(B'1)_L",
+      "predicted_nt": "gaba",
+      "consensus_nt": "gaba",
+      "effective_nt": "gaba",
+      "nt_source": "predicted_nt",
+      "sign": -1.0
+    },
+    {
+      "bodyId": 531829,
+      "type": "MBON10",
+      "instance": "MBON10(B'1)_L",
+      "predicted_nt": "gaba",
+      "consensus_nt": "gaba",
+      "effective_nt": "gaba",
+      "nt_source": "predicted_nt",
+      "sign": -1.0
+    },
+    {
+      "bodyId": 540383,
+      "type": "MBON10",
+      "instance": "MBON10(B'1)_R",
+      "predicted_nt": "gaba",
+      "consensus_nt": "gaba",
+      "effective_nt": "gaba",
+      "nt_source": "predicted_nt",
+      "sign": -1.0
+    },
+    {
+      "bodyId": 558665,
+      "type": "MBON10",
+      "instance": "MBON10(B'1)_R",
+      "predicted_nt": "gaba",
+      "consensus_nt": "gaba",
+      "effective_nt": "gaba",
+      "nt_source": "predicted_nt",
+      "sign": -1.0
+    },
+    {
+      "bodyId": 579919,
+      "type": "MBON10",
+      "instance": "MBON10(B'1)_R",
+      "predicted_nt": "gaba",
+      "consensus_nt": "gaba",
+      "effective_nt": "gaba",
+      "nt_source": "predicted_nt",
+      "sign": -1.0
+    },
+    {
+      "bodyId": 12726,
+      "type": "MBON13",
+      "instance": "MBON13(a'2)_L",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 514853,
+      "type": "MBON13",
+      "instance": "MBON13(a'2)_R",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 11777,
+      "type": "MBON15",
+      "instance": "MBON15(a'1)_R",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 38853,
+      "type": "MBON15",
+      "instance": "MBON15(a'1)_L",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 58401,
+      "type": "MBON15",
+      "instance": "MBON15(a'1)_R",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 520395,
+      "type": "MBON15",
+      "instance": "MBON15(a'1)_L",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 520186,
+      "type": "MBON16",
+      "instance": "MBON16(a'3ap)_L",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 562782,
+      "type": "MBON16",
+      "instance": "MBON16(a'3ap)_R",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 31016,
+      "type": "MBON17",
+      "instance": "MBON17(a'3m)_L",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 41692,
+      "type": "MBON17",
+      "instance": "MBON17(a'3m)_R",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 14221,
+      "type": "MBON18",
+      "instance": "MBON18(a2sc)_R",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 512788,
+      "type": "MBON18",
+      "instance": "MBON18(a2sc)_L",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 26853,
+      "type": "MBON19",
+      "instance": "MBON19(a2p3p)_R",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 33617,
+      "type": "MBON19",
+      "instance": "MBON19(a2p3p)_R",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 36094,
+      "type": "MBON19",
+      "instance": "MBON19(a2p3p)_L",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 47551,
+      "type": "MBON19",
+      "instance": "MBON19(a2p3p)_L",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 10804,
+      "type": "MBON20",
+      "instance": "MBON20(y1y2)_R",
+      "predicted_nt": "gaba",
+      "consensus_nt": "gaba",
+      "effective_nt": "gaba",
+      "nt_source": "predicted_nt",
+      "sign": -1.0
+    },
+    {
+      "bodyId": 11145,
+      "type": "MBON20",
+      "instance": "MBON20(y1y2)_L",
+      "predicted_nt": "gaba",
+      "consensus_nt": "gaba",
+      "effective_nt": "gaba",
+      "nt_source": "predicted_nt",
+      "sign": -1.0
+    },
+    {
+      "bodyId": 10826,
+      "type": "MBON21",
+      "instance": "MBON21(y4y5)_L",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 523628,
+      "type": "MBON21",
+      "instance": "MBON21(y4y5)_R",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 11990,
+      "type": "MBON22",
+      "instance": "MBON22(calyx)_R",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 12918,
+      "type": "MBON22",
+      "instance": "MBON22(calyx)_L",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 20835,
+      "type": "MBON23",
+      "instance": "MBON23(a2sp)_R",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 512789,
+      "type": "MBON23",
+      "instance": "MBON23(a2sp)_L",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 15708,
+      "type": "MBON24",
+      "instance": "MBON24(B2y5)_R",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 18406,
+      "type": "MBON24",
+      "instance": "MBON24(B2y5)_L",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 87077,
+      "type": "MBON25",
+      "instance": "MBON25(y1y2)_L",
+      "predicted_nt": "glutamate",
+      "consensus_nt": "glutamate",
+      "effective_nt": "glutamate",
+      "nt_source": "predicted_nt",
+      "sign": -1.0
+    },
+    {
+      "bodyId": 394860,
+      "type": "MBON25",
+      "instance": "MBON25(y1y2)_R",
+      "predicted_nt": "glutamate",
+      "consensus_nt": "glutamate",
+      "effective_nt": "glutamate",
+      "nt_source": "predicted_nt",
+      "sign": -1.0
+    },
+    {
+      "bodyId": 11176,
+      "type": "MBON26",
+      "instance": "MBON26(b'2d)_R",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 524893,
+      "type": "MBON26",
+      "instance": "MBON26(b'2d)_L",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 515034,
+      "type": "MBON27",
+      "instance": "MBON27(y5d)_R",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 519128,
+      "type": "MBON27",
+      "instance": "MBON27(y5d)_L",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 26485,
+      "type": "MBON28",
+      "instance": "MBON28(a'3a)_R",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 28622,
+      "type": "MBON28",
+      "instance": "MBON28(a'3a)_L",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 519619,
+      "type": "MBON29",
+      "instance": "MBON29(y4y5)_L",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 523987,
+      "type": "MBON29",
+      "instance": "MBON29(y4y5)_R",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 513174,
+      "type": "MBON30",
+      "instance": "MBON30(y1y2y3)_L",
+      "predicted_nt": "glutamate",
+      "consensus_nt": "glutamate",
+      "effective_nt": "glutamate",
+      "nt_source": "predicted_nt",
+      "sign": -1.0
+    },
+    {
+      "bodyId": 515015,
+      "type": "MBON30",
+      "instance": "MBON30(y1y2y3)_R",
+      "predicted_nt": "glutamate",
+      "consensus_nt": "glutamate",
+      "effective_nt": "glutamate",
+      "nt_source": "predicted_nt",
+      "sign": -1.0
+    },
+    {
+      "bodyId": 10816,
+      "type": "MBON31",
+      "instance": "MBON31(a'1a)_L",
+      "predicted_nt": "gaba",
+      "consensus_nt": "gaba",
+      "effective_nt": "gaba",
+      "nt_source": "predicted_nt",
+      "sign": -1.0
+    },
+    {
+      "bodyId": 11805,
+      "type": "MBON31",
+      "instance": "MBON31(a'1a)_R",
+      "predicted_nt": "gaba",
+      "consensus_nt": "gaba",
+      "effective_nt": "gaba",
+      "nt_source": "predicted_nt",
+      "sign": -1.0
+    },
+    {
+      "bodyId": 11455,
+      "type": "MBON32",
+      "instance": "MBON32(y2)_L",
+      "predicted_nt": "gaba",
+      "consensus_nt": "gaba",
+      "effective_nt": "gaba",
+      "nt_source": "predicted_nt",
+      "sign": -1.0
+    },
+    {
+      "bodyId": 519131,
+      "type": "MBON32",
+      "instance": "MBON32(y2)_R",
+      "predicted_nt": "gaba",
+      "consensus_nt": "gaba",
+      "effective_nt": "gaba",
+      "nt_source": "predicted_nt",
+      "sign": -1.0
+    },
+    {
+      "bodyId": 11785,
+      "type": "MBON33",
+      "instance": "MBON33(y2y3)_L",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 523043,
+      "type": "MBON33",
+      "instance": "MBON33(y2y3)_R",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 92112,
+      "type": "MBON34",
+      "instance": "MBON34(y2)_R",
+      "predicted_nt": "glutamate",
+      "consensus_nt": "glutamate",
+      "effective_nt": "glutamate",
+      "nt_source": "predicted_nt",
+      "sign": -1.0
+    },
+    {
+      "bodyId": 208566,
+      "type": "MBON34",
+      "instance": "MBON34(y2)_L",
+      "predicted_nt": "glutamate",
+      "consensus_nt": "glutamate",
+      "effective_nt": "glutamate",
+      "nt_source": "predicted_nt",
+      "sign": -1.0
+    },
+    {
+      "bodyId": 10599,
+      "type": "MBON35",
+      "instance": "MBON35(y2)_L",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 508595,
+      "type": "MBON35",
+      "instance": "MBON35(y2)_R",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
     }
   ]
 }
