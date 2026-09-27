@@ -17,7 +17,7 @@ def _neighbors(cell: int, n: int) -> list[int]:
 
 def hamiltonian_path(rng: Random, n: int) -> list[int]:
     """Warnsdorff's minimum onward degree, random ties, restart on dead ends."""
-    if n not in c.CHECKPOINT_COUNTS:
+    if n not in (*c.CHECKPOINT_COUNTS, 7):
         raise ValueError("unsupported training size")
     neighbors = [_neighbors(cell, n) for cell in range(n * n)]
     while True:
@@ -41,8 +41,13 @@ def generate(rng: Random, context: JsonObject) -> tuple[JsonObject, JsonObject]:
     if day not in c.TRAINING_SIZES or cue not in c.CUES or valence not in c.VALENCES:
         raise ValueError("invalid training context")
     n = c.TRAINING_SIZES[day]
+    params, secret = generate_board(rng, n, c.CHECKPOINT_COUNTS[n])
+    return params | {"cue": cue, "valence": valence}, secret
+
+
+def generate_board(rng: Random, n: int, count: int) -> tuple[JsonObject, JsonObject]:
+    """Build a solvable circuit shared by care training and the daily challenge."""
     path = hamiltonian_path(rng, n)
-    count = c.CHECKPOINT_COUNTS[n]
     indices = (
         [0]
         + [
@@ -52,7 +57,7 @@ def generate(rng: Random, context: JsonObject) -> tuple[JsonObject, JsonObject]:
         + [len(path) - 1]
     )
     checkpoints = [{"cell": path[index], "k": k} for k, index in enumerate(indices, 1)]
-    return {"n": n, "checkpoints": checkpoints, "cue": cue, "valence": valence}, {"path": path}
+    return {"n": n, "checkpoints": checkpoints}, {"path": path}
 
 
 def verify(params: JsonObject, submission: JsonObject) -> VerifyResult:

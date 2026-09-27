@@ -236,6 +236,20 @@
 { "hit": true, "effects": { "eclosion_bonus": true } }
 ```
 
+## 6. 今日の回路 `daily-circuit`（フェーズ2）
+
+- §2 の生成・経路検証を再利用する **7×7、9チェックポイント**の共通問題。育成週やしつけの回数・学習には影響しない。
+- 日付はサーバー実時刻の JST 04:00 区切り（03:59 までは前日）。個人の開発用時刻オフセットは使わない。
+- `seed = int.from_bytes(SHA-256(UTF-8("daily-circuit:" + YYYY-MM-DD)), "big")` を `random.Random` に渡す。Python のプロセス依存 `hash()` は使わない。全員に同じ盤面を返す。
+- `GET /v1/daily-circuit` は `day`, `params`（TrainingParams と同形）, `server_now`, `resets_at`, `attempt`（未開始は null）, `my_result`（未記録は null）を返す。読み出しで計測は開始しない。
+- `POST /v1/daily-circuit/start`（`{day}`、Idempotency-Key 必須）でその日の本番を開始。ユーザーと日付ごとに1件。再度の開始は同じ `started_at` / `expires_at` を返し、計測をリセットしない。期限は開始10分後または翌04:00の早い方。
+- `POST /v1/daily-circuit/submit` は `{day, path, elapsed_ms}`（Idempotency-Key 必須）。本番開始済みで期限内の完全な経路だけを受理し、共通の壁時計検証も行う。無効な提出は422、期限切れ・日付不一致は409。
+- 記録タイムは `max(elapsed_ms, floor((submit時刻 - started_at) * 1000))`。端末から短いタイムを送ってもサーバー経過時間より短くならない。完成時に自動送信し、通信時間も含む。
+- 1日1回だけ有効タイムと報酬を確定。同じキーは同じ応答、別キーの再提出も保存済みの結果を返す。期限切れの本番は再開不可。練習はいつでも何度でも可能で、提出・記録更新・報酬なし。
+- 報酬は記録タイム **20,000ms未満: 60しずく、40,000ms未満: 40しずく、それ以外: 20しずく**。結果と台帳の複式記録を同一トランザクションで保存。
+- `GET /v1/daily-circuit/ranking` は当日の自分と現在のフレンドの有効記録のみ。各人唯一の有効記録がベストタイム。タイム昇順、同タイムは提出時刻昇順、両方同じならユーザーID順で順位を確定する。未参加者には順位を付けない。
+- ランキングは表示名、自分かどうか、自慢の成虫の系統・性別を返す。未設定は野生型。画面はホームとフレンドから `/daily` に入り、タイマー、結果とフレンド内順位、ランキングを表示する。
+
 ## ゴールデンテスト（fixtures）の形式
 
 `packages/fixtures/puzzles/<kind>/<name>.json`

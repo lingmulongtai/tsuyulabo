@@ -20,7 +20,7 @@ def test_upgrade_matches_models_and_downgrade(tmp_path: Path) -> None:
     with engine.connect() as connection:
         context = MigrationContext.configure(connection, opts={"compare_type": True})
         assert compare_metadata(context, Base.metadata) == []
-        assert len(inspect(connection).get_table_names()) == 21
+        assert len(inspect(connection).get_table_names()) == 22
     engine.dispose()
     command.downgrade(config, "base")
     with engine.connect() as connection:
