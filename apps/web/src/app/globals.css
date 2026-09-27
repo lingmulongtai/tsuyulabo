@@ -113,9 +113,11 @@ body {
   line-height: 1.7;
 }
 
-button {
-  font: inherit;
-  color: inherit;
+@layer base {
+  button {
+    font: inherit;
+    color: inherit;
+  }
 }
 
 :focus-visible {
