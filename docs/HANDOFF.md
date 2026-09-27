@@ -11,7 +11,7 @@
   （既定は toy-v0。MaleCNS v1.0 の回路も同梱、6 項目中 3 項目合格）、シオリ、ワーカー、docker compose、CI
 - テスト: Python 373 件（+ eval）、Web 214 件。ruff / typecheck / lint / build も通過。GitHub Actions も緑
 - ブラウザで通しプレイ確認済み: 卵 → 時間スキップ → 発表会（ケアミスで減点・報酬 0）→ 羽化（サーバーの抽選）→ 成虫ページ → 脳ビューア
-- 実行中の Codex: W4-e2e（Playwright で1週間）、W4-malecns-calibrate（本物の回路の調整）、W4-names（成虫の名前と名前の変更）
+- 実行中の Codex: W4-malecns-calibrate（本物の回路の調整）、W5-media（README のスクリーンショットとプレイ動画。ローカルの web :3000 と API :8000 を使う）
 - MaleCNS v1.0 の生データ（約 1.1 GB、オーナー許可済み）は `C:\Users\lingm\dev\tsuyulabo-agents\W3-malecns\data\raw\malecns-v1.0\`
   （W4-malecns-calibrate のクローンにもコピー）。git には入れない
 - オーナーが帰宅後にやること: Codex のサンドボックス設定、Vercel CLI のログイン
@@ -68,8 +68,9 @@ git push
 | W4-brain-viewer | 神経活動の API と脳ビューア画面 | Codex | feat/brain-viewer | マージ済み |
 | W4-wire-screens | しつけ・発表会・羽化の画面を API に接続、ホームの発表会導線 | Codex | feat/wire-screens | マージ済み |
 | W4-malecns-calibrate | 本物の回路で残り 3 項目を合格させる | Codex | feat/malecns-calibrate | 実行中 |
-| W4-names | 成虫の名前の自動生成と名前の変更 | Codex | feat/adult-names | 実行中 |
-| W4-e2e | Playwright で1週間を通しでプレイ | Codex | feat/e2e | 実行中 |
+| W4-names | 成虫の名前の自動生成と名前の変更 | Codex | feat/adult-names | マージ済み |
+| W4-e2e | Playwright で1週間を通しでプレイ（ローカルで 2.8 分で合格） | Codex | feat/e2e | マージ済み |
+| W5-media | README 用のスクリーンショットとプレイ動画 | Codex | feat/media | 実行中 |
 | W3-web-app | API クライアント、フック、ホームとごはんの接続、残りの画面 | Codex | feat/web-app | マージ済み |
 | W3-malecns | MaleCNS v1.0 から回路を作って評価（3/6 合格、既定は toy-v0 のまま） | Codex | feat/malecns | マージ済み |
 
