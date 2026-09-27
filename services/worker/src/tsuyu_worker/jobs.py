@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 from collections.abc import AsyncIterator, Awaitable, Callable
 from contextlib import asynccontextmanager
 from datetime import UTC, datetime, timedelta
@@ -20,6 +21,8 @@ from tsuyulabo_api.settings import Settings
 
 from .adapters import SQLLab, SQLRecordStore, conversation_scope
 from .brain_adapter import BrainEngine
+
+logger = logging.getLogger(__name__)
 
 Sessions = async_sessionmaker[AsyncSession]
 Handler = Callable[[dict[str, Any]], Awaitable[dict[str, Any]]]
@@ -107,6 +110,8 @@ async def run_job(
                 inputs = job.params or params or (job.result or {}).get("input", {})
                 result = await perform(session, job.user_id, kind, inputs, provider, brain)
         except Exception:
+            # The player only sees a generic message, so keep the real cause in the logs.
+            logger.exception("job %s (%s) failed", job_id, kind)
             job.status, job.result = "failed", None
             job.error = {"code": "job_failed", "message": "処理に失敗しました"}
             result = {"error": job.error}

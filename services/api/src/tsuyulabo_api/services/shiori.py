@@ -11,7 +11,33 @@ from tsuyu_shiori.gateway import Provider
 from tsuyulabo_api.db.models import ShioriMessage
 from tsuyulabo_api.services.jobs import JobFunction
 from tsuyulabo_api.services.shiori_brain import BrainEngine
-from tsuyulabo_api.services.shiori_store import SQLLab, SQLRecordStore, conversation_scope
+from tsuyulabo_api.services.shiori_store import (
+    NoRecordsYet,
+    SQLLab,
+    SQLRecordStore,
+    conversation_scope,
+)
+
+NO_RECORDS_ANSWER = (
+    "まだ研究の記録がありません。卵を受け取ってお世話をはじめると、"
+    "その記録と実験にもとづいて答えられます。"
+)
+
+
+def no_records_answer() -> dict[str, Any]:
+    """A system reply that cites nothing because there is nothing to cite yet."""
+    return {
+        "text": NO_RECORDS_ANSWER,
+        "answer": NO_RECORDS_ANSWER,
+        "evidence": [],
+        "verification": {"kept": 0, "dropped": 0, "rate": 1.0, "reasons": []},
+        "cost": {"usd": 0.0, "input_tokens": 0, "output_tokens": 0, "cache_hits": 0, "calls": []},
+        "experiments": [],
+        "steps": 0,
+        "stopped_reason": "no_records",
+        "ai_label": "AI",
+        "disclaimer": "ゲーム内のモデルで測った結果です",
+    }
 
 
 async def perform(
@@ -22,10 +48,13 @@ async def perform(
     brain: BrainEngine | None = None,
 ) -> dict[str, Any]:
     store = SQLRecordStore(session, user_id)
-    week_id, fly_id = await conversation_scope(store, params)
     question = params.get("question")
     if not isinstance(question, str):
         raise ValueError("question is required")
+    try:
+        week_id, fly_id = await conversation_scope(store, params, fallback_to_latest=True)
+    except NoRecordsYet:
+        return no_records_answer()
     answer = await answer_question(
         question,
         store=store,
