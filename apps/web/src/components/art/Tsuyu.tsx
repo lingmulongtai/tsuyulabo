@@ -8,6 +8,8 @@ export interface TsuyuProps {
   animated?: boolean;
   label?: string;
   className?: string;
+  /** Front-leg grooming or proboscis extension, driven by the behaviour decoder. */
+  pose?: "idle" | "groom" | "feed";
 }
 
 const WING_PATHS: Record<"normal" | "vestigial", { l: string; r: string; vl: string[]; vr: string[] }> = {
@@ -63,7 +65,7 @@ function Wings({ id, type }: { id: string; type: WingType }) {
  * ツユ — the adult fly. Deformed but anatomically honest: compound eyes with a pseudopupil, three ocelli,
  * feathery aristae, bristles, grooming pose, a dark abdomen tip on males, iridescent wings.
  */
-export function Tsuyu({ strain = "wild", sex = "m", animated = false, label = "ツユ", className }: TsuyuProps) {
+export function Tsuyu({ strain = "wild", sex = "m", animated = false, label = "ツユ", className, pose = "idle" }: TsuyuProps) {
   const id = `ts${useId().replace(/[^a-zA-Z0-9]/g, "")}`;
   const s = paletteFor(strain);
   const { head: h, body: b, eye: e, leg } = s;
@@ -150,6 +152,7 @@ export function Tsuyu({ strain = "wild", sex = "m", animated = false, label = "�
         <ellipse cx="120" cy="142" rx="36" ry="9" fill="#4A2A10" opacity=".3" filter={`url(#${id}bs)`} />
 
         {/* front legs held together (grooming pose) */}
+        <g className={pose === "groom" ? "ts-groom" : undefined}>
         <g stroke={leg} strokeWidth={5} strokeLinecap="round" fill="none">
           <path d="M104 146 Q92 162 110 170" />
           <path d="M136 146 Q148 162 130 170" />
@@ -158,6 +161,7 @@ export function Tsuyu({ strain = "wild", sex = "m", animated = false, label = "�
         <circle cx="127" cy="170" r="5.2" fill={leg} />
         <circle cx="111.5" cy="168.5" r="1.6" fill="#fff" opacity=".5" />
         <circle cx="125.5" cy="168.5" r="1.6" fill="#fff" opacity=".5" />
+        </g>
 
         {/* head */}
         <ellipse cx="120" cy="88" rx="62" ry="54" fill={`url(#${id}h)`} stroke={h[3]} strokeWidth={2.5} />
@@ -218,6 +222,12 @@ export function Tsuyu({ strain = "wild", sex = "m", animated = false, label = "�
           <ellipse cx="136" cy="127" rx="10" ry="5.5" />
         </g>
         <path d="M114 129 Q120 135 126 129" stroke="#6B3A17" strokeWidth={2.4} fill="none" strokeLinecap="round" />
+        {pose === "feed" && (
+          <g className="ts-proboscis">
+            <path d="M120 131 L120 150" stroke={b[2]} strokeWidth={5} strokeLinecap="round" />
+            <ellipse cx="120" cy="152" rx="5.5" ry="3.5" fill={b[1]} stroke={b[3]} strokeWidth={1.2} />
+          </g>
+        )}
 
         {/* antennae with feathery aristae */}
         <g className="ant">
