@@ -49,16 +49,16 @@ git push
 | id | 内容 | 担当 | ブランチ | 状態 |
 | --- | --- | --- | --- | --- |
 | W0-scaffold | uv / npm workspaces、Next.js と FastAPI の雛形 | Claude | main | 完了 |
-| W1-brain | 脳エンジン（specs/brain.md） | Codex | feat/brain-engine | 実行中 |
+| W1-brain | 脳エンジン（specs/brain.md） | Codex | feat/brain-engine | マージ済み |
 | W1-domain | ゲームルールとパズルの Python 実装（specs/game-rules.md, puzzles.md） | Codex | feat/game-domain | マージ済み |
 | W1-api-core | API の土台（DB、認証、時計、冪等性、台帳） | Codex | feat/api-core | マージ済み |
 | W1-web-puzzles | パズルの TS エンジン、音、振動 | Codex | feat/web-puzzles | マージ済み |
 | W1-design | デザインシステム、キャラクター、ホーム画面 | Claude | feat/web-design | マージ済み |
-| W2-infra | docker compose、Dockerfile、CI | Codex | feat/infra | 実行中 |
+| W2-infra | docker compose、Dockerfile、CI | Codex | feat/infra | 完了・未マージ（commit plan 未適用） |
 | W2-api-game | ゲームのエンドポイント（domain + DB + 脳） | Codex | feat/api-game | 実行中 |
 | W2-shiori-worker | シオリのエージェントと arq ワーカー | Codex | feat/shiori-worker | 実行中 |
-| W2-puzzle-parity | TS のパズル検証を Python と完全一致させる | Codex | fix/puzzle-parity | 実行中 |
-| W2-web-games | ミニゲーム画面（ごはん、しつけ、そうじ、温度、場所えらび） | Claude | feat/web-games | 進行中 |
+| W2-puzzle-parity | TS のパズル検証を Python と完全一致させる | Codex | fix/puzzle-parity | 完了・未マージ（commit plan 未適用） |
+| W2-web-games | ミニゲーム画面（ごはん、しつけ、そうじ、温度、場所えらび） | Claude | feat/web-games（push 済み・未マージ） | ごはん画面まで |
 
 ## 決めたこと（理由つき）
 
@@ -75,5 +75,12 @@ git push
 - 本物の配線データ（MaleCNS）のダウンロード可否。
 
 ## Log
+
+- 2026-09-27 昼 Claude: 使用量の上限で停止。再開手順:
+  1. 実行中だった Codex（W2-api-game, W2-shiori-worker）の結果を C:\Users\lingm\dev\tsuyulabo-agents\<task>.last.md で確認。
+  2. 終わったタスクごとに python scripts/agents/apply-commit-plan.py <clone> → main で git fetch <clone> <branch> → git merge --no-ff → テスト → push。
+     対象: W2-infra (feat/infra), W2-puzzle-parity (fix/puzzle-parity), W2-api-game (feat/api-game), W2-shiori-worker (feat/shiori-worker)。
+  3. feat/web-games を main にマージ（/care/meal でごはんづくりの練習ができる）。
+  4. 次: しつけ・そうじ・温度・場所えらびの画面、羽化と発表会の画面、API クライアントで画面をつなぐ、Vercel デプロイ。
 
 - 2026-09-27 Claude: リポジトリ作成。企画書、開発計画、仕様（game-rules / puzzles / api / brain / shiori）、AGENTS.md を追加。
