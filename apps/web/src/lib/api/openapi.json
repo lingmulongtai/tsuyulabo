@@ -1,6 +1,77 @@
 {
   "components": {
     "schemas": {
+      "ActivityEdge": {
+        "properties": {
+          "post_group": {
+            "title": "Post Group",
+            "type": "string"
+          },
+          "pre_group": {
+            "title": "Pre Group",
+            "type": "string"
+          },
+          "sign": {
+            "enum": [
+              "excitatory",
+              "inhibitory"
+            ],
+            "title": "Sign",
+            "type": "string"
+          },
+          "weight_sum": {
+            "description": "Signed learned wiring sum before individual gains",
+            "title": "Weight Sum",
+            "type": "number"
+          }
+        },
+        "required": [
+          "pre_group",
+          "post_group",
+          "weight_sum",
+          "sign"
+        ],
+        "title": "ActivityEdge",
+        "type": "object"
+      },
+      "ActivityGroup": {
+        "properties": {
+          "circuit": {
+            "title": "Circuit",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "sensory",
+              "inter",
+              "output",
+              "modulatory"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "rates": {
+            "description": "Mean firing rate per neuron in Hz, one per window",
+            "items": {
+              "type": "number"
+            },
+            "title": "Rates",
+            "type": "array"
+          }
+        },
+        "required": [
+          "name",
+          "kind",
+          "circuit",
+          "rates"
+        ],
+        "title": "ActivityGroup",
+        "type": "object"
+      },
       "AddFriend": {
         "additionalProperties": false,
         "properties": {
@@ -64,6 +135,52 @@
           "question"
         ],
         "title": "AskRequest",
+        "type": "object"
+      },
+      "BrainActivity": {
+        "properties": {
+          "duration_ms": {
+            "title": "Duration Ms",
+            "type": "number"
+          },
+          "edges": {
+            "items": {
+              "$ref": "#/components/schemas/ActivityEdge"
+            },
+            "title": "Edges",
+            "type": "array"
+          },
+          "groups": {
+            "items": {
+              "$ref": "#/components/schemas/ActivityGroup"
+            },
+            "title": "Groups",
+            "type": "array"
+          },
+          "scenario": {
+            "enum": [
+              "rest",
+              "sugar",
+              "bitter",
+              "sugar+bitter",
+              "looming",
+              "light_left",
+              "light_right",
+              "antenna_touch",
+              "liked_odor",
+              "disliked_odor"
+            ],
+            "title": "Scenario",
+            "type": "string"
+          }
+        },
+        "required": [
+          "groups",
+          "edges",
+          "scenario",
+          "duration_ms"
+        ],
+        "title": "BrainActivity",
         "type": "object"
       },
       "ExperimentRequest": {
@@ -716,6 +833,68 @@
           }
         },
         "summary": "Behavior"
+      }
+    },
+    "/v1/flies/{fly_id}/brain/activity": {
+      "get": {
+        "description": "Observe a copy of an owned adult or active week's larva, in 20 equal windows.",
+        "operationId": "activity_v1_flies__fly_id__brain_activity_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "fly_id",
+            "required": true,
+            "schema": {
+              "title": "Fly Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "scenario",
+            "required": false,
+            "schema": {
+              "default": "sugar",
+              "enum": [
+                "rest",
+                "sugar",
+                "bitter",
+                "sugar+bitter",
+                "looming",
+                "light_left",
+                "light_right",
+                "antenna_touch",
+                "liked_odor",
+                "disliked_odor"
+              ],
+              "title": "Scenario",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BrainActivity"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Activity"
       }
     },
     "/v1/flies/{fly_id}/experiments": {

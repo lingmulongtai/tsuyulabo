@@ -11,6 +11,7 @@ from tsuyu_brain.circuit import Circuit, simulate
 from tsuyu_brain.connectome import load_circuit
 from tsuyu_brain.connectome.stimuli import cue_stimulus
 from tsuyu_brain.learning import FlyState, learned_circuit
+from tsuyu_brain.params import BrainParams
 
 FEATURES = ("MN9", "DNp01", "DNa02_L", "DNa02_R", "walking_DN", "aDN", "MBON_ap", "MBON_av")
 LABELS = ("rest", "walk", "turn_left", "turn_right", "feed", "escape", "groom", "approach", "avoid")
@@ -50,22 +51,14 @@ def shuffled_wiring(circuit: Circuit, seed: int) -> Circuit:
     return circuit.with_weights(weights)
 
 
-def scenario_features(
+def scenario_inputs(
     state: FlyState,
     scenario: str,
     *,
     cue: str = "banana",
     intensity: float = 1.0,
-    batch: int = 1,
-    seed: int = 0,
-    duration_ms: float = 300,
-    shuffle_seed: int | None = None,
-) -> Tensor:
-    """Return [batch, 8] time-averaged rates. Odor states must already be trained.
-
-    Walk adds a tonic arousal drive; rest retains low spontaneous walking-DN firing.
-    Scenario names never enter the decoder's numeric input.
-    """
+) -> tuple[BrainParams, dict[str, dict[str, float | Tensor]]]:
+    """Share stimulus definitions between behavior and copy-only activity views."""
     if scenario not in SCENARIOS:
         raise ValueError(f"unknown scenario: {scenario}")
     if not 0 <= intensity <= 5:
@@ -92,6 +85,26 @@ def scenario_features(
         jobs["olfaction_mb"] = {
             name: value * intensity for name, value in cue_stimulus(cue, state.version).items()
         }
+    return params, jobs
+
+
+def scenario_features(
+    state: FlyState,
+    scenario: str,
+    *,
+    cue: str = "banana",
+    intensity: float = 1.0,
+    batch: int = 1,
+    seed: int = 0,
+    duration_ms: float = 300,
+    shuffle_seed: int | None = None,
+) -> Tensor:
+    """Return [batch, 8] time-averaged rates. Odor states must already be trained.
+
+    Walk adds a tonic arousal drive; rest retains low spontaneous walking-DN firing.
+    Scenario names never enter the decoder's numeric input.
+    """
+    params, jobs = scenario_inputs(state, scenario, cue=cue, intensity=intensity)
     features = torch.zeros(batch, len(FEATURES))
     for name, stimulus in jobs.items():
         circuit = (

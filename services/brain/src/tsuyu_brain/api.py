@@ -14,6 +14,7 @@ from dataclasses import dataclass
 
 import torch
 
+from tsuyu_brain.activity import activity
 from tsuyu_brain.behavior import LABELS, scenario_features
 from tsuyu_brain.decoder import default_decoder
 from tsuyu_brain.individuality import generate_individual
@@ -37,6 +38,7 @@ __all__ = [
     "preference_index",
     "predict_behavior",
     "run_odor_choice",
+    "activity",
 ]
 
 
