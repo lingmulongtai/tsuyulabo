@@ -5,6 +5,7 @@ import { buzz } from "@/game/audio/haptics";
 import * as Sound from "@/game/audio/sound";
 import type { TierIndex } from "@/game/expectation";
 import { Tsuyu } from "../art/Tsuyu";
+import { Shiori } from "../art/Shiori";
 import { Pupa } from "../art/Stages";
 import { STRAIN_LABELS, type Sex, type Strain } from "../art/palette";
 import { Burst, GOLD, RAINBOW } from "../effects/Burst";
@@ -132,7 +133,9 @@ export function EclosionStage({ result, onStart, onDone, doneLabel = "飼育室�
       {cut && (
         <div className="absolute inset-x-0 top-[12%] slide-cut">
           <div className="mx-4 flex items-center gap-3 rounded-2xl bg-[#5f4fcf] px-4 py-3 shadow-2xl">
-            <span className="grid size-10 place-items-center rounded-full bg-white font-kiwi text-lg text-[#5f4fcf]">シ</span>
+            <span className="size-12 shrink-0 overflow-hidden rounded-full bg-white">
+              <Shiori mood="surprised" className="size-full" label="" />
+            </span>
             <span className="font-kiwi text-xl">これは……！？</span>
           </div>
         </div>
