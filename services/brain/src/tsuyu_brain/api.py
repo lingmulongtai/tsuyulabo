@@ -41,6 +41,8 @@ class BehaviorContext:
 def predict_behavior(
     state: FlyState, context: BehaviorContext | Mapping[str, object] | str
 ) -> dict[str, float]:
+    if state.version != "toy-v0":
+        raise ValueError(f"no validated behavior decoder for connectome version: {state.version}")
     if isinstance(context, str):
         context = BehaviorContext(scenario=context)
     elif isinstance(context, Mapping):
