@@ -10,10 +10,11 @@ function cx(...parts: Array<string | false | null | undefined>) {
 type Tone = "eye" | "leaf" | "banana" | "ai" | "plain";
 
 const TONES: Record<Tone, string> = {
-  eye: "bg-eye text-white shadow-[0_4px_0_0_#9c1428]",
-  leaf: "bg-leaf text-white shadow-[0_4px_0_0_#12574f]",
-  banana: "bg-banana text-[#3d2a05] shadow-[0_4px_0_0_#a67a17]",
-  ai: "bg-ai text-white shadow-[0_4px_0_0_#3b2f93]",
+  // Brand colours stay fixed in dark mode so white labels keep their contrast.
+  eye: "bg-[#d7263d] text-white shadow-[0_4px_0_0_#9c1428]",
+  leaf: "bg-[#1f8579] text-white shadow-[0_4px_0_0_#12574f]",
+  banana: "bg-[#e3ae35] text-[#3d2a05] shadow-[0_4px_0_0_#a67a17]",
+  ai: "bg-[#5f4fcf] text-white shadow-[0_4px_0_0_#3b2f93]",
   plain: "bg-surface-2 text-ink border border-line shadow-[0_3px_0_0_var(--line)]",
 };
 
