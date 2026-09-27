@@ -11,12 +11,12 @@ from tsuyulabo_api.domain.presentation import rank_for, rewards, summarize
     "points,rank",
     [
         (-500, "normal"),
-        (5999, "normal"),
-        (6000, "silver"),
-        (10999, "silver"),
-        (11000, "gold"),
-        (15999, "gold"),
-        (16000, "rainbow"),
+        (24999, "normal"),
+        (25000, "silver"),
+        (44999, "silver"),
+        (45000, "gold"),
+        (69999, "gold"),
+        (70000, "rainbow"),
     ],
 )
 def test_ranks(points: int, rank: str) -> None:

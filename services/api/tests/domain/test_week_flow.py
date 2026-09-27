@@ -52,7 +52,7 @@ def test_week_to_adult_team_flow() -> None:
     report = presentation.summarize(log, misses)
     assert (report.points, report.rank, report.shizuku, report.research_points) == (
         35600,
-        "rainbow",
+        "silver",
         5933,
         890,
     )
