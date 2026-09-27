@@ -10,7 +10,7 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from tsuyulabo_api.auth.dependencies import get_current_user
-from tsuyulabo_api.db.models import Gift, Like, SleepSession
+from tsuyulabo_api.db.models import Gift, Like, MatingProposal, SleepSession
 from tsuyulabo_api.db.rearing import Week
 from tsuyulabo_api.db.session import get_session
 from tsuyulabo_api.db.users import User
@@ -117,6 +117,8 @@ async def reset_time(
             (SleepSession, SleepSession.user_id),
             (Like, Like.from_user_id),
             (Gift, Gift.from_user_id),
+            (MatingProposal, MatingProposal.proposer_id),
+            (MatingProposal, MatingProposal.recipient_id),
         ):
             if await session.scalar(select(select(model).where(owner == user.id).exists())):
                 raise APIError("time_reversed", "進行済みのデータがあるため時刻を戻せません", 409)

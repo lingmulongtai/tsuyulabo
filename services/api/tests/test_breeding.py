@@ -80,7 +80,7 @@ async def test_parent_ownership_sex_reuse_and_clock_reset(sessions: Any) -> None
         assert (await game.post("/v1/weeks")).status_code == 201
 
 
-async def test_concurrent_breeding_and_stub(sessions: Any) -> None:
+async def test_concurrent_breeding(sessions: Any) -> None:
     async with GameClient(sessions, weeks.router) as game:
         mother = await make_adult(sessions, game)
         father = await make_adult(sessions, game, sex="m")
@@ -92,7 +92,6 @@ async def test_concurrent_breeding_and_stub(sessions: Any) -> None:
             assert (
                 len(list(await session.scalars(select(Week).where(Week.status == "active")))) == 1
             )
-        assert (await game.post("/v1/weeks/friend-mating")).status_code == 501
 
 
 async def test_lethal_redraws_persist_and_rainbow_mutates_one_allele(

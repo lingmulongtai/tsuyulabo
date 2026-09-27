@@ -1,14 +1,24 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Self
 
 from fastapi import APIRouter
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, model_validator
 from sqlalchemy import func, select
-from tsuyulabo_api.db.models import Adult, Friendship, LarvaState, Notification, User, Week
+from tsuyulabo_api.db.models import (
+    Adult,
+    Friendship,
+    LarvaState,
+    MatingProposal,
+    Notification,
+    PendingEgg,
+    User,
+    Week,
+)
 from tsuyulabo_api.domain import constants as c
 from tsuyulabo_api.domain import eclosion, genetics, lifecycle, names
 from tsuyulabo_api.errors import APIError
+from tsuyulabo_api.routers.mating import router as mating_router
 from tsuyulabo_api.services import week as service
 from tsuyulabo_api.services.brain_state import snapshot as brain_snapshot
 from tsuyulabo_api.services.brain_state import store as store_brain
@@ -18,11 +28,19 @@ from tsuyulabo_api.services.game import Brain, CurrentClock, CurrentUser, Sessio
 from tsuyulabo_api.services.idempotency import IdempotentRoute
 
 router = APIRouter(prefix="/v1/weeks", route_class=IdempotentRoute)
+router.include_router(mating_router)
 
 
 class StartWeekRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
     parents: tuple[str, str] | None = None
+    pending_egg_id: str | None = None
+
+    @model_validator(mode="after")
+    def one_source(self) -> Self:
+        if self.parents is not None and self.pending_egg_id is not None:
+            raise ValueError("choose parents or a pending egg")
+        return self
 
 
 @router.post("", status_code=201)
@@ -41,7 +59,18 @@ async def start_week(
         raise APIError("week_already_active", "育成中の週があります", 409)
     now = game_now(clock, user)
     parents = body.parents if body else None
-    offspring = await draw_egg(session, user.id, parents, now, rng())
+    pending = None
+    if body is not None and body.pending_egg_id is not None:
+        pending = await session.get(PendingEgg, body.pending_egg_id)
+        if pending is None or pending.user_id != user.id:
+            raise APIError("not_found", "卵が見つかりません", 404)
+        if pending.consumed_week_id is not None:
+            raise APIError("egg_already_used", "この卵は受け取り済みです", 409)
+        proposal = await session.get(MatingProposal, pending.proposal_id)
+        parents = (proposal.mother_id, proposal.father_id)
+        offspring = genetics.Offspring(pending.genotype, pending.lethal_redraws)
+    else:
+        offspring = await draw_egg(session, user.id, parents, now, rng())
     week = Week(
         user_id=user.id,
         started_at=now,
@@ -52,17 +81,13 @@ async def start_week(
     )
     session.add(week)
     await session.flush()
+    if pending is not None:
+        pending.consumed_week_id = week.id
     larva = LarvaState(week_id=week.id, last_computed_at=now)
     store_brain(larva, brain.new(), brain)
     session.add(larva)
     await session.flush()
     return await service.payload(session, week, now)
-
-
-@router.post("/friend-mating", status_code=501)
-async def friend_mating(user: CurrentUser) -> None:
-    # TODO: define friend consent and cross-owner parental eligibility before implementation.
-    raise APIError("not_implemented", "お見合いは準備中です", 501)
 
 
 @router.get("/current")
