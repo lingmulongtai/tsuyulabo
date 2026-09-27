@@ -1,0 +1,16 @@
+{
+  "name": "@tsuyulabo/mobile",
+  "private": true,
+  "version": "0.1.0-alpha.1",
+  "scripts": {
+    "sync": "cap sync android",
+    "doctor": "cap doctor"
+  },
+  "dependencies": {
+    "@capacitor/android": "8.5.2",
+    "@capacitor/core": "8.5.2"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "8.5.2"
+  }
+}
