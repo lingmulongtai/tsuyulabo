@@ -4,16 +4,16 @@
 
 ## いまの状態（サマリー）
 
-- 日付: 2026-09-27（昼）
-- フェーズ: W2 完了 → W3 進行中
-- main にあるもの: 仕様一式、脳エンジン（toy-v0）、ゲームルール、ゲーム API の全エンドポイント（脳はアダプター経由）、
-  シオリ（Mock で動くエージェント、根拠の検証、RAG）と arq ワーカー、docker compose・Dockerfile・CI、
-  Web: デザインシステム、ホーム（モック）、ごはん・しつけのミニゲーム（練習モード）、羽化の演出（デモ）、研究発表会（デモ）
-- テスト: Python 328 件（+ eval 8 件）、Web 183 件。ruff / typecheck / lint も通過
-- `docker compose up` の Postgres + Redis + API + ワーカーで、卵→パズル→時間スキップ→しつけ（ワーカーで学習）→シオリの回答まで通ることを `scripts/smoke_api.py` で確認済み
-- 実行中の Codex: W3-integration（本物の脳を API とワーカーにつなぐ）、W3-web-app（API クライアントと残りの画面）、
-  W3-malecns（本物の配線データから回路を作る）
-- MaleCNS v1.0 の生データ（約 1.1 GB、オーナー許可済み）は `C:\Users\lingm\dev\tsuyulabo-agents\W3-malecns\data\raw\malecns-v1.0\`。git には入れない
+- 日付: 2026-09-27（午後）
+- フェーズ: W3 完了 → W4 進行中。**アルファの1週間ループが Web + API + ワーカー + DB で通しで遊べる状態**
+- main にあるもの: 全画面が API につながった Web（ホーム、ごはん・しつけ・そうじ・温度・場所えらび・睡眠、研究発表会、羽化、
+  チーム、成虫の詳細＋脳モデルで動く行動、脳ビューア、図鑑、フレンド、シオリ、開発用の時計）、ゲーム API、本物の脳エンジン
+  （既定は toy-v0。MaleCNS v1.0 の回路も同梱、6 項目中 3 項目合格）、シオリ、ワーカー、docker compose、CI
+- テスト: Python 373 件（+ eval）、Web 214 件。ruff / typecheck / lint / build も通過。GitHub Actions も緑
+- ブラウザで通しプレイ確認済み: 卵 → 時間スキップ → 発表会（ケアミスで減点・報酬 0）→ 羽化（サーバーの抽選）→ 成虫ページ → 脳ビューア
+- 実行中の Codex: W4-e2e（Playwright で1週間）、W4-malecns-calibrate（本物の回路の調整）、W4-names（成虫の名前と名前の変更）
+- MaleCNS v1.0 の生データ（約 1.1 GB、オーナー許可済み）は `C:\Users\lingm\dev\tsuyulabo-agents\W3-malecns\data\raw\malecns-v1.0\`
+  （W4-malecns-calibrate のクローンにもコピー）。git には入れない
 - オーナーが帰宅後にやること: Codex のサンドボックス設定、Vercel CLI のログイン
 - ローカルで pytest が `PermissionError: ...\Temp\pytest-of-lingm` になるときは `PYTEST_DEBUG_TEMPROOT=/c/Users/lingm/.cache/pytest-tmp` を付ける
   （Codex のサンドボックスが作った一時フォルダの権限のせい）。
@@ -65,11 +65,13 @@ git push
 | W2-puzzle-parity | TS のパズル検証を Python と完全一致させる | Codex | fix/puzzle-parity | マージ済み |
 | W2-web-games | ごはん・しつけの画面、羽化の演出、研究発表会 | Claude | feat/web-games, feat/web-screens | マージ済み |
 | W3-integration | 本物の脳を API とワーカーに接続、報酬の下限、研究ランク | Codex | feat/integration | マージ済み（docker compose で通し確認済み） |
-| W4-brain-viewer | 神経活動の API と脳ビューア画面 | Codex | feat/brain-viewer | 実行中 |
-| W4-wire-screens | しつけ・発表会・羽化の画面を API に接続、ホームの発表会導線 | Codex | feat/wire-screens | W3-web-app のあとで開始 |
-| W4-e2e | Playwright で1週間を通しでプレイ | Codex | feat/e2e | W4-wire-screens のあとで開始 |
-| W3-web-app | API クライアント、フック、ホームとごはんの接続、残りの画面 | Codex | feat/web-app | 実行中 |
-| W3-malecns | MaleCNS v1.0 から回路を作って評価 | Codex | feat/malecns | 実行中 |
+| W4-brain-viewer | 神経活動の API と脳ビューア画面 | Codex | feat/brain-viewer | マージ済み |
+| W4-wire-screens | しつけ・発表会・羽化の画面を API に接続、ホームの発表会導線 | Codex | feat/wire-screens | マージ済み |
+| W4-malecns-calibrate | 本物の回路で残り 3 項目を合格させる | Codex | feat/malecns-calibrate | 実行中 |
+| W4-names | 成虫の名前の自動生成と名前の変更 | Codex | feat/adult-names | 実行中 |
+| W4-e2e | Playwright で1週間を通しでプレイ | Codex | feat/e2e | 実行中 |
+| W3-web-app | API クライアント、フック、ホームとごはんの接続、残りの画面 | Codex | feat/web-app | マージ済み |
+| W3-malecns | MaleCNS v1.0 から回路を作って評価（3/6 合格、既定は toy-v0 のまま） | Codex | feat/malecns | マージ済み |
 
 ## 決めたこと（理由つき）
 
