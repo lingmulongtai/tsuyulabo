@@ -2,8 +2,9 @@
 
     uv run python scripts/smoke_api.py [--base http://localhost:8000]
 
-Creates a guest, starts a week, plays a few puzzles through the real endpoints, advances the dev clock,
-trains once, asks Shiori through the worker queue, and prints what happened. Needs TSUYU_DEV_TOOLS=1.
+Creates a guest, starts a week, plays a few puzzles through the real endpoints, advances the dev
+clock, trains once, asks Shiori through the worker queue, and prints what happened.
+Needs TSUYU_DEV_TOOLS=1.
 """
 
 from __future__ import annotations
@@ -87,22 +88,31 @@ def main() -> int:
 
     temp = api.call("POST", "/v1/puzzles", json={"kind": "temperature"})
     time.sleep(0.3)
-    res = api.call("POST", f"/v1/puzzles/{temp['puzzle_id']}/submit", json={"stop_ms": 200, "elapsed_ms": 200})
+    res = api.call(
+        "POST", f"/v1/puzzles/{temp['puzzle_id']}/submit", json={"stop_ms": 200, "elapsed_ms": 200}
+    )
     print("temperature:", res.get("result", res))
 
     meal = api.call("POST", "/v1/puzzles", json={"kind": "meal"})
-    res = api.call("POST", f"/v1/puzzles/{meal['puzzle_id']}/submit", json={"moves": [], "elapsed_ms": 0})
+    res = api.call(
+        "POST", f"/v1/puzzles/{meal['puzzle_id']}/submit", json={"moves": [], "elapsed_ms": 0}
+    )
     print("meal (no moves):", res.get("result", res))
 
     api.call("POST", "/v1/dev/time/advance", json={"to": "next_day"})
     home = api.call("GET", "/v1/home")
-    print("after next_day:", home["week"]["research_day"], home["week"]["stage"], "care_miss", home["week"]["care_miss"])
+    w = home["week"]
+    print("after next_day:", w["research_day"], w["stage"], "care_miss", w["care_miss"])
 
-    train = api.call("POST", "/v1/puzzles", json={"kind": "training", "cue": "banana", "valence": "reward"})
+    train = api.call(
+        "POST", "/v1/puzzles", json={"kind": "training", "cue": "banana", "valence": "reward"}
+    )
     params = train["params"]
     path = solve_zip(params["n"], params["checkpoints"])
     time.sleep(2.0)
-    res = api.call("POST", f"/v1/puzzles/{train['puzzle_id']}/submit", json={"path": path, "elapsed_ms": 1800})
+    res = api.call(
+        "POST", f"/v1/puzzles/{train['puzzle_id']}/submit", json={"path": path, "elapsed_ms": 1800}
+    )
     print("training:", res.get("result", res))
 
     job = api.call("POST", "/v1/shiori/ask", json={"question": "バナナのしつけはうまくいった？"})
