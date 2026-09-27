@@ -68,6 +68,13 @@
 - `p` は `pieces` の添字。今の手札に含まれ、まだ置いていないこと。
 - 置くセルがすべて盤内かつ空であること。`t <= time_limit_ms + 1500`。
 
+### 検証の順番と細かい決まり
+
+- 最初に `moves` がオブジェクトの配列であることを確認（違えば `wrong_length`）。配置を再生する前に、すべての時刻を検証する。
+- 時刻の検証順: `elapsed_ms` が非負の整数（違えば `non_monotonic_time`）→ `elapsed_ms <= 600000`（超過は `time_exceeded`）→ 各 `t` が非負の整数かつ単調非減少 → 各 `t <= time_limit_ms + 1500` → 最後の `t <= elapsed_ms`。時刻の不正は `non_monotonic_time`、上限超過は `time_exceeded`。同時刻の手は許可する。
+- 各手は `p` の整数判定（`not_in_hand`）→ 使用済み（`already_placed`）→ 現在の手札（`not_in_hand`）→ `r, c` の整数判定と全セルの範囲（`out_of_bounds`）→ 占有（`cell_occupied`）の順。最初の違反を返す。
+- 時刻の上限は境界を含む。得点の丸めは下記の `floor(line_score * multiplier)` のみで、浮動小数点の許容誤差は加えない。
+
 ### 置いたあとの処理と採点
 
 1. ピースのセルに材料を置く。
@@ -127,6 +134,12 @@
 - `path[0]` が `k=1` のマス、最後が `k=K` のマス、チェックポイントのマスが `k` の昇順に現れる。
 - ★: `s = n*n / 25` として、`elapsed_ms < 12000*s` → 3、`< 25000*s` → 2、それ以外 → 1。
 
+### 検証の順番と細かい決まり
+
+- `path` が配列で長さ `n*n`（`wrong_length`）→ 全セルが整数かつ盤内（`out_of_bounds`）→ 重複（`revisit`）→ 全区間の上下左右の隣接（`not_adjacent`）→ 始点（`bad_start`）→ 終点（`bad_end`）→ チェックポイント順（`checkpoint_order`）→ 時刻、の順で最初の違反を返す。
+- チェックポイントは `k` の昇順に並べて比較する。時刻は `elapsed_ms` が非負の整数でなければ `non_monotonic_time`、`600000` を超えれば `time_exceeded`。`600000` 自体は許可し、独自の短い制限時間は設けない。
+- 星の境界は上記の厳密な `<`。丸めや許容誤差は加えない。
+
 ### result
 
 ```json
@@ -164,6 +177,12 @@
 - 各タップ: `d = |x(t) - center|`。`d <= perfect` → perfect 34 点、`d <= good` → good 22 点、それ以外 miss 5 点。
 - `score = min(100, 合計)`。`grades: ["perfect", "good", "miss"]` も返す。
 
+### 検証の順番と細かい決まり
+
+- `taps` が配列で指定回数（`wrong_tap_count`）→ `elapsed_ms` が非負の整数（`non_monotonic_time`）→ `elapsed_ms <= 600000`（`time_exceeded`）→ 各タップの時刻 → 最後のタップが `elapsed_ms` 以下（`non_monotonic_time`）の順。
+- 各タップは、非負の整数かつ狭義単調増加（違えば `non_monotonic_time`）を先に調べ、次に `t <= 10000`（超過は `time_exceeded`）を調べる。最初の `t=0` と上限ちょうどは許可する。
+- 境界を含む判定を浮動小数点誤差から守るため、実際の比較は `d <= perfect + 1e-12`、次に `d <= good + 1e-12` とする。得点は整数の合計を 100 で打ち切り、追加の丸めはしない。
+
 ## 4. 温度あわせ `temperature`（5秒）
 
 ゆれる針を 25℃ 付近で止める。
@@ -185,6 +204,12 @@
 ### 採点
 
 - `score = max(0, round(100 - |temp - 25| * 20))`。`grade`: 90 以上 perfect、60 以上 good、それ未満 miss。
+
+### 検証の順番と細かい決まり
+
+- `elapsed_ms` が非負の整数（`non_monotonic_time`）→ `elapsed_ms <= 600000`（`time_exceeded`）→ `stop_ms` が非負の整数（`non_monotonic_time`）→ `stop_ms <= 600000`（`time_exceeded`）→ `stop_ms <= elapsed_ms`（`non_monotonic_time`）の順で最初の違反を返す。小数の時刻は切り捨てず拒否する。
+- 上限 `600000` は境界を含む。5 秒の独自上限は設けない。サーバーの壁時計による期限・不正検出は別途行う（発行から実時間で 600000 ms 以上なら期限切れ）。
+- 丸めは `raw = 100 - |temp - 25| * 20` に対して `score = max(0, floor(raw + 0.5))`。正のちょうど半分は上へ丸める（例: 92.5 → 93）。偶数丸めや epsilon は使わない。丸めた得点を 90 以上、60 以上の順に比較する。
 
 ## 5. さなぎの場所えらび `pupation_site`（10秒）
 
