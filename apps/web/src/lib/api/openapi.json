@@ -776,6 +776,219 @@
         "title": "IssueRequest",
         "type": "object"
       },
+      "MatingGenotype": {
+        "properties": {
+          "Cy": {
+            "items": {
+              "enum": [
+                "+",
+                "Cy"
+              ],
+              "type": "string"
+            },
+            "title": "Cy",
+            "type": "array"
+          },
+          "e": {
+            "items": {
+              "enum": [
+                "+",
+                "e"
+              ],
+              "type": "string"
+            },
+            "title": "E",
+            "type": "array"
+          },
+          "sex": {
+            "enum": [
+              "f",
+              "m"
+            ],
+            "title": "Sex",
+            "type": "string"
+          },
+          "vg": {
+            "items": {
+              "enum": [
+                "+",
+                "vg"
+              ],
+              "type": "string"
+            },
+            "title": "Vg",
+            "type": "array"
+          },
+          "w": {
+            "items": {
+              "enum": [
+                "+",
+                "w"
+              ],
+              "type": "string"
+            },
+            "title": "W",
+            "type": "array"
+          },
+          "y": {
+            "items": {
+              "enum": [
+                "+",
+                "y"
+              ],
+              "type": "string"
+            },
+            "title": "Y",
+            "type": "array"
+          }
+        },
+        "required": [
+          "sex",
+          "w",
+          "y",
+          "e",
+          "vg",
+          "Cy"
+        ],
+        "title": "MatingGenotype",
+        "type": "object"
+      },
+      "MatingInbox": {
+        "properties": {
+          "incoming": {
+            "items": {
+              "$ref": "#/components/schemas/MatingView"
+            },
+            "title": "Incoming",
+            "type": "array"
+          },
+          "outgoing": {
+            "items": {
+              "$ref": "#/components/schemas/MatingView"
+            },
+            "title": "Outgoing",
+            "type": "array"
+          }
+        },
+        "required": [
+          "incoming",
+          "outgoing"
+        ],
+        "title": "MatingInbox",
+        "type": "object"
+      },
+      "MatingOption": {
+        "properties": {
+          "available": {
+            "title": "Available",
+            "type": "boolean"
+          },
+          "genotype": {
+            "$ref": "#/components/schemas/MatingGenotype"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "sex": {
+            "enum": [
+              "f",
+              "m"
+            ],
+            "title": "Sex",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "sex",
+          "genotype",
+          "available"
+        ],
+        "title": "MatingOption",
+        "type": "object"
+      },
+      "MatingView": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "expires_at": {
+            "format": "date-time",
+            "title": "Expires At",
+            "type": "string"
+          },
+          "father_id": {
+            "title": "Father Id",
+            "type": "string"
+          },
+          "father_name": {
+            "title": "Father Name",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "mother_id": {
+            "title": "Mother Id",
+            "type": "string"
+          },
+          "mother_name": {
+            "title": "Mother Name",
+            "type": "string"
+          },
+          "proposer_id": {
+            "title": "Proposer Id",
+            "type": "string"
+          },
+          "proposer_name": {
+            "title": "Proposer Name",
+            "type": "string"
+          },
+          "recipient_id": {
+            "title": "Recipient Id",
+            "type": "string"
+          },
+          "recipient_name": {
+            "title": "Recipient Name",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "pending",
+              "accepted",
+              "declined",
+              "expired"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "proposer_id",
+          "proposer_name",
+          "recipient_id",
+          "recipient_name",
+          "mother_id",
+          "mother_name",
+          "father_id",
+          "father_name",
+          "status",
+          "created_at",
+          "expires_at"
+        ],
+        "title": "MatingView",
+        "type": "object"
+      },
       "MazeFrame": {
         "properties": {
           "heading": {
@@ -901,6 +1114,50 @@
         "title": "MazeToken",
         "type": "object"
       },
+      "PendingEggView": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "father_id": {
+            "title": "Father Id",
+            "type": "string"
+          },
+          "father_name": {
+            "title": "Father Name",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "mother_id": {
+            "title": "Mother Id",
+            "type": "string"
+          },
+          "mother_name": {
+            "title": "Mother Name",
+            "type": "string"
+          },
+          "proposal_id": {
+            "title": "Proposal Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "proposal_id",
+          "mother_id",
+          "mother_name",
+          "father_id",
+          "father_name",
+          "created_at"
+        ],
+        "title": "PendingEggView",
+        "type": "object"
+      },
       "ProfilePatch": {
         "additionalProperties": false,
         "properties": {
@@ -943,6 +1200,30 @@
           }
         },
         "title": "ProfilePatch",
+        "type": "object"
+      },
+      "ProposeMating": {
+        "additionalProperties": false,
+        "properties": {
+          "adult_id": {
+            "title": "Adult Id",
+            "type": "string"
+          },
+          "friend_adult_id": {
+            "title": "Friend Adult Id",
+            "type": "string"
+          },
+          "friend_id": {
+            "title": "Friend Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "friend_id",
+          "adult_id",
+          "friend_adult_id"
+        ],
+        "title": "ProposeMating",
         "type": "object"
       },
       "RaceEntryView": {
@@ -1182,6 +1463,17 @@
               }
             ],
             "title": "Parents"
+          },
+          "pending_egg_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pending Egg Id"
           }
         },
         "title": "StartWeekRequest",
@@ -3132,8 +3424,24 @@
       }
     },
     "/v1/weeks/friend-mating": {
+      "get": {
+        "operationId": "inbox_v1_weeks_friend_mating_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MatingInbox"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Inbox"
+      },
       "post": {
-        "operationId": "friend_mating_v1_weeks_friend_mating_post",
+        "operationId": "propose_v1_weeks_friend_mating_post",
         "parameters": [
           {
             "in": "header",
@@ -3146,7 +3454,27 @@
             }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProposeMating"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MatingView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
           "422": {
             "content": {
               "application/json": {
@@ -3156,17 +3484,172 @@
               }
             },
             "description": "Validation Error"
-          },
-          "501": {
+          }
+        },
+        "summary": "Propose"
+      }
+    },
+    "/v1/weeks/friend-mating/options/{friend_id}": {
+      "get": {
+        "operationId": "options_v1_weeks_friend_mating_options__friend_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "friend_id",
+            "required": true,
+            "schema": {
+              "title": "Friend Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/MatingOption"
+                  },
+                  "title": "Response Options V1 Weeks Friend Mating Options  Friend Id  Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Options"
+      }
+    },
+    "/v1/weeks/friend-mating/{proposal_id}/accept": {
+      "post": {
+        "operationId": "accept_v1_weeks_friend_mating__proposal_id__accept_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "proposal_id",
+            "required": true,
+            "schema": {
+              "title": "Proposal Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Idempotency-Key",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MatingView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Accept"
+      }
+    },
+    "/v1/weeks/friend-mating/{proposal_id}/decline": {
+      "post": {
+        "operationId": "decline_v1_weeks_friend_mating__proposal_id__decline_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "proposal_id",
+            "required": true,
+            "schema": {
+              "title": "Proposal Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Idempotency-Key",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MatingView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Decline"
+      }
+    },
+    "/v1/weeks/pending-eggs": {
+      "get": {
+        "operationId": "pending_v1_weeks_pending_eggs_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PendingEggView"
+                  },
+                  "title": "Response Pending V1 Weeks Pending Eggs Get",
+                  "type": "array"
+                }
               }
             },
             "description": "Successful Response"
           }
         },
-        "summary": "Friend Mating"
+        "summary": "Pending"
       }
     },
     "/v1/zukan": {

@@ -745,10 +745,79 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /** Inbox */
+        get: operations["inbox_v1_weeks_friend_mating_get"];
+        put?: never;
+        /** Propose */
+        post: operations["propose_v1_weeks_friend_mating_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/weeks/friend-mating/options/{friend_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Options */
+        get: operations["options_v1_weeks_friend_mating_options__friend_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/weeks/friend-mating/{proposal_id}/accept": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
         get?: never;
         put?: never;
-        /** Friend Mating */
-        post: operations["friend_mating_v1_weeks_friend_mating_post"];
+        /** Accept */
+        post: operations["accept_v1_weeks_friend_mating__proposal_id__accept_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/weeks/friend-mating/{proposal_id}/decline": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Decline */
+        post: operations["decline_v1_weeks_friend_mating__proposal_id__decline_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/weeks/pending-eggs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Pending */
+        get: operations["pending_v1_weeks_pending_eggs_get"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -1087,6 +1156,82 @@ export interface components {
             /** Valence */
             valence?: ("reward" | "punish") | null;
         };
+        /** MatingGenotype */
+        MatingGenotype: {
+            /** Cy */
+            Cy: ("+" | "Cy")[];
+            /** E */
+            e: ("+" | "e")[];
+            /**
+             * Sex
+             * @enum {string}
+             */
+            sex: "f" | "m";
+            /** Vg */
+            vg: ("+" | "vg")[];
+            /** W */
+            w: ("+" | "w")[];
+            /** Y */
+            y: ("+" | "y")[];
+        };
+        /** MatingInbox */
+        MatingInbox: {
+            /** Incoming */
+            incoming: components["schemas"]["MatingView"][];
+            /** Outgoing */
+            outgoing: components["schemas"]["MatingView"][];
+        };
+        /** MatingOption */
+        MatingOption: {
+            /** Available */
+            available: boolean;
+            genotype: components["schemas"]["MatingGenotype"];
+            /** Id */
+            id: string;
+            /** Name */
+            name: string;
+            /**
+             * Sex
+             * @enum {string}
+             */
+            sex: "f" | "m";
+        };
+        /** MatingView */
+        MatingView: {
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Expires At
+             * Format: date-time
+             */
+            expires_at: string;
+            /** Father Id */
+            father_id: string;
+            /** Father Name */
+            father_name: string;
+            /** Id */
+            id: string;
+            /** Mother Id */
+            mother_id: string;
+            /** Mother Name */
+            mother_name: string;
+            /** Proposer Id */
+            proposer_id: string;
+            /** Proposer Name */
+            proposer_name: string;
+            /** Recipient Id */
+            recipient_id: string;
+            /** Recipient Name */
+            recipient_name: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "pending" | "accepted" | "declined" | "expired";
+        };
         /** MazeFrame */
         MazeFrame: {
             /** Heading */
@@ -1128,6 +1273,26 @@ export interface components {
             /** Y */
             y: number;
         };
+        /** PendingEggView */
+        PendingEggView: {
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Father Id */
+            father_id: string;
+            /** Father Name */
+            father_name: string;
+            /** Id */
+            id: string;
+            /** Mother Id */
+            mother_id: string;
+            /** Mother Name */
+            mother_name: string;
+            /** Proposal Id */
+            proposal_id: string;
+        };
         /** ProfilePatch */
         ProfilePatch: {
             /** Display Name */
@@ -1136,6 +1301,15 @@ export interface components {
             favorite_adult_id?: string | null;
             /** Title */
             title?: string | null;
+        };
+        /** ProposeMating */
+        ProposeMating: {
+            /** Adult Id */
+            adult_id: string;
+            /** Friend Adult Id */
+            friend_adult_id: string;
+            /** Friend Id */
+            friend_id: string;
         };
         /** RaceEntryView */
         RaceEntryView: {
@@ -1222,6 +1396,8 @@ export interface components {
                 string,
                 string
             ] | null;
+            /** Pending Egg Id */
+            pending_egg_id?: string | null;
         };
         /** TeamRequest */
         TeamRequest: {
@@ -2932,7 +3108,27 @@ export interface operations {
             };
         };
     };
-    friend_mating_v1_weeks_friend_mating_post: {
+    inbox_v1_weeks_friend_mating_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MatingInbox"];
+                };
+            };
+        };
+    };
+    propose_v1_weeks_friend_mating_post: {
         parameters: {
             query?: never;
             header: {
@@ -2941,8 +3137,21 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ProposeMating"];
+            };
+        };
         responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MatingView"];
+                };
+            };
             /** @description Validation Error */
             422: {
                 headers: {
@@ -2952,13 +3161,121 @@ export interface operations {
                     "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
+        };
+    };
+    options_v1_weeks_friend_mating_options__friend_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                friend_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
             /** @description Successful Response */
-            501: {
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["MatingOption"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    accept_v1_weeks_friend_mating__proposal_id__accept_post: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+            };
+            path: {
+                proposal_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MatingView"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    decline_v1_weeks_friend_mating__proposal_id__decline_post: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+            };
+            path: {
+                proposal_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MatingView"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    pending_v1_weeks_pending_eggs_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PendingEggView"][];
                 };
             };
         };
