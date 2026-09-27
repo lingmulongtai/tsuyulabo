@@ -9,7 +9,7 @@ from torch import Tensor
 
 from tsuyu_brain.circuit import Circuit, simulate
 from tsuyu_brain.connectome import load_circuit
-from tsuyu_brain.connectome.toy_v0 import cue_stimulus
+from tsuyu_brain.connectome.stimuli import cue_stimulus
 from tsuyu_brain.learning import FlyState, learned_circuit
 
 FEATURES = ("MN9", "DNp01", "DNa02_L", "DNa02_R", "walking_DN", "aDN", "MBON_ap", "MBON_av")
@@ -39,8 +39,14 @@ def shuffled_wiring(circuit: Circuit, seed: int) -> Circuit:
     weights = circuit.weights.clone()
     for source, target in circuit.projections:
         block = weights[circuit.groups[source], circuit.groups[target]]
-        flat = block.flatten()
-        block.copy_(flat[torch.randperm(flat.numel(), generator=generator)].reshape(block.shape))
+        # Real functional groups may contain both signs; shuffle within sign strata.
+        signs = circuit.signs[circuit.groups[source]]
+        for sign in signs.unique():
+            rows = signs == sign
+            flat = block[rows].flatten()
+            block[rows] = flat[torch.randperm(flat.numel(), generator=generator)].reshape(
+                int(rows.sum()), block.shape[1]
+            )
     return circuit.with_weights(weights)
 
 
@@ -84,11 +90,13 @@ def scenario_features(
         jobs["grooming"] = {"JO": intensity}
     elif scenario in {"liked_odor", "disliked_odor"}:
         jobs["olfaction_mb"] = {
-            name: value * intensity for name, value in cue_stimulus(cue).items()
+            name: value * intensity for name, value in cue_stimulus(cue, state.version).items()
         }
     features = torch.zeros(batch, len(FEATURES))
     for name, stimulus in jobs.items():
-        circuit = learned_circuit(state) if name == "olfaction_mb" else load_circuit(name)
+        circuit = (
+            learned_circuit(state) if name == "olfaction_mb" else load_circuit(name, state.version)
+        )
         if shuffle_seed is not None:
             circuit = shuffled_wiring(circuit, shuffle_seed)
         result = simulate(circuit, stimulus, params, duration_ms, batch, seed)

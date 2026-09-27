@@ -26,6 +26,7 @@ def generate_dataset(
     seed: int = 123,
     *,
     shuffle_seed: int | None = None,
+    version: str = "toy-v0",
 ) -> Dataset:
     if individuals < 2 or trials < 1:
         raise ValueError("at least two individuals and one trial required")
@@ -37,7 +38,7 @@ def generate_dataset(
         params = generate_individual(
             [] if trait is None else [trait], "m" if individual % 2 else "f", individual_seed
         )
-        original = new_fly_state(params)
+        original = new_fly_state(params, version)
         cue = CUES[individual % len(CUES)]
         for index, (scenario, label) in enumerate(SCENARIOS.items()):
             state = original

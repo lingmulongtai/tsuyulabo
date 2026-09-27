@@ -158,7 +158,13 @@ def simulate(
                 elapsed = ((step % window_steps) + 1) * DT_MS
                 windows.append(elapsed)
                 for name, group in circuit.groups.items():
-                    group_windows[name].append(window_counts[:, group].mean(1) * 1000 / elapsed)
+                    # Missing annotated populations stay empty, never invented neurons or NaNs.
+                    rate = (
+                        window_counts[:, group].mean(1) * 1000 / elapsed
+                        if group.stop > group.start
+                        else torch.zeros(batch)
+                    )
+                    group_windows[name].append(rate)
                 window_counts.zero_()
     return SimResult(
         {name: torch.stack(values, dim=1) for name, values in group_windows.items()},

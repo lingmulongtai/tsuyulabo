@@ -13,18 +13,18 @@ from torch import Tensor
 
 from tsuyu_brain.circuit import Circuit, simulate
 from tsuyu_brain.connectome import load_circuit
-from tsuyu_brain.connectome.toy_v0 import cue_stimulus
+from tsuyu_brain.connectome.stimuli import cue_stimulus
 from tsuyu_brain.params import BrainParams
 
 
 @dataclass(frozen=True)
 class FlyState:
     params: BrainParams
-    kc_mbon: Tensor  # [200, 2], columns approach / avoid; owned by this state
+    kc_mbon: Tensor  # magnitudes [KC, all approach MBONs then all avoid MBONs]
     version: str = "toy-v0"
 
     def __post_init__(self) -> None:
-        if self.version != "toy-v0" or self.kc_mbon.shape != (200, 2):
+        if self.kc_mbon.shape != learning_shape(self.version):
             raise ValueError("unsupported state version or weight shape")
         if not torch.isfinite(self.kc_mbon).all() or (self.kc_mbon < 0).any():
             raise ValueError("learned weights must be finite and nonnegative")
@@ -47,16 +47,23 @@ class FlyState:
     def from_bytes(cls, payload: bytes) -> FlyState:
         data = json.loads(payload)
         raw = base64.b64decode(data["kc_mbon_f16"], validate=True)
-        if len(raw) != 800:
-            raise ValueError("expected 400 float16 weights")
+        shape = learning_shape(data["version"])
+        if len(raw) != shape[0] * shape[1] * 2:
+            raise ValueError("unexpected number of float16 weights for state version")
         weights = torch.from_numpy(np.frombuffer(raw, dtype="<f2").astype("float32")).reshape(
-            200, 2
+            *shape
         )
         return cls(BrainParams(**data["params"]), weights, data["version"])
 
 
-def new_fly_state(params: BrainParams) -> FlyState:
-    circuit = load_circuit("olfaction_mb")
+def learning_shape(version: str) -> tuple[int, int]:
+    circuit = load_circuit("olfaction_mb", version)
+    sizes = {name: group.stop - group.start for name, group in circuit.groups.items()}
+    return sizes["KC"], sizes["MBON_ap"] + sizes["MBON_av"]
+
+
+def new_fly_state(params: BrainParams, version: str = "toy-v0") -> FlyState:
+    circuit = load_circuit("olfaction_mb", version)
     weights = torch.cat(
         [
             circuit.weights[circuit.groups["KC"], circuit.groups[group]]
@@ -64,14 +71,20 @@ def new_fly_state(params: BrainParams) -> FlyState:
         ],
         dim=1,
     )
-    return FlyState(params, weights.clone())
+    return FlyState(params, weights.abs().clone(), version)
 
 
 def learned_circuit(state: FlyState) -> Circuit:
     circuit = load_circuit("olfaction_mb", state.version)
     weights = circuit.weights.clone()
-    for column, name in enumerate(("MBON_ap", "MBON_av")):
-        weights[circuit.groups["KC"], circuit.groups[name]] = state.kc_mbon[:, column : column + 1]
+    column = 0
+    for name in ("MBON_ap", "MBON_av"):
+        group = circuit.groups[name]
+        stop = column + group.stop - group.start
+        weights[circuit.groups["KC"], group] = (
+            state.kc_mbon[:, column:stop] * circuit.signs[circuit.groups["KC"], None]
+        )
+        column = stop
     return circuit.with_weights(weights)
 
 
@@ -80,7 +93,7 @@ def choice_indices(state: FlyState, cue: str, seed: int, trials: int) -> Tensor:
         raise ValueError("trials must be positive")
     result = simulate(
         learned_circuit(state),
-        cue_stimulus(cue),
+        cue_stimulus(cue, state.version),
         state.params,
         duration_ms=300,
         batch=trials,
@@ -102,7 +115,7 @@ def apply_training(
         raise ValueError("valence must be reward or punish")
     if not math.isfinite(strength) or not 0 <= strength <= 1:
         raise ValueError("strength must be in [0, 1]")
-    stimulus = cue_stimulus(cue)
+    stimulus = cue_stimulus(cue, state.version)
     dan = "PAM" if valence == "reward" else "PPL1"
     stimulus[dan] = 1.0
     circuit = learned_circuit(state)
@@ -110,9 +123,11 @@ def apply_training(
     trace = (result.neuron_rates[:, circuit.groups["KC"]].mean(0) / 40).clamp(0, 1)
     dan_activity = (result.rates[dan].mean() / state.params.input_rate_hz).clamp(0, 1)
     weights = state.kc_mbon.clone()
-    column = 1 if valence == "reward" else 0
-    weights[:, column] = (
-        weights[:, column] - state.params.learning_rate * strength * trace * dan_activity
+    approach = circuit.groups["MBON_ap"]
+    split = approach.stop - approach.start
+    columns = slice(split, None) if valence == "reward" else slice(0, split)
+    weights[:, columns] = (
+        weights[:, columns] - state.params.learning_rate * strength * trace[:, None] * dan_activity
     ).clamp_min(0)
     updated = FlyState(state.params, weights, state.version)
     return updated, preference_index(updated, cue, seed, trials=8)

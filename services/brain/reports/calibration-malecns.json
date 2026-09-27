@@ -1,0 +1,591 @@
+[
+  {
+    "circuit": "feeding",
+    "scale": 0.0078125,
+    "input_rate_hz": 180,
+    "rates": [
+      {
+        "MN9": 0.0
+      },
+      {
+        "MN9": 0.0
+      },
+      {
+        "MN9": 0.0
+      }
+    ]
+  },
+  {
+    "circuit": "feeding",
+    "scale": 0.015625,
+    "input_rate_hz": 180,
+    "rates": [
+      {
+        "MN9": 0.0
+      },
+      {
+        "MN9": 0.0
+      },
+      {
+        "MN9": 0.0
+      }
+    ]
+  },
+  {
+    "circuit": "feeding",
+    "scale": 0.03125,
+    "input_rate_hz": 180,
+    "rates": [
+      {
+        "MN9": 0.0
+      },
+      {
+        "MN9": 0.0
+      },
+      {
+        "MN9": 0.0
+      }
+    ]
+  },
+  {
+    "circuit": "feeding",
+    "scale": 0.0625,
+    "input_rate_hz": 180,
+    "rates": [
+      {
+        "MN9": 0.0
+      },
+      {
+        "MN9": 2.0833332538604736
+      },
+      {
+        "MN9": 0.625
+      }
+    ]
+  },
+  {
+    "circuit": "feeding",
+    "scale": 0.125,
+    "input_rate_hz": 180,
+    "rates": [
+      {
+        "MN9": 0.0
+      },
+      {
+        "MN9": 240.625
+      },
+      {
+        "MN9": 214.375
+      }
+    ]
+  },
+  {
+    "circuit": "feeding",
+    "scale": 0.25,
+    "input_rate_hz": 180,
+    "rates": [
+      {
+        "MN9": 0.0
+      },
+      {
+        "MN9": 316.875
+      },
+      {
+        "MN9": 311.25
+      }
+    ]
+  },
+  {
+    "circuit": "escape",
+    "scale": 0.000244140625,
+    "input_rate_hz": 180,
+    "rates": [
+      {
+        "DNp01": 0.0
+      },
+      {
+        "DNp01": 25.41666603088379
+      }
+    ]
+  },
+  {
+    "circuit": "escape",
+    "scale": 0.00048828125,
+    "input_rate_hz": 180,
+    "rates": [
+      {
+        "DNp01": 0.0
+      },
+      {
+        "DNp01": 77.5
+      }
+    ]
+  },
+  {
+    "circuit": "escape",
+    "scale": 0.0009765625,
+    "input_rate_hz": 180,
+    "rates": [
+      {
+        "DNp01": 0.0
+      },
+      {
+        "DNp01": 144.5833282470703
+      }
+    ]
+  },
+  {
+    "circuit": "escape",
+    "scale": 0.001953125,
+    "input_rate_hz": 180,
+    "rates": [
+      {
+        "DNp01": 0.0
+      },
+      {
+        "DNp01": 226.875
+      }
+    ]
+  },
+  {
+    "circuit": "escape",
+    "scale": 0.00390625,
+    "input_rate_hz": 180,
+    "rates": [
+      {
+        "DNp01": 0.0
+      },
+      {
+        "DNp01": 305.625
+      }
+    ]
+  },
+  {
+    "circuit": "escape",
+    "scale": 0.0078125,
+    "input_rate_hz": 180,
+    "rates": [
+      {
+        "DNp01": 0.0
+      },
+      {
+        "DNp01": 363.125
+      }
+    ]
+  },
+  {
+    "circuit": "escape",
+    "scale": 0.015625,
+    "input_rate_hz": 180,
+    "rates": [
+      {
+        "DNp01": 0.0
+      },
+      {
+        "DNp01": 399.7916564941406
+      }
+    ]
+  },
+  {
+    "circuit": "escape",
+    "scale": 0.03125,
+    "input_rate_hz": 180,
+    "rates": [
+      {
+        "DNp01": 0.0
+      },
+      {
+        "DNp01": 400.0
+      }
+    ]
+  },
+  {
+    "circuit": "escape",
+    "scale": 0.0625,
+    "input_rate_hz": 180,
+    "rates": [
+      {
+        "DNp01": 0.0
+      },
+      {
+        "DNp01": 400.0
+      }
+    ]
+  },
+  {
+    "circuit": "escape",
+    "scale": 0.125,
+    "input_rate_hz": 180,
+    "rates": [
+      {
+        "DNp01": 0.0
+      },
+      {
+        "DNp01": 400.0
+      }
+    ]
+  },
+  {
+    "circuit": "escape",
+    "scale": 0.25,
+    "input_rate_hz": 180,
+    "rates": [
+      {
+        "DNp01": 0.0
+      },
+      {
+        "DNp01": 400.0
+      }
+    ]
+  },
+  {
+    "circuit": "olfaction_mb",
+    "scale": 0.0078125,
+    "input_rate_hz": 180,
+    "rates": [
+      {
+        "MBON_ap": 0.0,
+        "MBON_av": 0.0,
+        "KC": 0.0
+      },
+      {
+        "MBON_ap": 0.0,
+        "MBON_av": 0.0,
+        "KC": 0.0
+      }
+    ]
+  },
+  {
+    "circuit": "olfaction_mb",
+    "scale": 0.015625,
+    "input_rate_hz": 180,
+    "rates": [
+      {
+        "MBON_ap": 0.0,
+        "MBON_av": 0.0,
+        "KC": 0.0
+      },
+      {
+        "MBON_ap": 0.0,
+        "MBON_av": 0.0,
+        "KC": 0.28541669249534607
+      }
+    ]
+  },
+  {
+    "circuit": "olfaction_mb",
+    "scale": 0.03125,
+    "input_rate_hz": 180,
+    "rates": [
+      {
+        "MBON_ap": 0.0,
+        "MBON_av": 0.0,
+        "KC": 0.0
+      },
+      {
+        "MBON_ap": 0.0,
+        "MBON_av": 0.0,
+        "KC": 1.5229166746139526
+      }
+    ]
+  },
+  {
+    "circuit": "olfaction_mb",
+    "scale": 0.0625,
+    "input_rate_hz": 180,
+    "rates": [
+      {
+        "MBON_ap": 0.0,
+        "MBON_av": 0.0,
+        "KC": 0.0
+      },
+      {
+        "MBON_ap": 0.0,
+        "MBON_av": 0.0,
+        "KC": 2.7937498092651367
+      }
+    ]
+  },
+  {
+    "circuit": "olfaction_mb",
+    "scale": 0.125,
+    "input_rate_hz": 180,
+    "rates": [
+      {
+        "MBON_ap": 0.0,
+        "MBON_av": 0.0,
+        "KC": 0.0
+      },
+      {
+        "MBON_ap": 0.0,
+        "MBON_av": 0.0,
+        "KC": 5.204166889190674
+      }
+    ]
+  },
+  {
+    "circuit": "olfaction_mb",
+    "scale": 0.25,
+    "input_rate_hz": 180,
+    "rates": [
+      {
+        "MBON_ap": 0.0,
+        "MBON_av": 0.0,
+        "KC": 0.0
+      },
+      {
+        "MBON_ap": 86.16666412353516,
+        "MBON_av": 0.0,
+        "KC": 11.924999237060547
+      }
+    ]
+  },
+  {
+    "circuit": "olfaction_mb",
+    "scale": 0.1875,
+    "input_rate_hz": 180,
+    "rates": [
+      {
+        "MBON_ap": 0.0,
+        "MBON_av": 0.0,
+        "KC": 0.0
+      },
+      {
+        "MBON_ap": 7.125,
+        "MBON_av": 0.0,
+        "KC": 7.572916507720947
+      }
+    ]
+  },
+  {
+    "circuit": "olfaction_mb",
+    "scale": 0.375,
+    "input_rate_hz": 180,
+    "rates": [
+      {
+        "MBON_ap": 0.0,
+        "MBON_av": 0.0,
+        "KC": 0.0
+      },
+      {
+        "MBON_ap": 138.9583282470703,
+        "MBON_av": 0.0,
+        "KC": 20.006250381469727
+      }
+    ]
+  },
+  {
+    "circuit": "olfaction_mb",
+    "scale": 0.5,
+    "input_rate_hz": 180,
+    "rates": [
+      {
+        "MBON_ap": 0.0,
+        "MBON_av": 0.0,
+        "KC": 0.0
+      },
+      {
+        "MBON_ap": 154.7916717529297,
+        "MBON_av": 0.0,
+        "KC": 24.804166793823242
+      }
+    ]
+  },
+  {
+    "circuit": "olfaction_mb",
+    "scale": 1.0,
+    "input_rate_hz": 180,
+    "rates": [
+      {
+        "MBON_ap": 0.0,
+        "MBON_av": 0.0,
+        "KC": 0.0
+      },
+      {
+        "MBON_ap": 158.0833282470703,
+        "MBON_av": 0.0,
+        "KC": 36.16875076293945
+      }
+    ]
+  },
+  {
+    "circuit": "steering",
+    "scale": 0.0078125,
+    "input_rate_hz": 180,
+    "rates": [
+      {
+        "DNa02_L": 0.0,
+        "DNa02_R": 0.0,
+        "walking_DN": 23.33333396911621
+      },
+      {
+        "DNa02_L": 0.0,
+        "DNa02_R": 0.0,
+        "walking_DN": 23.33333396911621
+      }
+    ]
+  },
+  {
+    "circuit": "steering",
+    "scale": 0.015625,
+    "input_rate_hz": 180,
+    "rates": [
+      {
+        "DNa02_L": 0.0,
+        "DNa02_R": 0.0,
+        "walking_DN": 23.33333396911621
+      },
+      {
+        "DNa02_L": 0.0,
+        "DNa02_R": 0.0,
+        "walking_DN": 23.33333396911621
+      }
+    ]
+  },
+  {
+    "circuit": "steering",
+    "scale": 0.03125,
+    "input_rate_hz": 180,
+    "rates": [
+      {
+        "DNa02_L": 0.0,
+        "DNa02_R": 0.0,
+        "walking_DN": 23.33333396911621
+      },
+      {
+        "DNa02_L": 0.0,
+        "DNa02_R": 0.0,
+        "walking_DN": 23.33333396911621
+      }
+    ]
+  },
+  {
+    "circuit": "steering",
+    "scale": 0.0625,
+    "input_rate_hz": 180,
+    "rates": [
+      {
+        "DNa02_L": 0.0,
+        "DNa02_R": 0.0,
+        "walking_DN": 23.33333396911621
+      },
+      {
+        "DNa02_L": 0.0,
+        "DNa02_R": 0.0,
+        "walking_DN": 23.33333396911621
+      }
+    ]
+  },
+  {
+    "circuit": "steering",
+    "scale": 0.125,
+    "input_rate_hz": 180,
+    "rates": [
+      {
+        "DNa02_L": 10.0,
+        "DNa02_R": 0.0,
+        "walking_DN": 23.33333396911621
+      },
+      {
+        "DNa02_L": 10.0,
+        "DNa02_R": 0.0,
+        "walking_DN": 23.33333396911621
+      }
+    ]
+  },
+  {
+    "circuit": "steering",
+    "scale": 0.25,
+    "input_rate_hz": 180,
+    "rates": [
+      {
+        "DNa02_L": 23.33333396911621,
+        "DNa02_R": 0.0,
+        "walking_DN": 23.33333396911621
+      },
+      {
+        "DNa02_L": 23.33333396911621,
+        "DNa02_R": 0.0,
+        "walking_DN": 23.33333396911621
+      }
+    ]
+  },
+  {
+    "circuit": "grooming",
+    "scale": 0.0078125,
+    "input_rate_hz": 180,
+    "rates": [
+      {
+        "aDN": 0.0
+      },
+      {
+        "aDN": 10.833333015441895
+      }
+    ]
+  },
+  {
+    "circuit": "grooming",
+    "scale": 0.015625,
+    "input_rate_hz": 180,
+    "rates": [
+      {
+        "aDN": 0.0
+      },
+      {
+        "aDN": 179.5833282470703
+      }
+    ]
+  },
+  {
+    "circuit": "grooming",
+    "scale": 0.03125,
+    "input_rate_hz": 180,
+    "rates": [
+      {
+        "aDN": 0.0
+      },
+      {
+        "aDN": 278.75
+      }
+    ]
+  },
+  {
+    "circuit": "grooming",
+    "scale": 0.0625,
+    "input_rate_hz": 180,
+    "rates": [
+      {
+        "aDN": 0.0
+      },
+      {
+        "aDN": 332.1875
+      }
+    ]
+  },
+  {
+    "circuit": "grooming",
+    "scale": 0.125,
+    "input_rate_hz": 180,
+    "rates": [
+      {
+        "aDN": 0.0
+      },
+      {
+        "aDN": 357.7083435058594
+      }
+    ]
+  },
+  {
+    "circuit": "grooming",
+    "scale": 0.25,
+    "input_rate_hz": 180,
+    "rates": [
+      {
+        "aDN": 0.0
+      },
+      {
+        "aDN": 384.375
+      }
+    ]
+  }
+]
