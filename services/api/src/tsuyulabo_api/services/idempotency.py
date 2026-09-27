@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from collections.abc import Awaitable, Callable
 from datetime import timedelta
+from hashlib import sha256
 from typing import Annotated, Any
 from uuid import UUID
 
@@ -16,6 +17,7 @@ from tsuyulabo_api.auth.dependencies import authenticate_user
 from tsuyulabo_api.db.economy import IdempotencyKey
 from tsuyulabo_api.db.operations import insert_if_absent
 from tsuyulabo_api.errors import APIError, error_response
+from tsuyulabo_api.services.request_body import read_body
 
 GUEST_SCOPE = "00000000-0000-0000-0000-000000000000"
 MUTATING_METHODS = {"POST", "PUT", "PATCH", "DELETE"}
@@ -59,6 +61,17 @@ class IdempotentRoute(APIRoute):
             if request.method not in MUTATING_METHODS:
                 return await original(request)
             key = require_key(request)
+            body = await read_body(request)
+            identity = (
+                json.dumps(
+                    [request.method, request.url.path, request.url.query], ensure_ascii=True
+                ).encode()
+                + b"\0"
+                + body
+            )
+            # Use the existing path column to avoid a schema migration. Include a
+            # readable prefix, but hash the complete path/query and exact body bytes.
+            fingerprint = request.url.path[:420] + "#sha256=" + sha256(identity).hexdigest()
             async with request.app.state.session_factory() as session, session.begin():
                 request.state.session = session
                 if request.url.path == "/v1/auth/guest":
@@ -78,12 +91,15 @@ class IdempotentRoute(APIRoute):
                         "user_id": user_id,
                         "key": key,
                         "method": request.method,
-                        "path": request.url.path,
+                        "path": fingerprint,
                         "created_at": now,
                     },
                     ["user_id", "key"],
                 )
                 record = await session.get(IdempotencyKey, (user_id, key))
+                if not claimed and (record.method != request.method or record.path != fingerprint):
+                    # Legacy records lack a fingerprint; fail closed until their TTL expires.
+                    raise APIError("idempotency_key_reused", "別の操作に使用済みのキーです", 409)
                 if not claimed and record.status_code != 0:
                     return JSONResponse(record.response, status_code=record.status_code)
                 if claimed:
