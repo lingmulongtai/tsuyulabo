@@ -45,10 +45,10 @@ export function ActionGrid({ todo }: { todo: TodoItem[] }) {
     const prev = byKind.get(kind);
     if (!prev || rank[item.status] < rank[prev.status]) byKind.set(kind, item);
   }
-  const tiles = [...byKind.values()].slice(0, 4);
+  const tiles = [...byKind.values()];
 
   return (
-    <div className="grid grid-cols-4 gap-2">
+    <div className="grid grid-cols-3 gap-2">
       {tiles.map((item) => {
         const m = META[item.action];
         const available = item.status === "available";
