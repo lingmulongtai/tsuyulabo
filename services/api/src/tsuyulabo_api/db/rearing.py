@@ -4,8 +4,14 @@ from datetime import datetime
 from typing import Any
 
 from sqlalchemy import JSON, CheckConstraint, ForeignKey, LargeBinary, String, UniqueConstraint
+from sqlalchemy.engine.default import DefaultExecutionContext
 from sqlalchemy.orm import Mapped, mapped_column
 from tsuyulabo_api.db.base import Base, UTCDateTime, new_id, utc_now
+from tsuyulabo_api.domain.genetics import wild_type
+
+
+def default_genotype(context: DefaultExecutionContext) -> dict[str, Any]:
+    return wild_type(context.get_current_parameters()["sex"])
 
 
 class Week(Base):
@@ -20,6 +26,10 @@ class Week(Base):
     points: Mapped[int] = mapped_column(default=0)
     care_miss: Mapped[int] = mapped_column(default=0)
     eclosed_at: Mapped[datetime | None] = mapped_column(UTCDateTime())
+    egg_genotype: Mapped[dict[str, Any] | None] = mapped_column(JSON)
+    mother_id: Mapped[str | None] = mapped_column(String(36))
+    father_id: Mapped[str | None] = mapped_column(String(36))
+    lethal_redraws: Mapped[int] = mapped_column(default=0, server_default="0")
     adult_id: Mapped[str | None] = mapped_column(
         ForeignKey("adults.id", use_alter=True, name="fk_weeks_adult_id_adults")
     )
@@ -83,6 +93,9 @@ class Adult(Base):
     name: Mapped[str] = mapped_column(String(40))
     sex: Mapped[str] = mapped_column(String(1))
     strain: Mapped[str] = mapped_column(String(40))
+    genotype: Mapped[dict[str, Any]] = mapped_column(JSON, default=default_genotype)
+    mutation: Mapped[dict[str, Any] | None] = mapped_column(JSON)
+    last_parent_week: Mapped[datetime | None] = mapped_column(UTCDateTime())
     stars: Mapped[int]
     traits: Mapped[list[str]] = mapped_column(JSON, default=list)
     subskills: Mapped[list[str]] = mapped_column(JSON, default=list)

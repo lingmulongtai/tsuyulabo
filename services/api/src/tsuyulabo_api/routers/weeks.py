@@ -3,14 +3,16 @@ from __future__ import annotations
 from typing import Any
 
 from fastapi import APIRouter
+from pydantic import BaseModel, ConfigDict
 from sqlalchemy import func, select
-from tsuyulabo_api.db.models import Adult, Friendship, LarvaState, Notification, Week
+from tsuyulabo_api.db.models import Adult, Friendship, LarvaState, Notification, User, Week
 from tsuyulabo_api.domain import constants as c
-from tsuyulabo_api.domain import eclosion, lifecycle, names
+from tsuyulabo_api.domain import eclosion, genetics, lifecycle, names
 from tsuyulabo_api.errors import APIError
 from tsuyulabo_api.services import week as service
 from tsuyulabo_api.services.brain_state import snapshot as brain_snapshot
 from tsuyulabo_api.services.brain_state import store as store_brain
+from tsuyulabo_api.services.breeding import draw_egg
 from tsuyulabo_api.services.clock import game_now
 from tsuyulabo_api.services.game import Brain, CurrentClock, CurrentUser, Session, reward, rng
 from tsuyulabo_api.services.idempotency import IdempotentRoute
@@ -18,16 +20,36 @@ from tsuyulabo_api.services.idempotency import IdempotentRoute
 router = APIRouter(prefix="/v1/weeks", route_class=IdempotentRoute)
 
 
+class StartWeekRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    parents: tuple[str, str] | None = None
+
+
 @router.post("", status_code=201)
 async def start_week(
-    user: CurrentUser, session: Session, clock: CurrentClock, brain: Brain
+    user: CurrentUser,
+    session: Session,
+    clock: CurrentClock,
+    brain: Brain,
+    body: StartWeekRequest | None = None,
 ) -> dict[str, Any]:
+    # Serialize starts with different idempotency keys on PostgreSQL as well as SQLite.
+    await session.execute(select(User.id).where(User.id == user.id).with_for_update())
     if await session.scalar(
         select(Week.id).where(Week.user_id == user.id, Week.status == "active")
     ):
         raise APIError("week_already_active", "育成中の週があります", 409)
     now = game_now(clock, user)
-    week = Week(user_id=user.id, started_at=now)
+    parents = body.parents if body else None
+    offspring = await draw_egg(session, user.id, parents, now, rng())
+    week = Week(
+        user_id=user.id,
+        started_at=now,
+        egg_genotype=offspring.genotype,
+        lethal_redraws=offspring.lethal_redraws,
+        mother_id=parents[0] if parents else None,
+        father_id=parents[1] if parents else None,
+    )
     session.add(week)
     await session.flush()
     larva = LarvaState(week_id=week.id, last_computed_at=now)
@@ -35,6 +57,12 @@ async def start_week(
     session.add(larva)
     await session.flush()
     return await service.payload(session, week, now)
+
+
+@router.post("/friend-mating", status_code=501)
+async def friend_mating(user: CurrentUser) -> None:
+    # TODO: define friend consent and cross-owner parental eligibility before implementation.
+    raise APIError("not_implemented", "お見合いは準備中です", 501)
 
 
 @router.get("/current")
@@ -70,11 +98,14 @@ async def eclose(
     log = service.domain_events(await service.events(session, week))
     temperatures = [e.score for e in log if e.kind == "temperature"]
     random = rng()
+    if week.egg_genotype is None:
+        week.egg_genotype = genetics.wild_type(random.choice(("f", "m")))
     roll = eclosion.roll(
         random,
         result["rank"],
         sum(temperatures) / len(temperatures) if temperatures else 0,
         any(e.hit for e in log if e.kind == "pupation_site"),
+        genotype=week.egg_genotype,
     )
     larva = await session.get(LarvaState, week.id)
     snapshot, params = brain.eclose(
@@ -87,6 +118,8 @@ async def eclose(
         name=names.pick_name(random, taken, strain=roll.strain),
         sex=roll.sex,
         strain=roll.strain,
+        genotype=roll.genotype,
+        mutation=roll.mutation,
         stars=roll.stars,
         traits=list(roll.traits),
         brain_params=params,
@@ -119,11 +152,15 @@ async def eclose(
     return {
         "omen_sequence": roll.omen_sequence,
         "tier": roll.tier,
+        "lethal_redraws": week.lethal_redraws,
         "adult": {
             "id": adult.id,
             "name": adult.name,
             "sex": adult.sex,
             "strain": adult.strain,
+            "genotype": adult.genotype,
+            "phenotypes": genetics.phenotypes(adult.genotype),
+            "mutation": adult.mutation,
             "stars": adult.stars,
             "traits": adult.traits,
             "level": adult.level,

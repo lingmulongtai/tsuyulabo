@@ -10,7 +10,7 @@ export const useMe = () => useApiQuery(["me"], signal => unwrap(api.GET("/v1/me"
 export const useUpdateMe = () => useApiMutation((body: components["schemas"]["ProfilePatch"], headers) => unwrap(api.PATCH("/v1/me", { body, headers })), ["me"]);
 export const useWeeks = () => useApiQuery(["weeks"], signal => unwrap(api.GET("/v1/weeks", { signal })));
 export const useCurrentWeek = () => useApiQuery(["weeks", "current"], signal => unwrap(api.GET("/v1/weeks/current", { signal })));
-export const useStartWeek = () => useApiMutation((_: void, headers) => unwrap(api.POST("/v1/weeks", { headers })), ["weeks"]);
+export const useStartWeek = () => useApiMutation((body: components["schemas"]["StartWeekRequest"] | void, headers) => unwrap(api.POST("/v1/weeks", { headers, body: body || undefined })), ["weeks", "adults"]);
 export const usePresentation = () => useApiQuery(["presentation"], signal => unwrap(api.GET("/v1/weeks/current/presentation", { signal })));
 export const useEclose = () => useApiMutation((_: void, headers) => unwrap(api.POST("/v1/weeks/current/eclose", { headers })), ["weeks", "adults", "zukan", "me", "presentation"]);
 export const useIssuePuzzle = () => useApiMutation((body: components["schemas"]["IssueRequest"], headers) => unwrap(api.POST("/v1/puzzles", { body, headers })));
