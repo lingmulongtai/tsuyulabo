@@ -1,0 +1,123 @@
+name: deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: Deployment target (web can run without a backend)
+        type: choice
+        options: [web, backend, all]
+        default: web
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  configuration:
+    runs-on: ubuntu-latest
+    outputs:
+      backend: ${{ steps.check.outputs.backend }}
+      web: ${{ steps.check.outputs.web }}
+    steps:
+      - name: Check configuration without contacting providers
+        id: check
+        env:
+          TARGET: ${{ inputs.target }}
+          GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
+          GCP_WIF_PROVIDER: ${{ secrets.GCP_WIF_PROVIDER }}
+          GCP_DEPLOY_SERVICE_ACCOUNT: ${{ secrets.GCP_DEPLOY_SERVICE_ACCOUNT }}
+          WEB_ORIGIN: ${{ vars.WEB_ORIGIN }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ vars.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ vars.VERCEL_PROJECT_ID }}
+        shell: bash
+        run: |
+          check_target() {
+            local target="$1"
+            shift
+            if [[ "$TARGET" != "$target" && "$TARGET" != all ]]; then
+              echo "$target=false" >> "$GITHUB_OUTPUT"
+              echo "### $target: skipped (not selected)" >> "$GITHUB_STEP_SUMMARY"
+              return
+            fi
+            local missing=()
+            local name
+            for name in "$@"; do
+              [[ -n "${!name}" ]] || missing+=("$name")
+            done
+            if (( ${#missing[@]} )); then
+              echo "$target=false" >> "$GITHUB_OUTPUT"
+              echo "::notice::$target skipped: missing ${missing[*]}"
+              echo "### $target: skipped — set ${missing[*]} (docs/deploy.md)" >> "$GITHUB_STEP_SUMMARY"
+            else
+              echo "$target=true" >> "$GITHUB_OUTPUT"
+            fi
+          }
+          check_target backend GCP_PROJECT_ID GCP_WIF_PROVIDER GCP_DEPLOY_SERVICE_ACCOUNT WEB_ORIGIN
+          check_target web VERCEL_TOKEN VERCEL_ORG_ID VERCEL_PROJECT_ID
+
+  backend:
+    needs: configuration
+    if: needs.configuration.outputs.backend == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
+      GCP_REGION: ${{ vars.GCP_REGION || 'asia-northeast1' }}
+      WEB_ORIGIN: ${{ vars.WEB_ORIGIN }}
+      SECRET_VERSION: ${{ vars.GCP_SECRET_VERSION || '1' }}
+      SHIORI_PROVIDER: ${{ vars.SHIORI_PROVIDER || 'mock' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WIF_PROVIDER }}
+          service_account: ${{ secrets.GCP_DEPLOY_SERVICE_ACCOUNT }}
+      - uses: google-github-actions/setup-gcloud@v3
+      - name: Build and push immutable release tags
+        run: >-
+          python infra/cloudrun/release.py build
+          --project "$GCP_PROJECT_ID" --region "$GCP_REGION"
+          --tag "$GITHUB_SHA-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT" --execute
+      - name: Migrate then deploy worker and API
+        run: >-
+          python infra/cloudrun/release.py deploy
+          --project "$GCP_PROJECT_ID" --region "$GCP_REGION"
+          --tag "$GITHUB_SHA-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          --cors-origin "$WEB_ORIGIN" --secret-version "$SECRET_VERSION"
+          --shiori-provider "$SHIORI_PROVIDER" --execute
+      - name: Report API URL
+        run: |
+          url=$(gcloud run services describe tsuyulabo-api --project "$GCP_PROJECT_ID" --region "$GCP_REGION" --format='value(status.url)')
+          echo "API: $url — set NEXT_PUBLIC_API_URL in Vercel before deploying the full game." >> "$GITHUB_STEP_SUMMARY"
+
+  web:
+    needs: [configuration, backend]
+    if: >-
+      always() && !cancelled() && needs.configuration.outputs.web == 'true' &&
+      (needs.backend.result == 'success' || needs.backend.result == 'skipped')
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ vars.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ vars.VERCEL_PROJECT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      # Run from the monorepo root; Vercel's project Root Directory is apps/web.
+      # The remote build reads Production env vars (including NEXT_PUBLIC_API_URL).
+      - name: Deploy Vercel production project
+        run: npx --yes vercel@60.1.3 deploy --prod --yes --token "$VERCEL_TOKEN"
