@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+HIDDEN_CARRIER_CHANCE = 0.05
+
 TIMEZONE = "Asia/Tokyo"
 DAY_BOUNDARY_HOUR = 4
 SLOT_HOURS = {"morning": 4, "noon": 12, "night": 18}
