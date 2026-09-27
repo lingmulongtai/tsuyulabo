@@ -10,6 +10,17 @@
 > **状態: アルファ版を開発中。** 企画書: [docs/spec/kikakusho-v0.2.html](docs/spec/kikakusho-v0.2.html) ／
 > 開発計画: [docs/DEVELOPMENT_PLAN.md](docs/DEVELOPMENT_PLAN.md) ／ 進み具合: [docs/HANDOFF.md](docs/HANDOFF.md)
 
+## スクリーンショット
+
+ローカルの実プレイを、スマートフォン幅（390 × 844）で撮影しています。
+[全15場面・ダーク版を見る](docs/media/README.md) ／ [撮影の再現手順](docs/infra.md#readme-screenshots-and-play-video)
+
+| 研究3日目のツユ | ごはんのライン消去 | 回路をつなぐしつけ |
+| :---: | :---: | :---: |
+| <img src="docs/media/screens/home-light.webp" alt="研究3日目、2齢幼虫のホーム" width="230"> | <img src="docs/media/screens/meal-light.webp" alt="材料を並べてラインを消すごはんパズル" width="230"> | <img src="docs/media/screens/training-light.webp" alt="数字を順につなぐ回路パズルの途中" width="230"> |
+| **1週間の研究発表会** | **育てた成虫の観察** | **糖に反応する脳の模型** |
+| <img src="docs/media/screens/presentation-light.webp" alt="お世話を重ねた週のランク発表" width="230"> | <img src="docs/media/screens/adult-light.webp" alt="脳モデルの行動をアニメーションで観察" width="230"> | <img src="docs/media/screens/brain-light.webp" alt="糖の刺激に対する神経活動を再生" width="230"> |
+
 ## 遊び方（1週間）
 
 | 日 | すがた | やること |
@@ -21,6 +32,16 @@
 | 日 | 羽化 | 研究発表会でランク → 羽化（素質・特性・突然変異） |
 
 しつけのパズルがうまいほど、脳モデルのキノコ体のつながりが強く変わり、好き・苦手が行動に出る。
+
+羽化したあとも遊びは続く:
+
+- **研究チーム**: 成虫が材料としずくを集める。好きに育てた匂いの材料をよく見つける。レベル、サブスキル。
+- **交配**: 2匹から次の週の卵。white・yellow は伴性遺伝、Curly は優性でホモ致死など、遺伝は本物どおり。
+- **迷路レース**: 週に1回、同じ迷路に匂いを置いて成虫を送り出す。走りは、その子の脳モデル（しつけと特性）が決める。
+- **今日の回路**: 全員に同じ大きな回路パズル。フレンドとタイム勝負。
+- **いっしょにねる**: おやすみ・おはようの時刻がそろうほど体内時計ゲージがたまり、チームのげんきが回復する。
+- **脳ビューア**: 刺激を与えると、実在のニューロン名の細胞群が光る。
+- **研究員シオリ**: 「なんで？」に、記録と、コピーで行った実験の ID つきで答える。
 
 ## しくみ
 

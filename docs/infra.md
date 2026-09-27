@@ -203,6 +203,58 @@ uploads reports, failure traces, and service logs for 14 days even on failure. I
 provider credentials. Browser installation and reporting follow the
 [Playwright CI guidance](https://playwright.dev/docs/ci).
 
+## README screenshots and play video
+
+The media suite is an explicit opt-in, separate from smoke/nightly CI. The default Playwright
+config ignores `capture.spec.ts`; `e2e/capture.config.ts` selects only the `capture` project.
+Start the real local stack above with both dev-tool flags enabled, then run from the root:
+
+```powershell
+npm.cmd ci
+# In a restricted sandbox, set this for both installation and capture:
+$env:PLAYWRIGHT_BROWSERS_PATH = "$PWD/.codex-runs/browsers"
+npx.cmd playwright install chromium
+npm.cmd run capture -w @tsuyulabo/web
+```
+
+Allow about 15 minutes. A fresh guest plays all 21 meal slots, 18 three-star training puzzles,
+four perfect cleanings, and two perfect temperature games. Meal placements use the shared game
+engine and training uses the golden-path circuit solver. Timing is calculated from public puzzle
+parameters with Playwright's clock; submissions still wait for real elapsed time and are scored
+by the API. No API responses, ranks, rewards, or game records are fabricated. Pupation follows
+Shiori's public hint, which is only 70% reliable by design; its actual hit/miss is recorded.
+The capture fails if the presentation is below gold, training is below three stars, or timing
+care is below 100 points. Each guest remains in the development database.
+
+Thirteen scenes are saved in both color schemes at a **390 × 844 viewport, device scale 2**
+(780 × 1688 pixels). Each pair captures the same state, including a meal line clear, a partial
+training path, and sugar-scenario brain playback. Development overlays are hidden for the media;
+game content is unchanged. `sharp`, already installed by the locked Next.js dependency, encodes
+the screenshots as WebP. The command checks 26 images, each under 150 KB and total under 3 MB.
+
+- Publishable images: `docs/media/screens/<scene>-<light|dark>.webp`.
+- Publishable video: `docs/media/playthrough.webm`, a silent 75-second highlight edit, under 8 MB. Needs a full FFmpeg (set `FFMPEG_PATH`); Playwright's bundled FFmpeg lacks the `image2pipe` muxer, so without it only the raw recording is kept.
+  Playwright recordings do not include Web Audio. The edit omits repeated meal waits, opens with
+  day 3, and slows short actions/reveals so viewers can follow them. All frames come from the video.
+- Ignored raw video: `eval-results/media/playthrough-raw.webm`.
+- Ignored capture summary: `eval-results/media/capture.json` (rank, points, pupation result,
+  image names, and chapter timestamps); failure traces are in `eval-results/media/playwright/`.
+
+The encoder reuses Playwright's installed FFmpeg, including its minimal Windows build, without
+adding dependencies. It decodes real video frames, selects the chapter windows from `capture.json`,
+and encodes them at 24 fps; retain that summary with its matching raw recording.
+`FFMPEG_PATH` can select an already installed alternative. If no usable
+encoder is available, the command reports the raw recording's path and leaves it outside git;
+do not claim a new published video was generated. To rerun encoding without playing again:
+
+```powershell
+node apps/web/e2e/helpers/encode-media.mjs
+```
+
+Review all light/dark images and the video before publishing; random puzzle layouts, rewards,
+adult traits, and Shiori's configured provider can change the output. The gallery uses the local
+stack and development time travel, and does not imply a deployed public service.
+
 ## Future deployment
 
 The [project proposal](spec/kikakusho-v0.2.txt) plans Vercel for the web, Cloud Run for API and
