@@ -226,7 +226,9 @@ def build(
         metadata_path = target.with_suffix(".json")
         metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
         metadata["neurons"] = records
-        metadata_path.write_text(json.dumps(metadata, indent=2) + "\n", encoding="utf-8")
+        metadata_path.write_text(
+            json.dumps(metadata, indent=2) + "\n", encoding="utf-8", newline="\n"
+        )
         counts = {g: bounds.stop - bounds.start for g, bounds in circuit.groups.items()}
         todos = list(selection.todos)
         todos.extend(
@@ -248,5 +250,7 @@ def build(
             "todos": todos,
             "files": {target.name: sha256(target), metadata_path.name: sha256(metadata_path)},
         }
-    (output / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+    (output / "manifest.json").write_text(
+        json.dumps(manifest, indent=2) + "\n", encoding="utf-8", newline="\n"
+    )
     return manifest

@@ -26,7 +26,10 @@ def save_circuit(circuit: Circuit, path: Path, provenance: dict[str, str]) -> No
         "tonic": circuit.tonic,
         "provenance": provenance,
     }
-    path.with_suffix(".json").write_text(json.dumps(metadata, indent=2), encoding="utf-8")
+    # Always LF: the manifest stores sha256 of these bytes and git normalises text files to LF.
+    path.with_suffix(".json").write_text(
+        json.dumps(metadata, indent=2), encoding="utf-8", newline="\n"
+    )
 
 
 def load_npz_circuit(path: Path) -> Circuit:
