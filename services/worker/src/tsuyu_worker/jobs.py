@@ -16,7 +16,7 @@ from tsuyu_shiori.tools import ExperimentArguments
 from tsuyulabo_api.brain_adapter import BrainAdapter
 from tsuyulabo_api.db.models import Job, ShioriMessage, User
 from tsuyulabo_api.db.session import create_engine, session_factory
-from tsuyulabo_api.services import experiments, shiori, training
+from tsuyulabo_api.services import experiments, maze_race, shiori, training
 from tsuyulabo_api.settings import Settings
 
 from .adapters import SQLLab, SQLRecordStore, conversation_scope
@@ -48,6 +48,8 @@ async def perform(
     provider: Provider | None,
     brain: BrainEngine | None,
 ) -> dict[str, Any]:
+    if kind == "brain.maze_run":
+        return await maze_race.handler()(params)
     if kind == "brain.training":
         return await training.apply_pending(session, BrainAdapter(), params | {"user_id": user_id})
     if kind == "brain.experiment" and "snapshot" in params:
@@ -229,6 +231,7 @@ def inline_handlers(
         for kind in (
             "brain.experiment",
             "brain.training",
+            "brain.maze_run",
             "shiori.answer",
             "brain_run_experiment",
             "shiori_answer",
