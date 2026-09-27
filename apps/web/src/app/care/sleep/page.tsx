@@ -2,6 +2,7 @@
 import { AppShell } from "@/components/shell/AppShell";
 import { CareFrame, ResultSheet } from "@/components/games/CareFrame";
 import { FlyArt } from "@/components/art/FlyArt";
+import { MoonIcon, SunIcon } from "@/components/ui/icons";
 import { Button, Card } from "@/components/ui/primitives";
 import { ErrorCard, QueryState } from "@/components/ui/QueryState";
 import { useHome, useSleepEnd, useSleepStart } from "@/lib/api/hooks";
@@ -17,7 +18,12 @@ export default function SleepPage() {
       const available = data.week ? data.todo.some(item => item.action === action && item.status === "available") : (night || data.clock.slot === "morning");
       return <><Card className="overflow-hidden text-center">
         <div className={`relative p-8 ${night ? "bg-[linear-gradient(160deg,#142944,#463b67)] text-white" : "bg-[linear-gradient(160deg,#fff4cc,#d5efe8)] text-[#1e2c29]"}`}>
-          <div className="text-5xl" aria-hidden>{night ? "☾ · ✧" : "☀"}</div>
+          {night ? <>
+            {[[12, 14, 0], [78, 10, 0.6], [88, 38, 1.2], [20, 44, 0.3], [64, 24, 0.9], [40, 8, 1.5]].map(([x, y, d]) => (
+              <span key={`${x}-${y}`} aria-hidden className="absolute size-1.5 rounded-full bg-white motion-safe:animate-pulse" style={{ left: `${x}%`, top: `${y}%`, animationDelay: `${d}s` }} />
+            ))}
+            <MoonIcon size={56} className="mx-auto drop-shadow-[0_0_18px_rgba(255,224,138,.6)]" />
+          </> : <SunIcon size={60} className="mx-auto drop-shadow-[0_0_18px_rgba(255,200,87,.7)]" />}
           <FlyArt stage={data.fly?.stage ?? "egg"} className="mx-auto h-44 w-52" />
           <h2 className="font-kiwi text-2xl">{night ? "おやすみ、ツユ" : "おはよう、ツユ"}</h2>
           <p className="mt-2 text-sm">{night ? "ゆっくり休んで、明日にそなえよう。" : "今日もいっしょに、少しずつ。"}</p>
