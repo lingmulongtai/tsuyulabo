@@ -5,6 +5,7 @@ from __future__ import annotations
 from tsuyulabo_api.db.base import Base
 from tsuyulabo_api.db.daily_circuit import DailyCircuitAttempt
 from tsuyulabo_api.db.economy import IdempotencyKey, Inventory, LedgerAccount, LedgerEntry
+from tsuyulabo_api.db.maze import MazeEntry, MazeRace, MazeSlot
 from tsuyulabo_api.db.rearing import (
     Adult,
     CareEvent,
@@ -33,6 +34,9 @@ __all__ = [
     "LedgerAccount",
     "LedgerEntry",
     "Like",
+    "MazeEntry",
+    "MazeRace",
+    "MazeSlot",
     "Notification",
     "Paper",
     "Puzzle",
