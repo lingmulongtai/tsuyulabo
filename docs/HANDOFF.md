@@ -121,3 +121,14 @@ git push
 - 2026-09-27 15:06 Claude: W7（お見合い、Web Push）をマージ。push のマイグレーションを 0009 の後ろに付け替え。docker compose を 0010 まで上げて
   `scripts/smoke_api.py` が通ることを確認。次の候補: 見た目コンテスト、なわばりずもう（フェーズ3）、Capacitor でアプリ化、
   シオリの実 LLM（API キーが必要）、MaleCNS デコーダーの改善（出力ニューロンの追加抽出）、プレイ動画（フル FFmpeg が必要）。
+- 2026-09-27 夕方 Claude:
+  - **学校のメールアドレスを履歴から削除**（オーナーの指示）。全 474 コミットの author/committer を
+    `218745625+lingmulongtai@users.noreply.github.com` に書き換えて main を強制 push。古い feat ブランチは削除。
+    このリポジトリと Codex クローンの `user.email` は noreply に設定済み。`run-codex.sh` と `apply-commit-plan.py` は
+    noreply 以外だと止まる。CI の `commit-identity` ジョブも noreply 以外のメールがあれば失敗する。**今後も絶対に学校のアドレスを使わない。**
+  - **Vercel に公開**: https://tsuyulabo.vercel.app （プロジェクト `tsuyulabo`、Root Directory `apps/web`、`NEXT_PUBLIC_DEV_TOOLS=0`、
+    API URL なし＝公開デモモード）。再デプロイはルートで `vercel deploy --prod --yes`。Git Bash で `vercel api` を使うときは `MSYS_NO_PATHCONV=1`。
+  - **Codex の使用量を抑える**: `run-codex.sh <task> <branch> [effort] [model]`。既定は gpt-6-sol / medium。
+    難しい研究だけ gpt-6-astra、簡単な作業は gpt-6-luna。
+  - W8 を投入: Capacitor Android + CI で APK + GitHub プレリリース（sol）、見た目コンテスト（sol、migration 0011）、
+    なわばりずもう（sol、migration 0012 → マージ時に 0011 の後ろへ）、MaleCNS デコーダー改善（astra）。
