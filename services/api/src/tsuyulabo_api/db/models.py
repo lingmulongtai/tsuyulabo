@@ -19,6 +19,7 @@ from tsuyulabo_api.db.rearing import (
 )
 from tsuyulabo_api.db.research import Experiment, Job, Paper, ShioriMessage
 from tsuyulabo_api.db.social import Friendship, Gift, Like, Notification
+from tsuyulabo_api.db.sumo import SumoBout
 from tsuyulabo_api.db.users import User
 
 __all__ = [
@@ -49,6 +50,7 @@ __all__ = [
     "PushSubscription",
     "ShioriMessage",
     "SleepSession",
+    "SumoBout",
     "TeamSlot",
     "User",
     "Week",
