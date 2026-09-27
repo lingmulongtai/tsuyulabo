@@ -233,7 +233,7 @@ game content is unchanged. `sharp`, already installed by the locked Next.js depe
 the screenshots as WebP. The command checks 26 images, each under 150 KB and total under 3 MB.
 
 - Publishable images: `docs/media/screens/<scene>-<light|dark>.webp`.
-- Publishable video: `docs/media/playthrough.webm`, a silent 75-second highlight edit, under 8 MB.
+- Publishable video: `docs/media/playthrough.webm`, a silent 75-second highlight edit, under 8 MB. Needs a full FFmpeg (set `FFMPEG_PATH`); Playwright's bundled FFmpeg lacks the `image2pipe` muxer, so without it only the raw recording is kept.
   Playwright recordings do not include Web Audio. The edit omits repeated meal waits, opens with
   day 3, and slows short actions/reveals so viewers can follow them. All frames come from the video.
 - Ignored raw video: `eval-results/media/playthrough-raw.webm`.
