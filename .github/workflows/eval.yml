@@ -1,0 +1,129 @@
+name: Evaluations
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: eval-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.12.19"
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+      - id: sync
+        run: uv sync --frozen
+      # No provider credentials: Shiori uses its deterministic MockProvider.
+      # Continue each evaluation so that one failure cannot hide the other report.
+      - name: Run evaluation tests
+        id: tests
+        continue-on-error: true
+        run: uv run pytest -m eval
+      - name: Evaluate brain
+        id: brain
+        continue-on-error: true
+        run: uv run python -m tsuyu_brain.eval
+      - name: Evaluate Shiori
+        id: shiori
+        continue-on-error: true
+        run: uv run python -m tsuyu_shiori.eval
+      - name: Enforce evaluation gates
+        if: ${{ !cancelled() && steps.sync.outcome == 'success' }}
+        env:
+          TEST_OUTCOME: ${{ steps.tests.outcome }}
+          BRAIN_OUTCOME: ${{ steps.brain.outcome }}
+          SHIORI_OUTCOME: ${{ steps.shiori.outcome }}
+        # Contract: each eval writes eval-results/<name>/report.{json,md}.
+        # JSON has a top-level boolean "passed"; false means a failed gate.
+        # Missing/malformed reports or unsuccessful commands also fail closed.
+        run: |
+          uv run --no-sync python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          failures = []
+          for step in ("TEST", "BRAIN", "SHIORI"):
+              outcome = os.environ[f"{step}_OUTCOME"]
+              if outcome != "success":
+                  failures.append(f"{step.lower()} command: {outcome}")
+          for name in ("brain", "shiori"):
+              directory = Path("eval-results") / name
+              try:
+                  report = json.loads((directory / "report.json").read_text(encoding="utf-8"))
+                  if not isinstance(report, dict) or report.get("passed") is not True:
+                      failures.append(f"{name}: passed must be true")
+                  if not (directory / "report.md").read_text(encoding="utf-8").strip():
+                      failures.append(f"{name}: empty Markdown report")
+              except (OSError, ValueError) as exc:
+                  failures.append(f"{name}: {exc}")
+          if failures:
+              raise SystemExit("\n".join(failures))
+          print("Brain and Shiori evaluation gates passed.")
+          PY
+      - name: Upload evaluation reports
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: eval-results
+          path: eval-results/
+          if-no-files-found: warn
+          retention-days: 14
+      # Fork/Dependabot PR tokens are read-only. Their reports remain artifacts.
+      # Do not use pull_request_target to execute untrusted pull request code.
+      - name: Update evaluation comment
+        if: >-
+          ${{ always() && github.event_name == 'pull_request' &&
+              github.event.pull_request.head.repo.full_name == github.repository &&
+              github.actor != 'dependabot[bot]' }}
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('node:fs');
+            const marker = '<!-- tsuyulabo-eval -->';
+            const reports = ['brain', 'shiori'].map((name) => {
+              const path = `eval-results/${name}/report.md`;
+              const report = fs.existsSync(path)
+                ? fs.readFileSync(path, 'utf8').trim()
+                : 'Report unavailable; see the workflow logs.';
+              // Leave room for both reports within GitHub's comment size limit.
+              const text = report.length > 25000
+                ? report.slice(0, 25000) + '\n\n[Truncated; full report is in the artifact.]'
+                : report;
+              return `## ${name === 'brain' ? 'Brain' : 'Shiori'}\n\n${text}`;
+            });
+            const run = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const body = `${marker}\n# Evaluation reports\n\n${reports.join('\n\n')}\n\n[Workflow and artifacts](${run})`;
+            const issue = { ...context.repo, issue_number: context.issue.number };
+            try {
+              const comments = await github.paginate(github.rest.issues.listComments, {
+                ...issue, per_page: 100,
+              });
+              const previous = comments.find((comment) =>
+                comment.user?.login === 'github-actions[bot]' &&
+                comment.body?.startsWith(marker));
+              if (previous) {
+                await github.rest.issues.updateComment({
+                  ...context.repo, comment_id: previous.id, body,
+                });
+              } else {
+                await github.rest.issues.createComment({ ...issue, body });
+              }
+            } catch (error) {
+              if (error.status !== 403) throw error;
+              core.warning('PR comment permission denied; reports are available in the artifact.');
+            }
