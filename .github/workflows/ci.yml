@@ -12,6 +12,17 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  commit-identity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      # Public repository: every commit must use a GitHub noreply address.
+      - run: |
+          bad="$(git log --format='%ae%n%ce' | grep -v '@users.noreply.github.com$' | grep -vE '^(noreply@anthropic.com|codex@openai.com|noreply@github.com)$' | sort -u || true)"
+          if [ -n "$bad" ]; then echo "non-noreply commit emails found:"; echo "$bad"; exit 1; fi
   python:
     runs-on: ubuntu-latest
     timeout-minutes: 20
