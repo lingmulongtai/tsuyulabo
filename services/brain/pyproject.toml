@@ -9,6 +9,9 @@ dependencies = [
     "scipy>=1.14",
 ]
 
+[project.optional-dependencies]
+ingest = ["pyarrow>=18", "pandas>=2.2"]
+
 [tool.uv.sources]
 torch = [{ index = "pytorch-cpu", marker = "sys_platform == 'linux'" }]
 
