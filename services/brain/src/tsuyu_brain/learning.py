@@ -2,26 +2,25 @@
 
 from __future__ import annotations
 
-import base64
 import json
 import math
 from dataclasses import dataclass
 
-import numpy as np
 import torch
 from torch import Tensor
 
 from tsuyu_brain.circuit import Circuit, simulate
-from tsuyu_brain.connectome import load_circuit
+from tsuyu_brain.connectome import DEFAULT_VERSION, load_circuit
 from tsuyu_brain.connectome.stimuli import cue_stimulus
 from tsuyu_brain.params import BrainParams
+from tsuyu_brain.state_codec import decode_weights, encode_weights
 
 
 @dataclass(frozen=True)
 class FlyState:
     params: BrainParams
     kc_mbon: Tensor  # magnitudes [KC, all approach MBONs then all avoid MBONs]
-    version: str = "toy-v0"
+    version: str = DEFAULT_VERSION
 
     def __post_init__(self) -> None:
         if self.kc_mbon.shape != learning_shape(self.version):
@@ -32,12 +31,11 @@ class FlyState:
             raise ValueError("weights exceed float16 storage range")
 
     def to_bytes(self) -> bytes:
-        weights = self.kc_mbon.detach().cpu().numpy().astype("<f2").tobytes()
         return json.dumps(
             {
                 "version": self.version,
                 "params": self.params.to_dict(),
-                "kc_mbon_f16": base64.b64encode(weights).decode("ascii"),
+                **encode_weights(self.kc_mbon, self.version),
             },
             separators=(",", ":"),
             sort_keys=True,
@@ -46,13 +44,7 @@ class FlyState:
     @classmethod
     def from_bytes(cls, payload: bytes) -> FlyState:
         data = json.loads(payload)
-        raw = base64.b64decode(data["kc_mbon_f16"], validate=True)
-        shape = learning_shape(data["version"])
-        if len(raw) != shape[0] * shape[1] * 2:
-            raise ValueError("unexpected number of float16 weights for state version")
-        weights = torch.from_numpy(np.frombuffer(raw, dtype="<f2").astype("float32")).reshape(
-            *shape
-        )
+        weights = decode_weights(data, learning_shape(data["version"]))
         return cls(BrainParams(**data["params"]), weights, data["version"])
 
 
@@ -62,7 +54,7 @@ def learning_shape(version: str) -> tuple[int, int]:
     return sizes["KC"], sizes["MBON_ap"] + sizes["MBON_av"]
 
 
-def new_fly_state(params: BrainParams, version: str = "toy-v0") -> FlyState:
+def new_fly_state(params: BrainParams, version: str = DEFAULT_VERSION) -> FlyState:
     circuit = load_circuit("olfaction_mb", version)
     weights = torch.cat(
         [
