@@ -4,7 +4,8 @@ from collections import Counter
 from random import Random
 
 import pytest
-from tsuyulabo_api.domain.constants import EXCLUSIVE_TRAITS, MUTATIONS, ODDS
+from tsuyulabo_api.domain import genetics
+from tsuyulabo_api.domain.constants import EXCLUSIVE_TRAITS, ODDS
 from tsuyulabo_api.domain.eclosion import odds, omen_sequence, roll, roll_tier
 
 
@@ -39,8 +40,8 @@ def test_outcomes_and_determinism() -> None:
         if adult.tier == 0:
             low_stars[adult.stars] += 1
         if adult.tier == 3:
-            assert adult.stars == 5 and adult.strain in MUTATIONS
-            mutations[adult.strain] += 1
+            assert adult.stars == 5 and adult.mutation is not None
+            mutations[adult.mutation["locus"]] += 1
         else:
             assert adult.strain == "wild"
     assert 4800 < sexes["m"] < 5200
@@ -49,3 +50,14 @@ def test_outcomes_and_determinism() -> None:
     assert roll(Random(99), "gold") == roll(Random(99), "gold")
     assert omen_sequence(Random(1), 2) == (0, 1, 2, 3, 2)
     assert omen_sequence(Random(1), 3) == (0, 1, 2, 3)
+
+
+def test_inherited_phenotype_and_sex_survive_non_rainbow_eclosion() -> None:
+    egg = genetics.wild_type("m")
+    egg["w"] = ["w"]
+    for seed in range(100):
+        adult = roll(Random(seed), "normal", genotype=egg)
+        assert adult.sex == "m" and adult.strain == "white"
+        if adult.tier != 3:
+            assert adult.genotype == egg and adult.mutation is None
+    assert egg["w"] == ["w"]

@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from random import Random
 
 from . import constants as c
+from . import genetics
 
 
 def odds(
@@ -55,14 +56,24 @@ class AdultRoll:
     sex: str
     traits: tuple[str, str]
     omen_sequence: tuple[int, ...]
+    genotype: genetics.Genotype
+    mutation: genetics.Mutation | None
 
 
 def roll(
-    rng: Random, rank: str, temperature_average: float = 0, pupation_hit: bool = False
+    rng: Random,
+    rank: str,
+    temperature_average: float = 0,
+    pupation_hit: bool = False,
+    *,
+    genotype: genetics.Genotype | None = None,
 ) -> AdultRoll:
+    egg = genotype if genotype is not None else genetics.normal_egg(rng)
+    genetics.phenotypes(egg)
     tier = roll_tier(rng, rank, temperature_average, pupation_hit)
     stars = rng.choice((1, 2)) if tier == 0 else tier + 2
-    strain = rng.choice(c.MUTATIONS) if tier == 3 else c.WILD_STRAIN
-    sex = rng.choice(c.SEXES)
+    adult, mutation = genetics.mutate(rng, egg) if tier == 3 else (egg, None)
+    strain = genetics.phenotypes(adult)[0]
+    sex = adult["sex"]
     traits = roll_traits(rng)
-    return AdultRoll(tier, stars, strain, sex, traits, omen_sequence(rng, tier))
+    return AdultRoll(tier, stars, strain, sex, traits, omen_sequence(rng, tier), adult, mutation)
