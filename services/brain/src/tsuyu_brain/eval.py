@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import argparse
 import json
+import math
 from pathlib import Path
 
 import torch
@@ -10,7 +12,7 @@ from scipy.stats import ttest_ind
 
 from tsuyu_brain.behavior import LABELS
 from tsuyu_brain.circuit import simulate
-from tsuyu_brain.connectome import load_circuit
+from tsuyu_brain.connectome import VERSIONS, load_circuit
 from tsuyu_brain.decoder.dataset import generate_dataset, split_dataset
 from tsuyu_brain.decoder.model import evaluate_decoder, train_decoder
 from tsuyu_brain.individuality import generate_individual
@@ -18,9 +20,9 @@ from tsuyu_brain.learning import apply_training, new_fly_state, preference_index
 from tsuyu_brain.params import default_params
 
 
-def sanity_metrics() -> dict[str, dict[str, object]]:
+def sanity_metrics(version: str = "toy-v0") -> dict[str, dict[str, object]]:
     params = default_params()
-    feeding, escape = load_circuit("feeding"), load_circuit("escape")
+    feeding, escape = load_circuit("feeding", version), load_circuit("escape", version)
 
     def feed(stimulus: dict[str, float]) -> float:
         return float(simulate(feeding, stimulus, params, batch=16, seed=81).rates["MN9"].mean())
@@ -30,7 +32,7 @@ def sanity_metrics() -> dict[str, dict[str, object]]:
         simulate(escape, {"LPLC2": 1, "LC4": 1}, params, batch=16, seed=81).rates["DNp01"].mean()
     )
     quiet = float(simulate(escape, {}, params, batch=16, seed=81).rates["DNp01"].mean())
-    original = new_fly_state(params)
+    original = new_fly_state(params, version)
     baseline = preference_index(original, "banana", 71, 32)
     learned = {}
     for valence in ("reward", "punish"):
@@ -59,7 +61,7 @@ def sanity_metrics() -> dict[str, dict[str, object]]:
     }
 
 
-def trait_metrics(population: int = 32) -> dict[str, object]:
+def trait_metrics(population: int = 32, version: str = "toy-v0") -> dict[str, object]:
     """Independent populations under equal bilateral illumination; one-sided Welch test."""
     rates: list[list[float]] = [[], []]
     for group, traits in enumerate(([], ["right_turner"])):
@@ -67,7 +69,7 @@ def trait_metrics(population: int = 32) -> dict[str, object]:
             seed = 15000 + group * 10000 + individual
             params = generate_individual(traits, "m" if individual % 2 else "f", seed)
             result = simulate(
-                load_circuit("steering"),
+                load_circuit("steering", version),
                 {"photoreceptor_L": 1, "photoreceptor_R": 1},
                 params,
                 batch=4,
@@ -76,10 +78,14 @@ def trait_metrics(population: int = 32) -> dict[str, object]:
             right = result.rates["DNa02_R"].mean()
             left = result.rates["DNa02_L"].mean()
             rates[group].append(float(right / (right + left + 1e-8)))
-    p = float(ttest_ind(rates[1], rates[0], equal_var=False, alternative="greater").pvalue)
+    if len(set(rates[0] + rates[1])) == 1:
+        p = None  # No variation or activity: no statistical evidence for a trait effect.
+    else:
+        value = float(ttest_ind(rates[1], rates[0], equal_var=False, alternative="greater").pvalue)
+        p = value if math.isfinite(value) else None
     means = [sum(group) / population for group in rates]
     return {
-        "passed": means[1] > means[0] and p < 0.01,
+        "passed": p is not None and means[1] > means[0] and p < 0.01,
         "wild_mean_right_fraction": means[0],
         "trait_mean_right_fraction": means[1],
         "p_one_sided": p,
@@ -87,8 +93,8 @@ def trait_metrics(population: int = 32) -> dict[str, object]:
     }
 
 
-def decoder_metrics() -> dict[str, object]:
-    data = generate_dataset()
+def decoder_metrics(version: str = "toy-v0") -> dict[str, object]:
+    data = generate_dataset(version=version)
     train, held_out = split_dataset(data)
     metrics: dict[str, object] = {
         "labels": LABELS,
@@ -101,7 +107,7 @@ def decoder_metrics() -> dict[str, object]:
         metrics[kind] = evaluate_decoder(models[kind], held_out)
     control_accuracies = []
     for seed in (41, 42, 43):
-        _, control = split_dataset(generate_dataset(shuffle_seed=seed))
+        _, control = split_dataset(generate_dataset(shuffle_seed=seed, version=version))
         result = evaluate_decoder(models["mlp"], control)
         metrics[f"shuffled_{seed}"] = result
         control_accuracies.append(result["accuracy"])
@@ -117,13 +123,21 @@ def decoder_metrics() -> dict[str, object]:
     return metrics
 
 
-def run_evaluation() -> dict[str, object]:
-    checks = sanity_metrics()
-    checks["trait_bias"] = trait_metrics()
-    checks["decoder"] = decoder_metrics()
+def run_evaluation(version: str = "toy-v0") -> dict[str, object]:
+    if version not in VERSIONS:
+        raise ValueError(f"unsupported connectome version: {version}")
+    threads = torch.get_num_threads()
+    try:
+        torch.set_num_threads(1)
+        checks = sanity_metrics(version)
+        checks["trait_bias"] = trait_metrics(version=version)
+        checks["decoder"] = decoder_metrics(version)
+    finally:
+        torch.set_num_threads(threads)
     return {
-        "connectome": "toy-v0",
-        "model_boundary": "synthetic, not biological validation",
+        "connectome": version,
+        "model_boundary": "game LIF checks; measured topology for MaleCNS, synthetic for toy; "
+        "not biological validation",
         "torch_version": str(torch.__version__),
         "checks": checks,
         "passed": all(row["passed"] for row in checks.values()),
@@ -140,11 +154,16 @@ def repository_root() -> Path:
 def write_report(report: dict[str, object], directory: Path | None = None) -> Path:
     directory = directory if directory is not None else repository_root() / "eval-results/brain"
     directory.mkdir(parents=True, exist_ok=True)
-    (directory / "report.json").write_text(json.dumps(report, indent=2), encoding="utf-8")
+    version = report.get("connectome", "toy-v0")
+    stem = "report-malecns" if version == "malecns-v1.0" else "report"
+    (directory / f"{stem}.json").write_text(
+        json.dumps(report, indent=2, allow_nan=False) + "\n", encoding="utf-8"
+    )
     lines = [
-        "# Brain evaluation — toy-v0",
+        f"# Brain evaluation — {version}",
         "",
-        "Synthetic model checks, not biological validation.",
+        "Game LIF evaluation; measured MaleCNS topology or synthetic toy topology. "
+        "This is not biological validation.",
         "",
         "| Check | Pass | Measurements |",
         "| --- | --- | --- |",
@@ -183,16 +202,27 @@ def write_report(report: dict[str, object], directory: Path | None = None) -> Pa
             "Decoder confusion matrices: rows = true, columns = predicted; labels in JSON.",
             "Shuffled controls preserve each projection's weights (including zeros).",
             "The decoder is frozen; three control seeds use the same held-out individuals.",
-            "A 10 percentage-point average drop operationalizes 'large drop' for this toy model.",
+            "A 10 percentage-point average drop operationalizes 'large drop' for this model.",
         ]
     )
-    (directory / "report.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    (directory / f"{stem}.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
     return directory
 
 
 def main() -> None:
-    report = run_evaluation()
-    directory = write_report(report)
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--version", choices=VERSIONS, default="toy-v0")
+    parser.add_argument("--output", type=Path)
+    args = parser.parse_args()
+    report = run_evaluation(args.version)
+    if args.version == "malecns-v1.0":
+        from tsuyu_brain.connectome.malecns import manifest
+
+        report["calibration"] = {
+            name: {key: row[key] for key in ("scale", "input_rate_hz", "todos")}
+            for name, row in manifest()["circuits"].items()
+        }
+    directory = write_report(report, args.output)
     print(f"Brain evaluation: {'PASS' if report['passed'] else 'FAIL'}; {directory}")
     if not report["passed"]:
         raise SystemExit(1)
