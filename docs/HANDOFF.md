@@ -4,12 +4,16 @@
 
 ## いまの状態（サマリー）
 
-- 日付: 2026-09-27（午前）
-- フェーズ: W1 ほぼ完了 → W2 進行中
-- main にあるもの: 仕様一式、uv / npm workspaces、Next.js 16 の雛形、デザインシステム・キャラ・ホーム画面（モック）、
-  パズルの TS エンジンと音、Python のゲームルール（domain）と共有 fixtures、API の土台（DB・認証・時計・冪等性・台帳）
-- 次にやること: 走っている Codex タスクの結果をマージ（下の表）。Claude はミニゲーム画面（`feat/web-games`）→ 羽化・発表会の画面 →
-  API クライアントで画面をつなぐ。
+- 日付: 2026-09-27（昼）
+- フェーズ: W2 完了 → W3 進行中
+- main にあるもの: 仕様一式、脳エンジン（toy-v0）、ゲームルール、ゲーム API の全エンドポイント（脳はアダプター経由）、
+  シオリ（Mock で動くエージェント、根拠の検証、RAG）と arq ワーカー、docker compose・Dockerfile・CI、
+  Web: デザインシステム、ホーム（モック）、ごはん・しつけのミニゲーム（練習モード）、羽化の演出（デモ）、研究発表会（デモ）
+- テスト（昼の時点）: Python 317 件、Web 183 件。ruff / typecheck / lint も通過
+- 実行中の Codex: W3-integration（本物の脳を API とワーカーにつなぐ）、W3-web-app（API クライアントと残りの画面）、
+  W3-malecns（本物の配線データから回路を作る）
+- MaleCNS v1.0 の生データ（約 1.1 GB、オーナー許可済み）は `C:\Users\lingm\dev\tsuyulabo-agents\W3-malecns\data\raw\malecns-v1.0\`。git には入れない
+- オーナーが帰宅後にやること: Codex のサンドボックス設定、Vercel CLI のログイン
 - ローカルで pytest が `PermissionError: ...\Temp\pytest-of-lingm` になるときは `PYTEST_DEBUG_TEMPROOT=/c/Users/lingm/.cache/pytest-tmp` を付ける
   （Codex のサンドボックスが作った一時フォルダの権限のせい）。
 
@@ -54,11 +58,14 @@ git push
 | W1-api-core | API の土台（DB、認証、時計、冪等性、台帳） | Codex | feat/api-core | マージ済み |
 | W1-web-puzzles | パズルの TS エンジン、音、振動 | Codex | feat/web-puzzles | マージ済み |
 | W1-design | デザインシステム、キャラクター、ホーム画面 | Claude | feat/web-design | マージ済み |
-| W2-infra | docker compose、Dockerfile、CI | Codex | feat/infra | 完了・未マージ（commit plan 未適用） |
-| W2-api-game | ゲームのエンドポイント（domain + DB + 脳） | Codex | feat/api-game | 実行中 |
-| W2-shiori-worker | シオリのエージェントと arq ワーカー | Codex | feat/shiori-worker | 実行中 |
-| W2-puzzle-parity | TS のパズル検証を Python と完全一致させる | Codex | fix/puzzle-parity | 完了・未マージ（commit plan 未適用） |
-| W2-web-games | ミニゲーム画面（ごはん、しつけ、そうじ、温度、場所えらび） | Claude | feat/web-games（push 済み・未マージ） | ごはん画面まで |
+| W2-infra | docker compose、Dockerfile、CI | Codex | feat/infra | マージ済み |
+| W2-api-game | ゲームのエンドポイント（domain + DB + 脳） | Codex | feat/api-game | マージ済み |
+| W2-shiori-worker | シオリのエージェントと arq ワーカー | Codex | feat/shiori-worker | マージ済み |
+| W2-puzzle-parity | TS のパズル検証を Python と完全一致させる | Codex | fix/puzzle-parity | マージ済み |
+| W2-web-games | ごはん・しつけの画面、羽化の演出、研究発表会 | Claude | feat/web-games, feat/web-screens | マージ済み |
+| W3-integration | 本物の脳を API とワーカーに接続、報酬の下限、研究ランク | Codex | feat/integration | 実行中 |
+| W3-web-app | API クライアント、フック、ホームとごはんの接続、残りの画面 | Codex | feat/web-app | 実行中 |
+| W3-malecns | MaleCNS v1.0 から回路を作って評価 | Codex | feat/malecns | 実行中 |
 
 ## 決めたこと（理由つき）
 
