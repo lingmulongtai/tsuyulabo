@@ -101,22 +101,28 @@ flowchart LR
 | 特性が行動に出る | 合格（右曲がりぐせ群の右旋回 60.1% vs 野生型 52.2%、p < 1e-30） |
 | 行動デコーダー | 合格（本物の配線 100% ／ 配線シャッフル 73〜84%） |
 
-本物の配線 **MaleCNS v1.0**（5 回路・約 700 KB に前処理して同梱）: 6 項目中 5 項目合格。
+Measured **MaleCNS v1.0** is now the default: **all six gates pass**, with five
+circuits bundled in about 990 KB. The extract adds 279 real bodies, retains all
+original bodies, and stays below 2,000 neurons per circuit. This evaluates the
+game model, not biological validity.
 
-| チェック | 結果 |
+| Check | Result |
 | --- | --- |
-| 糖 → MN9 | 合格（0 Hz → 2.9 Hz） |
-| 迫る影 → DNp01 | 合格（0 Hz → 25.4 Hz） |
-| 苦味で摂食が止まる | 合格（2.9 Hz → 1.1 Hz） |
-| しつけで好みが変わる | 合格（初期 PI +0.08 → ごほうび +0.47 / 罰 −1.08） |
-| 特性が行動に出る | 合格（右旋回 53.9% vs 52.4%、p = 1.4e-5） |
-| 行動デコーダー | 未達（logistic 78.41% / MLP 76.70% ／ 配線シャッフル 46.02〜51.14%。基準 85%） |
+| Sugar -> MN9 | Pass: 0 Hz at rest, 115.625 Hz with sugar |
+| Looming -> DNp01 | Pass: 0 Hz at rest, 25.417 Hz with looming |
+| Bitter suppression | Pass: 115.625 Hz sugar, 0 Hz sugar+bitter |
+| Learning | Pass: baseline PI +0.098564; reward shift +0.462885 / punishment -1.098564 |
+| Trait bias | Pass: right fraction 53.62% vs 52.32%; one-sided p = 0.000858 |
+| Decoder | Pass: logistic **88.64%**, MLP **88.64%**; shuffled 43.75-48.86%; average drop 42.23 percentage points |
 
-ゲームの既定は引き続き `toy-v0`。匂いシナリオの修正と個体ごとの安静時活動の差し引きを行ったが、
-弱い匂いや摂食の無応答によるラベルの重なりが残る。調整には訓練・検証データのみを使用し、
-テスト個体 `[4, 5, 6, 10]` は固定。詳細は
-[評価レポート](services/brain/reports/report-malecns.md)と
-[原因・検証記録](services/brain/reports/decoder-investigation.md)。
+The previous measured scores were 78.41% / 76.70%. Selection used the unchanged
+training/validation split; test individuals [4, 5, 6, 10] stayed held out.
+Validation is still 81.82%, and weak yeast responses remain a limitation.
+Versioned checkpoints and compact float16 state deltas support the measured
+default; explicitly selected and persisted `toy-v0` states remain supported.
+All six toy gates also pass. See the [evaluation report](services/brain/reports/report-malecns.md),
+[output counts and provenance](services/brain/README.md#additional-output-census-w8),
+and [investigation](services/brain/reports/decoder-investigation.md).
 
 シオリ（Mock、42 問）: 正答率 100%、根拠の検証率 100%。
 
