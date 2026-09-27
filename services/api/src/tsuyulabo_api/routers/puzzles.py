@@ -127,6 +127,13 @@ async def submit(
         verified_time = verify_wall_clock(puzzle.issued_at, clock.now(), last_t)
         if not verified_time.valid:
             verified = verified_time
+        elif puzzle.kind == "training":
+            # A client can underreport elapsed_ms. Grade against at least the
+            # server duration, just as the daily circuit does.
+            elapsed_ms = max(
+                body["elapsed_ms"], int((clock.now() - puzzle.issued_at).total_seconds() * 1000)
+            )
+            verified = training.verify(puzzle.params, body | {"elapsed_ms": elapsed_ms})
     if not verified.valid:
         raise APIError("invalid_submission", "操作記録が不正です", 422, {"reason": verified.reason})
     result = verified.to_dict()
