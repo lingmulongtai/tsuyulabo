@@ -12,6 +12,7 @@ async def test_all_tables_exist(engine: AsyncEngine) -> None:
         "larva_states",
         "care_events",
         "puzzles",
+        "daily_circuit_attempts",
         "adults",
         "team_slots",
         "inventory",
