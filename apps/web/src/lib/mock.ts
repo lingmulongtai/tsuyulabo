@@ -10,6 +10,7 @@ const demoMember = (id: string, name: string, bag: number): TeamMemberSummary =>
 
 /** Sample home payload (research day 3, noon) used until the page is wired to the API, and in stories/tests. */
 export const MOCK_HOME: HomeData = {
+  circadian: { gauge: 64, streak: 4, typical_bedtime: "23:15", typical_wake: "07:00" },
   clock: { game_now: "2026-09-30T12:40:00+09:00", slot: "noon", research_day: 3, weekday_label: "水" },
   week: { id: "w-demo", research_day: 3, stage: "larva2", ready_to_eclose: false, care_miss: 0, points_so_far: 5420 },
   fly: { stage: "larva2", hunger: 70, cleanliness: 45, mood: 60, mood_label: "ふつう", growth: 88.5 },
