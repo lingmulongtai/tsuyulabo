@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { AppShell } from "@/components/shell/AppShell";
 import { DailyCircuitCard } from "@/components/daily/DailyCircuitCard";
+import { RaceCard } from "@/components/race/RaceCard";
 import { CareFrame } from "@/components/games/CareFrame";
 import { Button, Card, SectionTitle } from "@/components/ui/primitives";
 import { ErrorCard, QueryState } from "@/components/ui/QueryState";
@@ -20,6 +21,7 @@ export default function FriendsPage() {
   const [removing, setRemoving] = useState<string | null>(null);
   return <AppShell><CareFrame title="フレンドの研究室" subtitle="育ったツユを見せあおう">
     <DailyCircuitCard />
+    <RaceCard />
     <QueryState query={me}>{data => <Card className="space-y-3 p-5 text-center">
       <h2 className="font-kiwi">あなたのフレンドコード</h2><p className="select-all font-mono text-3xl tracking-widest">{data.friend_code}</p>
       <Button tone="leaf" size="sm" onClick={async () => { try { await navigator.clipboard.writeText(data.friend_code); setCopyMessage("コピーしました！"); } catch { setCopyMessage("コードを長押ししてコピーしてください。"); } }}>コードをコピー</Button>
