@@ -464,6 +464,59 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/push/preferences": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Preferences */
+        get: operations["preferences_v1_push_preferences_get"];
+        /** Update Preferences */
+        put: operations["update_preferences_v1_push_preferences_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/push/public-key": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Public Key */
+        get: operations["public_key_v1_push_public_key_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/push/subscribe": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Subscribe */
+        post: operations["subscribe_v1_push_subscribe_post"];
+        /** Unsubscribe */
+        delete: operations["unsubscribe_v1_push_subscribe_delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/puzzles": {
         parameters: {
             query?: never;
@@ -1004,6 +1057,11 @@ export interface components {
             /** Path */
             path: number[];
         };
+        /** EndpointRequest */
+        EndpointRequest: {
+            /** Endpoint */
+            endpoint: string;
+        };
         /** EnterRace */
         EnterRace: {
             /** Adult Id */
@@ -1137,6 +1195,36 @@ export interface components {
             /** Title */
             title?: string | null;
         };
+        /** PublicKeyResponse */
+        PublicKeyResponse: {
+            /** Public Key */
+            public_key: string | null;
+        };
+        /** PushPreferences */
+        PushPreferences: {
+            /**
+             * Eclosion Night
+             * @default true
+             */
+            eclosion_night: boolean;
+            /**
+             * Friend Activity
+             * @default true
+             */
+            friend_activity: boolean;
+            /** Meal Slots */
+            meal_slots?: ("morning" | "noon" | "night")[];
+            /**
+             * Quiet End
+             * @default 07:00
+             */
+            quiet_end: string;
+            /**
+             * Quiet Start
+             * @default 23:00
+             */
+            quiet_start: string;
+        };
         /** RaceEntryView */
         RaceEntryView: {
             /** Adult Id */
@@ -1222,6 +1310,26 @@ export interface components {
                 string,
                 string
             ] | null;
+        };
+        /** SubscribeRequest */
+        SubscribeRequest: {
+            /** Endpoint */
+            endpoint: string;
+            /** Expirationtime */
+            expirationTime?: number | null;
+            keys: components["schemas"]["SubscriptionKeys"];
+        };
+        /** SubscriptionKeys */
+        SubscriptionKeys: {
+            /** Auth */
+            auth: string;
+            /** P256Dh */
+            p256dh: string;
+        };
+        /** SubscriptionResponse */
+        SubscriptionResponse: {
+            /** Subscribed */
+            subscribed: boolean;
         };
         /** TeamRequest */
         TeamRequest: {
@@ -2417,6 +2525,151 @@ export interface operations {
                     "application/json": {
                         [key: string]: unknown;
                     };
+                };
+            };
+        };
+    };
+    preferences_v1_push_preferences_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PushPreferences"];
+                };
+            };
+        };
+    };
+    update_preferences_v1_push_preferences_put: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PushPreferences"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PushPreferences"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    public_key_v1_push_public_key_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicKeyResponse"];
+                };
+            };
+        };
+    };
+    subscribe_v1_push_subscribe_post: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SubscribeRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SubscriptionResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    unsubscribe_v1_push_subscribe_delete: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EndpointRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SubscriptionResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
