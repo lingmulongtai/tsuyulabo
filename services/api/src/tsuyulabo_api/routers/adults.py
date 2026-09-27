@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 from typing import Any
+from unicodedata import category
 
 from fastapi import APIRouter
+from pydantic import BaseModel, Field, field_validator
 from sqlalchemy import select
 from tsuyulabo_api.db.models import Adult
 from tsuyulabo_api.domain import adults as rules
@@ -14,6 +16,28 @@ from tsuyulabo_api.services.idempotency import IdempotentRoute
 from tsuyulabo_api.services.ledger import get_account, transfer
 
 router = APIRouter(prefix="/v1/adults", route_class=IdempotentRoute)
+
+
+class RenameAdult(BaseModel):
+    name: str = Field(min_length=1, max_length=12)
+
+    @field_validator("name", mode="before")
+    @classmethod
+    def trim_name(cls, value: Any) -> Any:
+        if isinstance(value, str):
+            if any(category(char) in {"Cc", "Cf", "Cs"} for char in value):
+                raise ValueError("名前に制御文字は使えません")
+            return value.strip()
+        return value
+
+
+@router.patch("/{adult_id}")
+async def rename(
+    adult_id: str, body: RenameAdult, user: CurrentUser, session: Session, brain: Brain
+) -> dict[str, Any]:
+    adult = await adults.owned(session, user.id, adult_id)
+    adult.name = body.name
+    return adults.payload(adult, brain)
 
 
 @router.get("")
