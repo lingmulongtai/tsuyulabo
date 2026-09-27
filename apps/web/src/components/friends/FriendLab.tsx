@@ -7,6 +7,7 @@ import { AdultCard } from "../collection/AdultCard";
 import { Terrarium } from "../home/Terrarium";
 import { Button, Card, SectionTitle } from "../ui/primitives";
 import { ErrorCard, QueryState } from "../ui/QueryState";
+import { MatingProposal } from "./MatingProposal";
 
 export function FriendLab({ id }: { id: string }) {
   const lab = useFriendLab(id);
@@ -33,6 +34,6 @@ export function FriendLab({ id }: { id: string }) {
     <SectionTitle>研究チーム</SectionTitle>{data.team.members.length === 0 && <p className="text-sm text-muted">まだチームを編成していません。</p>}
     {data.team.members.map(adult => <AdultCard key={adult.id} adult={adult} link={false} />)}
     <SectionTitle>育ったツユたち</SectionTitle>{data.adults.length === 0 && <p className="text-sm text-muted">最初の羽化を待っています。</p>}
-    {data.adults.map(adult => <AdultCard key={adult.id} adult={adult} link={false} />)}
+    {data.adults.map(adult => <div key={adult.id} className="space-y-2"><AdultCard adult={adult} link={false} /><MatingProposal friendId={id} adultId={adult.id} /></div>)}
   </>}</QueryState>;
 }

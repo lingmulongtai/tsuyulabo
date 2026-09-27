@@ -17,3 +17,10 @@ it("reads an answer without inventing evidence", () => {
   expect(shioriAnswer({ answer: "観察しました", evidence: ["event#1", {}, 2] })).toEqual({ answer: "観察しました", evidence: ["event#1"] });
   expect(shioriAnswer(null)).toEqual({ answer: null, evidence: [] });
 });
+
+it("explains mating notifications and where to find the egg", () => {
+  const base = { id: "n", created_at: "2026-09-27", read_at: null, payload: {} };
+  expect(notificationText({ ...base, kind: "mating_pending" })).toContain("申込");
+  expect(notificationText({ ...base, kind: "mating_accepted" })).toContain("ホーム");
+  expect(notificationText({ ...base, kind: "mating_declined" })).toContain("辞退");
+});

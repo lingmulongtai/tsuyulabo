@@ -16,6 +16,8 @@ async def test_all_tables_exist(engine: AsyncEngine) -> None:
         "maze_races",
         "maze_entries",
         "maze_slots",
+        "mating_proposals",
+        "pending_eggs",
         "adults",
         "team_slots",
         "inventory",

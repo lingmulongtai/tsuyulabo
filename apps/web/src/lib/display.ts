@@ -15,6 +15,9 @@ export function bagCapacity(subskills: readonly string[]) {
 }
 
 export function notificationText(notification: components["schemas"]["Notification"]) {
+  if (notification.kind === "mating_pending") return "お見合いの申込が届いています。おたよりで確認してね。";
+  if (notification.kind === "mating_accepted") return "お見合いが成立しました！ 卵はホームで選んで育てられます。";
+  if (notification.kind === "mating_declined") return "お見合いは辞退となりました。またの出会いを待ってね。";
   const p = notification.payload;
   const name = typeof p.display_name === "string" ? p.display_name : "フレンド";
   if (notification.kind === "like") return `${name}さんが、いいねしてくれました。`;
