@@ -6,6 +6,7 @@ from tsuyulabo_api.db.base import Base
 from tsuyulabo_api.db.daily_circuit import DailyCircuitAttempt
 from tsuyulabo_api.db.economy import IdempotencyKey, Inventory, LedgerAccount, LedgerEntry
 from tsuyulabo_api.db.maze import MazeEntry, MazeRace, MazeSlot
+from tsuyulabo_api.db.push import NotificationPreference, PushDelivery, PushSubscription
 from tsuyulabo_api.db.rearing import (
     Adult,
     CareEvent,
@@ -38,8 +39,11 @@ __all__ = [
     "MazeRace",
     "MazeSlot",
     "Notification",
+    "NotificationPreference",
     "Paper",
     "Puzzle",
+    "PushDelivery",
+    "PushSubscription",
     "ShioriMessage",
     "SleepSession",
     "TeamSlot",
