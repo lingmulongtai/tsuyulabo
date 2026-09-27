@@ -47,7 +47,8 @@ export interface paths {
         delete?: never;
         options?: never;
         head?: never;
-        patch?: never;
+        /** Rename */
+        patch: operations["rename_v1_adults__adult_id__patch"];
         trace?: never;
     };
     "/v1/adults/{adult_id}/level-up": {
@@ -738,6 +739,11 @@ export interface components {
             /** Title */
             title?: string | null;
         };
+        /** RenameAdult */
+        RenameAdult: {
+            /** Name */
+            name: string;
+        };
         /** SendGift */
         SendGift: {
             /** Amount */
@@ -1099,6 +1105,43 @@ export interface operations {
             cookie?: never;
         };
         requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Adult"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    rename_v1_adults__adult_id__patch: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+            };
+            path: {
+                adult_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RenameAdult"];
+            };
+        };
         responses: {
             /** @description Successful Response */
             200: {

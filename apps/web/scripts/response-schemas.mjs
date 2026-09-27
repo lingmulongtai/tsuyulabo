@@ -42,6 +42,7 @@ export const schemas = {
   ApiErrorBody: obj({ error: obj({ code: str, message: str, details: dict() }, ["details"]) }),
 };
 export const responses = {
+  "PATCH /v1/adults/{adult_id}": ref("Adult"),
   "POST /v1/auth/guest": ref("Guest"), "GET /v1/me": ref("Profile"), "PATCH /v1/me": ref("Profile"),
   "GET /v1/home": ref("HomeData"), "GET /v1/weeks": arr(ref("PastWeek")), "POST /v1/weeks": ref("Week"), "GET /v1/weeks/current": ref("Week"), "GET /v1/weeks/current/presentation": ref("Presentation"), "POST /v1/weeks/current/eclose": ref("Eclosion"),
   "POST /v1/puzzles": ref("Puzzle"), "POST /v1/puzzles/{puzzle_id}/submit": ref("PuzzleResult"),

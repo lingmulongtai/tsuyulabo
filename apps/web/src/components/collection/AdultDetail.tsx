@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { useAdult, useLevelUp } from "@/lib/api/hooks";
+import { useAdult, useLevelUp, useRenameAdult } from "@/lib/api/hooks";
 import { preferencePercent, SKILL_LABELS, SUBSKILL_LABELS, TRAIT_LABELS } from "@/lib/display";
 import { CUE_INFO } from "@/game/labels";
 import type { Cue } from "@/game/puzzles/types";
@@ -13,10 +13,34 @@ import { AskShiori } from "../shiori/AskShiori";
 export function AdultDetail({ id }: { id: string }) {
   const adult = useAdult(id);
   const level = useLevelUp();
+  const rename = useRenameAdult();
+  const [editing, setEditing] = useState(false);
+  const [name, setName] = useState("");
+  const trimmedName = name.trim();
+  const validName = [...trimmedName].length >= 1 && [...trimmedName].length <= 12 && !/[\p{Cc}\p{Cf}\p{Cs}]/u.test(name);
   const [ask, setAsk] = useState(false);
   return <QueryState query={adult}>{data => <>
     <Card className="p-5 text-center"><AdultBehavior id={id} strain={data.strain} sex={data.sex} />
-      <h2 className="font-kiwi text-2xl">{data.name} {data.sex === "f" ? "♀" : "♂"}</h2>
+      <div className="flex items-center justify-center gap-2">
+        <h2 className="font-kiwi text-2xl">{data.name} {data.sex === "f" ? "♀" : "♂"}</h2>
+        <button type="button" aria-label="名前を変更" aria-expanded={editing} className="rounded-full border-2 border-line p-2 text-muted hover:bg-bg focus-visible:outline-2 focus-visible:outline-leaf" hidden={editing} onClick={() => { setName(data.name); rename.reset(); setEditing(true); }}>
+          <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m16 3 5 5L8 21H3v-5L16 3Z M13 6l5 5" /></svg>
+        </button>
+      </div>
+      {editing && <form className="my-3 space-y-2" onSubmit={event => {
+        event.preventDefault();
+        if (validName && !rename.isPending) rename.mutate({ id, name: trimmedName }, { onSuccess: () => setEditing(false) });
+      }}>
+        <label htmlFor="adult-name" className="block text-sm font-bold">新しい名前</label>
+        <input id="adult-name" autoFocus value={name} disabled={rename.isPending} aria-describedby="adult-name-hint" aria-invalid={!validName} className="w-full rounded-2xl border-2 border-line bg-bg px-4 py-3 text-center focus:outline-leaf" onChange={event => setName(event.target.value)} onKeyDown={event => { if (event.key === "Escape" && !rename.isPending) setEditing(false); }} />
+        <p id="adult-name-hint" className="text-xs text-muted">1〜12文字で名前をつけてね。制御文字は使えません。</p>
+        <div className="flex justify-center gap-2">
+          <Button type="submit" tone="banana" disabled={!validName || rename.isPending}>{rename.isPending ? "保存中…" : "保存する"}</Button>
+          <Button type="button" disabled={rename.isPending} onClick={() => setEditing(false)}>キャンセル</Button>
+        </div>
+        {rename.error && <ErrorCard error={rename.error} />}
+      </form>}
+      {!editing && rename.isSuccess && <p role="status" className="mt-2 text-leaf">名前を変更しました！</p>}
       <p className="text-sm text-muted">{STRAIN_LABELS[data.strain].name} ・ {STRAIN_LABELS[data.strain].gene}</p><Stars value={data.stars} />
       <p className="my-3 font-mono text-xl">Lv.{data.level} / {data.level_cap}</p>
       <Meter label="げんき" value={data.energy} color="var(--leaf)" />

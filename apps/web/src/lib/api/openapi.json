@@ -342,6 +342,21 @@
         "title": "ProfilePatch",
         "type": "object"
       },
+      "RenameAdult": {
+        "properties": {
+          "name": {
+            "maxLength": 12,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "title": "RenameAdult",
+        "type": "object"
+      },
       "SendGift": {
         "additionalProperties": false,
         "properties": {
@@ -506,6 +521,65 @@
           }
         },
         "summary": "Detail"
+      },
+      "patch": {
+        "operationId": "rename_v1_adults__adult_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "adult_id",
+            "required": true,
+            "schema": {
+              "title": "Adult Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Idempotency-Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RenameAdult"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Rename V1 Adults  Adult Id  Patch",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Rename"
       }
     },
     "/v1/adults/{adult_id}/level-up": {
