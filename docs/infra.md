@@ -255,6 +255,102 @@ Review all light/dark images and the video before publishing; random puzzle layo
 adult traits, and Shiori's configured provider can change the output. The gallery uses the local
 stack and development time travel, and does not imply a deployed public service.
 
+## Web Push and the offline PWA
+
+Push uses standard VAPID Web Push through `pywebpush` (no Firebase project needed).
+`PushSender` in `services/api/src/tsuyulabo_api/services/push.py` is the provider interface
+for a future Capacitor/FCM implementation. The API and worker must share the same VAPID
+settings and database. Generate keys locally from the repository root:
+
+```powershell
+.\.tools\uv.exe sync
+.\.tools\uv.exe run python services/api/scripts/generate_vapid.py --subject mailto:you@example.com
+.\.tools\uv.exe run alembic -c services/api/alembic.ini upgrade head
+```
+
+The helper appends `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY` (base64url DER), and
+`VAPID_SUBJECT` to the ignored root `.env`, preserves existing settings, and refuses to
+overwrite existing VAPID entries. It never prints the keys. Keep the private key in your
+deployment's secret store; do not commit `.env`. Use a real contact URI in production.
+Keep keys stable: rotating the key pair requires browsers to unsubscribe and subscribe again.
+Without both keys the public-key endpoint returns null and the worker skips push jobs.
+
+Migration `0010` currently follows `0008` because this clone does not contain the parallel
+`0009` migration. The commander must change its `down_revision` to `0009` during integration.
+
+Start Redis, the API, the worker, and the web in separate terminals from the repository root:
+
+```powershell
+$env:REDIS_URL = 'redis://localhost:6379/0'
+.\.tools\uv.exe run uvicorn tsuyulabo_api.main:app --reload --port 8000
+# In another terminal (set REDIS_URL there too):
+.\.tools\uv.exe run arq tsuyu_worker.main.WorkerSettings
+# In another terminal:
+$env:NEXT_PUBLIC_API_URL = 'http://localhost:8000'
+npm.cmd run dev -w apps/web
+```
+
+Open `http://localhost:3000`, start a research week, then use the home header's **設定** link.
+Press **この端末で通知を受け取る** and accept the browser prompt. Merely visiting the app
+never requests notification permission. Category and quiet-hour preferences apply to all
+of the user's devices; disabling notifications unregisters only the current browser.
+The authenticated subscription and preference mutations use the usual `Idempotency-Key`.
+Routes are `GET /v1/push/public-key`, `POST`/`DELETE /v1/push/subscribe`, and
+`GET`/`PUT /v1/push/preferences`. Subscription endpoints accept browser `toJSON()` output.
+
+Meal jobs begin at **04:00, 12:00, 18:00 JST**. They check active weeks and submitted meal
+care events, respect selected slots, and send **ごはんの時間です** linking to `/care/meal`.
+Day 7 night also sends **羽化の夜です** linking to `/presentation`. Game eligibility uses
+the user's existing dev offset; scheduling and quiet hours always use real JST.
+The default **23:00–07:00** quiet interval suppresses the 04:00 reminder, without a deferred
+07:00 send. Equal start/end times disable quiet hours. Friend likes, gifts, and eclosions
+are checked once a minute and link to `/friends`; only unread events from the last five
+minutes and after device registration are eligible. Quiet-hour events are not queued
+for later delivery.
+
+Failed deliveries retry each minute through minute 4 of the slot, with a five-minute push
+TTL. Persistent per-device event claims prevent repeated/concurrent cron sends; a process
+crash after claiming can lose that reminder (best-effort, not exactly-once delivery).
+404/410 deletes the subscription and its claims. Other failures retain subscriptions.
+Claims older than eight days are pruned. Provider URLs and encryption secrets are never
+logged. Endpoint validation allows HTTPS browser push services under FCM, Mozilla, Apple,
+and Windows Push; redirects are disabled. Add and review any new provider hostname in
+`validate_endpoint` before supporting additional browsers.
+
+To test without waiting for the cron, use DevTools → Application → Service Workers → Push
+with this payload after registration:
+
+```json
+{"title":"ごはんの時間です","body":"研究室でごはんを作ろう。","url":"/care/meal","tag":"local-test"}
+```
+
+This tests display and click routing, not provider delivery. To exercise real encryption
+and delivery, with the API stopped against a local test database, run the worker function
+from a Python console using `Settings`, `create_engine`, `session_factory`, `WebPushSender`,
+and `send_reminders(sessions, sender, now=<aware JST slot boundary>)`; choose a boundary
+within the test user's active week and temporarily disable quiet hours. Do not use simulated
+timestamps against a production database. Unit tests inject a fake sender:
+
+```powershell
+.\.tools\uv.exe run pytest services/api/tests/test_push_routes.py services/api/tests/test_push_provider.py services/worker/tests/test_push.py
+npm.cmd run test -w apps/web -- src/lib/push-browser.test.ts src/lib/service-worker.test.ts
+```
+
+For offline testing, load the app once online and wait until `/sw.js` is activated. Switch
+DevTools Network to Offline, then reload or navigate to an app URL. The cached Japanese
+offline shell should appear, with a link to try the home page again. Reconnect and follow
+that link to return to live data. Only `/offline.html` is cached: account data, API responses,
+and mutations are never cached or replayed. Bump `tsuyu-offline-v1` when changing the shell;
+the next service-worker activation deletes only older Tsuyu offline caches. `/sw.js` is
+served with no-cache headers and registered with `updateViaCache: 'none'`.
+
+Use HTTPS outside localhost, with an HTTPS API and matching `CORS_ORIGINS`. For local HTTPS
+use `npm.cmd run dev -w apps/web -- --experimental-https` and configure the API accordingly.
+On iOS/iPadOS, install to the home screen before enabling notifications. Browser and OS
+notification permissions must both permit alerts; verify real delivery on each target device.
+Implementation references: the installed Next.js 16 `dist/docs/01-app/02-guides/progressive-web-apps.md`
+and the [pywebpush provider documentation](https://github.com/web-push-libs/pywebpush).
+
 ## Future deployment
 
 The [project proposal](spec/kikakusho-v0.2.txt) plans Vercel for the web, Cloud Run for API and
