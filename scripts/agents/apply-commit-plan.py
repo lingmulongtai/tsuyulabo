@@ -54,6 +54,11 @@ def _is_pending(path: str, pending: set[str]) -> bool:
 def main() -> int:
     repo = Path(sys.argv[1]).resolve()
     dry = "--dry-run" in sys.argv
+    email = git(repo, "config", "user.email").strip()
+    if not email.endswith("@users.noreply.github.com"):
+        # Public repository: never publish a personal or school address.
+        print(f"refusing to commit as {email!r}; set a GitHub noreply user.email in the clone")
+        return 2
     plan_path = repo / ".codex-runs" / "commits.jsonl"
     lines = plan_path.read_text(encoding="utf-8-sig").splitlines()
     plan = [json.loads(line) for line in lines if line.strip()]
