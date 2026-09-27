@@ -10,12 +10,13 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from tsuyulabo_api.auth.dependencies import get_current_user
+from tsuyulabo_api.db.rearing import Week
 from tsuyulabo_api.db.session import get_session
 from tsuyulabo_api.db.users import User
+from tsuyulabo_api.domain.clock import day_start, game_day, next_slot_start, research_day_start
 from tsuyulabo_api.errors import APIError
 from tsuyulabo_api.services.clock import Clock, clock_payload, game_now, get_clock
 from tsuyulabo_api.services.idempotency import IdempotentRoute
-from tsuyulabo_api.services.timeutil import next_boundary
 
 
 class DevRoute(IdempotentRoute):
@@ -40,7 +41,7 @@ CurrentClock = Annotated[Clock, Depends(get_clock)]
 class AdvanceRequest(BaseModel):
     model_config = ConfigDict(extra="forbid", allow_inf_nan=False)
     hours: float | None = Field(default=None, gt=0)
-    to: Literal["next_slot", "next_day"] | None = None
+    to: Literal["next_slot", "next_day", "eclosion"] | None = None
 
     @model_validator(mode="after")
     def exactly_one_target(self) -> Self:
@@ -69,11 +70,23 @@ async def advance_time(
         .execution_options(populate_existing=True)
     )
     now = game_now(clock, user)
+    target = None
+    if body.to == "next_slot":
+        target = next_slot_start(now)
+    elif body.to == "next_day":
+        target = day_start(game_day(now) + timedelta(days=1))
+    elif body.to == "eclosion":
+        week = await session.scalar(
+            select(Week).where(Week.user_id == user.id, Week.status == "active")
+        )
+        if week is None:
+            raise APIError("no_active_week", "No active week", 409)
+        target = max(now, research_day_start(week.started_at, 7).replace(hour=18))
     try:
         seconds = (
             math.ceil(body.hours * 3600)
             if body.hours is not None
-            else math.ceil((next_boundary(now, body.to) - now).total_seconds())
+            else math.ceil((target - now).total_seconds())
         )
         now + timedelta(seconds=seconds)
     except (ValueError, OverflowError) as exc:
