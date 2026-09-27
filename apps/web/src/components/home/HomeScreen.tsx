@@ -8,7 +8,7 @@ import { CircadianRing } from "../sleep/CircadianRing";
 import { ActionGrid } from "./ActionGrid";
 import { ShioriBubble } from "./ShioriBubble";
 import { TeamStrip } from "./TeamStrip";
-import { Terrarium } from "./Terrarium";
+import { DecorationEditor } from "./DecorationEditor";
 import { TodoList } from "./TodoList";
 import { WeekStrip } from "./WeekStrip";
 
@@ -67,7 +67,7 @@ export function HomeScreen({ data, hero, footer }: { data: HomeData; hero?: Reac
       )}
 
       {week && fly ? (
-        <Terrarium stage={fly.stage} researchDay={week.research_day} moodLabel={fly.mood_label} night={night} />
+        <DecorationEditor stage={fly.stage} researchDay={week.research_day} moodLabel={fly.mood_label} night={night} />
       ) : null}
 
       {fly && (fly.stage.startsWith("larva") || fly.stage === "wandering") && (
@@ -84,6 +84,7 @@ export function HomeScreen({ data, hero, footer }: { data: HomeData; hero?: Reac
       {data.todo.length > 0 && <TodoList todo={data.todo} />}
       <DailyCircuitCard />
       <RaceCard />
+      <Link href="/contest" className="rounded-2xl bg-tint-leaf p-4 text-center font-bold text-leaf">今週の見た目コンテストを見る →</Link>
       <TeamStrip team={data.team} />
       {footer}
     </div>
