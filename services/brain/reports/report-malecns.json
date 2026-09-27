@@ -1,0 +1,611 @@
+{
+  "connectome": "malecns-v1.0",
+  "model_boundary": "game LIF checks; measured topology for MaleCNS, synthetic for toy; not biological validation",
+  "torch_version": "2.14.0+cpu",
+  "checks": {
+    "sugar_mn9": {
+      "passed": true,
+      "rest_hz": 0.0,
+      "sugar_hz": 2.9166667461395264
+    },
+    "looming_dnp01": {
+      "passed": true,
+      "rest_hz": 0.0,
+      "looming_hz": 25.41666603088379
+    },
+    "bitter_suppression": {
+      "passed": true,
+      "sugar_hz": 2.9166667461395264,
+      "mixed_hz": 1.1458333730697632
+    },
+    "learning": {
+      "passed": false,
+      "baseline_pi": 1.0,
+      "reward_delta": 0.0,
+      "punish_delta": -1.0
+    },
+    "trait_bias": {
+      "passed": false,
+      "wild_mean_right_fraction": 0.0,
+      "trait_mean_right_fraction": 0.0,
+      "p_one_sided": null,
+      "individuals_per_group": 32
+    },
+    "decoder": {
+      "labels": [
+        "rest",
+        "walk",
+        "turn_left",
+        "turn_right",
+        "feed",
+        "escape",
+        "groom",
+        "approach",
+        "avoid"
+      ],
+      "train_rows": 528,
+      "test_rows": 176,
+      "logistic": {
+        "accuracy": 0.46590909361839294,
+        "confusion_matrix": [
+          [
+            0,
+            0,
+            21,
+            0,
+            6,
+            0,
+            0,
+            0,
+            21
+          ],
+          [
+            0,
+            16,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            8,
+            0,
+            0,
+            0,
+            0,
+            0,
+            8
+          ],
+          [
+            0,
+            0,
+            8,
+            0,
+            0,
+            0,
+            0,
+            0,
+            8
+          ],
+          [
+            0,
+            0,
+            5,
+            0,
+            10,
+            0,
+            0,
+            0,
+            1
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            16,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            16,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            4,
+            0,
+            0,
+            0,
+            0,
+            8,
+            4
+          ],
+          [
+            0,
+            0,
+            8,
+            0,
+            0,
+            0,
+            0,
+            0,
+            8
+          ]
+        ]
+      },
+      "mlp": {
+        "accuracy": 0.46590909361839294,
+        "confusion_matrix": [
+          [
+            0,
+            0,
+            0,
+            42,
+            6,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            16,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            16,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            16,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            6,
+            10,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            16,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            16,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            8,
+            0,
+            0,
+            0,
+            8,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            16,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        ]
+      },
+      "shuffled_41": {
+        "accuracy": 0.40909090638160706,
+        "confusion_matrix": [
+          [
+            0,
+            0,
+            0,
+            16,
+            32,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            16,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            16,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            16,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            16,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            2,
+            0,
+            12,
+            0,
+            2,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            16,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            4,
+            0,
+            0,
+            0,
+            12,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            4,
+            0,
+            0,
+            0,
+            12,
+            0
+          ]
+        ]
+      },
+      "shuffled_42": {
+        "accuracy": 0.40909090638160706,
+        "confusion_matrix": [
+          [
+            0,
+            0,
+            0,
+            16,
+            32,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            16,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            16,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            16,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            16,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            3,
+            0,
+            12,
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            16,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            4,
+            0,
+            0,
+            0,
+            12,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            4,
+            0,
+            0,
+            0,
+            12,
+            0
+          ]
+        ]
+      },
+      "shuffled_43": {
+        "accuracy": 0.40909090638160706,
+        "confusion_matrix": [
+          [
+            0,
+            0,
+            0,
+            23,
+            25,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            16,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            16,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            16,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            16,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            3,
+            0,
+            12,
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            16,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            4,
+            0,
+            0,
+            0,
+            12,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            4,
+            0,
+            0,
+            0,
+            12,
+            0
+          ]
+        ]
+      },
+      "accuracy_drop": 0.05681818723678589,
+      "minimum_drop": 0.1,
+      "passed": false
+    }
+  },
+  "passed": false,
+  "calibration": {
+    "olfaction_mb": {
+      "scale": 0.1875,
+      "input_rate_hz": 180.0,
+      "todos": [
+        "TODO: reconstruct visual relays to visual KCs; blue_light is incomplete.",
+        "TODO: validate fruit-cue glomerular mixtures; current cue mapping is a game convention.",
+        "TODO: review predicted dopamine in KCs against consensus acetylcholine; both map to positive current here."
+      ]
+    },
+    "feeding": {
+      "scale": 0.0625,
+      "input_rate_hz": 180.0,
+      "todos": [
+        "TODO: verify Gr66a expression per body; Gr66a is a game input alias for LB1a-d bitter GRNs, not a molecular annotation in this release."
+      ]
+    },
+    "escape": {
+      "scale": 0.000244140625,
+      "input_rate_hz": 180.0,
+      "todos": []
+    },
+    "steering": {
+      "scale": 0.03125,
+      "input_rate_hz": 180.0,
+      "todos": [
+        "TODO: include the multi-stage visual steering pathway; direct photoreceptor to DNa02 wiring is not assumed."
+      ]
+    },
+    "grooming": {
+      "scale": 0.0078125,
+      "input_rate_hz": 180.0,
+      "todos": [
+        "TODO: verify identities of graph-selected grooming interneurons against aBN1/2."
+      ]
+    }
+  }
+}
