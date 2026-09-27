@@ -18,6 +18,8 @@ async def perform(
     # The persisted experiment ID makes queue redelivery safe for evidence records.
     existing = await session.get(Experiment, params["experiment_id"])
     if existing:
+        if existing.user_id != params["user_id"] or existing.adult_or_week_id != params["fly_id"]:
+            raise ValueError("experiment does not belong to this user and fly")
         return {
             "experiment_id": existing.id,
             "seq": existing.seq,

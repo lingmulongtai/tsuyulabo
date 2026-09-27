@@ -10,6 +10,7 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from tsuyulabo_api.auth.dependencies import get_current_user
+from tsuyulabo_api.db.models import Gift, Like, SleepSession
 from tsuyulabo_api.db.rearing import Week
 from tsuyulabo_api.db.session import get_session
 from tsuyulabo_api.db.users import User
@@ -91,6 +92,8 @@ async def advance_time(
         now + timedelta(seconds=seconds)
     except (ValueError, OverflowError) as exc:
         raise APIError("validation_error", "指定した日時が範囲外です", 422) from exc
+    if user.dev_time_offset_s + seconds > 2**31 - 1:
+        raise APIError("validation_error", "指定した日時が範囲外です", 422)
     user.dev_time_offset_s += seconds
     await session.flush()
     return dev_payload(clock, user)
@@ -106,6 +109,17 @@ async def reset_time(
         .with_for_update()
         .execution_options(populate_existing=True)
     )
+    if user.dev_time_offset_s:
+        # Reset is only safe before gameplay starts. Historical weeks and daily
+        # social actions still carry game-time state even without an active week.
+        for model, owner in (
+            (Week, Week.user_id),
+            (SleepSession, SleepSession.user_id),
+            (Like, Like.from_user_id),
+            (Gift, Gift.from_user_id),
+        ):
+            if await session.scalar(select(select(model).where(owner == user.id).exists())):
+                raise APIError("time_reversed", "進行済みのデータがあるため時刻を戻せません", 409)
     user.dev_time_offset_s = 0
     await session.flush()
     return dev_payload(clock, user)

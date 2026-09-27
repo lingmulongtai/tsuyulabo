@@ -38,7 +38,11 @@ def generate(rng: Random, context: JsonObject) -> tuple[JsonObject, JsonObject]:
 
 def verify(params: JsonObject, submission: JsonObject) -> VerifyResult:
     moves = submission.get("moves")
-    if not isinstance(moves, list) or any(not isinstance(m, dict) for m in moves):
+    if (
+        not isinstance(moves, list)
+        or len(moves) > len(params["pieces"])
+        or any(not isinstance(m, dict) for m in moves)
+    ):
         return VerifyResult(False, "wrong_length")
     reason = times_reason(
         [m.get("t") for m in moves],

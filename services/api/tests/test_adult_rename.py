@@ -25,7 +25,10 @@ async def test_rename_persists_and_replays_without_overwriting_later_name(sessio
             headers=game.headers | {"Idempotency-Key": str(uuid4())},
         )
         assert later.status_code == 200
-        replay = await game.client.patch(path, json={"name": "みつ"}, headers=headers)
+        conflict = await game.client.patch(path, json={"name": "みつ"}, headers=headers)
+        assert conflict.status_code == 409
+        assert conflict.json()["error"]["code"] == "idempotency_key_reused"
+        replay = await game.client.patch(path, json={"name": "　しずく  "}, headers=headers)
         assert replay.json() == first.json()
         assert (await game.get(path)).json()["name"] == "あ" * 12
         assert (await game.get("/v1/adults")).json()[0]["name"] == "あ" * 12

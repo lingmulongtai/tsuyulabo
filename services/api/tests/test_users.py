@@ -23,7 +23,10 @@ async def test_guest_me_and_patch(sessions: async_sessionmaker[AsyncSession]) ->
         assert len(user["friend_code"]) == 8
         assert set(user["friend_code"]) <= set(FRIEND_CODE_ALPHABET)
         assert user["balances"] == {"shizuku": 300, "research_points": 0, "kohaku": 0}
-        repeated = await client.post("/v1/auth/guest", json={"display_name": "other"}, headers=key)
+        conflict = await client.post("/v1/auth/guest", json={"display_name": "other"}, headers=key)
+        assert conflict.status_code == 409
+        assert conflict.json()["error"]["code"] == "idempotency_key_reused"
+        repeated = await client.post("/v1/auth/guest", json={"display_name": "ゆうき"}, headers=key)
         assert repeated.status_code == 201 and repeated.json() == created
         auth = {"Authorization": f"Bearer {created['token']}"}
         assert (await client.get("/v1/me", headers=auth)).json() == user
