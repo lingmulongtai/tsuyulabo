@@ -183,6 +183,40 @@
         "title": "BrainActivity",
         "type": "object"
       },
+      "CurrentRace": {
+        "properties": {
+          "deadline": {
+            "format": "date-time",
+            "title": "Deadline",
+            "type": "string"
+          },
+          "maze": {
+            "$ref": "#/components/schemas/MazeGeometry"
+          },
+          "my_entry": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RaceEntryView"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "week": {
+            "title": "Week",
+            "type": "string"
+          }
+        },
+        "required": [
+          "week",
+          "maze",
+          "deadline",
+          "my_entry"
+        ],
+        "title": "CurrentRace",
+        "type": "object"
+      },
       "DailyAttempt": {
         "properties": {
           "expires_at": {
@@ -479,6 +513,35 @@
         "title": "DailySubmitRequest",
         "type": "object"
       },
+      "EnterRace": {
+        "additionalProperties": false,
+        "properties": {
+          "adult_id": {
+            "title": "Adult Id",
+            "type": "string"
+          },
+          "placements": {
+            "items": {
+              "$ref": "#/components/schemas/MazeToken"
+            },
+            "maxItems": 3,
+            "title": "Placements",
+            "type": "array"
+          },
+          "week": {
+            "pattern": "^\\d{4}-W\\d{2}$",
+            "title": "Week",
+            "type": "string"
+          }
+        },
+        "required": [
+          "week",
+          "adult_id",
+          "placements"
+        ],
+        "title": "EnterRace",
+        "type": "object"
+      },
       "ExperimentRequest": {
         "additionalProperties": false,
         "properties": {
@@ -594,6 +657,131 @@
         "title": "IssueRequest",
         "type": "object"
       },
+      "MazeFrame": {
+        "properties": {
+          "heading": {
+            "title": "Heading",
+            "type": "integer"
+          },
+          "x": {
+            "title": "X",
+            "type": "integer"
+          },
+          "y": {
+            "title": "Y",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "x",
+          "y",
+          "heading"
+        ],
+        "title": "MazeFrame",
+        "type": "object"
+      },
+      "MazeGeometry": {
+        "properties": {
+          "goal": {
+            "items": {
+              "type": "integer"
+            },
+            "maxItems": 2,
+            "minItems": 2,
+            "title": "Goal",
+            "type": "array"
+          },
+          "grid": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Grid",
+            "type": "array"
+          },
+          "start": {
+            "items": {
+              "type": "integer"
+            },
+            "maxItems": 2,
+            "minItems": 2,
+            "title": "Start",
+            "type": "array"
+          }
+        },
+        "required": [
+          "grid",
+          "start",
+          "goal"
+        ],
+        "title": "MazeGeometry",
+        "type": "object"
+      },
+      "MazeResult": {
+        "properties": {
+          "distance_left": {
+            "title": "Distance Left",
+            "type": "integer"
+          },
+          "frames": {
+            "items": {
+              "$ref": "#/components/schemas/MazeFrame"
+            },
+            "title": "Frames",
+            "type": "array"
+          },
+          "reached": {
+            "title": "Reached",
+            "type": "boolean"
+          },
+          "steps": {
+            "title": "Steps",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "reached",
+          "steps",
+          "distance_left",
+          "frames"
+        ],
+        "title": "MazeResult",
+        "type": "object"
+      },
+      "MazeToken": {
+        "additionalProperties": false,
+        "properties": {
+          "cue": {
+            "enum": [
+              "banana",
+              "apple_vinegar",
+              "yeast",
+              "grape",
+              "blue_light"
+            ],
+            "title": "Cue",
+            "type": "string"
+          },
+          "x": {
+            "maximum": 8.0,
+            "minimum": 0.0,
+            "title": "X",
+            "type": "integer"
+          },
+          "y": {
+            "maximum": 8.0,
+            "minimum": 0.0,
+            "title": "Y",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "x",
+          "y",
+          "cue"
+        ],
+        "title": "MazeToken",
+        "type": "object"
+      },
       "ProfilePatch": {
         "additionalProperties": false,
         "properties": {
@@ -636,6 +824,149 @@
           }
         },
         "title": "ProfilePatch",
+        "type": "object"
+      },
+      "RaceEntryView": {
+        "properties": {
+          "adult_id": {
+            "title": "Adult Id",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "job_id": {
+            "title": "Job Id",
+            "type": "string"
+          },
+          "placements": {
+            "items": {
+              "$ref": "#/components/schemas/MazeToken"
+            },
+            "title": "Placements",
+            "type": "array"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "submitted_at": {
+            "format": "date-time",
+            "title": "Submitted At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "adult_id",
+          "job_id",
+          "placements",
+          "submitted_at",
+          "status"
+        ],
+        "title": "RaceEntryView",
+        "type": "object"
+      },
+      "RaceRank": {
+        "properties": {
+          "display_name": {
+            "title": "Display Name",
+            "type": "string"
+          },
+          "distance_left": {
+            "title": "Distance Left",
+            "type": "integer"
+          },
+          "entry_id": {
+            "title": "Entry Id",
+            "type": "string"
+          },
+          "is_me": {
+            "title": "Is Me",
+            "type": "boolean"
+          },
+          "rank": {
+            "title": "Rank",
+            "type": "integer"
+          },
+          "reached": {
+            "title": "Reached",
+            "type": "boolean"
+          },
+          "steps": {
+            "title": "Steps",
+            "type": "integer"
+          },
+          "user_id": {
+            "title": "User Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "rank",
+          "entry_id",
+          "user_id",
+          "display_name",
+          "is_me",
+          "reached",
+          "steps",
+          "distance_left"
+        ],
+        "title": "RaceRank",
+        "type": "object"
+      },
+      "RaceRanking": {
+        "properties": {
+          "entries": {
+            "items": {
+              "$ref": "#/components/schemas/RaceRank"
+            },
+            "title": "Entries",
+            "type": "array"
+          },
+          "week": {
+            "title": "Week",
+            "type": "string"
+          }
+        },
+        "required": [
+          "week",
+          "entries"
+        ],
+        "title": "RaceRanking",
+        "type": "object"
+      },
+      "RaceReplay": {
+        "properties": {
+          "entry": {
+            "$ref": "#/components/schemas/RaceEntryView"
+          },
+          "maze": {
+            "$ref": "#/components/schemas/MazeGeometry"
+          },
+          "result": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MazeResult"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "week": {
+            "title": "Week",
+            "type": "string"
+          }
+        },
+        "required": [
+          "week",
+          "maze",
+          "entry",
+          "result"
+        ],
+        "title": "RaceReplay",
         "type": "object"
       },
       "RenameAdult": {
@@ -2084,6 +2415,131 @@
           }
         },
         "summary": "Submit"
+      }
+    },
+    "/v1/races/current": {
+      "get": {
+        "operationId": "current_v1_races_current_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CurrentRace"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Current"
+      }
+    },
+    "/v1/races/current/entry": {
+      "post": {
+        "operationId": "enter_v1_races_current_entry_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Idempotency-Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EnterRace"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RaceEntryView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Enter"
+      }
+    },
+    "/v1/races/current/ranking": {
+      "get": {
+        "operationId": "ranking_v1_races_current_ranking_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RaceRanking"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Ranking"
+      }
+    },
+    "/v1/races/entries/{entry_id}/replay": {
+      "get": {
+        "operationId": "replay_v1_races_entries__entry_id__replay_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "entry_id",
+            "required": true,
+            "schema": {
+              "title": "Entry Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RaceReplay"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Replay"
       }
     },
     "/v1/shiori/ask": {
