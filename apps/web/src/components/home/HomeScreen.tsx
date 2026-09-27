@@ -1,5 +1,6 @@
+import Link from "next/link";
 import type { HomeData } from "@/lib/types";
-import { CurrencyPill, Meter } from "../ui/primitives";
+import { Card, CurrencyPill, Meter } from "../ui/primitives";
 import { ActionGrid } from "./ActionGrid";
 import { ShioriBubble } from "./ShioriBubble";
 import { TeamStrip } from "./TeamStrip";
@@ -36,6 +37,14 @@ export function HomeScreen({ data, footer }: { data: HomeData; footer?: React.Re
       </header>
 
       {week && <WeekStrip researchDay={week.research_day} />}
+
+      {week?.ready_to_eclose && <Link href="/presentation" className="press rounded-3xl focus-visible:outline-2 focus-visible:outline-banana">
+        <Card className="border-banana bg-tint-banana p-5 text-center shadow-[0_0_28px_-8px_rgba(255,213,74,.7)]">
+          <p className="mb-1 text-sm text-muted">1週間の記録がそろいました</p>
+          <h2 className="font-kiwi text-xl">研究発表会へ</h2>
+          <p className="mt-1 text-sm text-muted">今週の成果を振り返って、羽化を見届けよう。</p>
+        </Card>
+      </Link>}
 
       {week && fly ? (
         <Terrarium stage={fly.stage} researchDay={week.research_day} moodLabel={fly.mood_label} night={night} />

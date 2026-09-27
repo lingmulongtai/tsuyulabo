@@ -16,7 +16,7 @@ const CUE_COLOR: Record<Cue, string> = {
 };
 
 /** Choose what to teach before the circuit puzzle: a cue (odour / light) and a sweet or bitter outcome. */
-export function TeachPicker({ remaining, tip, onPick }: { remaining?: number; tip?: string; onPick: (cue: Cue, valence: Valence) => void }) {
+export function TeachPicker({ remaining, tip, disabled, onPick }: { remaining?: number; tip?: string; disabled?: boolean; onPick: (cue: Cue, valence: Valence) => void }) {
   const [cue, setCue] = useState<Cue>("banana");
   const [valence, setValence] = useState<Valence>("reward");
 
@@ -72,7 +72,7 @@ export function TeachPicker({ remaining, tip, onPick }: { remaining?: number; ti
         本物のハエも、匂いとごほうび（または罰）を結びつけて覚えます。覚えるのは脳の「キノコ体」で、ドーパミンがつながりの強さを変えます。
       </div>
 
-      <Button tone="ai" size="lg" block onClick={() => onPick(cue, valence)}>
+      <Button tone="ai" size="lg" block disabled={disabled || remaining === 0} onClick={() => onPick(cue, valence)}>
         パズルをはじめる{remaining !== undefined && <span className="text-sm opacity-80">（今日あと{remaining}回）</span>}
       </Button>
     </div>

@@ -4,7 +4,7 @@ import { useAdult, useLevelUp } from "@/lib/api/hooks";
 import { preferencePercent, SKILL_LABELS, SUBSKILL_LABELS, TRAIT_LABELS } from "@/lib/display";
 import { CUE_INFO } from "@/game/labels";
 import type { Cue } from "@/game/puzzles/types";
-import { Tsuyu } from "../art/Tsuyu";
+import { AdultBehavior } from "./AdultBehavior";
 import { STRAIN_LABELS } from "../art/palette";
 import { Button, Card, Meter, SectionTitle, Stars } from "../ui/primitives";
 import { ErrorCard, QueryState } from "../ui/QueryState";
@@ -15,7 +15,7 @@ export function AdultDetail({ id }: { id: string }) {
   const level = useLevelUp();
   const [ask, setAsk] = useState(false);
   return <QueryState query={adult}>{data => <>
-    <Card className="p-5 text-center"><Tsuyu strain={data.strain} sex={data.sex} className="mx-auto h-56 w-64" label={data.name} />
+    <Card className="p-5 text-center"><AdultBehavior id={id} strain={data.strain} sex={data.sex} />
       <h2 className="font-kiwi text-2xl">{data.name} {data.sex === "f" ? "♀" : "♂"}</h2>
       <p className="text-sm text-muted">{STRAIN_LABELS[data.strain].name} ・ {STRAIN_LABELS[data.strain].gene}</p><Stars value={data.stars} />
       <p className="my-3 font-mono text-xl">Lv.{data.level} / {data.level_cap}</p>
