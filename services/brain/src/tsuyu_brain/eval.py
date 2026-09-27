@@ -14,6 +14,7 @@ from tsuyu_brain.behavior import LABELS
 from tsuyu_brain.circuit import simulate
 from tsuyu_brain.connectome import VERSIONS, load_circuit
 from tsuyu_brain.decoder.dataset import generate_dataset, split_dataset
+from tsuyu_brain.decoder.diagnostics import feature_diagnostics
 from tsuyu_brain.decoder.model import evaluate_decoder, train_decoder
 from tsuyu_brain.individuality import generate_individual
 from tsuyu_brain.learning import apply_training, new_fly_state, preference_index
@@ -96,14 +97,36 @@ def trait_metrics(population: int = 32, version: str = "toy-v0") -> dict[str, ob
 def decoder_metrics(version: str = "toy-v0") -> dict[str, object]:
     data = generate_dataset(version=version)
     train, held_out = split_dataset(data)
+    fit, validation = split_dataset(train)
     metrics: dict[str, object] = {
         "labels": LABELS,
         "train_rows": len(train.labels),
         "test_rows": len(held_out.labels),
         "feature_count": data.features.shape[1],
-        "feature_schema": "eight means + six windows per output + right-left/approach-avoid windows"
+        "feature_schema": "eight means + six windows per output + right-left/approach-avoid "
+        "windows; steering centered on individual neutral activity"
         if version == "malecns-v1.0"
         else "eight output means",
+        "protocol": {
+            "dataset_seed": 123,
+            "split_seed": 7,
+            "model_seed": 11,
+            "epochs": 400,
+            "development_fit_individuals": fit.individuals.unique().tolist(),
+            "validation_individuals": validation.individuals.unique().tolist(),
+            "final_train_individuals": train.individuals.unique().tolist(),
+            "test_individuals": held_out.individuals.unique().tolist(),
+            "selection": "changes selected using development fit/validation only; "
+            "final models refit on all training individuals; test and controls evaluated frozen",
+        },
+        "development": {
+            "training_diagnostics": feature_diagnostics(train),
+            "validation_diagnostics": feature_diagnostics(validation),
+            **{
+                kind: evaluate_decoder(train_decoder(fit, kind), validation)
+                for kind in ("logistic", "mlp")
+            },
+        },
     }
     models = {}
     for kind in ("logistic", "mlp"):
@@ -181,6 +204,40 @@ def write_report(report: dict[str, object], directory: Path | None = None) -> Pa
         lines.append(f"| {name} | {row['passed']} | `{json.dumps(measurements)}` |")
     decoder = report["checks"].get("decoder", {})
     if decoder:
+        protocol = decoder.get("protocol", {})
+        if protocol:
+            lines.extend(
+                [
+                    "",
+                    "## Fixed evaluation protocol",
+                    "",
+                    f"Dataset seed {protocol['dataset_seed']}; split seed "
+                    f"{protocol['split_seed']}; model seed {protocol['model_seed']}; "
+                    f"{protocol['epochs']} epochs. Splits are grouped by individual.",
+                    "",
+                    f"Development fit: {protocol['development_fit_individuals']}; "
+                    f"validation: {protocol['validation_individuals']}.",
+                    f"Final training: {protocol['final_train_individuals']}; "
+                    f"test: {protocol['test_individuals']}.",
+                    "",
+                    protocol["selection"] + ".",
+                ]
+            )
+        development = decoder.get("development", {})
+        if development:
+            lines.extend(["", "## Development diagnostics", ""])
+            for name in ("training_diagnostics", "validation_diagnostics"):
+                lines.append(f"{name}: `{json.dumps(development[name])}`")
+                lines.append("")
+            for kind in ("logistic", "mlp"):
+                lines.append(f"Validation {kind}: {development[kind]['accuracy']:.2%}.")
+            lines.extend(
+                [
+                    "",
+                    "The collision ceiling applies only to the observed finite sample. "
+                    "Zero features mean no evoked output, not that every neuron is silent.",
+                ]
+            )
         lines.extend(["", "## Decoder", "", "| Model | Accuracy |", "| --- | ---: |"])
         for name, row in decoder.items():
             if isinstance(row, dict) and "accuracy" in row:

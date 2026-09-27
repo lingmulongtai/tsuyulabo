@@ -15,8 +15,9 @@ service, or network access is needed at runtime.
 ```
 
 The first command selects fast tests using the root pytest configuration.
-Evaluation takes a few minutes and writes `eval-results/brain/report.json` and
-`report.md` relative to the repository root (even from a different working directory).
+Evaluation writes `eval-results/brain/report.json` and `report.md` relative to
+the repository root (even from a different working directory). The measured
+version with three complete shuffled simulations can take tens of minutes on CPU.
 Reports are generated artifacts, not source files. A failed criterion exits with status 1.
 
 ## Public facade
@@ -115,6 +116,10 @@ logits/losses with torch autograd and Adam. Data defaults to 16 individuals × 1
 scenarios × 4 trials (704 rows), varying traits, sex, intensity, cues, and seeds.
 Train/test splits keep all trials from an individual together; normalization uses
 training rows only. Both models must reach 85% held-out accuracy.
+Selection uses an inner grouped development split (nine fit individuals and three
+validation individuals); final models refit on all twelve training individuals.
+Reports include exact IDs, seeds, validation confusion matrices, and an empirical
+accuracy ceiling from conflicting labels on identical feature vectors.
 
 The control permutes **all entries, including zeros, within each projection and presynaptic sign**,
 preserving groups, signs, and weight distributions. It reruns matched individuals
@@ -341,16 +346,23 @@ Budgets 2, 4, and 8 were compared at seed 19: 2 gives weak unilateral responses;
 The manifest records both source-sign multiplier vectors and the tonic current.
 The small trait effect depends on these explicit model assumptions.
 
-**Decoder features.** The calibrated circuits with the original eight means
-reach 66.48% logistic / 64.20% MLP accuracy, below the 85% gate. The measured
-version therefore uses 68 output-only features: the eight means, six time windows
+**Decoder features.** The measured version uses 68 output-only features: the eight means, six time windows
 for each of the same eight output groups, and six-window right-minus-left and
 approach-minus-avoid contrasts. Windows span equal fractions of a trial (50 ms
 at the evaluation's 300 ms duration); partial windows are weighted by overlap.
+Steering means/windows subtract a neutral simulation of the same individual and
+circuit using the original state parameters, including in shuffled controls.
+This removes tonic offsets while preserving stimulus responses and walk arousal.
 The classifier is unchanged: logistic regression and a 16-hidden-unit tanh MLP,
 400 epochs, the original seeds and grouped individual split. The toy checkpoint
 retains its eight-feature contract. Experimental feature models cannot be saved
 with a misleading toy checkpoint schema.
+
+Measured liked/disliked odor scenarios cycle through banana, apple_vinegar,
+yeast, and grape. They no longer label the incomplete blue-light pathway as an
+odor preference. All nine behavior labels and all four odors remain, including
+silent responses. See the [decoder investigation](reports/decoder-investigation.md)
+for diagnosis, independent responsiveness probes, and validation comparisons.
 
 ### Reproduce ingestion and evaluation
 
@@ -377,9 +389,10 @@ A failed promotion gate still exits 1. Passing implementation tests do not waive
 
 ### Evaluation result for the bundled extract
 
-Full evaluation on PyTorch 2.14.0+cpu: **5/6 gates pass, up from 3/6**.
-**`toy-v0` remains the default** because decoder accuracy is still below 85%.
-The root README's toy evaluation table is therefore unchanged.
+Full evaluation on PyTorch 2.14.0+cpu: **5/6 gates pass**.
+**`toy-v0` remains the default** because the measured decoder still misses the
+unchanged 85% gate. The candidate was frozen after development validation;
+no subsequent adjustment used the final test results.
 
 | Gate | Result | Measurement |
 | --- | --- | --- |
@@ -388,22 +401,30 @@ The root README's toy evaluation table is therefore unchanged.
 | bitter suppression | pass | mixed 1.146 Hz, 39.3% of sugar alone |
 | three-session learning | pass | baseline PI +0.082687; reward ΔPI +0.471248; punishment ΔPI −1.082687 |
 | right-turner trait | pass | wild 0.523745 vs trait 0.539187; one-sided p = 0.00001384845; 32 flies/group |
-| decoder / shuffled control | fail | logistic 75.57%, MLP 78.98%; shuffled 43.18%, 40.34%, 39.77%; average drop 37.88 percentage points |
+| decoder / shuffled control | fail | logistic 78.41%, MLP 76.70%; shuffled 48.30%, 46.02%, 51.14%; average drop 28.22 percentage points |
 
-The shuffled-control requirement now passes, but **both** classifiers still miss
-the unchanged 85% accuracy threshold. Of the MLP's 37 errors on 176 held-out rows,
-20 confuse rest and feed, 12 miss approach/avoid labels, three miss left turns,
-and two miss grooming. The visual-to-KC route remains incomplete; passing the
-banana learning gate does not validate every cue. Further work must address
-these response ambiguities without changing the classifier or evaluation labels.
-The CLI correctly exits 1 for this remaining promotion failure.
+The final training/test split is 528/176 rows, with held-out individuals
+`[4, 5, 6, 10]`; dataset/split/model seeds remain 123/7/11. Development validation
+uses individuals `[1, 2, 14]`, yielding 79.55% logistic / 78.79% MLP. Its identical
+feature vectors with conflicting labels impose an empirical ceiling of 80.30%
+(26 unavoidable errors in 132 rows). This finite-sample ceiling is not a
+population accuracy estimate.
 
-Validation: `uv run pytest` passed **381 tests**; `uv run pytest -m eval` passed
-**13 tests**, including the real-Feather source audit. Repository-wide Ruff lint,
+Removing blue light from odor scenarios and centering steering on each
+individual's neutral activity fix two identifiable evaluation problems. Silent
+weak-odor MBON responses and overlapping sugar/mixed responses remain. Independent
+sensory-rate and feedback probes did not resolve these while preserving the
+existing regressions; no calibration changes were adopted. A larger classifier
+cannot distinguish identical output features. Details and rejected experiments
+are recorded in the [investigation](reports/decoder-investigation.md).
+
+Validation: `uv run pytest` passed **408 tests**; `uv run pytest -m eval` passed
+**13 tests**, including the real-Feather source audit. All six toy gates and the
+five previously passing MaleCNS gates remain passing. Repository-wide Ruff lint,
 brain formatting, artifact checksums, LF checks, and whitespace checks pass.
-The bundle is 758,332 bytes. No raw data or experimental decoder checkpoint is
-committed. The evaluation gate failure is distinct from passing implementation
-and regression tests.
+Bundled wiring and its SHA-256s are unchanged; only descriptive decoder metadata
+changed. No raw data or experimental checkpoint is committed. The evaluation
+CLI correctly exits 1 for the remaining promotion failure.
 
 See [full Markdown report](reports/report-malecns.md),
 [JSON measurements and confusion matrices](reports/report-malecns.json), and
