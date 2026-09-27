@@ -12,7 +12,7 @@ from scipy.stats import ttest_ind
 
 from tsuyu_brain.behavior import LABELS
 from tsuyu_brain.circuit import simulate
-from tsuyu_brain.connectome import VERSIONS, load_circuit
+from tsuyu_brain.connectome import DEFAULT_VERSION, VERSIONS, load_circuit
 from tsuyu_brain.decoder.dataset import generate_dataset, split_dataset
 from tsuyu_brain.decoder.diagnostics import feature_diagnostics
 from tsuyu_brain.decoder.model import evaluate_decoder, train_decoder
@@ -21,7 +21,7 @@ from tsuyu_brain.learning import apply_training, new_fly_state, preference_index
 from tsuyu_brain.params import default_params
 
 
-def sanity_metrics(version: str = "toy-v0") -> dict[str, dict[str, object]]:
+def sanity_metrics(version: str = DEFAULT_VERSION) -> dict[str, dict[str, object]]:
     params = default_params()
     feeding, escape = load_circuit("feeding", version), load_circuit("escape", version)
 
@@ -62,7 +62,7 @@ def sanity_metrics(version: str = "toy-v0") -> dict[str, dict[str, object]]:
     }
 
 
-def trait_metrics(population: int = 32, version: str = "toy-v0") -> dict[str, object]:
+def trait_metrics(population: int = 32, version: str = DEFAULT_VERSION) -> dict[str, object]:
     """Independent populations under equal bilateral illumination; one-sided Welch test."""
     rates: list[list[float]] = [[], []]
     for group, traits in enumerate(([], ["right_turner"])):
@@ -94,7 +94,7 @@ def trait_metrics(population: int = 32, version: str = "toy-v0") -> dict[str, ob
     }
 
 
-def decoder_metrics(version: str = "toy-v0") -> dict[str, object]:
+def decoder_metrics(version: str = DEFAULT_VERSION) -> dict[str, object]:
     data = generate_dataset(version=version)
     train, held_out = split_dataset(data)
     fit, validation = split_dataset(train)
@@ -104,7 +104,8 @@ def decoder_metrics(version: str = "toy-v0") -> dict[str, object]:
         "test_rows": len(held_out.labels),
         "feature_count": data.features.shape[1],
         "feature_schema": "eight means + six windows per output + right-left/approach-avoid "
-        "windows; steering centered on individual neutral activity"
+        "windows; steering centered on individual neutral activity; "
+        "additional anatomical outputs each contribute mean plus six windows"
         if version == "malecns-v1.0"
         else "eight output means",
         "protocol": {
@@ -150,7 +151,7 @@ def decoder_metrics(version: str = "toy-v0") -> dict[str, object]:
     return metrics
 
 
-def run_evaluation(version: str = "toy-v0") -> dict[str, object]:
+def run_evaluation(version: str = DEFAULT_VERSION) -> dict[str, object]:
     if version not in VERSIONS:
         raise ValueError(f"unsupported connectome version: {version}")
     threads = torch.get_num_threads()
@@ -272,7 +273,7 @@ def write_report(report: dict[str, object], directory: Path | None = None) -> Pa
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--version", choices=VERSIONS, default="toy-v0")
+    parser.add_argument("--version", choices=VERSIONS, default=DEFAULT_VERSION)
     parser.add_argument("--output", type=Path)
     args = parser.parse_args()
     report = run_evaluation(args.version)
@@ -280,7 +281,10 @@ def main() -> None:
         from tsuyu_brain.connectome.malecns import manifest
 
         report["calibration"] = {
-            name: {key: row[key] for key in ("scale", "input_rate_hz", "normalization", "todos")}
+            name: {
+                key: row.get(key, []) if key == "output_additions" else row[key]
+                for key in ("scale", "input_rate_hz", "normalization", "output_additions", "todos")
+            }
             for name, row in manifest()["circuits"].items()
         }
     directory = write_report(report, args.output)

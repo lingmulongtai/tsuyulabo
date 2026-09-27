@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 import torch
-from tsuyu_brain.connectome import DEFAULT_VERSION, data_directory, load_circuit
+from tsuyu_brain.connectome import data_directory, load_circuit
 from tsuyu_brain.connectome.malecns import manifest, verified_path
 from tsuyu_brain.connectome.stimuli import cue_stimulus
 from tsuyu_brain.connectome.toy_v0 import CIRCUIT_NAMES
@@ -30,10 +30,12 @@ def test_measured_artifact_contract(name: str) -> None:
     assert 0 < n <= 2000
     assert circuit.weights.shape == (n, n)
     assert circuit.version == "malecns-v1.0"
-    assert set(circuit.groups) >= set(load_circuit(name).groups)
+    assert set(circuit.groups) >= set(load_circuit(name, "toy-v0").groups)
     assert len({row["bodyId"] for row in metadata["neurons"]}) == n
     for group, region in circuit.groups.items():
-        assert region.stop - region.start == info["group_counts"][group] > 0
+        assert region.stop - region.start == info["group_counts"][group] >= 0
+        if region.stop == region.start:
+            assert any(f"missing group {group};" in todo for todo in info["todos"])
     assert (circuit.weights * circuit.signs[:, None] >= 0).all()
     sign_map = {"acetylcholine": 1, "dopamine": 1, "gaba": -1, "glutamate": -1, "histamine": -1}
     for index, row in enumerate(metadata["neurons"]):
@@ -54,8 +56,7 @@ def test_measured_artifact_contract(name: str) -> None:
             assert b"\r\n" not in (data_directory() / filename).read_bytes()
 
 
-def test_default_provenance_and_small_bundle() -> None:
-    assert DEFAULT_VERSION == "toy-v0"
+def test_provenance_and_small_bundle() -> None:
     assert manifest()["license"] == "CC-BY-4.0"
     assert manifest()["sources"]["weights"]["rows"] == 151856684
     for source in manifest()["sources"].values():
