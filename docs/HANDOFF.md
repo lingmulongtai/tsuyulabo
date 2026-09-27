@@ -9,9 +9,9 @@
 - main にあるもの: 全画面が API につながった Web（ホーム、ごはん・しつけ・そうじ・温度・場所えらび・睡眠、研究発表会、羽化、
   チーム、成虫の詳細＋脳モデルで動く行動、脳ビューア、図鑑、フレンド、シオリ、開発用の時計）、ゲーム API、本物の脳エンジン
   （既定は toy-v0。MaleCNS v1.0 の回路も同梱、6 項目中 3 項目合格）、シオリ、ワーカー、docker compose、CI
-- テスト: Python 373 件（+ eval）、Web 214 件。ruff / typecheck / lint / build も通過。GitHub Actions も緑
+- テスト: Python 564 件（+ eval）、Web 236 件。ruff / typecheck / lint / build も通過。GitHub Actions も緑
 - ブラウザで通しプレイ確認済み: 卵 → 時間スキップ → 発表会（ケアミスで減点・報酬 0）→ 羽化（サーバーの抽選）→ 成虫ページ → 脳ビューア
-- 実行中: W5-media（README のスクリーンショットとプレイ動画。ローカルの web :3000 と API :8000 を使う）
+- 実行中: W5-media の最終撮影（ブランチ `feat/media`。ローカルの web :3000 と API :8000 を使う。撮影が終わったら画像と README をコミットして main へ）
 - MaleCNS v1.0 の生データ（約 1.1 GB、オーナー許可済み）は `C:\Users\lingm\dev\tsuyulabo-agents\W3-malecns\data\raw\malecns-v1.0\`
   （W4-malecns-calibrate のクローンにもコピー）。git には入れない
 - Codex の使用量は 11:26 頃に一度上限に達したが、オーナーが同日リセットした（再開済み）。
@@ -75,7 +75,11 @@ git push
 | W5-deploy | Vercel と Cloud Run のデプロイ設定、手順書 `docs/deploy.md`（実デプロイはオーナー） | Codex | feat/deploy | マージ済み |
 | W5-daily-circuit | 今日の回路（全員同じ問題、フレンドのタイムランキング） | Codex | feat/daily-circuit | マージ済み |
 | W5-breeding | 交配と本物の遺伝（伴性遺伝、Cy のホモ致死）、系統図鑑 | Codex | feat/breeding | マージ済み |
-| W5-decoder | MaleCNS のデコーダーを 85% 以上に | Codex | feat/malecns-decoder | 実行中 |
+| W5-decoder | MaleCNS のデコーダーを 85% 以上に（78% で未達。出力ニューロンが沈黙する回路の限界。既定は toy-v0） | Codex | feat/malecns-decoder | マージ済み |
+| W6-maze-race | 迷路レース（置いた匂いと、しつけ・特性で脳モデルが走る。リプレイ、フレンドランキング） | Codex | feat/maze-race | マージ済み |
+| W6-circadian | いっしょにねる（体内時計ゲージ、げんき回復の倍率） | Codex | feat/circadian | マージ済み |
+| W6-review | API のセキュリティ・正確性レビューと 8 件の修正（`docs/security-review.md`） | Codex | fix/api-review | マージ済み |
+| W6-shiori-answers | シオリの Mock 回答を話題別に、引用は関連する少数だけに | Codex | feat/shiori-answers | マージ済み |
 | W3-web-app | API クライアント、フック、ホームとごはんの接続、残りの画面 | Codex | feat/web-app | マージ済み |
 | W3-malecns | MaleCNS v1.0 から回路を作って評価（3/6 合格、既定は toy-v0 のまま） | Codex | feat/malecns | マージ済み |
 
