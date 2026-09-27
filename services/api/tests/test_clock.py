@@ -4,8 +4,8 @@ from datetime import UTC, datetime, timedelta
 
 import pytest
 from tsuyulabo_api.db.users import User
+from tsuyulabo_api.domain.clock import JST, day_start, game_day, next_slot_start, slot_of
 from tsuyulabo_api.services.clock import clock_payload
-from tsuyulabo_api.services.timeutil import JST, next_boundary, slot_at
 
 
 @pytest.mark.parametrize(
@@ -22,9 +22,9 @@ from tsuyulabo_api.services.timeutil import JST, next_boundary, slot_at
 )
 def test_slot_boundaries(hour: int, slot: str, next_hour: int) -> None:
     now = datetime(2026, 1, 2, hour, tzinfo=JST)
-    assert slot_at(now) == slot
-    assert next_boundary(now, "next_slot").hour == next_hour
-    next_day = next_boundary(now, "next_day")
+    assert slot_of(now) == slot
+    assert next_slot_start(now).hour == next_hour
+    next_day = day_start(game_day(now) + timedelta(days=1))
     assert next_day.hour == 4 and next_day > now
     assert next_day.date() == (now + timedelta(days=int(hour >= 4))).date()
 

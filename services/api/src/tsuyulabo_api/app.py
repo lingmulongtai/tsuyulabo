@@ -13,10 +13,29 @@ from starlette.exceptions import HTTPException
 from starlette.responses import JSONResponse
 
 from tsuyulabo_api.auth.provider import AuthProvider, GuestAuthProvider
+from tsuyulabo_api.brain_adapter import BrainAdapter
 from tsuyulabo_api.db.session import create_engine, session_factory
 from tsuyulabo_api.errors import APIError, exception_handler
-from tsuyulabo_api.routers import clock, dev, jobs, users
+from tsuyulabo_api.routers import (
+    adults,
+    brain,
+    clock,
+    dev,
+    friends,
+    home,
+    inventory,
+    jobs,
+    odds,
+    puzzles,
+    shiori,
+    sleep,
+    team,
+    users,
+    weeks,
+    zukan,
+)
 from tsuyulabo_api.services.clock import Clock, SystemClock
+from tsuyulabo_api.services.experiments import handler as experiment_handler
 from tsuyulabo_api.services.idempotency import IdempotentRoute
 from tsuyulabo_api.services.jobs import (
     ArqJobQueue,
@@ -34,12 +53,17 @@ def create_app(
     clock_source: Clock | None = None,
     auth_provider: AuthProvider | None = None,
     brain_handlers: Mapping[str, JobFunction] | None = None,
+    brain_adapter: BrainAdapter | None = None,
 ) -> FastAPI:
     settings = settings or Settings()
     if settings.brain_mode == "queue" and not settings.redis_url:
         raise ValueError("REDIS_URL is required when BRAIN_MODE=queue")
     engine = create_engine(settings.database_url)
     sessions = session_factory(engine)
+    adapter = brain_adapter or BrainAdapter()
+    handlers = {"brain.experiment": experiment_handler(sessions, adapter)} | dict(
+        brain_handlers or {}
+    )
     redis = (
         Redis.from_url(settings.redis_url, socket_connect_timeout=1, socket_timeout=1)
         if settings.redis_url
@@ -48,7 +72,7 @@ def create_app(
     queue: JobQueue = (
         ArqJobQueue(settings.redis_url)
         if settings.brain_mode == "queue"
-        else InlineJobQueue(sessions, brain_handlers or {})
+        else InlineJobQueue(sessions, handlers)
     )
 
     @asynccontextmanager
@@ -56,6 +80,11 @@ def create_app(
         try:
             yield
         finally:
+            pending = tuple(getattr(app.state, "pending_calculations", ()))
+            for task in pending:
+                task.cancel()
+            if pending:
+                await asyncio.gather(*pending, return_exceptions=True)
             await queue.close()
             if redis is not None:
                 await redis.aclose()
@@ -73,6 +102,7 @@ def create_app(
     app.state.redis = redis
     app.state.job_queue = queue
     app.state.brain_client = BrainClient(sessions, queue)
+    app.state.brain_adapter = adapter
     app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.cors_origins,
@@ -109,6 +139,23 @@ def create_app(
             status_code=200 if healthy else 503,
         )
 
-    for router in (users.router, clock.router, dev.router, jobs.router):
+    for router in (
+        users.router,
+        clock.router,
+        dev.router,
+        jobs.router,
+        weeks.router,
+        puzzles.router,
+        adults.router,
+        team.router,
+        inventory.router,
+        sleep.router,
+        home.router,
+        friends.router,
+        zukan.router,
+        odds.router,
+        brain.router,
+        shiori.router,
+    ):
         app.include_router(router)
     return app

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from datetime import datetime
 
-from sqlalchemy import BigInteger, ForeignKey, String
+from sqlalchemy import JSON, BigInteger, ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column
 from tsuyulabo_api.db.base import Base, UTCDateTime, new_id, utc_now
 
@@ -18,4 +18,5 @@ class User(Base):
         ForeignKey("adults.id", use_alter=True, name="fk_users_favorite_adult_id_adults")
     )
     dev_time_offset_s: Mapped[int] = mapped_column(BigInteger, default=0)
+    observed_behaviors: Mapped[list[str]] = mapped_column(JSON, default=list, server_default="[]")
     created_at: Mapped[datetime] = mapped_column(UTCDateTime(), default=utc_now)

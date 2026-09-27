@@ -5,7 +5,7 @@ from typing import Protocol
 
 from fastapi import Request
 from tsuyulabo_api.db.users import User
-from tsuyulabo_api.services.timeutil import slot_at
+from tsuyulabo_api.domain.clock import slot_of
 
 
 class Clock(Protocol):
@@ -32,6 +32,6 @@ def clock_payload(clock: Clock, user: User) -> dict[str, str | int]:
         "server_now": server.isoformat(),
         "game_now": game.isoformat(),
         "tz": "Asia/Tokyo",
-        "slot": slot_at(game),
+        "slot": slot_of(game),
         "day_boundary_hour": 4,
     }

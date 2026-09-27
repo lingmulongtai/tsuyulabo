@@ -36,7 +36,7 @@ a configured dependency failure gives HTTP 503 without exposing connection detai
 | GET / PATCH | `/v1/me` | Profile and balances; patch display name, title, or favorite adult |
 | GET | `/v1/clock` | UTC server/game timestamps, JST slot, 04:00 day boundary |
 | GET | `/v1/dev/time` | Clock and `dev_time_offset_s` |
-| POST | `/v1/dev/time/advance` | `{ "hours": 3 }` or `{ "to": "next_slot" }` / `next_day` |
+| POST | `/v1/dev/time/advance` | `{ "hours": 3 }` or `{ "to": "next_slot" }` / `next_day` / `eclosion` |
 | POST | `/v1/dev/time/reset` | Reset the user's offset |
 | GET | `/v1/jobs/{id}` | Owner-only job status, result, error, and timestamps |
 
@@ -50,7 +50,27 @@ The three balance fields are `shizuku`, `research_points`, and `kohaku`; kohaku 
 in alpha. `research_rank` is currently `null`: the specs do not yet define its progression formula.
 Favorite adults must belong to the authenticated user. Null clears the title or favorite adult.
 
-## Transactions and W2 integration
+## Game endpoints
+
+The app registers weeks, puzzles, sleep, adults, team, inventory, home, friends, notifications,
+zukan, odds, fly behavior/experiments, and Shiori memo/ask routes described in `docs/specs/api.md`.
+`GET /v1/home` aggregates current state and available care; `GET /v1/weeks/current` includes the
+seven daily event records. A fly ID is either the active week ID or an owned adult ID.
+
+Puzzle submit bodies are the submission objects directly, not wrapped in a `submission` field.
+Issue time and the ten-minute expiry use the real injectable server clock; dev advances affect
+game windows, not the wall-clock anti-cheat check. An issued puzzle cannot cross its research day
+(or its meal slot). Repeated issue requests do not reserve extra care quota: submit checks it again.
+
+Team changes settle gathering first. Removed adults keep their bags and fractional progress in
+`adults.gathering`; adding them again restores the bag without crediting time spent off the team.
+Collection transfers materials, shizuku and experience, preserving fractional shizuku/items.
+
+The existing presentation rules intentionally return negative rewards for negative point totals.
+These are ledger debits and can return `insufficient_funds` at eclosion; this branch does not change
+that game-economy rule. The commander should resolve whether negative rewards should be clamped.
+
+## Transactions and worker integration
 
 - Use `APIRouter(route_class=IdempotentRoute)` for new mutation routers, and obtain sessions through
   `get_session`. The route owns the transaction: handlers must flush as needed and must not commit.
@@ -73,23 +93,54 @@ Favorite adults must belong to the authenticated user. Null clears the title or 
   a JSON parameter object and returns a JSON result object; async handlers are also supported.
   `app.state.brain_client.submit(user_id, kind, params)` persists a job, commits it, then dispatches.
   Call this convenience method outside a route-owned transaction. The brain package is still being
-  implemented; concrete handler registration belongs to W2.
+  implemented independently. The game app registers `brain.experiment` in inline mode.
 - Queue mode enqueues arq `run_brain_job(job_id, kind, params)` with `_job_id=job_id`. The W2 worker
   must implement that function and update the committed job row. Status values are `pending`,
   `running`, `succeeded`, and `failed`. This task implements the enqueue side only.
-- SQL and Redis are not one atomic transaction. W2 game mutations should create their job row inside
-  their transaction and dispatch after commit, using a durable outbox for crash recovery. The current
-  convenience client records enqueue failures; process termination between commit and enqueue can
-  leave a pending job. Worker retries and the three-second training wait belong to W2.
+- Game routes persist `jobs.params` in the same transaction as accepted effects, then dispatch after
+  commit. SQL and Redis are not one atomic transaction: process termination between commit and
+  enqueue can leave a pending job. Its persisted kind/params are sufficient to redispatch; a periodic
+  recovery scan belongs to the worker. Explicit enqueue failures produce `failed/enqueue_failed`.
+- In queue mode, training waits up to three seconds after committing the accepted care event. A fast
+  result includes `association` and `learning_status: completed`; otherwise the response includes a
+  `job_id`, `association: null` and `learning_status: pending`. Poll `/v1/jobs/{id}` for completion.
+  The first finalized HTTP response remains immutable for idempotency replay, including pending
+  responses. Training workers apply pending events in sequence order and tolerate redelivery.
+  Learning that finishes after eclosion also updates the adult's brain and cached preferences.
+
+Worker handler registration (the worker itself is outside this branch):
+
+| Job kind | Handler contract |
+| --- | --- |
+| `brain.experiment` | `services.experiments.handler(session_factory, brain_adapter)` returns an async JSON handler; stores an experiment with a user-scoped sequence and `display_id: c-<seq>` |
+| `brain.training` | `services.training.handler(session_factory, brain_adapter)` applies accepted training, updates puzzle/care results, and completes associated jobs |
+| `shiori.answer` | Receives `{user_id, question, game_now}`; the Shiori worker supplies the answer handler |
+
+Both Python handler factories are in the `tsuyulabo_api` package. Job inputs are internal: the public
+job endpoint does not expose brain snapshots or RNG seeds. Daily memo readers expect
+`ShioriMessage.role == "memo"`, with `created_at` in the user's game-time day (04:00 JST boundary).
+
+## Brain boundary
+
+`brain_adapter.py` imports only `tsuyu_brain.api`, lazily. Without that independently developed
+package, brain-dependent requests return `503 brain_unavailable`; tests inject a deterministic fake.
+The façade must expose `default_params` as well as the six functions in W1-brain item 9.
+`generate_individual` parameters must be a dataclass or a JSON-compatible mapping.
+
+The interim persistence codec stores individual-generation arguments and seeded training history
+(at most 18 events), then reconstructs through public façade calls. It avoids depending on an
+unpublished engine byte codec. The commander can replace it with the engine's finalized codec at
+integration; no brain internals are imported and the brain package is untouched.
 
 ## Migrations and tests
 
 ```powershell
 .\.tools\uv.exe run alembic -c services/api/alembic.ini upgrade head
 .\.tools\uv.exe run alembic -c services/api/alembic.ini revision --autogenerate -m "describe change"
-.\.tools\uv.exe run pytest services/api --ignore=services/api/tests/domain
+.\.tools\uv.exe run pytest services/api
 .\.tools\uv.exe run ruff check services/api
 .\.tools\uv.exe run ruff format --check services/api
+.\.tools\uv.exe run python services/api/scripts/export_openapi.py
 ```
 
 Alembic reads `DATABASE_URL` through the same settings as the application. Programmatic migration
@@ -101,3 +152,9 @@ Tests use a fresh temporary SQLite database per test, HTTPX ASGI clients, and fr
 includes concurrent retries/spending, ledger rollback, authentication, errors, dev controls, job
 ownership, migration upgrade/downgrade and schema parity, and offline Postgres migration SQL.
 Redis/arq enqueue is mocked; live Postgres and Redis integration remains for W2 infrastructure tests.
+
+The full-week HTTP scenario solves all puzzles, presents at gold or better, ecloses, gathers for
+eight hours, collects and levels up. A second scenario neglects days 2–5 and verifies stable care
+misses and normal rank. Queue tests cover the three-second deadline, late adult updates and replay.
+The export command writes `apps/web/src/lib/api/openapi.json` without starting the app or loading
+the brain engine. Mutation headers are part of the live and exported OpenAPI schema.
