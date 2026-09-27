@@ -1,31 +1,26 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { AppShell } from "@/components/shell/AppShell";
-import { Button, TruthBadge } from "@/components/ui/primitives";
+import { QueryState } from "@/components/ui/QueryState";
+import { TruthBadge } from "@/components/ui/primitives";
+import { api, unwrap } from "@/lib/api/client";
+import { useApiQuery } from "@/lib/api/query";
 import { BrainPlayback } from "./BrainPlayback";
-import { BrainConnection, readApi } from "./connection";
 import { SCENARIOS, type BrainActivity, type Scenario } from "./types";
 
-function Observation({ flyId, token, scenario }: { flyId: string; token: string; scenario: Scenario }) {
-  const [data, setData] = useState<BrainActivity | null>(null);
-  const [error, setError] = useState("");
-  const [attempt, setAttempt] = useState(0);
-  useEffect(() => {
-    const controller = new AbortController();
-    readApi<BrainActivity>(`/v1/flies/${encodeURIComponent(flyId)}/brain/activity?scenario=${encodeURIComponent(scenario)}`, token, controller.signal)
-      .then((result) => { if (!controller.signal.aborted) setData(result); })
-      .catch((reason: unknown) => {
-        if (!controller.signal.aborted) setError(reason instanceof Error ? reason.message : "通信に失敗しました。");
-      });
-    return () => controller.abort();
-  }, [flyId, token, scenario, attempt]);
-  if (error) return <div role="alert" className="space-y-3 rounded-2xl bg-tint-eye p-4 text-sm">
-    <p>{error}</p><Button tone="plain" size="sm" onClick={() => { setError(""); setAttempt(attempt + 1); }}>もう一度読み込む</Button>
-  </div>;
-  if (!data) return <p role="status" className="py-8 text-center text-sm text-muted">この子の脳を観察しています…</p>;
-  return <BrainPlayback activity={data} />;
+function useBrainActivity(flyId: string, scenario: Scenario) {
+  return useApiQuery(["brain-activity", flyId, scenario], (signal) =>
+    unwrap(
+      api.GET("/v1/flies/{fly_id}/brain/activity", { signal, params: { path: { fly_id: flyId }, query: { scenario } } }),
+    ).then((data) => data as unknown as BrainActivity),
+  );
+}
+
+function Observation({ flyId, scenario }: { flyId: string; scenario: Scenario }) {
+  const query = useBrainActivity(flyId, scenario);
+  return <QueryState query={query}>{(data) => <BrainPlayback activity={data} />}</QueryState>;
 }
 
 export function BrainScreen({ flyId }: { flyId: string }) {
@@ -43,7 +38,7 @@ export function BrainScreen({ flyId }: { flyId: string }) {
         {Object.entries(SCENARIOS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
       </select>
       {(scenario === "liked_odor" || scenario === "disliked_odor") && <p className="text-xs text-muted">どちらも同じバナナの匂いを出します。好き・苦手は、この子が学んだ重みで決まります。</p>}
-      <BrainConnection>{(token) => <Observation key={`${flyId}:${scenario}:${token}`} flyId={flyId} token={token} scenario={scenario} />}</BrainConnection>
+      <Observation key={`${flyId}:${scenario}`} flyId={flyId} scenario={scenario} />
     </div>
   </AppShell>;
 }
