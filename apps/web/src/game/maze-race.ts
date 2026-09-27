@@ -3,11 +3,11 @@ import type { components } from "@/lib/api/schema";
 export type MazeToken = components["schemas"]["MazeToken"];
 export type MazeGeometry = components["schemas"]["MazeGeometry"];
 export const RACE_CUES = [
-  { id: "banana", label: "バナナ", icon: "🍌" },
-  { id: "apple_vinegar", label: "りんご酢", icon: "🍎" },
-  { id: "yeast", label: "酵母", icon: "🍞" },
-  { id: "grape", label: "ぶどう", icon: "🍇" },
-  { id: "blue_light", label: "青い光", icon: "🔵" },
+  { id: "banana", label: "バナナ" },
+  { id: "apple_vinegar", label: "りんご酢" },
+  { id: "yeast", label: "酵母" },
+  { id: "grape", label: "ぶどう" },
+  { id: "blue_light", label: "青い光" },
 ] as const;
 
 export function placeToken(maze: MazeGeometry, tokens: MazeToken[], token: MazeToken): { tokens: MazeToken[]; message: string } {

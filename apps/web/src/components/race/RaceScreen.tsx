@@ -14,6 +14,7 @@ import { useCurrentRace, useEnterRace, useRaceRanking, useRaceReplay, type Curre
 import type { components } from "@/lib/api/schema";
 import { MazeBoard } from "./MazeBoard";
 import { RacePlayback } from "./RacePlayback";
+import { CueIcon } from "../art/CueIcon";
 
 export function RaceScreen() {
   const race = useCurrentRace();
@@ -60,14 +61,14 @@ function RaceSession({ race, adults }: { race: CurrentRace; adults: components["
           <div className="flex items-center gap-2"><Tsuyu strain={adult.strain} sex={adult.sex} className="h-14 w-14" /><div><b>{adult.name}</b><p className="text-xs text-muted">{adult.traits.map(traitName).join("・") || "個性を観察しよう"}</p></div></div>
           <div className="mt-2 space-y-2">{RACE_CUES.map(item => {
             const value = Math.max(-1, Math.min(1, adult.preferences[item.id] ?? 0));
-            return <div key={item.id}><div className="flex justify-between text-xs"><span>{item.icon} {item.label}</span><span>{value > 0.1 ? "好き" : value < -0.1 ? "苦手" : "中立"}</span></div><div role="meter" aria-label={`${adult.name}の${item.label}の好み`} aria-valuemin={-1} aria-valuemax={1} aria-valuenow={value} className="relative mt-1 h-2 overflow-hidden rounded bg-line-soft"><div className="h-full bg-ai" style={{ width: `${(value + 1) * 50}%` }} /><span className="absolute inset-y-0 left-1/2 w-px bg-ink/60" /></div></div>;
+            return <div key={item.id}><div className="flex justify-between text-xs"><span className="inline-flex items-center gap-1"><CueIcon cue={item.id} size={16} />{item.label}</span><span>{value > 0.1 ? "好き" : value < -0.1 ? "苦手" : "中立"}</span></div><div role="meter" aria-label={`${adult.name}の${item.label}の好み`} aria-valuemin={-1} aria-valuemax={1} aria-valuenow={value} className="relative mt-1 h-2 overflow-hidden rounded bg-line-soft"><div className="h-full bg-ai" style={{ width: `${(value + 1) * 50}%` }} /><span className="absolute inset-y-0 left-1/2 w-px bg-ink/60" /></div></div>;
           })}</div>
         </button>)}
       </div>
       <Card className="space-y-4 p-4">
         <div className="flex justify-between"><h2 className="font-kiwi text-lg">2. 合図で作戦を立てる</h2><b className="text-ai">{tokens.length} / 3</b></div>
         <p className="text-xs text-muted">合図を選んで通路をタップ。置いた合図をもう一度タップすると取り除けます。匂いは通路に沿って届きます。</p>
-        <div className="flex flex-wrap gap-2" role="group" aria-label="置く合図">{RACE_CUES.map(item => <Button key={item.id} tone={item.id === cue ? "ai" : "plain"} size="sm" aria-pressed={item.id === cue} onClick={() => setCue(item.id)}>{item.icon} {item.label}</Button>)}</div>
+        <div className="flex flex-wrap gap-2" role="group" aria-label="置く合図">{RACE_CUES.map(item => <Button key={item.id} tone={item.id === cue ? "ai" : "plain"} size="sm" aria-pressed={item.id === cue} onClick={() => setCue(item.id)}><CueIcon cue={item.id} size={18} />{item.label}</Button>)}</div>
         <MazeBoard maze={race.maze} tokens={tokens} onCell={(x, y) => {
           const next = placeToken(race.maze, tokens, { x, y, cue });
           setTokens(next.tokens); setMessage(next.message);
