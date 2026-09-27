@@ -102,6 +102,74 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/daily-circuit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Today */
+        get: operations["today_v1_daily_circuit_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/daily-circuit/ranking": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Ranking */
+        get: operations["ranking_v1_daily_circuit_ranking_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/daily-circuit/start": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Start */
+        post: operations["start_v1_daily_circuit_start_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/daily-circuit/submit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Submit */
+        post: operations["submit_v1_daily_circuit_submit_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/dev/time": {
         parameters: {
             query?: never;
@@ -688,6 +756,146 @@ export interface components {
              */
             scenario: "rest" | "sugar" | "bitter" | "sugar+bitter" | "looming" | "light_left" | "light_right" | "antenna_touch" | "liked_odor" | "disliked_odor";
         };
+        /** DailyAttempt */
+        DailyAttempt: {
+            /**
+             * Expires At
+             * Format: date-time
+             */
+            expires_at: string;
+            /**
+             * Started At
+             * Format: date-time
+             */
+            started_at: string;
+        };
+        /** DailyAvatar */
+        DailyAvatar: {
+            /**
+             * Sex
+             * @enum {string}
+             */
+            sex: "m" | "f";
+            /**
+             * Strain
+             * @enum {string}
+             */
+            strain: "wild" | "white" | "yellow" | "ebony" | "curly" | "vestigial";
+        };
+        /** DailyCheckpoint */
+        DailyCheckpoint: {
+            /** Cell */
+            cell: number;
+            /** K */
+            k: number;
+        };
+        /** DailyCircuitParams */
+        DailyCircuitParams: {
+            /** Checkpoints */
+            checkpoints: components["schemas"]["DailyCheckpoint"][];
+            /**
+             * Cue
+             * @constant
+             */
+            cue: "banana";
+            /**
+             * N
+             * @constant
+             */
+            n: 7;
+            /**
+             * Valence
+             * @constant
+             */
+            valence: "reward";
+        };
+        /** DailyCircuitResponse */
+        DailyCircuitResponse: {
+            attempt: components["schemas"]["DailyAttempt"] | null;
+            /**
+             * Day
+             * Format: date
+             */
+            day: string;
+            my_result: components["schemas"]["DailyResult"] | null;
+            params: components["schemas"]["DailyCircuitParams"];
+            /**
+             * Resets At
+             * Format: date-time
+             */
+            resets_at: string;
+            /**
+             * Server Now
+             * Format: date-time
+             */
+            server_now: string;
+        };
+        /** DailyRanking */
+        DailyRanking: {
+            /**
+             * Day
+             * Format: date
+             */
+            day: string;
+            /** Entries */
+            entries: components["schemas"]["DailyRankingEntry"][];
+        };
+        /** DailyRankingEntry */
+        DailyRankingEntry: {
+            avatar: components["schemas"]["DailyAvatar"];
+            /** Display Name */
+            display_name: string;
+            /** Elapsed Ms */
+            elapsed_ms: number;
+            /** Is Me */
+            is_me: boolean;
+            /** Rank */
+            rank: number;
+            /**
+             * Submitted At
+             * Format: date-time
+             */
+            submitted_at: string;
+            /** User Id */
+            user_id: string;
+        };
+        /** DailyResult */
+        DailyResult: {
+            /**
+             * Day
+             * Format: date
+             */
+            day: string;
+            /** Elapsed Ms */
+            elapsed_ms: number;
+            /** Shizuku */
+            shizuku: number;
+            /**
+             * Submitted At
+             * Format: date-time
+             */
+            submitted_at: string;
+        };
+        /** DailyStartRequest */
+        DailyStartRequest: {
+            /**
+             * Day
+             * Format: date
+             */
+            day: string;
+        };
+        /** DailySubmitRequest */
+        DailySubmitRequest: {
+            /**
+             * Day
+             * Format: date
+             */
+            day: string;
+            /** Elapsed Ms */
+            elapsed_ms: number;
+            /** Path */
+            path: number[];
+        };
         /** ExperimentRequest */
         ExperimentRequest: {
             /**
@@ -1251,6 +1459,116 @@ export interface operations {
                     "application/json": {
                         [key: string]: string | number;
                     };
+                };
+            };
+        };
+    };
+    today_v1_daily_circuit_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DailyCircuitResponse"];
+                };
+            };
+        };
+    };
+    ranking_v1_daily_circuit_ranking_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DailyRanking"];
+                };
+            };
+        };
+    };
+    start_v1_daily_circuit_start_post: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DailyStartRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DailyCircuitResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    submit_v1_daily_circuit_submit_post: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DailySubmitRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DailyResult"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };

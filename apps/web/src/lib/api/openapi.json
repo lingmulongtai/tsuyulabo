@@ -183,6 +183,302 @@
         "title": "BrainActivity",
         "type": "object"
       },
+      "DailyAttempt": {
+        "properties": {
+          "expires_at": {
+            "format": "date-time",
+            "title": "Expires At",
+            "type": "string"
+          },
+          "started_at": {
+            "format": "date-time",
+            "title": "Started At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "started_at",
+          "expires_at"
+        ],
+        "title": "DailyAttempt",
+        "type": "object"
+      },
+      "DailyAvatar": {
+        "properties": {
+          "sex": {
+            "enum": [
+              "m",
+              "f"
+            ],
+            "title": "Sex",
+            "type": "string"
+          },
+          "strain": {
+            "enum": [
+              "wild",
+              "white",
+              "yellow",
+              "ebony",
+              "curly",
+              "vestigial"
+            ],
+            "title": "Strain",
+            "type": "string"
+          }
+        },
+        "required": [
+          "strain",
+          "sex"
+        ],
+        "title": "DailyAvatar",
+        "type": "object"
+      },
+      "DailyCheckpoint": {
+        "properties": {
+          "cell": {
+            "title": "Cell",
+            "type": "integer"
+          },
+          "k": {
+            "title": "K",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "cell",
+          "k"
+        ],
+        "title": "DailyCheckpoint",
+        "type": "object"
+      },
+      "DailyCircuitParams": {
+        "properties": {
+          "checkpoints": {
+            "items": {
+              "$ref": "#/components/schemas/DailyCheckpoint"
+            },
+            "title": "Checkpoints",
+            "type": "array"
+          },
+          "cue": {
+            "const": "banana",
+            "title": "Cue",
+            "type": "string"
+          },
+          "n": {
+            "const": 7,
+            "title": "N",
+            "type": "integer"
+          },
+          "valence": {
+            "const": "reward",
+            "title": "Valence",
+            "type": "string"
+          }
+        },
+        "required": [
+          "n",
+          "checkpoints",
+          "cue",
+          "valence"
+        ],
+        "title": "DailyCircuitParams",
+        "type": "object"
+      },
+      "DailyCircuitResponse": {
+        "properties": {
+          "attempt": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DailyAttempt"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "day": {
+            "format": "date",
+            "title": "Day",
+            "type": "string"
+          },
+          "my_result": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DailyResult"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "params": {
+            "$ref": "#/components/schemas/DailyCircuitParams"
+          },
+          "resets_at": {
+            "format": "date-time",
+            "title": "Resets At",
+            "type": "string"
+          },
+          "server_now": {
+            "format": "date-time",
+            "title": "Server Now",
+            "type": "string"
+          }
+        },
+        "required": [
+          "day",
+          "params",
+          "server_now",
+          "resets_at",
+          "attempt",
+          "my_result"
+        ],
+        "title": "DailyCircuitResponse",
+        "type": "object"
+      },
+      "DailyRanking": {
+        "properties": {
+          "day": {
+            "format": "date",
+            "title": "Day",
+            "type": "string"
+          },
+          "entries": {
+            "items": {
+              "$ref": "#/components/schemas/DailyRankingEntry"
+            },
+            "title": "Entries",
+            "type": "array"
+          }
+        },
+        "required": [
+          "day",
+          "entries"
+        ],
+        "title": "DailyRanking",
+        "type": "object"
+      },
+      "DailyRankingEntry": {
+        "properties": {
+          "avatar": {
+            "$ref": "#/components/schemas/DailyAvatar"
+          },
+          "display_name": {
+            "title": "Display Name",
+            "type": "string"
+          },
+          "elapsed_ms": {
+            "title": "Elapsed Ms",
+            "type": "integer"
+          },
+          "is_me": {
+            "title": "Is Me",
+            "type": "boolean"
+          },
+          "rank": {
+            "title": "Rank",
+            "type": "integer"
+          },
+          "submitted_at": {
+            "format": "date-time",
+            "title": "Submitted At",
+            "type": "string"
+          },
+          "user_id": {
+            "title": "User Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "rank",
+          "user_id",
+          "display_name",
+          "is_me",
+          "elapsed_ms",
+          "submitted_at",
+          "avatar"
+        ],
+        "title": "DailyRankingEntry",
+        "type": "object"
+      },
+      "DailyResult": {
+        "properties": {
+          "day": {
+            "format": "date",
+            "title": "Day",
+            "type": "string"
+          },
+          "elapsed_ms": {
+            "title": "Elapsed Ms",
+            "type": "integer"
+          },
+          "shizuku": {
+            "title": "Shizuku",
+            "type": "integer"
+          },
+          "submitted_at": {
+            "format": "date-time",
+            "title": "Submitted At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "day",
+          "elapsed_ms",
+          "shizuku",
+          "submitted_at"
+        ],
+        "title": "DailyResult",
+        "type": "object"
+      },
+      "DailyStartRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "day": {
+            "format": "date",
+            "title": "Day",
+            "type": "string"
+          }
+        },
+        "required": [
+          "day"
+        ],
+        "title": "DailyStartRequest",
+        "type": "object"
+      },
+      "DailySubmitRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "day": {
+            "format": "date",
+            "title": "Day",
+            "type": "string"
+          },
+          "elapsed_ms": {
+            "maximum": 600000.0,
+            "minimum": 0.0,
+            "title": "Elapsed Ms",
+            "type": "integer"
+          },
+          "path": {
+            "items": {
+              "type": "integer"
+            },
+            "maxItems": 49,
+            "minItems": 49,
+            "title": "Path",
+            "type": "array"
+          }
+        },
+        "required": [
+          "day",
+          "path",
+          "elapsed_ms"
+        ],
+        "title": "DailySubmitRequest",
+        "type": "object"
+      },
       "ExperimentRequest": {
         "additionalProperties": false,
         "properties": {
@@ -712,6 +1008,142 @@
           }
         },
         "summary": "Read Clock"
+      }
+    },
+    "/v1/daily-circuit": {
+      "get": {
+        "operationId": "today_v1_daily_circuit_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyCircuitResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Today"
+      }
+    },
+    "/v1/daily-circuit/ranking": {
+      "get": {
+        "operationId": "ranking_v1_daily_circuit_ranking_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyRanking"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Ranking"
+      }
+    },
+    "/v1/daily-circuit/start": {
+      "post": {
+        "operationId": "start_v1_daily_circuit_start_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Idempotency-Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DailyStartRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyCircuitResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Start"
+      }
+    },
+    "/v1/daily-circuit/submit": {
+      "post": {
+        "operationId": "submit_v1_daily_circuit_submit_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Idempotency-Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DailySubmitRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyResult"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Submit"
       }
     },
     "/v1/dev/time": {
