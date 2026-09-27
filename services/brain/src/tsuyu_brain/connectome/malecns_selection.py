@@ -2,10 +2,12 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 
 import numpy as np
 import pandas as pd
+
+from tsuyu_brain.connectome.malecns_outputs import ADDITIONAL_TYPES, OUTPUT_REASONS
 
 SEED = 1729
 GLOMERULI = ("DM1", "DM2", "DM3", "DM4", "VA2", "VM2", "DL1", "DC2")
@@ -181,3 +183,42 @@ def select_circuits(rows: pd.DataFrame, seed: int = SEED) -> list[Selection]:
         ("TODO: verify identities of graph-selected grooming interneurons against aBN1/2.",),
     )
     return [mb, feeding, escape, steering, grooming]
+
+
+def add_output_populations(selection: Selection, rows: pd.DataFrame) -> Selection:
+    """Add exact annotated outputs; never substitute a body with an unknown sign."""
+    groups, rules = dict(selection.groups), dict(selection.rules)
+    outputs = list(selection.outputs)
+    for name in ADDITIONAL_TYPES.get(selection.name, ()):
+        candidates = rows[rows.type.eq(name) & rows.sign.notna()]
+        sides = ("L", "R") if selection.name == "steering" else (None,)
+        for side in sides:
+            group = f"{name}_{side}" if side else name
+            groups[group] = candidates[candidates.somaSide.eq(side)] if side else candidates
+            rules[group] = f"exact type {name}" + (f"; somaSide {side}" if side else "")
+            rules[group] += "; " + OUTPUT_REASONS[selection.name]
+            outputs.append(group)
+    # A previously selected bridge can now be an explicitly named output.
+    added = (
+        pd.concat([groups[g] for g in outputs if g not in selection.outputs]).bodyId
+        if len(outputs) > len(selection.outputs)
+        else []
+    )
+    for group in selection.groups:
+        groups[group] = groups[group][~groups[group].bodyId.isin(added)]
+    return replace(selection, groups=groups, outputs=tuple(outputs), rules=rules)
+
+
+def output_census(rows: pd.DataFrame, selection: Selection) -> list[dict[str, object]]:
+    """Report absent exact types, unresolved signs, and retained counts explicitly."""
+    retained = set(pd.concat(list(selection.groups.values())).bodyId)
+    return [
+        {
+            "type": name,
+            "annotated": int(rows.type.eq(name).sum()),
+            "resolved_sign": int((rows.type.eq(name) & rows.sign.notna()).sum()),
+            "selected": int((rows.type.eq(name) & rows.bodyId.isin(retained)).sum()),
+            "reason": OUTPUT_REASONS[selection.name],
+        }
+        for name in ADDITIONAL_TYPES.get(selection.name, ())
+    ]
