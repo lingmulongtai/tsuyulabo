@@ -1,4 +1,11 @@
-import type { HomeData } from "./types";
+import type { HomeData, TeamMemberSummary } from "./types";
+
+const demoMember = (id: string, name: string, bag: number): TeamMemberSummary => ({
+  id, name, strain: "wild", sex: "f", level: 12, energy: 80, bag: { banana: bag },
+  week_id: "w-demo", stars: 3, traits: [], subskills: [], skills: {}, preferences: {},
+  level_cap: 40, exp: 0, created_at: "2026-09-27T04:00:00+09:00", slot: 0,
+  shizuku: 0, pending_exp: bag,
+});
 
 /** Sample home payload (research day 3, noon) used until the page is wired to the API, and in stories/tests. */
 export const MOCK_HOME: HomeData = {
@@ -16,8 +23,8 @@ export const MOCK_HOME: HomeData = {
   balances: { shizuku: 1240, research_points: 60, kohaku: 0 },
   team: {
     members: [
-      { id: "a1", name: "ぴかり", strain: "white", sex: "f", level: 12, energy: 80, bag: 9, bag_cap: 30 },
-      { id: "a2", name: "こむぎ", strain: "wild", sex: "m", level: 8, energy: 64, bag: 3, bag_cap: 30 },
+      demoMember("a1", "ぴかり", 9),
+      { ...demoMember("a2", "こむぎ", 3), slot: 1 },
     ],
     bag_total: 12,
     collectable: true,

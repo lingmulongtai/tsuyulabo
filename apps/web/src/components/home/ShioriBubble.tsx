@@ -28,7 +28,7 @@ export function ShioriBubble({
           <div className="mt-1.5 flex flex-wrap gap-1">
             {evidence.map((id) => (
               <span key={id} className="rounded-md bg-tint-ai px-1.5 font-mono text-[0.68rem] text-ai">
-                #{id}
+                {id.includes("#") ? id : `#${id}`}
               </span>
             ))}
           </div>
