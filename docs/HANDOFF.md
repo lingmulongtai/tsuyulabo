@@ -11,11 +11,17 @@
   （既定は toy-v0。MaleCNS v1.0 の回路も同梱、6 項目中 3 項目合格）、シオリ、ワーカー、docker compose、CI
 - テスト: Python 564 件（+ eval）、Web 236 件。ruff / typecheck / lint / build も通過。GitHub Actions も緑
 - ブラウザで通しプレイ確認済み: 卵 → 時間スキップ → 発表会（ケアミスで減点・報酬 0）→ 羽化（サーバーの抽選）→ 成虫ページ → 脳ビューア
-- 実行中: W5-media の最終撮影（ブランチ `feat/media`。ローカルの web :3000 と API :8000 を使う。撮影が終わったら画像と README をコミットして main へ）
+- 実行中の Codex: W7-omiai（マイグレーション 0009）、W7-push（0010 予定。0008 に付けてきたら 0009 の後ろに付け替える）
 - MaleCNS v1.0 の生データ（約 1.1 GB、オーナー許可済み）は `C:\Users\lingm\dev\tsuyulabo-agents\W3-malecns\data\raw\malecns-v1.0\`
   （W4-malecns-calibrate のクローンにもコピー）。git には入れない
 - Codex の使用量は 11:26 頃に一度上限に達したが、オーナーが同日リセットした（再開済み）。
-- オーナーが帰宅後にやること: Codex のサンドボックス設定、Vercel CLI のログイン
+- **オーナー向けチェックリスト**:
+  1. Vercel CLI にログインして `docs/deploy.md` の手順で Web を公開（API なしでもデモ案内のトップになる）
+  2. API を公開するなら Cloud Run + Neon + Upstash（`docs/deploy.md`）。GitHub の Secrets を入れると `deploy.yml` が動く
+  3. Codex のサンドボックス設定（Codex に直接コミットさせたい場合）
+  4. プレイ動画を作るなら `winget install ffmpeg` → `docs/media/README.md` の 1 行を実行
+  5. git の author メール（学校のアドレス）を公開リポジトリで使い続けるか決める
+- オーナーが帰宅後にやること（元のメモ）: Codex のサンドボックス設定、Vercel CLI のログイン
 - ローカルで pytest が `PermissionError: ...\Temp\pytest-of-lingm` になるときは `PYTEST_DEBUG_TEMPROOT=/c/Users/lingm/.cache/pytest-tmp` を付ける
   （Codex のサンドボックスが作った一時フォルダの権限のせい）。
 
@@ -71,7 +77,9 @@ git push
 | W4-malecns-calibrate | 本物の回路の調整（3/6 → 5/6 合格。デコーダーだけ未達、既定は toy-v0） | Codex | feat/malecns-calibrate | マージ済み |
 | W4-names | 成虫の名前の自動生成と名前の変更 | Codex | feat/adult-names | マージ済み |
 | W4-e2e | Playwright で1週間を通しでプレイ（ローカルで 2.8 分で合格） | Codex | feat/e2e | マージ済み |
-| W5-media | README 用のスクリーンショットとプレイ動画（Codex が途中で上限。Claude が引き継ぎ） | Codex → Claude | feat/media | 進行中 |
+| W5-media | README 用のスクリーンショット 30 枚（15 場面 × ライト/ダーク）。動画はフル FFmpeg が必要なので未作成 | Codex → Claude | feat/media | マージ済み |
+| W7-omiai | お見合い（フレンドの成虫と交配、両方に卵） | Codex | feat/omiai | 実行中 |
+| W7-push | Web Push 通知（ごはんの時間です）と設定画面 | Codex | feat/push | 実行中 |
 | W5-deploy | Vercel と Cloud Run のデプロイ設定、手順書 `docs/deploy.md`（実デプロイはオーナー） | Codex | feat/deploy | マージ済み |
 | W5-daily-circuit | 今日の回路（全員同じ問題、フレンドのタイムランキング） | Codex | feat/daily-circuit | マージ済み |
 | W5-breeding | 交配と本物の遺伝（伴性遺伝、Cy のホモ致死）、系統図鑑 | Codex | feat/breeding | マージ済み |
