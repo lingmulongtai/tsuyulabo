@@ -45,6 +45,7 @@ describe("cleaning", () => {
     ["non_monotonic_time", [-1, 1, 2]],
     ["non_monotonic_time", [1, 2, NaN]],
     ["non_monotonic_time", [1, 2, Infinity]],
+    ["non_monotonic_time", [1, 2, 3.5]],
     ["time_exceeded", [1, 2, 10001]],
   ] as const)("rejects %s", (reason, taps) => {
     expect(verifyCleaning(params, { taps, elapsed_ms: 11000 })).toEqual({ valid: false, reason });
@@ -55,10 +56,26 @@ describe("cleaning", () => {
   });
 
   it("requires finite elapsed time at or after the last tap", () => {
-    for (const elapsed_ms of [-1, 2, NaN, Infinity]) {
+    for (const elapsed_ms of [-1, 2, 3.5, NaN, Infinity]) {
       expect(verifyCleaning(params, { taps: [1, 2, 3], elapsed_ms })).toEqual({
         valid: false, reason: "non_monotonic_time",
       });
     }
+  });
+
+  it("limits elapsed time after tap count but before tap validation", () => {
+    expect(verifyCleaning(params, { taps: [0, 500, 10000], elapsed_ms: 600000 }).valid)
+      .toBe(true);
+    expect(verifyCleaning(params, { taps: [-1, 1, 2], elapsed_ms: 600001 }))
+      .toEqual({ valid: false, reason: "time_exceeded" });
+    expect(verifyCleaning(params, { taps: [], elapsed_ms: 600001 }))
+      .toEqual({ valid: false, reason: "wrong_tap_count" });
+  });
+
+  it("tolerates boundary float error without widening zones beyond epsilon", () => {
+    for (const t of [220, 280, 720, 780]) expect(gradeTap(params, t)).toBe("perfect");
+    for (const t of [175, 325, 675, 825]) expect(gradeTap(params, t)).toBe("good");
+    expect(gradeTap(params, 280 + 1e-8)).toBe("good");
+    expect(gradeTap(params, 325 + 1e-8)).toBe("miss");
   });
 });
