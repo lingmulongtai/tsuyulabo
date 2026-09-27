@@ -9,6 +9,8 @@ from tsuyulabo_api.domain import constants as c
 from tsuyulabo_api.domain import eclosion, lifecycle
 from tsuyulabo_api.errors import APIError
 from tsuyulabo_api.services import week as service
+from tsuyulabo_api.services.brain_state import snapshot as brain_snapshot
+from tsuyulabo_api.services.brain_state import store as store_brain
 from tsuyulabo_api.services.clock import game_now
 from tsuyulabo_api.services.game import Brain, CurrentClock, CurrentUser, Session, reward, rng
 from tsuyulabo_api.services.idempotency import IdempotentRoute
@@ -28,7 +30,9 @@ async def start_week(
     week = Week(user_id=user.id, started_at=now)
     session.add(week)
     await session.flush()
-    session.add(LarvaState(week_id=week.id, last_computed_at=now, brain_snapshot=brain.new()))
+    larva = LarvaState(week_id=week.id, last_computed_at=now)
+    store_brain(larva, brain.new(), brain)
+    session.add(larva)
     await session.flush()
     return await service.payload(session, week, now)
 
@@ -74,7 +78,7 @@ async def eclose(
     )
     larva = await session.get(LarvaState, week.id)
     snapshot, params = brain.eclose(
-        larva.brain_snapshot, list(roll.traits), roll.sex, random.getrandbits(63)
+        brain_snapshot(larva), list(roll.traits), roll.sex, random.getrandbits(63)
     )
     adult = Adult(
         user_id=user.id,
@@ -85,11 +89,10 @@ async def eclose(
         stars=roll.stars,
         traits=list(roll.traits),
         brain_params=params,
-        brain_snapshot=snapshot,
-        preferences=brain.preferences(snapshot),
         skills=larva.skills,
         created_at=now,
     )
+    store_brain(adult, snapshot, brain)
     session.add(adult)
     await session.flush()
     for currency in ("shizuku", "research_points"):

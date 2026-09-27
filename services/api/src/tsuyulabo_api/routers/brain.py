@@ -9,6 +9,7 @@ from tsuyulabo_api.db.models import Adult, Week
 from tsuyulabo_api.errors import APIError
 from tsuyulabo_api.routers.zukan import BEHAVIORS
 from tsuyulabo_api.services import week as week_service
+from tsuyulabo_api.services.brain_state import snapshot as brain_snapshot
 from tsuyulabo_api.services.clock import game_now
 from tsuyulabo_api.services.dispatch import enqueue
 from tsuyulabo_api.services.game import Brain, CurrentClock, CurrentUser, Session, rng
@@ -29,12 +30,12 @@ async def fly_state(
 ) -> tuple[dict, dict]:
     adult = await session.get(Adult, fly_id)
     if adult is not None and adult.user_id == user.id:
-        return adult.brain_snapshot, {"stage": "adult", "energy": adult.energy}
+        return brain_snapshot(adult), {"stage": "adult", "energy": adult.energy}
     week = await session.get(Week, fly_id)
     if week is None or week.user_id != user.id or week.status != "active":
         raise APIError("not_found", "個体が見つかりません", 404)
     larva = await week_service.evaluate(session, week, game_now(clock, user))
-    return larva.brain_snapshot, week_service.state_stats(larva).display() | {"stage": larva.stage}
+    return brain_snapshot(larva), week_service.state_stats(larva).display() | {"stage": larva.stage}
 
 
 @router.get("/{fly_id}/behavior")
