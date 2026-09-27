@@ -87,10 +87,13 @@ flowchart LR
 | 苦味で摂食が止まる | 合格（2.9 Hz → 1.1 Hz） |
 | しつけで好みが変わる | 合格（初期 PI +0.08 → ごほうび +0.47 / 罰 −1.08） |
 | 特性が行動に出る | 合格（右旋回 53.9% vs 52.4%、p = 1.4e-5） |
-| 行動デコーダー | 未達（MLP 79.0% ／ 配線シャッフル 41%。基準 85% に届かず） |
+| 行動デコーダー | 未達（logistic 78.41% / MLP 76.70% ／ 配線シャッフル 46.02〜51.14%。基準 85%） |
 
-デコーダーが基準に届くまで、ゲームの既定は `toy-v0`。詳細は
-[services/brain/reports/report-malecns.md](services/brain/reports/report-malecns.md)。
+ゲームの既定は引き続き `toy-v0`。匂いシナリオの修正と個体ごとの安静時活動の差し引きを行ったが、
+弱い匂いや摂食の無応答によるラベルの重なりが残る。調整には訓練・検証データのみを使用し、
+テスト個体 `[4, 5, 6, 10]` は固定。詳細は
+[評価レポート](services/brain/reports/report-malecns.md)と
+[原因・検証記録](services/brain/reports/decoder-investigation.md)。
 
 シオリ（Mock、42 問）: 正答率 100%、根拠の検証率 100%。
 
