@@ -27,6 +27,7 @@ from tsuyulabo_api.routers import (
     inventory,
     jobs,
     odds,
+    push,
     puzzles,
     races,
     shiori,
@@ -162,6 +163,7 @@ def create_app(
         friends.router,
         zukan.router,
         odds.router,
+        push.router,
         brain.router,
         shiori.router,
     ):
