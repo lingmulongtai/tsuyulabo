@@ -11,7 +11,22 @@ from .game_support import GameClient
 async def test_home_aggregate_todo_and_memo(sessions: Any) -> None:
     async with GameClient(sessions, home.router, weeks.router, puzzles.router) as game:
         empty = (await game.get("/v1/home")).json()
-        assert set(empty) == {"clock", "week", "fly", "todo", "balances", "team", "shiori"}
+        assert set(empty) == {
+            "clock",
+            "week",
+            "fly",
+            "todo",
+            "balances",
+            "team",
+            "shiori",
+            "circadian",
+        }
+        assert empty["circadian"] == {
+            "gauge": 0,
+            "streak": 0,
+            "typical_bedtime": None,
+            "typical_wake": None,
+        }
         assert empty["week"] is None and empty["shiori"]["memo"] is None
         await game.post("/v1/weeks")
         response = (await game.get("/v1/home")).json()

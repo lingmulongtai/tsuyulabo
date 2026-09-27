@@ -9,7 +9,8 @@ from tsuyulabo_api.db.models import Week
 from tsuyulabo_api.domain import lifecycle
 from tsuyulabo_api.domain.clock import research_day, research_day_start, slot_of, weekday_label
 from tsuyulabo_api.domain.constants import SLOT_HOURS
-from tsuyulabo_api.services import memo, team
+from tsuyulabo_api.routers.circadian_responses import HomeResponse
+from tsuyulabo_api.services import circadian, memo, team
 from tsuyulabo_api.services import week as service
 from tsuyulabo_api.services.clock import game_now
 from tsuyulabo_api.services.game import Brain, CurrentClock, CurrentUser, Session
@@ -18,7 +19,7 @@ from tsuyulabo_api.services.ledger import balances
 router = APIRouter(prefix="/v1/home")
 
 
-@router.get("")
+@router.get("", response_model=HomeResponse)
 async def home(
     user: CurrentUser, session: Session, clock: CurrentClock, brain: Brain
 ) -> dict[str, Any]:
@@ -39,6 +40,7 @@ async def home(
         "balances": await balances(session, user.id),
         "team": team.payload(await team.settle(session, user.id, now, brain)),
         "shiori": {"memo": await memo.today(session, user.id, now)},
+        "circadian": asdict(await circadian.current(session, user.id, now)),
     }
     if week is not None:
         day = research_day(week.started_at, now)

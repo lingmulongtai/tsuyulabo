@@ -773,6 +773,17 @@ export interface components {
              */
             scenario: "rest" | "sugar" | "bitter" | "sugar+bitter" | "looming" | "light_left" | "light_right" | "antenna_touch" | "liked_odor" | "disliked_odor";
         };
+        /** CircadianResponse */
+        CircadianResponse: {
+            /** Gauge */
+            gauge: number;
+            /** Streak */
+            streak: number;
+            /** Typical Bedtime */
+            typical_bedtime: string | null;
+            /** Typical Wake */
+            typical_wake: string | null;
+        };
         /** DailyAttempt */
         DailyAttempt: {
             /**
@@ -943,6 +954,38 @@ export interface components {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
         };
+        /** HomeResponse */
+        HomeResponse: {
+            /** Balances */
+            balances: {
+                [key: string]: number;
+            };
+            circadian: components["schemas"]["CircadianResponse"];
+            /** Clock */
+            clock: {
+                [key: string]: unknown;
+            };
+            /** Fly */
+            fly: {
+                [key: string]: unknown;
+            } | null;
+            /** Shiori */
+            shiori: {
+                [key: string]: unknown;
+            };
+            /** Team */
+            team: {
+                [key: string]: unknown;
+            };
+            /** Todo */
+            todo: {
+                [key: string]: unknown;
+            }[];
+            /** Week */
+            week: {
+                [key: string]: unknown;
+            } | null;
+        };
         /** IssueRequest */
         IssueRequest: {
             /** Cue */
@@ -975,6 +1018,20 @@ export interface components {
             amount: number;
             /** Material */
             material: string;
+        };
+        /** SleepEndResponse */
+        SleepEndResponse: {
+            /** Bonus */
+            bonus: number;
+            circadian: components["schemas"]["CircadianResponse"];
+            /** Energy Recovered */
+            energy_recovered: {
+                [key: string]: number;
+            };
+            /** Hours */
+            hours: number;
+            /** Id */
+            id: string;
         };
         /** StartWeekRequest */
         StartWeekRequest: {
@@ -1117,6 +1174,7 @@ export interface components {
             evidence: string[];
         };
         HomeData: {
+            circadian: components["schemas"]["CircadianResponse"];
             clock: {
                 game_now: string;
                 slot: components["schemas"]["Slot"];
@@ -1218,14 +1276,7 @@ export interface components {
             id: string;
             started_at: string;
         };
-        SleepEnd: {
-            id: string;
-            hours: number;
-            bonus: number;
-            energy_recovered: {
-                [key: string]: number;
-            };
-        };
+        SleepEnd: components["schemas"]["SleepEndResponse"];
         Collection: {
             materials: {
                 [key: string]: number;

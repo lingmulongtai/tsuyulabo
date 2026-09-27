@@ -3,6 +3,7 @@ import type { HomeData } from "@/lib/types";
 import { Pupa } from "../art/Stages";
 import { DailyCircuitCard } from "../daily/DailyCircuitCard";
 import { CurrencyPill, Meter } from "../ui/primitives";
+import { CircadianRing } from "../sleep/CircadianRing";
 import { ActionGrid } from "./ActionGrid";
 import { ShioriBubble } from "./ShioriBubble";
 import { TeamStrip } from "./TeamStrip";
@@ -33,7 +34,10 @@ export function HomeScreen({ data, hero, footer }: { data: HomeData; hero?: Reac
             )}
           </h1>
         </div>
-        <div className="flex shrink-0 gap-1.5">
+        <div className="flex shrink-0 items-center gap-1.5">
+          <Link href="/care/sleep" aria-label={`体内時計ゲージ ${data.circadian.gauge}、いっしょにねるへ`} className="rounded-full focus-visible:outline-2 focus-visible:outline-ai">
+            <CircadianRing gauge={data.circadian.gauge} compact />
+          </Link>
           <CurrencyPill kind="shizuku" value={balances.shizuku} />
           <CurrencyPill kind="research" value={balances.research_points} />
         </div>

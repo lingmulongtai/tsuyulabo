@@ -6,6 +6,7 @@ import { MoonIcon, SunIcon } from "@/components/ui/icons";
 import { Button, Card } from "@/components/ui/primitives";
 import { ErrorCard, QueryState } from "@/components/ui/QueryState";
 import { useHome, useSleepEnd, useSleepStart } from "@/lib/api/hooks";
+import { CircadianCard } from "@/components/sleep/CircadianCard";
 
 export default function SleepPage() {
   const home = useHome();
@@ -16,7 +17,7 @@ export default function SleepPage() {
       const night = data.clock.slot === "night";
       const action = night ? "sleep" : "wake";
       const available = data.week ? data.todo.some(item => item.action === action && item.status === "available") : (night || data.clock.slot === "morning");
-      return <><Card className="overflow-hidden text-center">
+      return <><CircadianCard circadian={end.data?.circadian ?? data.circadian} /><Card className="overflow-hidden text-center">
         <div className={`relative p-8 ${night ? "bg-[linear-gradient(160deg,#142944,#463b67)] text-white" : "bg-[linear-gradient(160deg,#fff4cc,#d5efe8)] text-[#1e2c29]"}`}>
           {night ? <>
             {[[12, 14, 0], [78, 10, 0.6], [88, 38, 1.2], [20, 44, 0.3], [64, 24, 0.9], [40, 8, 1.5]].map(([x, y, d]) => (

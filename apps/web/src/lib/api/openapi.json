@@ -183,6 +183,52 @@
         "title": "BrainActivity",
         "type": "object"
       },
+      "CircadianResponse": {
+        "properties": {
+          "gauge": {
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Gauge",
+            "type": "integer"
+          },
+          "streak": {
+            "maximum": 7.0,
+            "minimum": 0.0,
+            "title": "Streak",
+            "type": "integer"
+          },
+          "typical_bedtime": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Typical Bedtime"
+          },
+          "typical_wake": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Typical Wake"
+          }
+        },
+        "required": [
+          "gauge",
+          "streak",
+          "typical_bedtime",
+          "typical_wake"
+        ],
+        "title": "CircadianResponse",
+        "type": "object"
+      },
       "DailyAttempt": {
         "properties": {
           "expires_at": {
@@ -540,6 +586,79 @@
         "title": "HTTPValidationError",
         "type": "object"
       },
+      "HomeResponse": {
+        "properties": {
+          "balances": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Balances",
+            "type": "object"
+          },
+          "circadian": {
+            "$ref": "#/components/schemas/CircadianResponse"
+          },
+          "clock": {
+            "additionalProperties": true,
+            "title": "Clock",
+            "type": "object"
+          },
+          "fly": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fly"
+          },
+          "shiori": {
+            "additionalProperties": true,
+            "title": "Shiori",
+            "type": "object"
+          },
+          "team": {
+            "additionalProperties": true,
+            "title": "Team",
+            "type": "object"
+          },
+          "todo": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Todo",
+            "type": "array"
+          },
+          "week": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Week"
+          }
+        },
+        "required": [
+          "clock",
+          "week",
+          "fly",
+          "todo",
+          "balances",
+          "team",
+          "shiori",
+          "circadian"
+        ],
+        "title": "HomeResponse",
+        "type": "object"
+      },
       "IssueRequest": {
         "additionalProperties": false,
         "properties": {
@@ -672,6 +791,41 @@
           "amount"
         ],
         "title": "SendGift",
+        "type": "object"
+      },
+      "SleepEndResponse": {
+        "properties": {
+          "bonus": {
+            "title": "Bonus",
+            "type": "integer"
+          },
+          "circadian": {
+            "$ref": "#/components/schemas/CircadianResponse"
+          },
+          "energy_recovered": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "title": "Energy Recovered",
+            "type": "object"
+          },
+          "hours": {
+            "title": "Hours",
+            "type": "number"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "hours",
+          "bonus",
+          "energy_recovered",
+          "circadian"
+        ],
+        "title": "SleepEndResponse",
         "type": "object"
       },
       "StartWeekRequest": {
@@ -1783,9 +1937,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "additionalProperties": true,
-                  "title": "Response Home V1 Home Get",
-                  "type": "object"
+                  "$ref": "#/components/schemas/HomeResponse"
                 }
               }
             },
@@ -2187,9 +2339,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "additionalProperties": true,
-                  "title": "Response End V1 Sleep End Post",
-                  "type": "object"
+                  "$ref": "#/components/schemas/SleepEndResponse"
                 }
               }
             },
