@@ -237,9 +237,10 @@ def build(
         "decoder_features": {
             "count": 68,
             "schema": "8 output means; 6 equal-duration windows per output; "
-            "6 right-left and 6 approach-avoid differences",
-            "reason": "calibrated 8-mean decoder remains below 85%; preserve temporal "
-            "responses without changing classifier, labels, or held-out individuals",
+            "6 right-left and 6 approach-avoid differences; steering centered on "
+            "the same individual's neutral response (also for shuffled circuits)",
+            "reason": "preserve temporal responses and remove individual tonic offsets; "
+            "output-only features with unchanged classifiers and held-out individuals",
         },
         "circuits": {},
     }
