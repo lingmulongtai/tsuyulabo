@@ -100,6 +100,10 @@ def decoder_metrics(version: str = "toy-v0") -> dict[str, object]:
         "labels": LABELS,
         "train_rows": len(train.labels),
         "test_rows": len(held_out.labels),
+        "feature_count": data.features.shape[1],
+        "feature_schema": "eight means + six windows per output + right-left/approach-avoid windows"
+        if version == "malecns-v1.0"
+        else "eight output means",
     }
     models = {}
     for kind in ("logistic", "mlp"):
@@ -157,7 +161,7 @@ def write_report(report: dict[str, object], directory: Path | None = None) -> Pa
     version = report.get("connectome", "toy-v0")
     stem = "report-malecns" if version == "malecns-v1.0" else "report"
     (directory / f"{stem}.json").write_text(
-        json.dumps(report, indent=2, allow_nan=False) + "\n", encoding="utf-8"
+        json.dumps(report, indent=2, allow_nan=False) + "\n", encoding="utf-8", newline="\n"
     )
     lines = [
         f"# Brain evaluation — {version}",
@@ -205,7 +209,7 @@ def write_report(report: dict[str, object], directory: Path | None = None) -> Pa
             "A 10 percentage-point average drop operationalizes 'large drop' for this model.",
         ]
     )
-    (directory / f"{stem}.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    (directory / f"{stem}.md").write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
     return directory
 
 
@@ -219,7 +223,7 @@ def main() -> None:
         from tsuyu_brain.connectome.malecns import manifest
 
         report["calibration"] = {
-            name: {key: row[key] for key in ("scale", "input_rate_hz", "todos")}
+            name: {key: row[key] for key in ("scale", "input_rate_hz", "normalization", "todos")}
             for name, row in manifest()["circuits"].items()
         }
     directory = write_report(report, args.output)
