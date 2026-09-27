@@ -12,8 +12,8 @@ const output = path.join(root, "docs/media/playthrough.webm");
 const screens = path.join(root, "docs/media/screens");
 const sizes = await Promise.all((await readdir(screens)).filter(name => name.endsWith(".webp"))
   .map(async name => ({ name, size: (await stat(path.join(screens, name))).size })));
-if (sizes.length !== 26 || sizes.some(file => file.size >= 150_000) || sizes.reduce((sum, file) => sum + file.size, 0) >= 3_000_000) {
-  throw new Error("Expected 26 WebP images, each <150 KB and total <3 MB");
+if (sizes.length !== 30 || sizes.some(file => file.size >= 150_000) || sizes.reduce((sum, file) => sum + file.size, 0) >= 3_000_000) {
+  throw new Error("Expected 30 WebP images, each <150 KB and total <3 MB");
 }
 
 // Reuse Playwright's installed recorder; no new codec dependency or system install.
