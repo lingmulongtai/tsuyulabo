@@ -25,6 +25,7 @@ from tsuyu_brain.learning import (
     new_fly_state,
     preference_index,
 )
+from tsuyu_brain.maze import maze_policy
 from tsuyu_brain.params import BrainParams, default_params
 
 __all__ = [
@@ -39,6 +40,7 @@ __all__ = [
     "predict_behavior",
     "run_odor_choice",
     "activity",
+    "maze_policy",
 ]
 
 
