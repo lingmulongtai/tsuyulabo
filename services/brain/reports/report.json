@@ -1,0 +1,861 @@
+{
+  "connectome": "toy-v0",
+  "model_boundary": "game LIF checks; measured topology for MaleCNS, synthetic for toy; not biological validation",
+  "torch_version": "2.14.0+cpu",
+  "checks": {
+    "sugar_mn9": {
+      "passed": true,
+      "rest_hz": 0.0,
+      "sugar_hz": 326.7708435058594
+    },
+    "looming_dnp01": {
+      "passed": true,
+      "rest_hz": 0.0,
+      "looming_hz": 318.125
+    },
+    "bitter_suppression": {
+      "passed": true,
+      "sugar_hz": 326.7708435058594,
+      "mixed_hz": 0.0
+    },
+    "learning": {
+      "passed": true,
+      "baseline_pi": 0.0,
+      "reward_delta": 1.0,
+      "punish_delta": -1.0
+    },
+    "trait_bias": {
+      "passed": true,
+      "wild_mean_right_fraction": 0.5221496904268861,
+      "trait_mean_right_fraction": 0.600973891094327,
+      "p_one_sided": 7.436589328947562e-32,
+      "individuals_per_group": 32
+    },
+    "decoder": {
+      "labels": [
+        "rest",
+        "walk",
+        "turn_left",
+        "turn_right",
+        "feed",
+        "escape",
+        "groom",
+        "approach",
+        "avoid"
+      ],
+      "train_rows": 528,
+      "test_rows": 176,
+      "feature_count": 8,
+      "feature_schema": "eight output means",
+      "protocol": {
+        "dataset_seed": 123,
+        "split_seed": 7,
+        "model_seed": 11,
+        "epochs": 400,
+        "development_fit_individuals": [
+          0,
+          3,
+          7,
+          8,
+          9,
+          11,
+          12,
+          13,
+          15
+        ],
+        "validation_individuals": [
+          1,
+          2,
+          14
+        ],
+        "final_train_individuals": [
+          0,
+          1,
+          2,
+          3,
+          7,
+          8,
+          9,
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "test_individuals": [
+          4,
+          5,
+          6,
+          10
+        ],
+        "selection": "changes selected using development fit/validation only; final models refit on all training individuals; test and controls evaluated frozen"
+      },
+      "development": {
+        "training_diagnostics": {
+          "rows": 528,
+          "unavoidable_errors_from_identical_features": 0,
+          "empirical_accuracy_ceiling": 1.0,
+          "zero_feature_rows_by_label": {
+            "rest": 12,
+            "walk": 0,
+            "turn_left": 0,
+            "turn_right": 0,
+            "feed": 0,
+            "escape": 0,
+            "groom": 0,
+            "approach": 0,
+            "avoid": 0
+          }
+        },
+        "validation_diagnostics": {
+          "rows": 132,
+          "unavoidable_errors_from_identical_features": 0,
+          "empirical_accuracy_ceiling": 1.0,
+          "zero_feature_rows_by_label": {
+            "rest": 0,
+            "walk": 0,
+            "turn_left": 0,
+            "turn_right": 0,
+            "feed": 0,
+            "escape": 0,
+            "groom": 0,
+            "approach": 0,
+            "avoid": 0
+          }
+        },
+        "logistic": {
+          "accuracy": 1.0,
+          "confusion_matrix": [
+            [
+              36,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              12,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              12,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              12,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              12,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0,
+              12,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              12,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              12,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              12
+            ]
+          ]
+        },
+        "mlp": {
+          "accuracy": 1.0,
+          "confusion_matrix": [
+            [
+              36,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              12,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              12,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              12,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              12,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0,
+              12,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              12,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              12,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              12
+            ]
+          ]
+        }
+      },
+      "logistic": {
+        "accuracy": 1.0,
+        "confusion_matrix": [
+          [
+            48,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            16,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            16,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            16,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            16,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            16,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            16,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            16,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            16
+          ]
+        ]
+      },
+      "mlp": {
+        "accuracy": 1.0,
+        "confusion_matrix": [
+          [
+            48,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            16,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            16,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            16,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            16,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            16,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            16,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            16,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            16
+          ]
+        ]
+      },
+      "shuffled_41": {
+        "accuracy": 0.75,
+        "confusion_matrix": [
+          [
+            48,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            16,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            14,
+            2,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            14,
+            0,
+            2,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            16,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            16,
+            0,
+            0,
+            0
+          ],
+          [
+            16,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            16,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            16
+          ]
+        ]
+      },
+      "shuffled_42": {
+        "accuracy": 0.8409090638160706,
+        "confusion_matrix": [
+          [
+            48,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            16,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            9,
+            7,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            10,
+            0,
+            6,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            16,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            16,
+            0,
+            0,
+            0
+          ],
+          [
+            7,
+            0,
+            0,
+            0,
+            0,
+            0,
+            9,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            14,
+            2
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            16
+          ]
+        ]
+      },
+      "shuffled_43": {
+        "accuracy": 0.7329545617103577,
+        "confusion_matrix": [
+          [
+            48,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            16,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            15,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            16,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            16,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            16,
+            0,
+            0,
+            0
+          ],
+          [
+            16,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            8,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            8,
+            0
+          ],
+          [
+            8,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            8
+          ]
+        ]
+      },
+      "accuracy_drop": 0.22537879149119056,
+      "minimum_drop": 0.1,
+      "passed": true
+    }
+  },
+  "passed": true
+}
