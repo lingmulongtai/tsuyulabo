@@ -6,10 +6,11 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, Request
 from pydantic import BaseModel, ConfigDict, Field, field_validator
+from sqlalchemy import func, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from tsuyulabo_api.auth.dependencies import get_current_user
-from tsuyulabo_api.db.models import Adult, User
+from tsuyulabo_api.db.models import Adult, LedgerAccount, LedgerEntry, User
 from tsuyulabo_api.db.session import get_session
 from tsuyulabo_api.errors import APIError
 from tsuyulabo_api.services.idempotency import IdempotentRoute
@@ -41,6 +42,15 @@ class ProfilePatch(BaseModel):
 
 
 async def profile(session: AsyncSession, user: User) -> dict[str, Any]:
+    earned = await session.scalar(
+        select(func.coalesce(func.sum(LedgerEntry.amount), 0))
+        .join(LedgerAccount, LedgerAccount.id == LedgerEntry.account_id)
+        .where(
+            LedgerAccount.owner == f"user:{user.id}",
+            LedgerAccount.currency == "research_points",
+            LedgerEntry.amount > 0,
+        )
+    )
     return {
         "id": user.id,
         "display_name": user.display_name,
@@ -48,7 +58,7 @@ async def profile(session: AsyncSession, user: User) -> dict[str, Any]:
         "title": user.title,
         "favorite_adult_id": user.favorite_adult_id,
         "balances": await balances(session, user.id),
-        "research_rank": None,
+        "research_rank": min(99, 1 + earned // 100),
     }
 
 
