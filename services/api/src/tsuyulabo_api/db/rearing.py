@@ -35,6 +35,9 @@ class LarvaState(Base):
     hunger_zero_since: Mapped[datetime | None] = mapped_column(UTCDateTime())
     last_computed_at: Mapped[datetime] = mapped_column(UTCDateTime(), default=utc_now)
     stage: Mapped[str] = mapped_column(String(24), default="egg")
+    miss_keys: Mapped[list[list[Any]]] = mapped_column(JSON, default=list, server_default="[]")
+    brain_snapshot: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, server_default="{}")
+    skills: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, server_default="{}")
 
 
 class CareEvent(Base):
@@ -80,10 +83,13 @@ class Adult(Base):
     stars: Mapped[int]
     traits: Mapped[list[str]] = mapped_column(JSON, default=list)
     subskills: Mapped[list[str]] = mapped_column(JSON, default=list)
+    gathering: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, server_default="{}")
     level: Mapped[int] = mapped_column(default=1)
     exp: Mapped[int] = mapped_column(default=0)
     energy: Mapped[float] = mapped_column(default=100.0)
     brain_params: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
+    preferences: Mapped[dict[str, float]] = mapped_column(JSON, default=dict, server_default="{}")
+    brain_snapshot: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, server_default="{}")
     learned_weights: Mapped[bytes | None] = mapped_column(LargeBinary)
     skills: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
     created_at: Mapped[datetime] = mapped_column(UTCDateTime(), default=utc_now)
