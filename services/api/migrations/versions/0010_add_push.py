@@ -7,7 +7,7 @@ from alembic import op
 
 revision = "0010"
 # The commander will rebase this onto 0009 from the parallel branch.
-down_revision = "0008"
+down_revision = "0009"
 branch_labels = None
 depends_on = None
 
