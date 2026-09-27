@@ -8,6 +8,7 @@ import torch
 from torch import Tensor
 
 from tsuyu_brain.behavior import LABELS, SCENARIOS, scenario_features
+from tsuyu_brain.connectome.stimuli import CUE_GLOMERULI
 from tsuyu_brain.connectome.toy_v0 import CUES
 from tsuyu_brain.individuality import TRAIT_EFFECTS, generate_individual
 from tsuyu_brain.learning import apply_training, new_fly_state
@@ -32,6 +33,9 @@ def generate_dataset(
         raise ValueError("at least two individuals and one trial required")
     features, labels, ids = [], [], []
     traits = (None, *TRAIT_EFFECTS)
+    # MaleCNS has no complete visual-to-KC path. A blue-light trial cannot
+    # truthfully be labeled as a liked/disliked odor; retain all four odors.
+    cues = tuple(CUE_GLOMERULI) if version == "malecns-v1.0" else CUES
     for individual in range(individuals):
         individual_seed = seed + 1009 * individual
         trait = traits[individual % len(traits)]
@@ -39,7 +43,7 @@ def generate_dataset(
             [] if trait is None else [trait], "m" if individual % 2 else "f", individual_seed
         )
         original = new_fly_state(params, version)
-        cue = CUES[individual % len(CUES)]
+        cue = cues[individual % len(cues)]
         for index, (scenario, label) in enumerate(SCENARIOS.items()):
             state = original
             if scenario in {"liked_odor", "disliked_odor"}:
