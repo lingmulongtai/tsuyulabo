@@ -7,29 +7,7 @@ import re
 from typing import Any
 
 from .base import Cost, Response, ToolCall
-
-CUES = {
-    "banana": "バナナ",
-    "apple_vinegar": "りんご酢",
-    "yeast": "酵母",
-    "grape": "ぶどう",
-    "blue_light": "青い光",
-}
-KINDS = {
-    "training": "しつけ",
-    "meal": "ごはん",
-    "cleaning": "そうじ",
-    "temperature": "温度あわせ",
-    "pupation_site": "場所えらび",
-}
-
-
-def cue_in(question: str) -> str | None:
-    return next((cue for cue, label in CUES.items() if cue in question or label in question), None)
-
-
-def citations(records: list[dict[str, Any]]) -> str:
-    return " ".join(dict.fromkeys(r["id"] for r in records))
+from .topics import CUES, KINDS, citations, compact, cue_in, newest, observations, topic_in
 
 
 def count_records(question: str, records: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -59,20 +37,22 @@ def count_records(question: str, records: list[dict[str, Any]]) -> list[dict[str
     valence = (
         "punish"
         if "罰" in question or "punish" in question
-        else ("reward" if "報酬" in question or "reward" in question else None)
+        else ("reward" if any(w in question for w in ("報酬", "reward", "ごほうび")) else None)
     )
     if valence:
         selected = [r for r in selected if r["data"].get("valence") == valence]
-    kind = next(
-        (kind for kind, label in KINDS.items() if kind in question or label in question), None
-    )
+    kind = topic_in(question)
+    if cue and kind is None:
+        kind = "training"
     if kind:
         selected = [r for r in selected if r["kind"] == kind]
+    if "大成功" in question:
+        selected = [r for r in selected if r["data"].get("great_success") is True]
     return selected
 
 
 class MockProvider:
-    cache_namespace = "mock:v1"
+    cache_namespace = "mock:v2"
 
     def model_for(self, purpose: str) -> str:
         return "mock-" + purpose
@@ -82,44 +62,54 @@ class MockProvider:
     ) -> Response:
         request = json.loads(next(m["content"] for m in messages if m["role"] == "user"))
         question = request["question"]
+        counting = any(word in question for word in ("何回", "回数", "件数"))
         results = [json.loads(m["content"]) for m in messages if m["role"] == "tool"]
         if not results:
             calls = [ToolCall("care", "get_care_events", {"week_id": request["week_id"]})]
             cue = cue_in(question)
-            if cue and any(
-                word in question for word in ("なぜ", "なんで", "実験", "好み", "コーチ")
-            ):
-                calls.extend(
-                    [
-                        ToolCall(
-                            "association",
-                            "get_association",
-                            {"fly_id": request["fly_id"], "cue": cue},
-                        ),
-                        ToolCall(
-                            "experiment",
-                            "run_odor_choice",
-                            {"fly_id": request["fly_id"], "cue": cue},
-                        ),
-                    ]
-                )
+            if cue and topic_in(question) == "training" and not counting:
+                calls.extend(self.measure(request["fly_id"], cue))
             if any(
                 word in question.lower() for word in ("論文", "文献", "キノコ体", "nobel", "mn9")
             ):
                 calls.append(ToolCall("papers", "search_papers", {"query": question, "k": 2}))
             return self.response(messages, tool_calls=calls[:4])
 
-        records = {r["id"]: r for result in results for r in result.get("records", [])}
-        care = [r for r in records.values() if r["kind"] not in {"experiment", "association"}]
+        # Association results may reuse a training ID; preserve both views of the record.
+        records = [r for result in results for r in result.get("records", [])]
+        care = list(
+            {r["id"]: r for r in records if r["kind"] not in {"experiment", "association"}}.values()
+        )
         sleeps = [r for result in results for r in result.get("sleep_sessions", [])]
         papers = [p for result in results for p in result.get("papers", [])]
         sentences: list[str] = []
         feature = request.get("feature", "answer")
-        if any(word in question for word in ("何回", "回数", "件数")) and care:
-            selected = count_records(question, care)
-            sentences.append(f"該当する記録は{len(selected)}回です {citations(selected or care)}。")
+        if feature == "answer" and topic_in(question) == "training" and not counting:
+            measured = any(m.get("name") == "get_association" for m in messages)
+            cue = cue_in(question) or next(
+                (
+                    r["data"]["cue"]
+                    for r in newest(care)
+                    if r["kind"] == "training" and r["data"].get("cue") in CUES
+                ),
+                None,
+            )
+            if cue and not measured and tools:
+                return self.response(messages, tool_calls=self.measure(request["fly_id"], cue))
+        if counting and (care or sleeps):
+            selected = count_records(question, sleeps if topic_in(question) == "sleep" else care)
+            evidence = selected or care + sleeps
+            refs = citations(evidence, 1 if any(r["kind"] == "sleep" for r in evidence) else 2)
+            sentences.append(f"該当する記録は{len(selected)}回です {refs}。")
+            if selected:
+                sentences.append(f"この回数は確認できた記録の範囲です {citations(selected, 1)}。")
+            else:
+                sentences.append(
+                    "該当するお世話の記録を残して、また確かめましょう "
+                    f"{citations(care + sleeps, 1)}。"
+                )
         elif feature == "coach":
-            associations = [r for r in records.values() if "value" in r["data"]]
+            associations = [r for r in records if "value" in r["data"]]
             if associations:
                 record = associations[-1]
                 sentences.append(
@@ -131,6 +121,8 @@ class MockProvider:
                     f"今週の{len(care)}件のお世話を手がかりに、"
                     f"次のしつけ前後も比べましょう {citations(care)}。"
                 )
+        elif feature == "answer":
+            sentences.extend(observations(question, care, sleeps, records))
         else:
             if care:
                 sentences.append(f"お世話の記録は{len(care)}件あります {citations(care)}。")
@@ -146,7 +138,7 @@ class MockProvider:
                 last = care[-1]
                 label = KINDS.get(last["kind"], "お世話")
                 sentences.append(f"直近のお世話は{label}でした {last['id']}。")
-            for record in records.values():
+            for record in records:
                 data = record["data"]
                 if record["kind"] == "experiment":
                     sentences.append(
@@ -158,10 +150,15 @@ class MockProvider:
         if feature not in {"coach", "morning"}:
             for paper in papers:
                 summary = paper["summary"].rstrip("。")
-                sentences.append(f"文献では、{summary} {paper['id']}。")
-        return self.response(
-            messages, text="".join(sentences[:3] if feature == "morning" else sentences)
-        )
+                sentences.insert(0, f"文献では、{summary} {paper['id']}。")
+        return self.response(messages, text=compact(sentences))
+
+    @staticmethod
+    def measure(fly_id: str, cue: str) -> list[ToolCall]:
+        return [
+            ToolCall("association", "get_association", {"fly_id": fly_id, "cue": cue}),
+            ToolCall("experiment", "run_odor_choice", {"fly_id": fly_id, "cue": cue, "trials": 20}),
+        ]
 
     @staticmethod
     def response(
