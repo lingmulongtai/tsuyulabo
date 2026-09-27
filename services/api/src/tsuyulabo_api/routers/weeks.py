@@ -6,7 +6,7 @@ from fastapi import APIRouter
 from sqlalchemy import func, select
 from tsuyulabo_api.db.models import Adult, Friendship, LarvaState, Notification, Week
 from tsuyulabo_api.domain import constants as c
-from tsuyulabo_api.domain import eclosion, lifecycle
+from tsuyulabo_api.domain import eclosion, lifecycle, names
 from tsuyulabo_api.errors import APIError
 from tsuyulabo_api.services import week as service
 from tsuyulabo_api.services.brain_state import snapshot as brain_snapshot
@@ -80,10 +80,11 @@ async def eclose(
     snapshot, params = brain.eclose(
         brain_snapshot(larva), list(roll.traits), roll.sex, random.getrandbits(63)
     )
+    taken = set(await session.scalars(select(Adult.name).where(Adult.user_id == user.id)))
     adult = Adult(
         user_id=user.id,
         week_id=week.id,
-        name="ショウジョウバエ",
+        name=names.pick_name(random, taken, strain=roll.strain),
         sex=roll.sex,
         strain=roll.strain,
         stars=roll.stars,
