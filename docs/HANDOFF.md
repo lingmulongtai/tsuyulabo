@@ -9,9 +9,9 @@
 - main にあるもの: 全画面が API につながった Web（ホーム、ごはん・しつけ・そうじ・温度・場所えらび・睡眠、研究発表会、羽化、
   チーム、成虫の詳細＋脳モデルで動く行動、脳ビューア、図鑑、フレンド、シオリ、開発用の時計）、ゲーム API、本物の脳エンジン
   （既定は toy-v0。MaleCNS v1.0 の回路も同梱、6 項目中 3 項目合格）、シオリ、ワーカー、docker compose、CI
-- テスト: Python 564 件（+ eval）、Web 236 件。ruff / typecheck / lint / build も通過。GitHub Actions も緑
+- テスト: Python 597 件（+ eval）、Web 254 件。ruff / typecheck / lint / build も通過。GitHub Actions も緑
 - ブラウザで通しプレイ確認済み: 卵 → 時間スキップ → 発表会（ケアミスで減点・報酬 0）→ 羽化（サーバーの抽選）→ 成虫ページ → 脳ビューア
-- 実行中の Codex: W7-omiai（マイグレーション 0009）、W7-push（0010 予定。0008 に付けてきたら 0009 の後ろに付け替える）
+- 実行中のタスクはなし（2026-09-27 15:06 時点）。マイグレーションの先頭は 0010
 - MaleCNS v1.0 の生データ（約 1.1 GB、オーナー許可済み）は `C:\Users\lingm\dev\tsuyulabo-agents\W3-malecns\data\raw\malecns-v1.0\`
   （W4-malecns-calibrate のクローンにもコピー）。git には入れない
 - Codex の使用量は 11:26 頃に一度上限に達したが、オーナーが同日リセットした（再開済み）。
@@ -78,8 +78,8 @@ git push
 | W4-names | 成虫の名前の自動生成と名前の変更 | Codex | feat/adult-names | マージ済み |
 | W4-e2e | Playwright で1週間を通しでプレイ（ローカルで 2.8 分で合格） | Codex | feat/e2e | マージ済み |
 | W5-media | README 用のスクリーンショット 30 枚（15 場面 × ライト/ダーク）。動画はフル FFmpeg が必要なので未作成 | Codex → Claude | feat/media | マージ済み |
-| W7-omiai | お見合い（フレンドの成虫と交配、両方に卵） | Codex | feat/omiai | 実行中 |
-| W7-push | Web Push 通知（ごはんの時間です）と設定画面 | Codex | feat/push | 実行中 |
+| W7-omiai | お見合い（フレンドの成虫と交配、両方に卵） | Codex | feat/omiai | マージ済み |
+| W7-push | Web Push 通知（ごはんの時間です）、通知設定、オフライン用の PWA 画面（実機での配信は未確認） | Codex | feat/push | マージ済み |
 | W5-deploy | Vercel と Cloud Run のデプロイ設定、手順書 `docs/deploy.md`（実デプロイはオーナー） | Codex | feat/deploy | マージ済み |
 | W5-daily-circuit | 今日の回路（全員同じ問題、フレンドのタイムランキング） | Codex | feat/daily-circuit | マージ済み |
 | W5-breeding | 交配と本物の遺伝（伴性遺伝、Cy のホモ致死）、系統図鑑 | Codex | feat/breeding | マージ済み |
@@ -118,3 +118,6 @@ git push
 - 2026-09-27 昼 Claude: スクリーンショット撮影で「羽化後にシオリへの質問が失敗する」バグを発見・修正（最新の週にフォールバック）。
   発表会のランクのしきい値が低すぎた（上手に遊ぶと 8.2 万点、にじは 1.6 万点から）ので 2.5 万 / 4.5 万 / 7 万に変更。
   並列ブランチで同じ Alembic リビジョン 0006 ができたので、genetics を 0007 に振り直した。
+- 2026-09-27 15:06 Claude: W7（お見合い、Web Push）をマージ。push のマイグレーションを 0009 の後ろに付け替え。docker compose を 0010 まで上げて
+  `scripts/smoke_api.py` が通ることを確認。次の候補: 見た目コンテスト、なわばりずもう（フェーズ3）、Capacitor でアプリ化、
+  シオリの実 LLM（API キーが必要）、MaleCNS デコーダーの改善（出力ニューロンの追加抽出）、プレイ動画（フル FFmpeg が必要）。
