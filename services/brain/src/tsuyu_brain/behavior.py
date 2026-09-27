@@ -99,10 +99,12 @@ def scenario_features(
     duration_ms: float = 300,
     shuffle_seed: int | None = None,
 ) -> Tensor:
-    """Return mean rates (toy) or mean/window rates and contrasts (MaleCNS).
+    """Return mean rates (toy) or evoked mean/window rates and contrasts (MaleCNS).
 
     Walk adds a tonic arousal drive; rest retains low spontaneous walking-DN firing.
-    Scenario names never enter the decoder's numeric input.
+    Measured steering is centered on this individual's neutral resting response,
+    including in shuffled controls. This removes tonic offsets without giving
+    the classifier individual parameters or the scenario name.
     """
     params, jobs = scenario_inputs(state, scenario, cue=cue, intensity=intensity)
     features = torch.zeros(batch, len(FEATURES))
@@ -116,10 +118,20 @@ def scenario_features(
         if shuffle_seed is not None:
             circuit = shuffled_wiring(circuit, shuffle_seed)
         result = simulate(circuit, stimulus, params, duration_ms, batch, seed)
+        reference = (
+            simulate(circuit, {}, state.params, duration_ms, 1, seed)
+            if state.version == "malecns-v1.0" and name == "steering"
+            else None
+        )
         for group in circuit.output_groups:
             features[:, FEATURES.index(group)] = (result.rates[group] * result.window_ms).sum(
                 1
             ) / duration_ms
             if state.version == "malecns-v1.0":
                 windows[:, FEATURES.index(group)] = window_rates(result, group)
+                if reference is not None:
+                    features[:, FEATURES.index(group)] -= (
+                        reference.rates[group] * reference.window_ms
+                    ).sum(1) / duration_ms
+                    windows[:, FEATURES.index(group)] -= window_rates(reference, group)
     return temporal_features(features, windows) if state.version == "malecns-v1.0" else features
