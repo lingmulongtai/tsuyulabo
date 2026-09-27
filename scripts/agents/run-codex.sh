@@ -10,6 +10,8 @@
 # Logs: $AGENTS_DIR/<task-id>.log, final message: $AGENTS_DIR/<task-id>.last.md
 set -euo pipefail
 
+MAIN_REPO="$(cd "$(dirname "$0")/../.." && pwd)"
+
 TASK="$1"
 BRANCH="$2"
 EFFORT="${3:-high}"
@@ -33,6 +35,14 @@ if git show-ref --quiet "refs/heads/$BRANCH"; then
 else
   git checkout -q -b "$BRANCH" origin/main
 fi
+
+# Commits must never carry a personal or school address: reuse the main repo's noreply identity.
+git config user.name "$(git -C "$MAIN_REPO" config user.name)"
+git config user.email "$(git -C "$MAIN_REPO" config user.email)"
+case "$(git config user.email)" in
+  *@users.noreply.github.com) ;;
+  *) echo "refusing to run: set a GitHub noreply user.email in $MAIN_REPO" >&2; exit 1 ;;
+esac
 
 # Everything Codex needs must live inside the workspace: the sandbox cannot read the home folder.
 mkdir -p .tools .codex-runs
