@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from dataclasses import asdict
 from typing import Any
 
 from fastapi import APIRouter
@@ -8,7 +9,8 @@ from tsuyulabo_api.db.models import SleepSession, Week
 from tsuyulabo_api.domain import adults, sleep
 from tsuyulabo_api.domain.clock import game_day, slot_of
 from tsuyulabo_api.errors import APIError
-from tsuyulabo_api.services import team
+from tsuyulabo_api.routers.circadian_responses import SleepEndResponse
+from tsuyulabo_api.services import circadian, team
 from tsuyulabo_api.services.clock import game_now
 from tsuyulabo_api.services.game import (
     Brain,
@@ -52,7 +54,7 @@ async def start(user: CurrentUser, session: Session, clock: CurrentClock) -> dic
     return {"id": record.id, "started_at": now}
 
 
-@router.post("/end")
+@router.post("/end", response_model=SleepEndResponse)
 async def end(
     user: CurrentUser, session: Session, clock: CurrentClock, brain: Brain
 ) -> dict[str, Any]:
@@ -71,15 +73,28 @@ async def end(
         raise APIError("time_reversed", "睡眠開始後に時刻を進めてください", 409)
     members = await team.settle(session, user.id, now, brain)
     hours = sleep.sleep_duration(record.started_at, now)
+    record.ended_at = now
+    await session.flush()
+    rhythm = await circadian.current(session, user.id, now)
     recovered = {}
     for _, adult in members:
         result = sleep.wake(
-            record.started_at, now, adult.energy, adults.bonuses(adult.subskills)["energy_bonus"]
+            record.started_at,
+            now,
+            adult.energy,
+            adults.bonuses(adult.subskills)["energy_bonus"],
+            rhythm.energy_multiplier,
         )
         recovered[adult.id] = result.energy - adult.energy
         adult.energy = result.energy
-    record.ended_at, record.bonus = now, sleep.sleep_bonus(hours)
+    record.bonus = sleep.sleep_bonus(hours) + rhythm.shizuku_bonus
     await reward(session, user.id, "shizuku", record.bonus, "sleep", record.id)
-    result = {"id": record.id, "hours": hours, "bonus": record.bonus, "energy_recovered": recovered}
+    result = {
+        "id": record.id,
+        "hours": hours,
+        "bonus": record.bonus,
+        "energy_recovered": recovered,
+        "circadian": asdict(rhythm),
+    }
     await log_sleep(session, user, now, "wake", result)
     return result
