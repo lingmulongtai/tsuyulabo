@@ -1,0 +1,20 @@
+"use client";
+import { api, unwrap } from "./client";
+import type { components } from "./schema";
+import { useApiMutation, useApiQuery } from "./query";
+
+export const useHome = () => useApiQuery(["home"], signal => unwrap(api.GET("/v1/home", { signal })));
+export const useClock = () => useApiQuery(["clock"], signal => unwrap(api.GET("/v1/clock", { signal })));
+export const useHealth = () => useApiQuery(["health"], signal => unwrap(api.GET("/healthz", { signal })));
+export const useMe = () => useApiQuery(["me"], signal => unwrap(api.GET("/v1/me", { signal })));
+export const useUpdateMe = () => useApiMutation((body: components["schemas"]["ProfilePatch"], headers) => unwrap(api.PATCH("/v1/me", { body, headers })), ["me"]);
+export const useWeeks = () => useApiQuery(["weeks"], signal => unwrap(api.GET("/v1/weeks", { signal })));
+export const useCurrentWeek = () => useApiQuery(["weeks", "current"], signal => unwrap(api.GET("/v1/weeks/current", { signal })));
+export const useStartWeek = () => useApiMutation((_: void, headers) => unwrap(api.POST("/v1/weeks", { headers })), ["weeks"]);
+export const usePresentation = () => useApiQuery(["presentation"], signal => unwrap(api.GET("/v1/weeks/current/presentation", { signal })));
+export const useEclose = () => useApiMutation((_: void, headers) => unwrap(api.POST("/v1/weeks/current/eclose", { headers })), ["weeks", "adults", "zukan", "me", "presentation"]);
+export const useIssuePuzzle = () => useApiMutation((body: components["schemas"]["IssueRequest"], headers) => unwrap(api.POST("/v1/puzzles", { body, headers })));
+export const useSubmitPuzzle = () => useApiMutation(({ id, submission }: { id: string; submission: Record<string, unknown> }, headers) => unwrap(api.POST("/v1/puzzles/{puzzle_id}/submit", { params: { path: { puzzle_id: id } }, body: submission, headers })), ["weeks", "presentation", "behavior"]);
+export const useSleepStart = () => useApiMutation((_: void, headers) => unwrap(api.POST("/v1/sleep/start", { headers })));
+export const useSleepEnd = () => useApiMutation((_: void, headers) => unwrap(api.POST("/v1/sleep/end", { headers })), ["team", "adults", "memo", "me"]);
+export const useOdds = () => useApiQuery(["odds"], signal => unwrap(api.GET("/v1/odds", { signal })));
