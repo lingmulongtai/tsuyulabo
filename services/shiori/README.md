@@ -13,10 +13,31 @@ From the repository root in PowerShell:
 ```
 
 The last command writes ignored `eval-results/shiori/report.json` and `report.md`, and exits
-nonzero unless accuracy is at least 0.80 and sentence verification is at least 0.95.
+nonzero unless count accuracy is at least 0.80, sentence verification is at least 0.95,
+and topic accuracy and readability are both 1.0.
 `--seed` and `--output-dir` are available. The evaluation generates 42 count questions from
-a synthetic week, including zero counts, different days, cues and reinforcement types.
+a synthetic week, including zero counts, different days, cues and reinforcement types,
+plus nine topic questions. Readability requires nonempty answers of at most 160 characters,
+at most six citation occurrences total, and one to four citations in every sentence.
+Rejected sentences also fail readability, so verification cannot hide uncited prose.
 It measures template accuracy and citation validity, not live-model reasoning quality.
+
+## Offline answers
+
+Mock answers select records for learning, a named cue, meals/great success, sleep,
+cleaning, temperature, pupation sites, and eclosion/traits. They use recent relevant
+evidence, report measured values without attributing feelings or inventing causes,
+and normally contain two or three short sentences.
+Learning questions without a cue follow the most recently trained cue. Named-cue
+and learning questions read associations and run 20 odor-choice trials through the
+host's copy-only lab; count questions do not run experiments.
+
+Missing topic records are stated explicitly with a suggestion to collect observations.
+If no existing evidence ID is available at all, the provider returns empty text to
+preserve the citation contract; the question UI displays a request for care records.
+Traits are described only when present in returned records, never inferred from care.
+Older or live-provider answers can still have many evidence chips: the question UI
+shows six initially and a native `+N件` disclosure for the rest.
 
 ## Host interface
 
