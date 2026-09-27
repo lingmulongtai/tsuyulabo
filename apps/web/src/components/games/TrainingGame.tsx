@@ -18,11 +18,17 @@ export interface TrainingFinish {
  * しつけ — the circuit puzzle. Start on the yellow 1, pass the numbers in order, fill every cell, end on the red
  * reward. Solving faster gives more stars, which become the learning strength in the mushroom body model.
  */
-export function TrainingGame({ params, onFinish }: { params: TrainingParams; onFinish: (r: TrainingFinish) => void }) {
+export function TrainingGame({ params, onFinish, mode = "training", elapsedTime }: {
+  params: TrainingParams;
+  onFinish: (r: TrainingFinish) => void;
+  mode?: "training" | "daily";
+  /** A session clock keeps counting through path resets and resumed attempts. */
+  elapsedTime?: () => number;
+}) {
   const { n } = params;
   const [game, setGame] = useState<TrainingState>(() => createTrainingGame(params));
-  const [elapsed, setElapsed] = useState(0);
-  const [running, setRunning] = useState(false);
+  const [elapsed, setElapsed] = useState(() => elapsedTime?.() ?? 0);
+  const [running, setRunning] = useState(Boolean(elapsedTime));
   const [won, setWon] = useState<TrainingFinish | null>(null);
   const [bad, setBad] = useState<number | null>(null);
   const [lit, setLit] = useState(0);
@@ -42,9 +48,9 @@ export function TrainingGame({ params, onFinish }: { params: TrainingParams; onF
 
   useEffect(() => {
     if (!running) return;
-    const id = setInterval(() => setElapsed(performance.now() - startRef.current), 100);
+    const id = setInterval(() => setElapsed(elapsedTime?.() ?? performance.now() - startRef.current), 100);
     return () => clearInterval(id);
-  }, [running]);
+  }, [running, elapsedTime]);
 
   // cascade of lit cells after a win
   useEffect(() => {
@@ -86,15 +92,17 @@ export function TrainingGame({ params, onFinish }: { params: TrainingParams; onF
     setGame(next);
     if (next.path.length > cur.path.length) Sound.step(next.path.length - 1);
     if (isSolved(next)) {
-      const ms = Math.round(performance.now() - startRef.current);
+      const ms = Math.floor(elapsedTime?.() ?? performance.now() - startRef.current);
       const stars = starsFor(n, ms);
       setRunning(false);
       setElapsed(ms);
       dragging.current = false;
       Sound.puzzleClear();
       buzz([25, 30, 25]);
-      setWon({ submission: { path: next.path, elapsed_ms: ms }, stars, elapsedMs: ms });
-      for (let i = 0; i < stars; i++) setTimeout(() => Sound.star(i), 450 + i * 280);
+      const result = { submission: { path: next.path, elapsed_ms: ms }, stars, elapsedMs: ms };
+      setWon(result);
+      if (mode === "daily") onFinish(result);
+      else for (let i = 0; i < stars; i++) setTimeout(() => Sound.star(i), 450 + i * 280);
     }
   };
 
@@ -130,8 +138,8 @@ export function TrainingGame({ params, onFinish }: { params: TrainingParams; onF
     const fresh = createTrainingGame(params);
     gameRef.current = fresh;
     setGame(fresh);
-    setRunning(false);
-    setElapsed(0);
+    setRunning(Boolean(elapsedTime));
+    setElapsed(elapsedTime?.() ?? 0);
   };
 
   const points = game.path
@@ -146,9 +154,9 @@ export function TrainingGame({ params, onFinish }: { params: TrainingParams; onF
 
   return (
     <div className="flex select-none flex-col gap-3">
-      <div className="rounded-2xl bg-tint-ai px-4 py-2 text-sm">
+      {mode === "training" && <div className="rounded-2xl bg-tint-ai px-4 py-2 text-sm">
         教えること：<b>{cue.name}</b> ＋ <b>{valence.name}</b>
-      </div>
+      </div>}
 
       <div className="flex items-end justify-between px-1">
         <div className="text-xs text-muted">
@@ -215,7 +223,7 @@ export function TrainingGame({ params, onFinish }: { params: TrainingParams; onF
         </button>
       </div>
 
-      {won && (
+      {won && mode === "training" && (
         <div className="fixed inset-0 z-50 grid place-items-center bg-[#10201d]/55 p-6 backdrop-blur-[2px]">
           <div className="w-full max-w-sm rounded-[28px] bg-surface-2 p-6 text-center shadow-2xl pop-in">
             {won.stars === 3 && <div className="font-mono text-sm font-bold tracking-[0.3em] text-banana">PERFECT</div>}
