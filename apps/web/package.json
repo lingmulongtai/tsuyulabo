@@ -10,6 +10,10 @@
     "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "test:e2e:smoke": "playwright test smoke.spec.ts",
+    "test:e2e:helpers": "vitest run --config e2e/vitest.config.ts",
+    "test:e2e:report": "playwright show-report",
     "gen:api": "node scripts/gen-api.mjs"
   },
   "dependencies": {
@@ -20,6 +24,7 @@
     "react-dom": "19.2.8"
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
