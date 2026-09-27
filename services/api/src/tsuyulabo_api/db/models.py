@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from tsuyulabo_api.db.base import Base
+from tsuyulabo_api.db.contest import ContestEntry, ContestVote, Decoration, DecorationLayout
 from tsuyulabo_api.db.daily_circuit import DailyCircuitAttempt
 from tsuyulabo_api.db.economy import IdempotencyKey, Inventory, LedgerAccount, LedgerEntry
 from tsuyulabo_api.db.mating import MatingProposal, PendingEgg
@@ -26,6 +27,10 @@ __all__ = [
     "Adult",
     "Base",
     "CareEvent",
+    "ContestEntry",
+    "ContestVote",
+    "Decoration",
+    "DecorationLayout",
     "DailyCircuitAttempt",
     "Experiment",
     "Friendship",

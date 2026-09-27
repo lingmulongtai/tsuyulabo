@@ -784,6 +784,20 @@
         "title": "EnterRace",
         "type": "object"
       },
+      "EntryBody": {
+        "additionalProperties": false,
+        "properties": {
+          "adult_id": {
+            "title": "Adult Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "adult_id"
+        ],
+        "title": "EntryBody",
+        "type": "object"
+      },
       "ExperimentRequest": {
         "additionalProperties": false,
         "properties": {
@@ -970,6 +984,68 @@
           "kind"
         ],
         "title": "IssueRequest",
+        "type": "object"
+      },
+      "LayoutBody": {
+        "additionalProperties": false,
+        "properties": {
+          "accessory": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Accessory"
+          },
+          "background": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Background"
+          },
+          "left": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Left"
+          },
+          "right": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Right"
+          },
+          "vial": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Vial"
+          }
+        },
+        "title": "LayoutBody",
         "type": "object"
       },
       "MatingGenotype": {
@@ -1947,6 +2023,20 @@
         ],
         "title": "ValidationError",
         "type": "object"
+      },
+      "VoteBody": {
+        "additionalProperties": false,
+        "properties": {
+          "entry_id": {
+            "title": "Entry Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "entry_id"
+        ],
+        "title": "VoteBody",
+        "type": "object"
       }
     }
   },
@@ -2227,6 +2317,152 @@
         "summary": "Read Clock"
       }
     },
+    "/v1/contest/current": {
+      "get": {
+        "operationId": "current_v1_contest_current_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Current V1 Contest Current Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Current"
+      }
+    },
+    "/v1/contest/current/entry": {
+      "post": {
+        "operationId": "enter_v1_contest_current_entry_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Idempotency-Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EntryBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Enter V1 Contest Current Entry Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Enter"
+      }
+    },
+    "/v1/contest/current/votes": {
+      "post": {
+        "operationId": "vote_v1_contest_current_votes_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Idempotency-Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VoteBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "integer"
+                  },
+                  "title": "Response Vote V1 Contest Current Votes Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Vote"
+      }
+    },
+    "/v1/contest/results": {
+      "get": {
+        "operationId": "results_v1_contest_results_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Results V1 Contest Results Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Results"
+      }
+    },
     "/v1/daily-circuit": {
       "get": {
         "operationId": "today_v1_daily_circuit_get",
@@ -2361,6 +2597,87 @@
           }
         },
         "summary": "Submit"
+      }
+    },
+    "/v1/decorations": {
+      "get": {
+        "operationId": "inventory_v1_decorations_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Inventory V1 Decorations Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Inventory"
+      }
+    },
+    "/v1/decorations/layout": {
+      "put": {
+        "operationId": "equip_v1_decorations_layout_put",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Idempotency-Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LayoutBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "title": "Response Equip V1 Decorations Layout Put",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Equip"
       }
     },
     "/v1/dev/time": {
