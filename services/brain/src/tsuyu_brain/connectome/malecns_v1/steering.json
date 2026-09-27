@@ -25,6 +25,38 @@
     "visual_relay": [
       132,
       324
+    ],
+    "DNa01_L": [
+      324,
+      325
+    ],
+    "DNa01_R": [
+      325,
+      326
+    ],
+    "DNb05_L": [
+      326,
+      327
+    ],
+    "DNb05_R": [
+      327,
+      328
+    ],
+    "DNb06_L": [
+      328,
+      329
+    ],
+    "DNb06_R": [
+      329,
+      330
+    ],
+    "DNg13_L": [
+      330,
+      331
+    ],
+    "DNg13_R": [
+      331,
+      332
     ]
   },
   "signs": [
@@ -351,6 +383,14 @@
     1.0,
     1.0,
     1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
     1.0
   ],
   "input_groups": [
@@ -360,7 +400,15 @@
   "output_groups": [
     "DNa02_L",
     "DNa02_R",
-    "walking_DN"
+    "walking_DN",
+    "DNa01_L",
+    "DNa01_R",
+    "DNb05_L",
+    "DNb05_R",
+    "DNb06_L",
+    "DNb06_R",
+    "DNg13_L",
+    "DNg13_R"
   ],
   "projections": [
     [
@@ -384,6 +432,10 @@
       "visual_relay"
     ],
     [
+      "DNa02_R",
+      "DNg13_R"
+    ],
+    [
       "walking_DN",
       "DNa02_L"
     ],
@@ -394,6 +446,14 @@
     [
       "walking_DN",
       "visual_relay"
+    ],
+    [
+      "walking_DN",
+      "DNa01_R"
+    ],
+    [
+      "walking_DN",
+      "DNg13_R"
     ],
     [
       "visual_relay",
@@ -413,6 +473,106 @@
     ],
     [
       "visual_relay",
+      "visual_relay"
+    ],
+    [
+      "visual_relay",
+      "DNa01_L"
+    ],
+    [
+      "visual_relay",
+      "DNa01_R"
+    ],
+    [
+      "visual_relay",
+      "DNb05_L"
+    ],
+    [
+      "visual_relay",
+      "DNb05_R"
+    ],
+    [
+      "visual_relay",
+      "DNb06_L"
+    ],
+    [
+      "visual_relay",
+      "DNb06_R"
+    ],
+    [
+      "visual_relay",
+      "DNg13_L"
+    ],
+    [
+      "visual_relay",
+      "DNg13_R"
+    ],
+    [
+      "DNa01_L",
+      "DNa02_L"
+    ],
+    [
+      "DNa01_L",
+      "visual_relay"
+    ],
+    [
+      "DNa01_L",
+      "DNg13_L"
+    ],
+    [
+      "DNa01_L",
+      "DNg13_R"
+    ],
+    [
+      "DNa01_R",
+      "DNa02_R"
+    ],
+    [
+      "DNa01_R",
+      "visual_relay"
+    ],
+    [
+      "DNa01_R",
+      "DNg13_R"
+    ],
+    [
+      "DNb05_L",
+      "visual_relay"
+    ],
+    [
+      "DNb05_R",
+      "visual_relay"
+    ],
+    [
+      "DNb05_R",
+      "DNb05_L"
+    ],
+    [
+      "DNb06_L",
+      "visual_relay"
+    ],
+    [
+      "DNb06_R",
+      "visual_relay"
+    ],
+    [
+      "DNb06_R",
+      "DNb05_L"
+    ],
+    [
+      "DNg13_L",
+      "visual_relay"
+    ],
+    [
+      "DNg13_L",
+      "DNa01_R"
+    ],
+    [
+      "DNg13_R",
+      "DNa02_R"
+    ],
+    [
+      "DNg13_R",
       "visual_relay"
     ]
   ],
@@ -3660,6 +3820,86 @@
       "bodyId": 517849,
       "type": "aMe5",
       "instance": "aMe5_L",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 10442,
+      "type": "DNa01",
+      "instance": "DNa01(VES006)_L",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 10760,
+      "type": "DNa01",
+      "instance": "DNa01(VES006)_R",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 10118,
+      "type": "DNb05",
+      "instance": "DNb05_L",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 10065,
+      "type": "DNb05",
+      "instance": "DNb05_R",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 10888,
+      "type": "DNb06",
+      "instance": "DNb06_L",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 11067,
+      "type": "DNb06",
+      "instance": "DNb06_R",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 11074,
+      "type": "DNg13",
+      "instance": "DNg13_L",
+      "predicted_nt": "acetylcholine",
+      "consensus_nt": "acetylcholine",
+      "effective_nt": "acetylcholine",
+      "nt_source": "predicted_nt",
+      "sign": 1.0
+    },
+    {
+      "bodyId": 512006,
+      "type": "DNg13",
+      "instance": "DNg13_R",
       "predicted_nt": "acetylcholine",
       "consensus_nt": "acetylcholine",
       "effective_nt": "acetylcholine",

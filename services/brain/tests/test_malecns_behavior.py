@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 from collections.abc import Iterator
+from dataclasses import replace
 
 import pytest
 import torch
 from tsuyu_brain.behavior import scenario_features, shuffled_wiring
 from tsuyu_brain.circuit import simulate
 from tsuyu_brain.connectome import load_circuit
+from tsuyu_brain.connectome.malecns_outputs import EXTRA_OUTPUTS
 from tsuyu_brain.connectome.toy_v0 import CIRCUIT_NAMES
 from tsuyu_brain.learning import new_fly_state
 from tsuyu_brain.params import default_params
@@ -45,9 +47,33 @@ def test_scenarios_use_state_connectome_version() -> None:
         .mean(1)
     )
     assert torch.equal(features[:, 0], expected)
-    assert features.shape == (2, 68)
+    assert features.shape == (2, 68 + 7 * len(EXTRA_OUTPUTS))
     assert torch.isfinite(features).all()
     assert torch.allclose(features[:, 8:14].mean(1), expected)
     # Signed contrasts are neural outputs, never scenario-label indicators.
     assert torch.equal(features[:, 56:62], features[:, 26:32] - features[:, 20:26])
     assert torch.equal(features[:, 62:68], features[:, 44:50] - features[:, 50:56])
+
+
+def test_additional_readout_uses_simulated_output_only(monkeypatch: pytest.MonkeyPatch) -> None:
+    from tsuyu_brain import behavior
+
+    original = load_circuit("feeding", "toy-v0")
+    groups = {
+        "MN6" if name == "feeding_interneuron" else name: region
+        for name, region in original.groups.items()
+    }
+    circuit = replace(original, groups=groups, output_groups=("MN9", "MN6"), version="malecns-v1.0")
+    monkeypatch.setattr(
+        behavior,
+        "load_circuit",
+        lambda name, version: circuit if name == "feeding" else load_circuit(name, version),
+    )
+    state = new_fly_state(default_params(), "malecns-v1.0")
+    actual = scenario_features(state, "sugar", batch=2, seed=19)
+    result = simulate(circuit, {"Gr64f": 1}, state.params, batch=2, seed=19)
+    offset = 68 + 7 * EXTRA_OUTPUTS.index("MN6")
+    assert torch.equal(actual[:, offset], result.rates["MN6"].mean(1))
+    assert torch.equal(actual[:, offset + 1 : offset + 7], result.rates["MN6"])
+    rest = scenario_features(state, "rest", batch=2, seed=19)
+    assert torch.count_nonzero(rest[:, 68:]) == 0

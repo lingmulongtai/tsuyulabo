@@ -1,15 +1,15 @@
-# Brain evaluation — malecns-v1.0
+# Brain evaluation — toy-v0
 
 Game LIF evaluation; measured MaleCNS topology or synthetic toy topology. This is not biological validation.
 
 | Check | Pass | Measurements |
 | --- | --- | --- |
-| sugar_mn9 | True | `{"rest_hz": 0.0, "sugar_hz": 115.625}` |
-| looming_dnp01 | True | `{"rest_hz": 0.0, "looming_hz": 25.41666603088379}` |
-| bitter_suppression | True | `{"sugar_hz": 115.625, "mixed_hz": 0.0}` |
-| learning | True | `{"baseline_pi": 0.0985640212893486, "reward_delta": 0.4628850892186165, "punish_delta": -1.0985640212893486}` |
-| trait_bias | True | `{"wild_mean_right_fraction": 0.5232251100242138, "trait_mean_right_fraction": 0.5361741613596678, "p_one_sided": 0.0008578914240750442, "individuals_per_group": 32}` |
-| decoder | True | `{"train_rows": 528, "test_rows": 176, "feature_count": 404, "feature_schema": "eight means + six windows per output + right-left/approach-avoid windows; steering centered on individual neutral activity; additional anatomical outputs each contribute mean plus six windows", "accuracy_drop": 0.4223484694957733, "minimum_drop": 0.1}` |
+| sugar_mn9 | True | `{"rest_hz": 0.0, "sugar_hz": 326.7708435058594}` |
+| looming_dnp01 | True | `{"rest_hz": 0.0, "looming_hz": 318.125}` |
+| bitter_suppression | True | `{"sugar_hz": 326.7708435058594, "mixed_hz": 0.0}` |
+| learning | True | `{"baseline_pi": 0.0, "reward_delta": 1.0, "punish_delta": -1.0}` |
+| trait_bias | True | `{"wild_mean_right_fraction": 0.5221496904268861, "trait_mean_right_fraction": 0.600973891094327, "p_one_sided": 7.436589328947562e-32, "individuals_per_group": 32}` |
+| decoder | True | `{"train_rows": 528, "test_rows": 176, "feature_count": 8, "feature_schema": "eight output means", "accuracy_drop": 0.22537879149119056, "minimum_drop": 0.1}` |
 
 ## Fixed evaluation protocol
 
@@ -22,12 +22,12 @@ changes selected using development fit/validation only; final models refit on al
 
 ## Development diagnostics
 
-training_diagnostics: `{"rows": 528, "unavoidable_errors_from_identical_features": 16, "empirical_accuracy_ceiling": 0.9696969696969697, "zero_feature_rows_by_label": {"rest": 144, "walk": 0, "turn_left": 0, "turn_right": 0, "feed": 0, "escape": 0, "groom": 0, "approach": 8, "avoid": 8}}`
+training_diagnostics: `{"rows": 528, "unavoidable_errors_from_identical_features": 0, "empirical_accuracy_ceiling": 1.0, "zero_feature_rows_by_label": {"rest": 12, "walk": 0, "turn_left": 0, "turn_right": 0, "feed": 0, "escape": 0, "groom": 0, "approach": 0, "avoid": 0}}`
 
-validation_diagnostics: `{"rows": 132, "unavoidable_errors_from_identical_features": 16, "empirical_accuracy_ceiling": 0.8787878787878788, "zero_feature_rows_by_label": {"rest": 36, "walk": 0, "turn_left": 0, "turn_right": 0, "feed": 0, "escape": 0, "groom": 0, "approach": 8, "avoid": 8}}`
+validation_diagnostics: `{"rows": 132, "unavoidable_errors_from_identical_features": 0, "empirical_accuracy_ceiling": 1.0, "zero_feature_rows_by_label": {"rest": 0, "walk": 0, "turn_left": 0, "turn_right": 0, "feed": 0, "escape": 0, "groom": 0, "approach": 0, "avoid": 0}}`
 
-Validation logistic: 81.82%.
-Validation mlp: 81.82%.
+Validation logistic: 100.00%.
+Validation mlp: 100.00%.
 
 The collision ceiling applies only to the observed finite sample. Zero features mean no evoked output, not that every neuron is silent.
 
@@ -35,11 +35,11 @@ The collision ceiling applies only to the observed finite sample. Zero features 
 
 | Model | Accuracy |
 | --- | ---: |
-| logistic | 88.64% |
-| mlp | 88.64% |
-| shuffled_41 | 46.59% |
-| shuffled_42 | 48.86% |
-| shuffled_43 | 43.75% |
+| logistic | 100.00% |
+| mlp | 100.00% |
+| shuffled_41 | 75.00% |
+| shuffled_42 | 84.09% |
+| shuffled_43 | 73.30% |
 
 ### logistic confusion matrix
 
@@ -47,13 +47,13 @@ The collision ceiling applies only to the observed finite sample. Zero features 
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | rest | 48 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | walk | 0 | 16 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| turn_left | 4 | 0 | 12 | 0 | 0 | 0 | 0 | 0 | 0 |
+| turn_left | 0 | 0 | 16 | 0 | 0 | 0 | 0 | 0 | 0 |
 | turn_right | 0 | 0 | 0 | 16 | 0 | 0 | 0 | 0 | 0 |
 | feed | 0 | 0 | 0 | 0 | 16 | 0 | 0 | 0 | 0 |
 | escape | 0 | 0 | 0 | 0 | 0 | 16 | 0 | 0 | 0 |
 | groom | 0 | 0 | 0 | 0 | 0 | 0 | 16 | 0 | 0 |
-| approach | 8 | 0 | 0 | 0 | 0 | 0 | 0 | 8 | 0 |
-| avoid | 8 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 8 |
+| approach | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 16 | 0 |
+| avoid | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 16 |
 
 ### mlp confusion matrix
 
@@ -61,55 +61,55 @@ The collision ceiling applies only to the observed finite sample. Zero features 
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | rest | 48 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | walk | 0 | 16 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| turn_left | 0 | 0 | 12 | 0 | 0 | 0 | 0 | 0 | 4 |
+| turn_left | 0 | 0 | 16 | 0 | 0 | 0 | 0 | 0 | 0 |
 | turn_right | 0 | 0 | 0 | 16 | 0 | 0 | 0 | 0 | 0 |
 | feed | 0 | 0 | 0 | 0 | 16 | 0 | 0 | 0 | 0 |
 | escape | 0 | 0 | 0 | 0 | 0 | 16 | 0 | 0 | 0 |
 | groom | 0 | 0 | 0 | 0 | 0 | 0 | 16 | 0 | 0 |
-| approach | 8 | 0 | 0 | 0 | 0 | 0 | 0 | 8 | 0 |
-| avoid | 8 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 8 |
+| approach | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 16 | 0 |
+| avoid | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 16 |
 
 ### shuffled_41 confusion matrix
 
 | True / predicted | rest | walk | turn_left | turn_right | feed | escape | groom | approach | avoid |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| rest | 16 | 0 | 0 | 0 | 32 | 0 | 0 | 0 | 0 |
+| rest | 48 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | walk | 0 | 16 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| turn_left | 3 | 0 | 0 | 0 | 0 | 0 | 0 | 5 | 8 |
-| turn_right | 3 | 0 | 0 | 0 | 0 | 0 | 0 | 7 | 6 |
+| turn_left | 0 | 14 | 2 | 0 | 0 | 0 | 0 | 0 | 0 |
+| turn_right | 0 | 14 | 0 | 2 | 0 | 0 | 0 | 0 | 0 |
 | feed | 0 | 0 | 0 | 0 | 16 | 0 | 0 | 0 | 0 |
-| escape | 4 | 0 | 0 | 0 | 0 | 12 | 0 | 0 | 0 |
+| escape | 0 | 0 | 0 | 0 | 0 | 16 | 0 | 0 | 0 |
 | groom | 16 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| approach | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 6 | 10 |
+| approach | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 16 | 0 |
 | avoid | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 16 |
 
 ### shuffled_42 confusion matrix
 
 | True / predicted | rest | walk | turn_left | turn_right | feed | escape | groom | approach | avoid |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| rest | 16 | 0 | 0 | 0 | 32 | 0 | 0 | 0 | 0 |
+| rest | 48 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | walk | 0 | 16 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| turn_left | 2 | 3 | 4 | 6 | 0 | 0 | 0 | 0 | 1 |
-| turn_right | 1 | 6 | 6 | 3 | 0 | 0 | 0 | 0 | 0 |
+| turn_left | 0 | 9 | 7 | 0 | 0 | 0 | 0 | 0 | 0 |
+| turn_right | 0 | 10 | 0 | 6 | 0 | 0 | 0 | 0 | 0 |
 | feed | 0 | 0 | 0 | 0 | 16 | 0 | 0 | 0 | 0 |
-| escape | 4 | 0 | 0 | 0 | 0 | 12 | 0 | 0 | 0 |
-| groom | 16 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| approach | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 3 | 13 |
+| escape | 0 | 0 | 0 | 0 | 0 | 16 | 0 | 0 | 0 |
+| groom | 7 | 0 | 0 | 0 | 0 | 0 | 9 | 0 | 0 |
+| approach | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 14 | 2 |
 | avoid | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 16 |
 
 ### shuffled_43 confusion matrix
 
 | True / predicted | rest | walk | turn_left | turn_right | feed | escape | groom | approach | avoid |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| rest | 16 | 0 | 0 | 0 | 32 | 0 | 0 | 0 | 0 |
+| rest | 48 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | walk | 0 | 16 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| turn_left | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 2 | 14 |
-| turn_right | 2 | 2 | 0 | 0 | 0 | 0 | 1 | 1 | 10 |
+| turn_left | 0 | 15 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
+| turn_right | 0 | 0 | 0 | 16 | 0 | 0 | 0 | 0 | 0 |
 | feed | 0 | 0 | 0 | 0 | 16 | 0 | 0 | 0 | 0 |
-| escape | 4 | 0 | 0 | 0 | 0 | 12 | 0 | 0 | 0 |
+| escape | 0 | 0 | 0 | 0 | 0 | 16 | 0 | 0 | 0 |
 | groom | 16 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| approach | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 13 | 3 |
-| avoid | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 12 | 4 |
+| approach | 8 | 0 | 0 | 0 | 0 | 0 | 0 | 8 | 0 |
+| avoid | 8 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 8 |
 
 Decoder confusion matrices: rows = true, columns = predicted; labels in JSON.
 Shuffled controls preserve each projection's weights (including zeros).

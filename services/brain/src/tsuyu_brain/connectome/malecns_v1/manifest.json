@@ -83,14 +83,64 @@
   "boundary": "induced subgraphs only; no fabricated neurons/edges; weights = synapse count * presynaptic sign * circuit scale * documented normalization factors; steering tonic current approximates omitted background drive",
   "storage": "compressed CSR float32; normalized values rounded once to float32",
   "decoder_features": {
-    "count": 68,
-    "schema": "8 output means; 6 equal-duration windows per output; 6 right-left and 6 approach-avoid differences; steering centered on the same individual's neutral response (also for shuffled circuits)",
+    "count": 404,
+    "additional_outputs": [
+      "MN6",
+      "MN11D",
+      "MN11V",
+      "MN12D",
+      "DNa01_L",
+      "DNa01_R",
+      "DNb05_L",
+      "DNb05_R",
+      "DNb06_L",
+      "DNb06_R",
+      "DNg13_L",
+      "DNg13_R",
+      "DNg11",
+      "DNg12_a",
+      "DNg12_b",
+      "DNg12_c",
+      "DNg12_d",
+      "DNg12_e",
+      "DNg12_f",
+      "DNg12_g",
+      "DNg12_h",
+      "MBON02",
+      "MBON07",
+      "MBON08",
+      "MBON09",
+      "MBON10",
+      "MBON13",
+      "MBON15",
+      "MBON16",
+      "MBON17",
+      "MBON18",
+      "MBON19",
+      "MBON20",
+      "MBON21",
+      "MBON22",
+      "MBON23",
+      "MBON24",
+      "MBON25",
+      "MBON26",
+      "MBON27",
+      "MBON28",
+      "MBON29",
+      "MBON30",
+      "MBON31",
+      "MBON32",
+      "MBON33",
+      "MBON34",
+      "MBON35"
+    ],
+    "schema": "8 output means; 6 equal-duration windows per output; 6 right-left and 6 approach-avoid differences; steering centered on the same individual's neutral response (also for shuffled circuits); append mean and six windows for each additional anatomical output",
     "reason": "preserve temporal responses and remove individual tonic offsets; output-only features with unchanged classifiers and held-out individuals"
   },
   "circuits": {
     "olfaction_mb": {
-      "neurons": 987,
-      "edges": 37341,
+      "neurons": 1054,
+      "edges": 42815,
       "group_counts": {
         "ORN": 452,
         "PN": 27,
@@ -100,7 +150,34 @@
         "MBON_av": 10,
         "PAM": 248,
         "PPL1": 6,
-        "visual": 32
+        "visual": 32,
+        "MBON02": 2,
+        "MBON07": 4,
+        "MBON08": 0,
+        "MBON09": 4,
+        "MBON10": 9,
+        "MBON13": 2,
+        "MBON15": 4,
+        "MBON16": 2,
+        "MBON17": 2,
+        "MBON18": 2,
+        "MBON19": 4,
+        "MBON20": 2,
+        "MBON21": 2,
+        "MBON22": 2,
+        "MBON23": 2,
+        "MBON24": 2,
+        "MBON25": 2,
+        "MBON26": 2,
+        "MBON27": 2,
+        "MBON28": 2,
+        "MBON29": 2,
+        "MBON30": 2,
+        "MBON31": 2,
+        "MBON32": 2,
+        "MBON33": 2,
+        "MBON34": 2,
+        "MBON35": 2
       },
       "selection_rules": {
         "ORN": "exact ORN_ types for DM1, DM2, DM3, DM4, VA2, VM2, DL1, DC2",
@@ -111,8 +188,384 @@
         "MBON_av": "MBON01, MBON03, MBON04, MBON05, MBON06",
         "PAM": "reward-associated PAM01,02,04,05,06,07,08,09,10,11,15",
         "PPL1": "punishment-associated PPL101,103,106",
-        "visual": "32 seeded R8p photoreceptors; no fabricated relay"
+        "visual": "32 seeded R8p photoreceptors; no fabricated relay",
+        "MBON02": "exact type MBON02; Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded.",
+        "MBON07": "exact type MBON07; Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded.",
+        "MBON08": "exact type MBON08; Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded.",
+        "MBON09": "exact type MBON09; Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded.",
+        "MBON10": "exact type MBON10; Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded.",
+        "MBON13": "exact type MBON13; Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded.",
+        "MBON15": "exact type MBON15; Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded.",
+        "MBON16": "exact type MBON16; Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded.",
+        "MBON17": "exact type MBON17; Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded.",
+        "MBON18": "exact type MBON18; Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded.",
+        "MBON19": "exact type MBON19; Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded.",
+        "MBON20": "exact type MBON20; Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded.",
+        "MBON21": "exact type MBON21; Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded.",
+        "MBON22": "exact type MBON22; Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded.",
+        "MBON23": "exact type MBON23; Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded.",
+        "MBON24": "exact type MBON24; Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded.",
+        "MBON25": "exact type MBON25; Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded.",
+        "MBON26": "exact type MBON26; Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded.",
+        "MBON27": "exact type MBON27; Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded.",
+        "MBON28": "exact type MBON28; Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded.",
+        "MBON29": "exact type MBON29; Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded.",
+        "MBON30": "exact type MBON30; Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded.",
+        "MBON31": "exact type MBON31; Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded.",
+        "MBON32": "exact type MBON32; Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded.",
+        "MBON33": "exact type MBON33; Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded.",
+        "MBON34": "exact type MBON34; Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded.",
+        "MBON35": "exact type MBON35; Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded."
       },
+      "output_additions": [
+        {
+          "type": "MBON02",
+          "annotated": 2,
+          "resolved_sign": 2,
+          "selected": 2,
+          "reason": "Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded."
+        },
+        {
+          "type": "MBON07",
+          "annotated": 4,
+          "resolved_sign": 4,
+          "selected": 4,
+          "reason": "Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded."
+        },
+        {
+          "type": "MBON08",
+          "annotated": 0,
+          "resolved_sign": 0,
+          "selected": 0,
+          "reason": "Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded."
+        },
+        {
+          "type": "MBON09",
+          "annotated": 4,
+          "resolved_sign": 4,
+          "selected": 4,
+          "reason": "Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded."
+        },
+        {
+          "type": "MBON10",
+          "annotated": 9,
+          "resolved_sign": 9,
+          "selected": 9,
+          "reason": "Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded."
+        },
+        {
+          "type": "MBON13",
+          "annotated": 2,
+          "resolved_sign": 2,
+          "selected": 2,
+          "reason": "Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded."
+        },
+        {
+          "type": "MBON15",
+          "annotated": 4,
+          "resolved_sign": 4,
+          "selected": 4,
+          "reason": "Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded."
+        },
+        {
+          "type": "MBON16",
+          "annotated": 2,
+          "resolved_sign": 2,
+          "selected": 2,
+          "reason": "Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded."
+        },
+        {
+          "type": "MBON17",
+          "annotated": 2,
+          "resolved_sign": 2,
+          "selected": 2,
+          "reason": "Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded."
+        },
+        {
+          "type": "MBON18",
+          "annotated": 2,
+          "resolved_sign": 2,
+          "selected": 2,
+          "reason": "Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded."
+        },
+        {
+          "type": "MBON19",
+          "annotated": 4,
+          "resolved_sign": 4,
+          "selected": 4,
+          "reason": "Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded."
+        },
+        {
+          "type": "MBON20",
+          "annotated": 2,
+          "resolved_sign": 2,
+          "selected": 2,
+          "reason": "Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded."
+        },
+        {
+          "type": "MBON21",
+          "annotated": 2,
+          "resolved_sign": 2,
+          "selected": 2,
+          "reason": "Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded."
+        },
+        {
+          "type": "MBON22",
+          "annotated": 2,
+          "resolved_sign": 2,
+          "selected": 2,
+          "reason": "Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded."
+        },
+        {
+          "type": "MBON23",
+          "annotated": 2,
+          "resolved_sign": 2,
+          "selected": 2,
+          "reason": "Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded."
+        },
+        {
+          "type": "MBON24",
+          "annotated": 2,
+          "resolved_sign": 2,
+          "selected": 2,
+          "reason": "Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded."
+        },
+        {
+          "type": "MBON25",
+          "annotated": 2,
+          "resolved_sign": 2,
+          "selected": 2,
+          "reason": "Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded."
+        },
+        {
+          "type": "MBON26",
+          "annotated": 2,
+          "resolved_sign": 2,
+          "selected": 2,
+          "reason": "Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded."
+        },
+        {
+          "type": "MBON27",
+          "annotated": 2,
+          "resolved_sign": 2,
+          "selected": 2,
+          "reason": "Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded."
+        },
+        {
+          "type": "MBON28",
+          "annotated": 2,
+          "resolved_sign": 2,
+          "selected": 2,
+          "reason": "Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded."
+        },
+        {
+          "type": "MBON29",
+          "annotated": 2,
+          "resolved_sign": 2,
+          "selected": 2,
+          "reason": "Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded."
+        },
+        {
+          "type": "MBON30",
+          "annotated": 2,
+          "resolved_sign": 2,
+          "selected": 2,
+          "reason": "Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded."
+        },
+        {
+          "type": "MBON31",
+          "annotated": 2,
+          "resolved_sign": 2,
+          "selected": 2,
+          "reason": "Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded."
+        },
+        {
+          "type": "MBON32",
+          "annotated": 2,
+          "resolved_sign": 2,
+          "selected": 2,
+          "reason": "Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded."
+        },
+        {
+          "type": "MBON33",
+          "annotated": 2,
+          "resolved_sign": 2,
+          "selected": 2,
+          "reason": "Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded."
+        },
+        {
+          "type": "MBON34",
+          "annotated": 2,
+          "resolved_sign": 2,
+          "selected": 2,
+          "reason": "Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded."
+        },
+        {
+          "type": "MBON35",
+          "annotated": 2,
+          "resolved_sign": 2,
+          "selected": 2,
+          "reason": "Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded."
+        }
+      ],
+      "extraction_additions": [
+        {
+          "group": "MBON02",
+          "type": "MBON02",
+          "count": 2,
+          "reason": "exact type MBON02; Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded."
+        },
+        {
+          "group": "MBON07",
+          "type": "MBON07",
+          "count": 4,
+          "reason": "exact type MBON07; Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded."
+        },
+        {
+          "group": "MBON09",
+          "type": "MBON09",
+          "count": 4,
+          "reason": "exact type MBON09; Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded."
+        },
+        {
+          "group": "MBON10",
+          "type": "MBON10",
+          "count": 9,
+          "reason": "exact type MBON10; Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded."
+        },
+        {
+          "group": "MBON13",
+          "type": "MBON13",
+          "count": 2,
+          "reason": "exact type MBON13; Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded."
+        },
+        {
+          "group": "MBON15",
+          "type": "MBON15",
+          "count": 4,
+          "reason": "exact type MBON15; Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded."
+        },
+        {
+          "group": "MBON16",
+          "type": "MBON16",
+          "count": 2,
+          "reason": "exact type MBON16; Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded."
+        },
+        {
+          "group": "MBON17",
+          "type": "MBON17",
+          "count": 2,
+          "reason": "exact type MBON17; Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded."
+        },
+        {
+          "group": "MBON18",
+          "type": "MBON18",
+          "count": 2,
+          "reason": "exact type MBON18; Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded."
+        },
+        {
+          "group": "MBON19",
+          "type": "MBON19",
+          "count": 4,
+          "reason": "exact type MBON19; Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded."
+        },
+        {
+          "group": "MBON20",
+          "type": "MBON20",
+          "count": 2,
+          "reason": "exact type MBON20; Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded."
+        },
+        {
+          "group": "MBON21",
+          "type": "MBON21",
+          "count": 2,
+          "reason": "exact type MBON21; Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded."
+        },
+        {
+          "group": "MBON22",
+          "type": "MBON22",
+          "count": 2,
+          "reason": "exact type MBON22; Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded."
+        },
+        {
+          "group": "MBON23",
+          "type": "MBON23",
+          "count": 2,
+          "reason": "exact type MBON23; Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded."
+        },
+        {
+          "group": "MBON24",
+          "type": "MBON24",
+          "count": 2,
+          "reason": "exact type MBON24; Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded."
+        },
+        {
+          "group": "MBON25",
+          "type": "MBON25",
+          "count": 2,
+          "reason": "exact type MBON25; Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded."
+        },
+        {
+          "group": "MBON26",
+          "type": "MBON26",
+          "count": 2,
+          "reason": "exact type MBON26; Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded."
+        },
+        {
+          "group": "MBON27",
+          "type": "MBON27",
+          "count": 2,
+          "reason": "exact type MBON27; Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded."
+        },
+        {
+          "group": "MBON28",
+          "type": "MBON28",
+          "count": 2,
+          "reason": "exact type MBON28; Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded."
+        },
+        {
+          "group": "MBON29",
+          "type": "MBON29",
+          "count": 2,
+          "reason": "exact type MBON29; Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded."
+        },
+        {
+          "group": "MBON30",
+          "type": "MBON30",
+          "count": 2,
+          "reason": "exact type MBON30; Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded."
+        },
+        {
+          "group": "MBON31",
+          "type": "MBON31",
+          "count": 2,
+          "reason": "exact type MBON31; Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded."
+        },
+        {
+          "group": "MBON32",
+          "type": "MBON32",
+          "count": 2,
+          "reason": "exact type MBON32; Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded."
+        },
+        {
+          "group": "MBON33",
+          "type": "MBON33",
+          "count": 2,
+          "reason": "exact type MBON33; Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded."
+        },
+        {
+          "group": "MBON34",
+          "type": "MBON34",
+          "count": 2,
+          "reason": "exact type MBON34; Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded."
+        },
+        {
+          "group": "MBON35",
+          "type": "MBON35",
+          "count": 2,
+          "reason": "exact type MBON35; Complete exact numbered MBON output census beyond the existing valence pools. MBON ensemble activity carries learned value (Aso et al. 2014). No valence is inferred from transmitter or assigned to these additional readouts; MBON08 is absent and ambiguous '-like' annotations are excluded."
+        }
+      ],
       "selected_types": {
         "ORN": {
           "ORN_DC2": 22,
@@ -182,10 +635,89 @@
         },
         "visual": {
           "R8p": 32
+        },
+        "MBON02": {
+          "MBON02": 2
+        },
+        "MBON07": {
+          "MBON07": 4
+        },
+        "MBON08": {},
+        "MBON09": {
+          "MBON09": 4
+        },
+        "MBON10": {
+          "MBON10": 9
+        },
+        "MBON13": {
+          "MBON13": 2
+        },
+        "MBON15": {
+          "MBON15": 4
+        },
+        "MBON16": {
+          "MBON16": 2
+        },
+        "MBON17": {
+          "MBON17": 2
+        },
+        "MBON18": {
+          "MBON18": 2
+        },
+        "MBON19": {
+          "MBON19": 4
+        },
+        "MBON20": {
+          "MBON20": 2
+        },
+        "MBON21": {
+          "MBON21": 2
+        },
+        "MBON22": {
+          "MBON22": 2
+        },
+        "MBON23": {
+          "MBON23": 2
+        },
+        "MBON24": {
+          "MBON24": 2
+        },
+        "MBON25": {
+          "MBON25": 2
+        },
+        "MBON26": {
+          "MBON26": 2
+        },
+        "MBON27": {
+          "MBON27": 2
+        },
+        "MBON28": {
+          "MBON28": 2
+        },
+        "MBON29": {
+          "MBON29": 2
+        },
+        "MBON30": {
+          "MBON30": 2
+        },
+        "MBON31": {
+          "MBON31": 2
+        },
+        "MBON32": {
+          "MBON32": 2
+        },
+        "MBON33": {
+          "MBON33": 2
+        },
+        "MBON34": {
+          "MBON34": 2
+        },
+        "MBON35": {
+          "MBON35": 2
         }
       },
-      "scale": 0.1875,
-      "scale_reason": "retain prior global scale calibration; normalize only MB and steering",
+      "scale": 0.140625,
+      "scale_reason": "explicit circuit-wide CLI scale; W8 compares only global scales at independent seed 19 and the fixed development split; normalization formulas and their budgets stay fixed (see reports/output-scale-sweep.json)",
       "input_rate_hz": 180.0,
       "input_rate_reason": "retain the original 180 Hz input convention",
       "normalization": {
@@ -193,56 +725,56 @@
         "reason": "sampled KC drive and nearly saturated APL feedback silence avoidance MBONs",
         "kc_budget": 40.0,
         "kc_budget_reason": "40 is closest to neutral untrained PI in the seed-19 sweep of 20, 40, 60, 80, 100, 120; independent evaluation uses seed 71",
-        "reference_kc_hz": 7.572916030883789,
-        "reference_apl_hz": 396.66668701171875,
+        "reference_kc_hz": 5.787499904632568,
+        "reference_apl_hz": 375.625,
         "projection_factors": {
           "KC->MBON_ap": [
-            0.23469014465808868,
-            0.1982651799917221,
-            0.728100061416626,
-            0.6708595156669617,
-            0.9397944211959839,
-            0.843214750289917,
-            0.7960199117660522,
-            0.7087486386299133,
-            0.6165703535079956,
-            0.7538280487060547
+            0.3129201829433441,
+            0.26435357332229614,
+            0.9708001613616943,
+            0.8944793939590454,
+            1.2530591487884521,
+            1.124286413192749,
+            1.0613598823547363,
+            0.9449982047080994,
+            0.8220937848091125,
+            1.0051040649414062
           ],
           "APL->MBON_ap": [
-            0.019091383972609885,
-            0.019091383972609885,
-            0.019091383972609885,
-            0.019091383972609885,
-            0.019091383972609885,
-            0.019091383972609885,
-            0.019091383972609885,
-            0.019091383972609885,
-            0.019091383972609885,
-            0.019091383972609885
+            0.01540765365625975,
+            0.01540765365625975,
+            0.01540765365625975,
+            0.01540765365625975,
+            0.01540765365625975,
+            0.01540765365625975,
+            0.01540765365625975,
+            0.01540765365625975,
+            0.01540765365625975,
+            0.01540765365625975
           ],
           "KC->MBON_av": [
-            0.27850303053855896,
-            0.1866433322429657,
-            0.48929664492607117,
-            0.28256070613861084,
-            1.1408199071884155,
-            1.9937694072723389,
-            0.20935557782649994,
-            0.31936126947402954,
-            0.34688347578048706,
-            0.3146509528160095
+            0.3713373839855194,
+            0.2488577663898468,
+            0.652395486831665,
+            0.37674760818481445,
+            1.5210932493209839,
+            2.6583595275878906,
+            0.27914077043533325,
+            0.42581501603126526,
+            0.4625113010406494,
+            0.4195345938205719
           ],
           "APL->MBON_av": [
-            0.019091383972609885,
-            0.019091383972609885,
-            0.019091383972609885,
-            0.019091383972609885,
-            0.019091383972609885,
-            0.019091383972609885,
-            0.019091383972609885,
-            0.019091383972609885,
-            0.019091383972609885,
-            0.019091383972609885
+            0.01540765365625975,
+            0.01540765365625975,
+            0.01540765365625975,
+            0.01540765365625975,
+            0.01540765365625975,
+            0.01540765365625975,
+            0.01540765365625975,
+            0.01540765365625975,
+            0.01540765365625975,
+            0.01540765365625975
           ]
         },
         "reference": {
@@ -256,28 +788,291 @@
       "todos": [
         "TODO: reconstruct visual relays to visual KCs; blue_light is incomplete.",
         "TODO: validate fruit-cue glomerular mixtures; current cue mapping is a game convention.",
-        "TODO: review predicted dopamine in KCs against consensus acetylcholine; both map to positive current here."
+        "TODO: review predicted dopamine in KCs against consensus acetylcholine; both map to positive current here.",
+        "TODO: missing group MBON08; no substitute invented"
       ],
       "files": {
-        "olfaction_mb.npz": "c766223d218081a326705edbdd9504b1447b2fdc40937e78a335d2e04b26f828",
-        "olfaction_mb.json": "0c08bbe6e909deb026f30338c29ff8efcdde9856e6aec511f400076d16ce1c03"
+        "olfaction_mb.npz": "59f19105081112163090818aef0a38b3f20d11038efa1bb0b9e2c8f0b75de24c",
+        "olfaction_mb.json": "27cdf19255e279034d9b71c45f650f6122a0beeb51f5a72896c859fc49b1335c"
       }
     },
     "feeding": {
-      "neurons": 113,
-      "edges": 2334,
+      "neurons": 173,
+      "edges": 5067,
       "group_counts": {
         "Gr64f": 34,
         "Gr66a": 35,
-        "feeding_interneuron": 42,
-        "MN9": 2
+        "feeding_interneuron": 93,
+        "MN9": 2,
+        "MN6": 2,
+        "MN11D": 3,
+        "MN11V": 2,
+        "MN12D": 2
       },
       "selection_rules": {
         "Gr64f": "LB3b/c, putative Gr64f sweet GRNs (Tastekin et al. 2026 Fig 2E)",
         "Gr66a": "LB1a-d, putative bitter GRNs mapped using Gr33a (same Fig 2E)",
-        "feeding_interneuron": "GNG108/Roundup, GNG120/Roundtree, GNG175/Usnea, ANXXX462a/Clavicle, DNge080/Rounddown, DNg67/Fudog; plus two-hop bridges; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending",
-        "MN9": "type MN9"
+        "feeding_interneuron": "GNG108/Roundup, GNG120/Roundtree, GNG175/Usnea, ANXXX462a/Clavicle, DNge080/Rounddown, DNg67/Fudog; plus two-hop bridges; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending",
+        "MN9": "type MN9",
+        "MN6": "exact type MN6; MN6 extends the labellum; MN11D/V and MN12D observe ingestion/pumping beyond MN9 (Schwarz et al. 2017; Manzo et al. 2012). Unresolved signs stay excluded.",
+        "MN11D": "exact type MN11D; MN6 extends the labellum; MN11D/V and MN12D observe ingestion/pumping beyond MN9 (Schwarz et al. 2017; Manzo et al. 2012). Unresolved signs stay excluded.",
+        "MN11V": "exact type MN11V; MN6 extends the labellum; MN11D/V and MN12D observe ingestion/pumping beyond MN9 (Schwarz et al. 2017; Manzo et al. 2012). Unresolved signs stay excluded.",
+        "MN12D": "exact type MN12D; MN6 extends the labellum; MN11D/V and MN12D observe ingestion/pumping beyond MN9 (Schwarz et al. 2017; Manzo et al. 2012). Unresolved signs stay excluded."
       },
+      "output_additions": [
+        {
+          "type": "MN6",
+          "annotated": 2,
+          "resolved_sign": 2,
+          "selected": 2,
+          "reason": "MN6 extends the labellum; MN11D/V and MN12D observe ingestion/pumping beyond MN9 (Schwarz et al. 2017; Manzo et al. 2012). Unresolved signs stay excluded."
+        },
+        {
+          "type": "MN11D",
+          "annotated": 3,
+          "resolved_sign": 3,
+          "selected": 3,
+          "reason": "MN6 extends the labellum; MN11D/V and MN12D observe ingestion/pumping beyond MN9 (Schwarz et al. 2017; Manzo et al. 2012). Unresolved signs stay excluded."
+        },
+        {
+          "type": "MN11V",
+          "annotated": 2,
+          "resolved_sign": 2,
+          "selected": 2,
+          "reason": "MN6 extends the labellum; MN11D/V and MN12D observe ingestion/pumping beyond MN9 (Schwarz et al. 2017; Manzo et al. 2012). Unresolved signs stay excluded."
+        },
+        {
+          "type": "MN12D",
+          "annotated": 4,
+          "resolved_sign": 2,
+          "selected": 2,
+          "reason": "MN6 extends the labellum; MN11D/V and MN12D observe ingestion/pumping beyond MN9 (Schwarz et al. 2017; Manzo et al. 2012). Unresolved signs stay excluded."
+        }
+      ],
+      "extraction_additions": [
+        {
+          "group": "feeding_interneuron",
+          "type": "AN17A008",
+          "count": 1,
+          "reason": "GNG108/Roundup, GNG120/Roundtree, GNG175/Usnea, ANXXX462a/Clavicle, DNge080/Rounddown, DNg67/Fudog; plus two-hop bridges; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "feeding_interneuron",
+          "type": "DNg47",
+          "count": 2,
+          "reason": "GNG108/Roundup, GNG120/Roundtree, GNG175/Usnea, ANXXX462a/Clavicle, DNge080/Rounddown, DNg67/Fudog; plus two-hop bridges; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "feeding_interneuron",
+          "type": "GNG037",
+          "count": 2,
+          "reason": "GNG108/Roundup, GNG120/Roundtree, GNG175/Usnea, ANXXX462a/Clavicle, DNge080/Rounddown, DNg67/Fudog; plus two-hop bridges; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "feeding_interneuron",
+          "type": "GNG055",
+          "count": 2,
+          "reason": "GNG108/Roundup, GNG120/Roundtree, GNG175/Usnea, ANXXX462a/Clavicle, DNge080/Rounddown, DNg67/Fudog; plus two-hop bridges; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "feeding_interneuron",
+          "type": "GNG057",
+          "count": 1,
+          "reason": "GNG108/Roundup, GNG120/Roundtree, GNG175/Usnea, ANXXX462a/Clavicle, DNge080/Rounddown, DNg67/Fudog; plus two-hop bridges; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "feeding_interneuron",
+          "type": "GNG059",
+          "count": 1,
+          "reason": "GNG108/Roundup, GNG120/Roundtree, GNG175/Usnea, ANXXX462a/Clavicle, DNge080/Rounddown, DNg67/Fudog; plus two-hop bridges; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "feeding_interneuron",
+          "type": "GNG065",
+          "count": 2,
+          "reason": "GNG108/Roundup, GNG120/Roundtree, GNG175/Usnea, ANXXX462a/Clavicle, DNge080/Rounddown, DNg67/Fudog; plus two-hop bridges; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "feeding_interneuron",
+          "type": "GNG072",
+          "count": 1,
+          "reason": "GNG108/Roundup, GNG120/Roundtree, GNG175/Usnea, ANXXX462a/Clavicle, DNge080/Rounddown, DNg67/Fudog; plus two-hop bridges; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "feeding_interneuron",
+          "type": "GNG074",
+          "count": 1,
+          "reason": "GNG108/Roundup, GNG120/Roundtree, GNG175/Usnea, ANXXX462a/Clavicle, DNge080/Rounddown, DNg67/Fudog; plus two-hop bridges; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "feeding_interneuron",
+          "type": "GNG076",
+          "count": 1,
+          "reason": "GNG108/Roundup, GNG120/Roundtree, GNG175/Usnea, ANXXX462a/Clavicle, DNge080/Rounddown, DNg67/Fudog; plus two-hop bridges; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "feeding_interneuron",
+          "type": "GNG087",
+          "count": 3,
+          "reason": "GNG108/Roundup, GNG120/Roundtree, GNG175/Usnea, ANXXX462a/Clavicle, DNge080/Rounddown, DNg67/Fudog; plus two-hop bridges; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "feeding_interneuron",
+          "type": "GNG090",
+          "count": 1,
+          "reason": "GNG108/Roundup, GNG120/Roundtree, GNG175/Usnea, ANXXX462a/Clavicle, DNge080/Rounddown, DNg67/Fudog; plus two-hop bridges; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "feeding_interneuron",
+          "type": "GNG096",
+          "count": 1,
+          "reason": "GNG108/Roundup, GNG120/Roundtree, GNG175/Usnea, ANXXX462a/Clavicle, DNge080/Rounddown, DNg67/Fudog; plus two-hop bridges; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "feeding_interneuron",
+          "type": "GNG107",
+          "count": 2,
+          "reason": "GNG108/Roundup, GNG120/Roundtree, GNG175/Usnea, ANXXX462a/Clavicle, DNge080/Rounddown, DNg67/Fudog; plus two-hop bridges; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "feeding_interneuron",
+          "type": "GNG145",
+          "count": 2,
+          "reason": "GNG108/Roundup, GNG120/Roundtree, GNG175/Usnea, ANXXX462a/Clavicle, DNge080/Rounddown, DNg67/Fudog; plus two-hop bridges; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "feeding_interneuron",
+          "type": "GNG147",
+          "count": 1,
+          "reason": "GNG108/Roundup, GNG120/Roundtree, GNG175/Usnea, ANXXX462a/Clavicle, DNge080/Rounddown, DNg67/Fudog; plus two-hop bridges; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "feeding_interneuron",
+          "type": "GNG155",
+          "count": 2,
+          "reason": "GNG108/Roundup, GNG120/Roundtree, GNG175/Usnea, ANXXX462a/Clavicle, DNge080/Rounddown, DNg67/Fudog; plus two-hop bridges; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "feeding_interneuron",
+          "type": "GNG165",
+          "count": 1,
+          "reason": "GNG108/Roundup, GNG120/Roundtree, GNG175/Usnea, ANXXX462a/Clavicle, DNge080/Rounddown, DNg67/Fudog; plus two-hop bridges; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "feeding_interneuron",
+          "type": "GNG170",
+          "count": 2,
+          "reason": "GNG108/Roundup, GNG120/Roundtree, GNG175/Usnea, ANXXX462a/Clavicle, DNge080/Rounddown, DNg67/Fudog; plus two-hop bridges; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "feeding_interneuron",
+          "type": "GNG173",
+          "count": 1,
+          "reason": "GNG108/Roundup, GNG120/Roundtree, GNG175/Usnea, ANXXX462a/Clavicle, DNge080/Rounddown, DNg67/Fudog; plus two-hop bridges; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "feeding_interneuron",
+          "type": "GNG187",
+          "count": 2,
+          "reason": "GNG108/Roundup, GNG120/Roundtree, GNG175/Usnea, ANXXX462a/Clavicle, DNge080/Rounddown, DNg67/Fudog; plus two-hop bridges; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "feeding_interneuron",
+          "type": "GNG192",
+          "count": 2,
+          "reason": "GNG108/Roundup, GNG120/Roundtree, GNG175/Usnea, ANXXX462a/Clavicle, DNge080/Rounddown, DNg67/Fudog; plus two-hop bridges; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "feeding_interneuron",
+          "type": "GNG209",
+          "count": 1,
+          "reason": "GNG108/Roundup, GNG120/Roundtree, GNG175/Usnea, ANXXX462a/Clavicle, DNge080/Rounddown, DNg67/Fudog; plus two-hop bridges; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "feeding_interneuron",
+          "type": "GNG221",
+          "count": 1,
+          "reason": "GNG108/Roundup, GNG120/Roundtree, GNG175/Usnea, ANXXX462a/Clavicle, DNge080/Rounddown, DNg67/Fudog; plus two-hop bridges; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "feeding_interneuron",
+          "type": "GNG232",
+          "count": 2,
+          "reason": "GNG108/Roundup, GNG120/Roundtree, GNG175/Usnea, ANXXX462a/Clavicle, DNge080/Rounddown, DNg67/Fudog; plus two-hop bridges; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "feeding_interneuron",
+          "type": "GNG241",
+          "count": 1,
+          "reason": "GNG108/Roundup, GNG120/Roundtree, GNG175/Usnea, ANXXX462a/Clavicle, DNge080/Rounddown, DNg67/Fudog; plus two-hop bridges; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "feeding_interneuron",
+          "type": "GNG254",
+          "count": 1,
+          "reason": "GNG108/Roundup, GNG120/Roundtree, GNG175/Usnea, ANXXX462a/Clavicle, DNge080/Rounddown, DNg67/Fudog; plus two-hop bridges; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "feeding_interneuron",
+          "type": "GNG298",
+          "count": 1,
+          "reason": "GNG108/Roundup, GNG120/Roundtree, GNG175/Usnea, ANXXX462a/Clavicle, DNge080/Rounddown, DNg67/Fudog; plus two-hop bridges; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "feeding_interneuron",
+          "type": "GNG407",
+          "count": 1,
+          "reason": "GNG108/Roundup, GNG120/Roundtree, GNG175/Usnea, ANXXX462a/Clavicle, DNge080/Rounddown, DNg67/Fudog; plus two-hop bridges; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "feeding_interneuron",
+          "type": "GNG467",
+          "count": 4,
+          "reason": "GNG108/Roundup, GNG120/Roundtree, GNG175/Usnea, ANXXX462a/Clavicle, DNge080/Rounddown, DNg67/Fudog; plus two-hop bridges; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "feeding_interneuron",
+          "type": "GNG468",
+          "count": 1,
+          "reason": "GNG108/Roundup, GNG120/Roundtree, GNG175/Usnea, ANXXX462a/Clavicle, DNge080/Rounddown, DNg67/Fudog; plus two-hop bridges; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "feeding_interneuron",
+          "type": "GNG592",
+          "count": 3,
+          "reason": "GNG108/Roundup, GNG120/Roundtree, GNG175/Usnea, ANXXX462a/Clavicle, DNge080/Rounddown, DNg67/Fudog; plus two-hop bridges; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "feeding_interneuron",
+          "type": "SMP545",
+          "count": 1,
+          "reason": "GNG108/Roundup, GNG120/Roundtree, GNG175/Usnea, ANXXX462a/Clavicle, DNge080/Rounddown, DNg67/Fudog; plus two-hop bridges; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "MN6",
+          "type": "MN6",
+          "count": 2,
+          "reason": "exact type MN6; MN6 extends the labellum; MN11D/V and MN12D observe ingestion/pumping beyond MN9 (Schwarz et al. 2017; Manzo et al. 2012). Unresolved signs stay excluded."
+        },
+        {
+          "group": "MN11D",
+          "type": "MN11D",
+          "count": 3,
+          "reason": "exact type MN11D; MN6 extends the labellum; MN11D/V and MN12D observe ingestion/pumping beyond MN9 (Schwarz et al. 2017; Manzo et al. 2012). Unresolved signs stay excluded."
+        },
+        {
+          "group": "MN11V",
+          "type": "MN11V",
+          "count": 2,
+          "reason": "exact type MN11V; MN6 extends the labellum; MN11D/V and MN12D observe ingestion/pumping beyond MN9 (Schwarz et al. 2017; Manzo et al. 2012). Unresolved signs stay excluded."
+        },
+        {
+          "group": "MN12D",
+          "type": "MN12D",
+          "count": 2,
+          "reason": "exact type MN12D; MN6 extends the labellum; MN11D/V and MN12D observe ingestion/pumping beyond MN9 (Schwarz et al. 2017; Manzo et al. 2012). Unresolved signs stay excluded."
+        }
+      ],
       "selected_types": {
         "Gr64f": {
           "LB3b": 11,
@@ -290,7 +1085,9 @@
           "LB1d": 5
         },
         "feeding_interneuron": {
+          "AN17A008": 1,
           "ANXXX462a": 2,
+          "DNg47": 2,
           "DNg67": 2,
           "DNge031": 2,
           "DNge036": 1,
@@ -302,30 +1099,71 @@
           "DNge105": 1,
           "GNG029": 1,
           "GNG036": 1,
+          "GNG037": 2,
           "GNG041": 2,
           "GNG043": 2,
-          "GNG057": 1,
+          "GNG055": 2,
+          "GNG057": 2,
+          "GNG059": 1,
+          "GNG065": 2,
+          "GNG072": 1,
+          "GNG074": 1,
+          "GNG076": 1,
+          "GNG087": 3,
           "GNG089": 2,
+          "GNG090": 1,
+          "GNG096": 1,
+          "GNG107": 2,
           "GNG108": 2,
           "GNG116": 2,
           "GNG120": 2,
           "GNG131": 1,
-          "GNG173": 1,
+          "GNG145": 2,
+          "GNG147": 1,
+          "GNG155": 2,
+          "GNG165": 1,
+          "GNG170": 2,
+          "GNG173": 2,
           "GNG175": 2,
           "GNG176": 1,
+          "GNG187": 2,
+          "GNG192": 2,
           "GNG208": 1,
+          "GNG209": 1,
           "GNG220": 2,
+          "GNG221": 1,
+          "GNG232": 2,
+          "GNG241": 1,
+          "GNG254": 1,
           "GNG297": 1,
+          "GNG298": 1,
           "GNG341": 1,
           "GNG393": 2,
-          "GNG568": 1
+          "GNG407": 1,
+          "GNG467": 4,
+          "GNG468": 1,
+          "GNG568": 1,
+          "GNG592": 3,
+          "SMP545": 1
         },
         "MN9": {
           "MN9": 2
+        },
+        "MN6": {
+          "MN6": 2
+        },
+        "MN11D": {
+          "MN11D": 3
+        },
+        "MN11V": {
+          "MN11V": 2
+        },
+        "MN12D": {
+          "MN12D": 2
         }
       },
       "scale": 0.0625,
-      "scale_reason": "retain prior global scale calibration; normalize only MB and steering",
+      "scale_reason": "explicit circuit-wide CLI scale; W8 compares only global scales at independent seed 19 and the fixed development split; normalization formulas and their budgets stay fixed (see reports/output-scale-sweep.json)",
       "input_rate_hz": 180.0,
       "input_rate_reason": "retain the original 180 Hz input convention",
       "normalization": {},
@@ -333,8 +1171,8 @@
         "TODO: verify Gr66a expression per body; Gr66a is a game input alias for LB1a-d bitter GRNs, not a molecular annotation in this release."
       ],
       "files": {
-        "feeding.npz": "6038996c691aea3aa7625f9d61bf5a034c9a908fc262501a102107251bc1126f",
-        "feeding.json": "de322d752532b5ca918fa64e0e6f20ff9bd26f53608235a804cfd8f9d26d5f48"
+        "feeding.npz": "596c17f4a2796b56354c281af9634bad186c34f442bb50593f5ef7a9a56db695",
+        "feeding.json": "dc4f04b44dda93632eea9262303c773fb7a6555920d8dfcd1c92c75918b35a8a"
       }
     },
     "escape": {
@@ -350,6 +1188,8 @@
         "LC4": "exact type LC4",
         "DNp01": "exact type DNp01"
       },
+      "output_additions": [],
+      "extraction_additions": [],
       "selected_types": {
         "LPLC2": {
           "LPLC2": 185
@@ -362,7 +1202,7 @@
         }
       },
       "scale": 0.000244140625,
-      "scale_reason": "retain prior global scale calibration; normalize only MB and steering",
+      "scale_reason": "explicit circuit-wide CLI scale; W8 compares only global scales at independent seed 19 and the fixed development split; normalization formulas and their budgets stay fixed (see reports/output-scale-sweep.json)",
       "input_rate_hz": 180.0,
       "input_rate_reason": "retain the original 180 Hz input convention",
       "normalization": {},
@@ -373,15 +1213,23 @@
       }
     },
     "steering": {
-      "neurons": 324,
-      "edges": 2115,
+      "neurons": 332,
+      "edges": 2272,
       "group_counts": {
         "photoreceptor_L": 64,
         "photoreceptor_R": 64,
         "DNa02_L": 1,
         "DNa02_R": 1,
         "walking_DN": 2,
-        "visual_relay": 192
+        "visual_relay": 192,
+        "DNa01_L": 1,
+        "DNa01_R": 1,
+        "DNb05_L": 1,
+        "DNb05_R": 1,
+        "DNb06_L": 1,
+        "DNb06_R": 1,
+        "DNg13_L": 1,
+        "DNg13_R": 1
       },
       "selection_rules": {
         "photoreceptor_L": "64 seeded R8p/y; rootSide L",
@@ -389,8 +1237,96 @@
         "DNa02_L": "DNa02, somaSide L",
         "DNa02_R": "DNa02, somaSide R",
         "walking_DN": "DNp09 (Braun et al. 2024); model tonic drive retained",
-        "visual_relay": "up to 192 annotated bodies on complete sensory->a->b->DNa02 paths; rank min(sum sensory->a, a->b, sum b->DNa02) descending; tie by a,b bodyId; retain complete pairs, then all induced edges; no pooled or synthetic bodies"
+        "visual_relay": "up to 192 annotated bodies on complete sensory->a->b->DNa02 paths; rank min(sum sensory->a, a->b, sum b->DNa02) descending; tie by a,b bodyId; retain complete pairs, then all induced edges; no pooled or synthetic bodies",
+        "DNa01_L": "exact type DNa01; somaSide L; DNa01, DNb05/06 and DNg13 correlate with rotational velocity (Rayshubskiy et al., Fine-grained descending control of steering). Keep soma sides separate.",
+        "DNa01_R": "exact type DNa01; somaSide R; DNa01, DNb05/06 and DNg13 correlate with rotational velocity (Rayshubskiy et al., Fine-grained descending control of steering). Keep soma sides separate.",
+        "DNb05_L": "exact type DNb05; somaSide L; DNa01, DNb05/06 and DNg13 correlate with rotational velocity (Rayshubskiy et al., Fine-grained descending control of steering). Keep soma sides separate.",
+        "DNb05_R": "exact type DNb05; somaSide R; DNa01, DNb05/06 and DNg13 correlate with rotational velocity (Rayshubskiy et al., Fine-grained descending control of steering). Keep soma sides separate.",
+        "DNb06_L": "exact type DNb06; somaSide L; DNa01, DNb05/06 and DNg13 correlate with rotational velocity (Rayshubskiy et al., Fine-grained descending control of steering). Keep soma sides separate.",
+        "DNb06_R": "exact type DNb06; somaSide R; DNa01, DNb05/06 and DNg13 correlate with rotational velocity (Rayshubskiy et al., Fine-grained descending control of steering). Keep soma sides separate.",
+        "DNg13_L": "exact type DNg13; somaSide L; DNa01, DNb05/06 and DNg13 correlate with rotational velocity (Rayshubskiy et al., Fine-grained descending control of steering). Keep soma sides separate.",
+        "DNg13_R": "exact type DNg13; somaSide R; DNa01, DNb05/06 and DNg13 correlate with rotational velocity (Rayshubskiy et al., Fine-grained descending control of steering). Keep soma sides separate."
       },
+      "output_additions": [
+        {
+          "type": "DNa01",
+          "annotated": 2,
+          "resolved_sign": 2,
+          "selected": 2,
+          "reason": "DNa01, DNb05/06 and DNg13 correlate with rotational velocity (Rayshubskiy et al., Fine-grained descending control of steering). Keep soma sides separate."
+        },
+        {
+          "type": "DNb05",
+          "annotated": 2,
+          "resolved_sign": 2,
+          "selected": 2,
+          "reason": "DNa01, DNb05/06 and DNg13 correlate with rotational velocity (Rayshubskiy et al., Fine-grained descending control of steering). Keep soma sides separate."
+        },
+        {
+          "type": "DNb06",
+          "annotated": 2,
+          "resolved_sign": 2,
+          "selected": 2,
+          "reason": "DNa01, DNb05/06 and DNg13 correlate with rotational velocity (Rayshubskiy et al., Fine-grained descending control of steering). Keep soma sides separate."
+        },
+        {
+          "type": "DNg13",
+          "annotated": 2,
+          "resolved_sign": 2,
+          "selected": 2,
+          "reason": "DNa01, DNb05/06 and DNg13 correlate with rotational velocity (Rayshubskiy et al., Fine-grained descending control of steering). Keep soma sides separate."
+        }
+      ],
+      "extraction_additions": [
+        {
+          "group": "DNa01_L",
+          "type": "DNa01",
+          "count": 1,
+          "reason": "exact type DNa01; somaSide L; DNa01, DNb05/06 and DNg13 correlate with rotational velocity (Rayshubskiy et al., Fine-grained descending control of steering). Keep soma sides separate."
+        },
+        {
+          "group": "DNa01_R",
+          "type": "DNa01",
+          "count": 1,
+          "reason": "exact type DNa01; somaSide R; DNa01, DNb05/06 and DNg13 correlate with rotational velocity (Rayshubskiy et al., Fine-grained descending control of steering). Keep soma sides separate."
+        },
+        {
+          "group": "DNb05_L",
+          "type": "DNb05",
+          "count": 1,
+          "reason": "exact type DNb05; somaSide L; DNa01, DNb05/06 and DNg13 correlate with rotational velocity (Rayshubskiy et al., Fine-grained descending control of steering). Keep soma sides separate."
+        },
+        {
+          "group": "DNb05_R",
+          "type": "DNb05",
+          "count": 1,
+          "reason": "exact type DNb05; somaSide R; DNa01, DNb05/06 and DNg13 correlate with rotational velocity (Rayshubskiy et al., Fine-grained descending control of steering). Keep soma sides separate."
+        },
+        {
+          "group": "DNb06_L",
+          "type": "DNb06",
+          "count": 1,
+          "reason": "exact type DNb06; somaSide L; DNa01, DNb05/06 and DNg13 correlate with rotational velocity (Rayshubskiy et al., Fine-grained descending control of steering). Keep soma sides separate."
+        },
+        {
+          "group": "DNb06_R",
+          "type": "DNb06",
+          "count": 1,
+          "reason": "exact type DNb06; somaSide R; DNa01, DNb05/06 and DNg13 correlate with rotational velocity (Rayshubskiy et al., Fine-grained descending control of steering). Keep soma sides separate."
+        },
+        {
+          "group": "DNg13_L",
+          "type": "DNg13",
+          "count": 1,
+          "reason": "exact type DNg13; somaSide L; DNa01, DNb05/06 and DNg13 correlate with rotational velocity (Rayshubskiy et al., Fine-grained descending control of steering). Keep soma sides separate."
+        },
+        {
+          "group": "DNg13_R",
+          "type": "DNg13",
+          "count": 1,
+          "reason": "exact type DNg13; somaSide R; DNa01, DNb05/06 and DNg13 correlate with rotational velocity (Rayshubskiy et al., Fine-grained descending control of steering). Keep soma sides separate."
+        }
+      ],
       "selected_types": {
         "photoreceptor_L": {
           "R8p": 33,
@@ -496,10 +1432,34 @@
           "aMe3": 1,
           "aMe30": 2,
           "aMe5": 7
+        },
+        "DNa01_L": {
+          "DNa01": 1
+        },
+        "DNa01_R": {
+          "DNa01": 1
+        },
+        "DNb05_L": {
+          "DNb05": 1
+        },
+        "DNb05_R": {
+          "DNb05": 1
+        },
+        "DNb06_L": {
+          "DNb06": 1
+        },
+        "DNb06_R": {
+          "DNb06": 1
+        },
+        "DNg13_L": {
+          "DNg13": 1
+        },
+        "DNg13_R": {
+          "DNg13": 1
         }
       },
       "scale": 0.03125,
-      "scale_reason": "retain prior global scale calibration; normalize only MB and steering",
+      "scale_reason": "explicit circuit-wide CLI scale; W8 compares only global scales at independent seed 19 and the fixed development split; normalization formulas and their budgets stay fixed (see reports/output-scale-sweep.json)",
       "input_rate_hz": 180.0,
       "input_rate_reason": "retain the original 180 Hz input convention",
       "normalization": {
@@ -832,7 +1792,15 @@
             11.636363983154297,
             14.222222328186035,
             8.0,
-            32.0
+            32.0,
+            1.0,
+            0.1599999964237213,
+            64.0,
+            9.84615421295166,
+            3.555555582046509,
+            64.0,
+            3.6571428775787354,
+            2.559999942779541
           ],
           "1": [
             1.0,
@@ -963,40 +1931,40 @@
             1.0,
             1.0,
             1.0,
-            0.22338569164276123,
-            0.24902723729610443,
+            0.2222222238779068,
+            0.24521072208881378,
             14.222222328186035,
             12.800000190734863,
-            5.119999885559082,
+            4.5714287757873535,
             1.7066667079925537,
-            0.7852760553359985,
-            4.740740776062012,
+            0.6399999856948853,
+            4.5714287757873535,
             9.84615421295166,
             6.736842155456543,
             5.5652174949646,
             9.84615421295166,
-            16.0,
-            0.4723247289657593,
-            21.33333396911621,
-            12.800000190734863,
-            11.636363983154297,
+            14.222222328186035,
+            0.47058823704719543,
             18.285715103149414,
-            5.818181991577148,
-            0.581818163394928,
-            7.529411792755127,
-            4.413793087005615,
-            0.5400843620300293,
+            12.800000190734863,
+            10.666666984558105,
+            18.285715103149414,
+            5.5652174949646,
+            0.5688889026641846,
+            6.095238208770752,
+            4.129032135009766,
+            0.5355648398399353,
             1.7066667079925537,
-            6.400000095367432,
-            2.6666667461395264,
             5.5652174949646,
-            1.580246925354004,
-            3.3684210777282715,
-            4.740740776062012,
+            2.4150943756103516,
+            5.5652174949646,
+            1.5609755516052246,
+            3.047619104385376,
+            4.413793087005615,
             9.142857551574707,
-            5.5652174949646,
-            11.636363983154297,
-            11.636363983154297,
+            5.333333492279053,
+            10.666666984558105,
+            10.666666984558105,
             42.66666793823242,
             1.523809552192688,
             5.119999885559082,
@@ -1019,16 +1987,16 @@
             21.33333396911621,
             1.1130434274673462,
             0.9275362491607666,
-            16.0,
+            9.142857551574707,
             4.740740776062012,
-            9.84615421295166,
+            9.142857551574707,
             14.222222328186035,
             3.7647058963775635,
             8.0,
             3.6571428775787354,
             6.400000095367432,
             42.66666793823242,
-            2.5098040103912354,
+            2.4150943756103516,
             4.129032135009766,
             7.111111164093018,
             25.600000381469727,
@@ -1072,8 +2040,8 @@
             0.15147928893566132,
             8.0,
             0.6530612111091614,
-            0.40506330132484436,
-            0.49805447459220886,
+            0.39384615421295166,
+            0.4923076927661896,
             0.5638766288757324,
             1.4883720874786377,
             8.0,
@@ -1088,13 +2056,13 @@
             1.3061224222183228,
             1.174311876296997,
             1.0666667222976685,
-            0.29357796907424927,
-            0.3506849408149719,
-            0.274678111076355,
+            0.26283368468284607,
+            0.3333333432674408,
+            0.2740899324417114,
             64.0,
             4.92307710647583,
-            2.7826087474823,
-            4.740740776062012,
+            2.7234041690826416,
+            3.8787879943847656,
             11.636363983154297,
             1.3617020845413208,
             2.4150943756103516,
@@ -1104,8 +2072,8 @@
             21.33333396911621,
             2.2456140518188477,
             1.4382022619247437,
-            1.376344084739685,
-            0.9014084339141846,
+            1.3617020845413208,
+            0.8366013169288635,
             0.8951048851013184,
             1.5421686172485352,
             0.7950310707092285,
@@ -1143,11 +2111,11 @@
             64.0,
             128.0,
             1.0,
-            2.064516067504883,
+            1.6623376607894897,
             14.222222328186035,
             10.666666984558105,
-            64.0,
-            1.0,
+            32.0,
+            128.0,
             21.33333396911621,
             128.0,
             32.0,
@@ -1158,7 +2126,15 @@
             12.800000190734863,
             7.529411792755127,
             32.0,
-            18.285715103149414
+            18.285715103149414,
+            1.1428571939468384,
+            11.636363983154297,
+            9.142857551574707,
+            2.7826087474823,
+            32.0,
+            1.0,
+            3.121951103210449,
+            2.9767441749572754
           ]
         },
         "tonic": {
@@ -1172,23 +2148,510 @@
         "TODO: longer visual paths and omitted boundary input remain unmodeled."
       ],
       "files": {
-        "steering.npz": "7d77e8719abd8bf12762adcec893fe46bc4343bb7e11e4d591f7193d47b00c54",
-        "steering.json": "479c1465d4e48301e06417cf553b1f1893ce230f2ec505e21f7e93a6e204fc8f"
+        "steering.npz": "71cbae9807a765da5d7990a23d59f28b692712d209579f4066788ad33c1b6b5d",
+        "steering.json": "9fec4f27bba2359485ea230dd8103478dd6577707893ab93b1a9e0b160060274"
       }
     },
     "grooming": {
-      "neurons": 524,
-      "edges": 8037,
+      "neurons": 668,
+      "edges": 14659,
       "group_counts": {
         "JO": 424,
         "aDN": 4,
-        "grooming_interneuron": 96
+        "grooming_interneuron": 192,
+        "DNg11": 6,
+        "DNg12_a": 8,
+        "DNg12_b": 10,
+        "DNg12_c": 8,
+        "DNg12_d": 2,
+        "DNg12_e": 6,
+        "DNg12_f": 4,
+        "DNg12_g": 2,
+        "DNg12_h": 2
       },
       "selection_rules": {
         "JO": "JO-C*, JO-E*, JO-F*, JO-mz; exclude JO-unclear",
         "aDN": "DNg62/aDN1 and DNge078/aDN2 (annotation synonyms Hampel 2015)",
-        "grooming_interneuron": "; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        "grooming_interneuron": "; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending",
+        "DNg11": "exact type DNg11; DNg11 front-leg rubbing and DNg12 anterior grooming (Guo et al. 2022; Cande et al. 2018); retain the release's DNg12_a-h subtypes separately.",
+        "DNg12_a": "exact type DNg12_a; DNg11 front-leg rubbing and DNg12 anterior grooming (Guo et al. 2022; Cande et al. 2018); retain the release's DNg12_a-h subtypes separately.",
+        "DNg12_b": "exact type DNg12_b; DNg11 front-leg rubbing and DNg12 anterior grooming (Guo et al. 2022; Cande et al. 2018); retain the release's DNg12_a-h subtypes separately.",
+        "DNg12_c": "exact type DNg12_c; DNg11 front-leg rubbing and DNg12 anterior grooming (Guo et al. 2022; Cande et al. 2018); retain the release's DNg12_a-h subtypes separately.",
+        "DNg12_d": "exact type DNg12_d; DNg11 front-leg rubbing and DNg12 anterior grooming (Guo et al. 2022; Cande et al. 2018); retain the release's DNg12_a-h subtypes separately.",
+        "DNg12_e": "exact type DNg12_e; DNg11 front-leg rubbing and DNg12 anterior grooming (Guo et al. 2022; Cande et al. 2018); retain the release's DNg12_a-h subtypes separately.",
+        "DNg12_f": "exact type DNg12_f; DNg11 front-leg rubbing and DNg12 anterior grooming (Guo et al. 2022; Cande et al. 2018); retain the release's DNg12_a-h subtypes separately.",
+        "DNg12_g": "exact type DNg12_g; DNg11 front-leg rubbing and DNg12 anterior grooming (Guo et al. 2022; Cande et al. 2018); retain the release's DNg12_a-h subtypes separately.",
+        "DNg12_h": "exact type DNg12_h; DNg11 front-leg rubbing and DNg12 anterior grooming (Guo et al. 2022; Cande et al. 2018); retain the release's DNg12_a-h subtypes separately."
       },
+      "output_additions": [
+        {
+          "type": "DNg11",
+          "annotated": 6,
+          "resolved_sign": 6,
+          "selected": 6,
+          "reason": "DNg11 front-leg rubbing and DNg12 anterior grooming (Guo et al. 2022; Cande et al. 2018); retain the release's DNg12_a-h subtypes separately."
+        },
+        {
+          "type": "DNg12_a",
+          "annotated": 8,
+          "resolved_sign": 8,
+          "selected": 8,
+          "reason": "DNg11 front-leg rubbing and DNg12 anterior grooming (Guo et al. 2022; Cande et al. 2018); retain the release's DNg12_a-h subtypes separately."
+        },
+        {
+          "type": "DNg12_b",
+          "annotated": 10,
+          "resolved_sign": 10,
+          "selected": 10,
+          "reason": "DNg11 front-leg rubbing and DNg12 anterior grooming (Guo et al. 2022; Cande et al. 2018); retain the release's DNg12_a-h subtypes separately."
+        },
+        {
+          "type": "DNg12_c",
+          "annotated": 8,
+          "resolved_sign": 8,
+          "selected": 8,
+          "reason": "DNg11 front-leg rubbing and DNg12 anterior grooming (Guo et al. 2022; Cande et al. 2018); retain the release's DNg12_a-h subtypes separately."
+        },
+        {
+          "type": "DNg12_d",
+          "annotated": 2,
+          "resolved_sign": 2,
+          "selected": 2,
+          "reason": "DNg11 front-leg rubbing and DNg12 anterior grooming (Guo et al. 2022; Cande et al. 2018); retain the release's DNg12_a-h subtypes separately."
+        },
+        {
+          "type": "DNg12_e",
+          "annotated": 6,
+          "resolved_sign": 6,
+          "selected": 6,
+          "reason": "DNg11 front-leg rubbing and DNg12 anterior grooming (Guo et al. 2022; Cande et al. 2018); retain the release's DNg12_a-h subtypes separately."
+        },
+        {
+          "type": "DNg12_f",
+          "annotated": 4,
+          "resolved_sign": 4,
+          "selected": 4,
+          "reason": "DNg11 front-leg rubbing and DNg12 anterior grooming (Guo et al. 2022; Cande et al. 2018); retain the release's DNg12_a-h subtypes separately."
+        },
+        {
+          "type": "DNg12_g",
+          "annotated": 2,
+          "resolved_sign": 2,
+          "selected": 2,
+          "reason": "DNg11 front-leg rubbing and DNg12 anterior grooming (Guo et al. 2022; Cande et al. 2018); retain the release's DNg12_a-h subtypes separately."
+        },
+        {
+          "type": "DNg12_h",
+          "annotated": 2,
+          "resolved_sign": 2,
+          "selected": 2,
+          "reason": "DNg11 front-leg rubbing and DNg12 anterior grooming (Guo et al. 2022; Cande et al. 2018); retain the release's DNg12_a-h subtypes separately."
+        }
+      ],
+      "extraction_additions": [
+        {
+          "group": "grooming_interneuron",
+          "type": "AN02A001",
+          "count": 1,
+          "reason": "; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "grooming_interneuron",
+          "type": "AN09B014",
+          "count": 2,
+          "reason": "; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "grooming_interneuron",
+          "type": "AN09B023",
+          "count": 1,
+          "reason": "; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "grooming_interneuron",
+          "type": "AN12B076",
+          "count": 1,
+          "reason": "; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "grooming_interneuron",
+          "type": "AN27X008",
+          "count": 2,
+          "reason": "; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "grooming_interneuron",
+          "type": "ANXXX027",
+          "count": 1,
+          "reason": "; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "grooming_interneuron",
+          "type": "CB0266",
+          "count": 1,
+          "reason": "; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "grooming_interneuron",
+          "type": "CB0397",
+          "count": 1,
+          "reason": "; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "grooming_interneuron",
+          "type": "CB0607",
+          "count": 1,
+          "reason": "; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "grooming_interneuron",
+          "type": "CB0630",
+          "count": 1,
+          "reason": "; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "grooming_interneuron",
+          "type": "CB2205",
+          "count": 4,
+          "reason": "; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "grooming_interneuron",
+          "type": "CB3865",
+          "count": 9,
+          "reason": "; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "grooming_interneuron",
+          "type": "CB4037",
+          "count": 3,
+          "reason": "; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "grooming_interneuron",
+          "type": "CB4038",
+          "count": 1,
+          "reason": "; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "grooming_interneuron",
+          "type": "DNae006",
+          "count": 1,
+          "reason": "; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "grooming_interneuron",
+          "type": "DNde006",
+          "count": 1,
+          "reason": "; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "grooming_interneuron",
+          "type": "DNg05_a",
+          "count": 2,
+          "reason": "; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "grooming_interneuron",
+          "type": "DNg05_b",
+          "count": 2,
+          "reason": "; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "grooming_interneuron",
+          "type": "DNg08",
+          "count": 1,
+          "reason": "; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "grooming_interneuron",
+          "type": "DNg106",
+          "count": 1,
+          "reason": "; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "grooming_interneuron",
+          "type": "DNg108",
+          "count": 2,
+          "reason": "; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "grooming_interneuron",
+          "type": "DNg32",
+          "count": 1,
+          "reason": "; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "grooming_interneuron",
+          "type": "DNg35",
+          "count": 2,
+          "reason": "; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "grooming_interneuron",
+          "type": "DNg37",
+          "count": 1,
+          "reason": "; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "grooming_interneuron",
+          "type": "DNg48",
+          "count": 2,
+          "reason": "; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "grooming_interneuron",
+          "type": "DNg51",
+          "count": 2,
+          "reason": "; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "grooming_interneuron",
+          "type": "DNg82",
+          "count": 1,
+          "reason": "; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "grooming_interneuron",
+          "type": "DNg83",
+          "count": 2,
+          "reason": "; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "grooming_interneuron",
+          "type": "DNg85",
+          "count": 1,
+          "reason": "; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "grooming_interneuron",
+          "type": "DNge008",
+          "count": 1,
+          "reason": "; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "grooming_interneuron",
+          "type": "DNge032",
+          "count": 1,
+          "reason": "; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "grooming_interneuron",
+          "type": "DNge037",
+          "count": 1,
+          "reason": "; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "grooming_interneuron",
+          "type": "DNge045",
+          "count": 1,
+          "reason": "; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "grooming_interneuron",
+          "type": "DNge056",
+          "count": 2,
+          "reason": "; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "grooming_interneuron",
+          "type": "DNge084",
+          "count": 2,
+          "reason": "; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "grooming_interneuron",
+          "type": "DNge121",
+          "count": 2,
+          "reason": "; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "grooming_interneuron",
+          "type": "DNge122",
+          "count": 1,
+          "reason": "; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "grooming_interneuron",
+          "type": "DNge124",
+          "count": 1,
+          "reason": "; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "grooming_interneuron",
+          "type": "DNge128",
+          "count": 2,
+          "reason": "; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "grooming_interneuron",
+          "type": "DNp73",
+          "count": 1,
+          "reason": "; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "grooming_interneuron",
+          "type": "GNG046",
+          "count": 2,
+          "reason": "; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "grooming_interneuron",
+          "type": "GNG100",
+          "count": 2,
+          "reason": "; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "grooming_interneuron",
+          "type": "GNG102",
+          "count": 2,
+          "reason": "; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "grooming_interneuron",
+          "type": "GNG315",
+          "count": 2,
+          "reason": "; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "grooming_interneuron",
+          "type": "GNG316",
+          "count": 2,
+          "reason": "; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "grooming_interneuron",
+          "type": "GNG423",
+          "count": 1,
+          "reason": "; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "grooming_interneuron",
+          "type": "GNG494",
+          "count": 2,
+          "reason": "; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "grooming_interneuron",
+          "type": "GNG530",
+          "count": 1,
+          "reason": "; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "grooming_interneuron",
+          "type": "GNG547",
+          "count": 2,
+          "reason": "; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "grooming_interneuron",
+          "type": "GNG557",
+          "count": 2,
+          "reason": "; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "grooming_interneuron",
+          "type": "GNG633",
+          "count": 1,
+          "reason": "; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "grooming_interneuron",
+          "type": "GNG666",
+          "count": 1,
+          "reason": "; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "grooming_interneuron",
+          "type": "IPS001",
+          "count": 1,
+          "reason": "; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "grooming_interneuron",
+          "type": "MeVC9",
+          "count": 2,
+          "reason": "; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "grooming_interneuron",
+          "type": "PS126",
+          "count": 2,
+          "reason": "; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "grooming_interneuron",
+          "type": "SAD034",
+          "count": 2,
+          "reason": "; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "grooming_interneuron",
+          "type": "WED167",
+          "count": 2,
+          "reason": "; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "grooming_interneuron",
+          "type": "pIP1",
+          "count": 1,
+          "reason": "; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+        },
+        {
+          "group": "DNg11",
+          "type": "DNg11",
+          "count": 6,
+          "reason": "exact type DNg11; DNg11 front-leg rubbing and DNg12 anterior grooming (Guo et al. 2022; Cande et al. 2018); retain the release's DNg12_a-h subtypes separately."
+        },
+        {
+          "group": "DNg12_a",
+          "type": "DNg12_a",
+          "count": 8,
+          "reason": "exact type DNg12_a; DNg11 front-leg rubbing and DNg12 anterior grooming (Guo et al. 2022; Cande et al. 2018); retain the release's DNg12_a-h subtypes separately."
+        },
+        {
+          "group": "DNg12_b",
+          "type": "DNg12_b",
+          "count": 10,
+          "reason": "exact type DNg12_b; DNg11 front-leg rubbing and DNg12 anterior grooming (Guo et al. 2022; Cande et al. 2018); retain the release's DNg12_a-h subtypes separately."
+        },
+        {
+          "group": "DNg12_c",
+          "type": "DNg12_c",
+          "count": 8,
+          "reason": "exact type DNg12_c; DNg11 front-leg rubbing and DNg12 anterior grooming (Guo et al. 2022; Cande et al. 2018); retain the release's DNg12_a-h subtypes separately."
+        },
+        {
+          "group": "DNg12_d",
+          "type": "DNg12_d",
+          "count": 2,
+          "reason": "exact type DNg12_d; DNg11 front-leg rubbing and DNg12 anterior grooming (Guo et al. 2022; Cande et al. 2018); retain the release's DNg12_a-h subtypes separately."
+        },
+        {
+          "group": "DNg12_e",
+          "type": "DNg12_e",
+          "count": 6,
+          "reason": "exact type DNg12_e; DNg11 front-leg rubbing and DNg12 anterior grooming (Guo et al. 2022; Cande et al. 2018); retain the release's DNg12_a-h subtypes separately."
+        },
+        {
+          "group": "DNg12_f",
+          "type": "DNg12_f",
+          "count": 4,
+          "reason": "exact type DNg12_f; DNg11 front-leg rubbing and DNg12 anterior grooming (Guo et al. 2022; Cande et al. 2018); retain the release's DNg12_a-h subtypes separately."
+        },
+        {
+          "group": "DNg12_g",
+          "type": "DNg12_g",
+          "count": 2,
+          "reason": "exact type DNg12_g; DNg11 front-leg rubbing and DNg12 anterior grooming (Guo et al. 2022; Cande et al. 2018); retain the release's DNg12_a-h subtypes separately."
+        },
+        {
+          "group": "DNg12_h",
+          "type": "DNg12_h",
+          "count": 2,
+          "reason": "exact type DNg12_h; DNg11 front-leg rubbing and DNg12 anterior grooming (Guo et al. 2022; Cande et al. 2018); retain the release's DNg12_a-h subtypes separately."
+        }
+      ],
       "selected_types": {
         "JO": {
           "JO-CA1": 10,
@@ -1217,6 +2680,7 @@
         "grooming_interneuron": {
           "ALIN4": 1,
           "AN00A002": 1,
+          "AN02A001": 1,
           "AN05B005": 2,
           "AN05B009": 2,
           "AN05B010": 1,
@@ -1226,62 +2690,143 @@
           "AN05B046": 1,
           "AN05B054_a": 1,
           "AN05B058": 1,
+          "AN09B014": 2,
+          "AN09B023": 1,
           "AN12B001": 1,
+          "AN12B076": 1,
           "AN17A076": 1,
+          "AN27X008": 2,
           "ANXXX013": 2,
+          "ANXXX027": 1,
           "ANXXX108": 1,
           "BM": 11,
           "BM_InOm": 1,
+          "CB0266": 1,
+          "CB0397": 1,
           "CB0591": 2,
+          "CB0607": 1,
+          "CB0630": 1,
+          "CB2205": 4,
+          "CB3865": 9,
+          "CB4037": 3,
+          "CB4038": 1,
+          "DNae006": 1,
           "DNd03": 1,
           "DNde005": 1,
-          "DNde006": 1,
+          "DNde006": 2,
+          "DNg05_a": 2,
+          "DNg05_b": 2,
+          "DNg08": 1,
+          "DNg106": 1,
+          "DNg108": 2,
           "DNg17": 1,
           "DNg20": 1,
           "DNg21": 1,
           "DNg22": 1,
+          "DNg32": 1,
+          "DNg35": 2,
+          "DNg37": 1,
+          "DNg48": 2,
+          "DNg51": 2,
           "DNg59": 2,
           "DNg70": 1,
           "DNg74_a": 1,
           "DNg81": 2,
+          "DNg82": 1,
+          "DNg83": 2,
           "DNg84": 2,
+          "DNg85": 1,
           "DNg87": 1,
           "DNg98": 1,
+          "DNge008": 1,
           "DNge011": 2,
           "DNge012": 2,
           "DNge027": 1,
           "DNge031": 1,
+          "DNge032": 1,
+          "DNge037": 1,
           "DNge039": 2,
           "DNge044": 2,
+          "DNge045": 1,
+          "DNge056": 2,
+          "DNge084": 2,
           "DNge104": 1,
-          "DNge122": 1,
+          "DNge121": 2,
+          "DNge122": 2,
+          "DNge124": 1,
+          "DNge128": 2,
           "DNge132": 2,
           "DNge133": 2,
+          "DNp73": 1,
+          "GNG046": 2,
+          "GNG100": 2,
+          "GNG102": 2,
           "GNG203": 2,
           "GNG300": 2,
+          "GNG315": 2,
+          "GNG316": 2,
           "GNG351": 1,
-          "GNG423": 3,
+          "GNG423": 4,
           "GNG448": 2,
           "GNG449": 2,
           "GNG450": 1,
           "GNG451": 1,
           "GNG493": 1,
+          "GNG494": 2,
           "GNG502": 1,
           "GNG504": 1,
           "GNG509": 1,
+          "GNG530": 1,
+          "GNG547": 2,
+          "GNG557": 2,
           "GNG575": 2,
           "GNG594": 1,
           "GNG611": 2,
           "GNG612": 1,
+          "GNG633": 1,
+          "GNG666": 1,
+          "IPS001": 1,
+          "MeVC9": 2,
           "OCG06": 1,
+          "PS126": 2,
+          "SAD034": 2,
           "SAD070": 1,
           "SAD093": 2,
           "VES001": 1,
-          "WED060": 2
+          "WED060": 2,
+          "WED167": 2,
+          "pIP1": 1
+        },
+        "DNg11": {
+          "DNg11": 6
+        },
+        "DNg12_a": {
+          "DNg12_a": 8
+        },
+        "DNg12_b": {
+          "DNg12_b": 10
+        },
+        "DNg12_c": {
+          "DNg12_c": 8
+        },
+        "DNg12_d": {
+          "DNg12_d": 2
+        },
+        "DNg12_e": {
+          "DNg12_e": 6
+        },
+        "DNg12_f": {
+          "DNg12_f": 4
+        },
+        "DNg12_g": {
+          "DNg12_g": 2
+        },
+        "DNg12_h": {
+          "DNg12_h": 2
         }
       },
       "scale": 0.0078125,
-      "scale_reason": "retain prior global scale calibration; normalize only MB and steering",
+      "scale_reason": "explicit circuit-wide CLI scale; W8 compares only global scales at independent seed 19 and the fixed development split; normalization formulas and their budgets stay fixed (see reports/output-scale-sweep.json)",
       "input_rate_hz": 180.0,
       "input_rate_reason": "retain the original 180 Hz input convention",
       "normalization": {},
@@ -1289,8 +2834,8 @@
         "TODO: verify identities of graph-selected grooming interneurons against aBN1/2."
       ],
       "files": {
-        "grooming.npz": "41cdc69b5242c30b82095edfae5c30ac0419a4d83f2a1968b6da63d9e7159274",
-        "grooming.json": "a020f7fd8833cef7e34f9becd777773b0e6367c0fe6e6be2d9344c703cd399e8"
+        "grooming.npz": "04d2dae6ca010900102901e92772b6ae38fb867d01b99642df107c4c0b6ce2bd",
+        "grooming.json": "ac5333342d3e7aa53ce0d909828311fa31e8bd03cce7442adc9858ed40920de6"
       }
     }
   }

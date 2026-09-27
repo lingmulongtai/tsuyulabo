@@ -10,7 +10,7 @@ from tsuyu_brain.params import default_params
 
 @pytest.mark.parametrize("cue", CUES)
 def test_reward_and_punishment(cue: str) -> None:
-    initial = new_fly_state(default_params())
+    initial = new_fly_state(default_params(), "toy-v0")
     before = initial.to_bytes()
     reward, punish = initial, initial
     for seed in range(3):
@@ -24,7 +24,7 @@ def test_reward_and_punishment(cue: str) -> None:
 
 
 def test_serialization_size_and_seed() -> None:
-    state = new_fly_state(generate_individual(["keen_nose"], "f", 0))
+    state = new_fly_state(generate_individual(["keen_nose"], "f", 0), "toy-v0")
     trained, value = apply_training(state, "banana", "reward", 0.7, 8)
     repeated, other = apply_training(state, "banana", "reward", 0.7, 8)
     assert torch.equal(trained.kc_mbon, repeated.kc_mbon) and value == other
@@ -37,7 +37,7 @@ def test_serialization_size_and_seed() -> None:
 
 
 def test_zero_strength_and_invalid_training() -> None:
-    state = new_fly_state(default_params())
+    state = new_fly_state(default_params(), "toy-v0")
     unchanged, _ = apply_training(state, "banana", "reward", 0, 0)
     assert torch.equal(unchanged.kc_mbon, state.kc_mbon)
     for cue, valence, strength in [

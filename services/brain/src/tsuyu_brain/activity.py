@@ -1,4 +1,4 @@
-"""Copy-only, group-level activity for the brain viewer (synthetic toy-v0 wiring)."""
+"""Copy-only activity for the viewer using the persisted state's wiring version."""
 
 from __future__ import annotations
 
@@ -10,6 +10,15 @@ from tsuyu_brain.connectome import load_circuit
 from tsuyu_brain.connectome.toy_v0 import CIRCUIT_NAMES
 from tsuyu_brain.learning import FlyState, learned_circuit
 from tsuyu_brain.neuron import DT_MS
+
+# Public viewer palette: preserve its 23 names while simulating the full circuit.
+VIEW_GROUPS = {
+    "olfaction_mb": ("ORN", "PN", "KC", "APL", "MBON_ap", "MBON_av", "PAM", "PPL1", "visual"),
+    "feeding": ("Gr64f", "Gr66a", "feeding_interneuron", "MN9"),
+    "escape": ("LPLC2", "LC4", "DNp01"),
+    "steering": ("photoreceptor_L", "photoreceptor_R", "DNa02_L", "DNa02_R", "walking_DN"),
+    "grooming": ("JO", "aDN"),
+}
 
 
 class ActivityGroup(TypedDict):
@@ -36,7 +45,7 @@ class Activity(TypedDict):
 def activity(state: FlyState, scenario: str, seed: int, windows: int = 20) -> Activity:
     """Run up to 300 ms, in equal windows aligned to the 0.5 ms simulation step.
 
-    Inactive toy circuits have no spontaneous drive, so their rates are zero.
+    Inactive circuits have no spontaneous drive, so their rates are zero.
     Steering always runs to retain spontaneous walking-DN firing. Odor scenarios
     both present banana, like behavior(); learned weights determine preference.
     DANs only fire during training, which this read-only observation never applies.
@@ -50,13 +59,15 @@ def activity(state: FlyState, scenario: str, seed: int, windows: int = 20) -> Ac
     groups: list[ActivityGroup] = []
     edges: list[ActivityEdge] = []
     for name in CIRCUIT_NAMES:
-        circuit = learned_circuit(state) if name == "olfaction_mb" else load_circuit(name)
+        circuit = (
+            learned_circuit(state) if name == "olfaction_mb" else load_circuit(name, state.version)
+        )
         result = (
             simulate(circuit, jobs[name], params, duration_ms, seed=seed, window_ms=window_ms)
             if name in jobs
             else None
         )
-        for group in circuit.groups:
+        for group in VIEW_GROUPS[name]:
             kind: Literal["sensory", "inter", "output", "modulatory"] = "inter"
             if group in {"PAM", "PPL1"}:
                 kind = "modulatory"
@@ -73,6 +84,8 @@ def activity(state: FlyState, scenario: str, seed: int, windows: int = 20) -> Ac
                 }
             )
         for pre, post in circuit.projections:
+            if pre not in VIEW_GROUPS[name] or post not in VIEW_GROUPS[name]:
+                continue
             weight = float(circuit.weights[circuit.groups[pre], circuit.groups[post]].sum())
             if weight:
                 edges.append(

@@ -8,6 +8,7 @@ import torch
 from torch import Tensor
 
 from tsuyu_brain.behavior import LABELS, SCENARIOS, scenario_features
+from tsuyu_brain.connectome import DEFAULT_VERSION
 from tsuyu_brain.connectome.stimuli import CUE_GLOMERULI
 from tsuyu_brain.connectome.toy_v0 import CUES
 from tsuyu_brain.individuality import TRAIT_EFFECTS, generate_individual
@@ -19,6 +20,7 @@ class Dataset:
     features: Tensor
     labels: Tensor
     individuals: Tensor
+    version: str = "toy-v0"
 
 
 def generate_dataset(
@@ -27,7 +29,7 @@ def generate_dataset(
     seed: int = 123,
     *,
     shuffle_seed: int | None = None,
-    version: str = "toy-v0",
+    version: str = DEFAULT_VERSION,
 ) -> Dataset:
     if individuals < 2 or trials < 1:
         raise ValueError("at least two individuals and one trial required")
@@ -62,7 +64,7 @@ def generate_dataset(
             features.append(x)
             labels.extend([LABELS.index(label)] * trials)
             ids.extend([individual] * trials)
-    return Dataset(torch.cat(features), torch.tensor(labels), torch.tensor(ids))
+    return Dataset(torch.cat(features), torch.tensor(labels), torch.tensor(ids), version)
 
 
 def split_dataset(data: Dataset, seed: int = 7, fraction: float = 0.75) -> tuple[Dataset, Dataset]:
@@ -75,6 +77,11 @@ def split_dataset(data: Dataset, seed: int = 7, fraction: float = 0.75) -> tuple
     count = max(1, min(len(ids) - 1, int(len(ids) * fraction)))
     mask = torch.isin(data.individuals, ids[:count])
     return tuple(
-        Dataset(data.features[selection], data.labels[selection], data.individuals[selection])
+        Dataset(
+            data.features[selection],
+            data.labels[selection],
+            data.individuals[selection],
+            data.version,
+        )
         for selection in (mask, ~mask)
     )

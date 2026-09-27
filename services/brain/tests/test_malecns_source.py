@@ -15,6 +15,7 @@ pytest.importorskip("pandas")
 
 import pyarrow.dataset as ds
 from tsuyu_brain.connectome.malecns_ingest import scan_edges, sha256
+from tsuyu_brain.connectome.malecns_selection import resolve_transmitters
 
 
 @pytest.mark.eval
@@ -29,6 +30,28 @@ def test_committed_edges_equal_raw_synapse_counts() -> None:
         name: json.loads((data_directory() / f"{name}.json").read_text())
         for name in manifest["circuits"]
     }
+    annotations = (
+        ds.dataset(raw / manifest["sources"]["annotations"]["file"], format="ipc")
+        .to_table(columns=["bodyId", "type"])
+        .to_pandas()
+    )
+    transmitters = (
+        ds.dataset(raw / manifest["sources"]["transmitters"]["file"], format="ipc")
+        .to_table(columns=["body", "predicted_nt", "consensus_nt"])
+        .to_pandas()
+    )
+    resolved = resolve_transmitters(annotations, transmitters).set_index("bodyId")
+    for name, data in metadata.items():
+        retained = {row["bodyId"] for row in data["neurons"]}
+        for row in data["neurons"]:
+            source = resolved.loc[row["bodyId"]]
+            assert source.type == row["type"]
+            assert source.sign == row["sign"]
+        for census in manifest["circuits"][name]["output_additions"]:
+            candidates = resolved[resolved.type.eq(census["type"])]
+            assert len(candidates) == census["annotated"]
+            assert int(candidates.sign.notna().sum()) == census["resolved_sign"]
+            assert len(set(candidates.index) & retained) == census["selected"]
     ids = sorted({row["bodyId"] for data in metadata.values() for row in data["neurons"]})
     edges = scan_edges(
         raw / manifest["sources"]["weights"]["file"],

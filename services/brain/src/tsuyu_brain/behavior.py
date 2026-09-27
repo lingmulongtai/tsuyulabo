@@ -9,6 +9,7 @@ from torch import Tensor
 
 from tsuyu_brain.circuit import Circuit, simulate
 from tsuyu_brain.connectome import load_circuit
+from tsuyu_brain.connectome.malecns_outputs import EXTRA_OUTPUTS
 from tsuyu_brain.connectome.stimuli import cue_stimulus
 from tsuyu_brain.learning import FlyState, learned_circuit
 from tsuyu_brain.params import BrainParams
@@ -111,6 +112,7 @@ def scenario_features(
     from tsuyu_brain.decoder.features import WINDOWS, temporal_features, window_rates
 
     windows = torch.zeros(batch, len(FEATURES), WINDOWS)
+    extra = torch.zeros(batch, len(EXTRA_OUTPUTS), WINDOWS + 1)
     for name, stimulus in jobs.items():
         circuit = (
             learned_circuit(state) if name == "olfaction_mb" else load_circuit(name, state.version)
@@ -124,6 +126,18 @@ def scenario_features(
             else None
         )
         for group in circuit.output_groups:
+            if group not in FEATURES:
+                if state.version != "malecns-v1.0" or group not in EXTRA_OUTPUTS:
+                    raise ValueError(f"unknown output feature: {group}")
+                index = EXTRA_OUTPUTS.index(group)
+                extra[:, index, 0] = (result.rates[group] * result.window_ms).sum(1) / duration_ms
+                extra[:, index, 1:] = window_rates(result, group)
+                if reference is not None:
+                    extra[:, index, 0] -= (reference.rates[group] * reference.window_ms).sum(
+                        1
+                    ) / duration_ms
+                    extra[:, index, 1:] -= window_rates(reference, group)
+                continue
             features[:, FEATURES.index(group)] = (result.rates[group] * result.window_ms).sum(
                 1
             ) / duration_ms
@@ -134,4 +148,6 @@ def scenario_features(
                         reference.rates[group] * reference.window_ms
                     ).sum(1) / duration_ms
                     windows[:, FEATURES.index(group)] -= window_rates(reference, group)
-    return temporal_features(features, windows) if state.version == "malecns-v1.0" else features
+    if state.version == "malecns-v1.0":
+        return torch.cat((temporal_features(features, windows), extra.flatten(1)), dim=1)
+    return features

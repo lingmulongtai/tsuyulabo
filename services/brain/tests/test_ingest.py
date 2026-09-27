@@ -17,6 +17,8 @@ import pyarrow.feather as feather
 from tsuyu_brain.connectome.malecns_ingest import FILES, build, scan_edges, sha256
 from tsuyu_brain.connectome.malecns_selection import (
     ANNOTATION_COLUMNS,
+    add_output_populations,
+    output_census,
     resolve_transmitters,
     select_circuits,
 )
@@ -112,3 +114,42 @@ def test_prediction_polarity_fallback_and_sampling() -> None:
     assert 2 not in first.groups["KC"].bodyId.tolist()
     assert len(first.groups["PN"]) == 1
     assert torch.tensor(first.groups["KC"]["sign"].to_numpy()).isfinite().all()
+
+
+def test_output_selection_uses_exact_types_and_resolved_signs() -> None:
+    names = ["MN9", "MN6", "MN11D", "MN11V", "MN12D", "MN12D", "MN12-like"]
+    rows = pd.DataFrame(
+        {
+            "bodyId": range(len(names)),
+            "type": names,
+            "rootSide": "L",
+            "somaSide": "L",
+            "sign": [1, 1, 1, 1, 1, float("nan"), 1],
+        }
+    )
+    base = next(s for s in select_circuits(rows) if s.name == "feeding")
+    expanded = add_output_populations(base, rows)
+    assert expanded.groups["MN12D"].bodyId.tolist() == [4]
+    assert expanded.groups["MN9"].bodyId.tolist() == [0]
+    assert expanded.outputs == ("MN9", "MN6", "MN11D", "MN11V", "MN12D")
+    assert len(pd.concat(list(expanded.groups.values())).bodyId.unique()) == 5
+    census = {row["type"]: row for row in output_census(rows, expanded)}
+    assert census["MN12D"]["annotated"] == 2
+    assert census["MN12D"]["selected"] == census["MN12D"]["resolved_sign"] == 1
+
+
+def test_absent_numbered_mbon_stays_empty_without_relabeling() -> None:
+    rows = pd.DataFrame(
+        {
+            "bodyId": [1, 2],
+            "type": ["MBON09", "MBON08-like"],
+            "rootSide": "L",
+            "somaSide": "L",
+            "sign": 1,
+        }
+    )
+    expanded = add_output_populations(select_circuits(rows)[0], rows)
+    assert expanded.groups["MBON08"].empty
+    assert expanded.groups["MBON09"].bodyId.tolist() == [1]
+    assert expanded.groups["MBON_ap"].empty
+    assert expanded.groups["MBON_av"].empty

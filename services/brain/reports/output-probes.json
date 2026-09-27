@@ -1,0 +1,771 @@
+{
+  "seed": 19,
+  "feeding_global_scale_sweep": [
+    {
+      "scale": 0.046875,
+      "sugar": {
+        "MN9": {
+          "hz": 58.07291793823242,
+          "silent_trials": 0
+        },
+        "MN6": {
+          "hz": 0.0,
+          "silent_trials": 32
+        },
+        "MN11D": {
+          "hz": 46.66667175292969,
+          "silent_trials": 0
+        },
+        "MN11V": {
+          "hz": 0.0,
+          "silent_trials": 32
+        },
+        "MN12D": {
+          "hz": 0.0,
+          "silent_trials": 32
+        }
+      },
+      "mixed": {
+        "MN9": {
+          "hz": 0.0,
+          "silent_trials": 32
+        },
+        "MN6": {
+          "hz": 0.0,
+          "silent_trials": 32
+        },
+        "MN11D": {
+          "hz": 0.0,
+          "silent_trials": 32
+        },
+        "MN11V": {
+          "hz": 0.0,
+          "silent_trials": 32
+        },
+        "MN12D": {
+          "hz": 0.0,
+          "silent_trials": 32
+        }
+      }
+    },
+    {
+      "scale": 0.0625,
+      "sugar": {
+        "MN9": {
+          "hz": 118.69791412353516,
+          "silent_trials": 0
+        },
+        "MN6": {
+          "hz": 0.625,
+          "silent_trials": 21
+        },
+        "MN11D": {
+          "hz": 132.67361450195312,
+          "silent_trials": 0
+        },
+        "MN11V": {
+          "hz": 0.3645833432674408,
+          "silent_trials": 25
+        },
+        "MN12D": {
+          "hz": 0.0,
+          "silent_trials": 32
+        }
+      },
+      "mixed": {
+        "MN9": {
+          "hz": 0.0,
+          "silent_trials": 32
+        },
+        "MN6": {
+          "hz": 0.0,
+          "silent_trials": 32
+        },
+        "MN11D": {
+          "hz": 0.0,
+          "silent_trials": 32
+        },
+        "MN11V": {
+          "hz": 0.0,
+          "silent_trials": 32
+        },
+        "MN12D": {
+          "hz": 0.0,
+          "silent_trials": 32
+        }
+      }
+    },
+    {
+      "scale": 0.078125,
+      "sugar": {
+        "MN9": {
+          "hz": 163.59375,
+          "silent_trials": 0
+        },
+        "MN6": {
+          "hz": 11.979166984558105,
+          "silent_trials": 0
+        },
+        "MN11D": {
+          "hz": 233.125,
+          "silent_trials": 0
+        },
+        "MN11V": {
+          "hz": 17.70833396911621,
+          "silent_trials": 0
+        },
+        "MN12D": {
+          "hz": 0.0,
+          "silent_trials": 32
+        }
+      },
+      "mixed": {
+        "MN9": {
+          "hz": 0.0,
+          "silent_trials": 32
+        },
+        "MN6": {
+          "hz": 0.0,
+          "silent_trials": 32
+        },
+        "MN11D": {
+          "hz": 0.0,
+          "silent_trials": 32
+        },
+        "MN11V": {
+          "hz": 0.0,
+          "silent_trials": 32
+        },
+        "MN12D": {
+          "hz": 0.0,
+          "silent_trials": 32
+        }
+      }
+    },
+    {
+      "scale": 0.09375,
+      "sugar": {
+        "MN9": {
+          "hz": 195.5208282470703,
+          "silent_trials": 0
+        },
+        "MN6": {
+          "hz": 36.35416793823242,
+          "silent_trials": 0
+        },
+        "MN11D": {
+          "hz": 283.22918701171875,
+          "silent_trials": 0
+        },
+        "MN11V": {
+          "hz": 31.04166603088379,
+          "silent_trials": 0
+        },
+        "MN12D": {
+          "hz": 0.0,
+          "silent_trials": 32
+        }
+      },
+      "mixed": {
+        "MN9": {
+          "hz": 0.0,
+          "silent_trials": 32
+        },
+        "MN6": {
+          "hz": 0.0,
+          "silent_trials": 32
+        },
+        "MN11D": {
+          "hz": 0.0,
+          "silent_trials": 32
+        },
+        "MN11V": {
+          "hz": 0.0,
+          "silent_trials": 32
+        },
+        "MN12D": {
+          "hz": 0.0,
+          "silent_trials": 32
+        }
+      }
+    },
+    {
+      "scale": 0.125,
+      "sugar": {
+        "MN9": {
+          "hz": 231.3020782470703,
+          "silent_trials": 0
+        },
+        "MN6": {
+          "hz": 81.71875,
+          "silent_trials": 0
+        },
+        "MN11D": {
+          "hz": 325.0000305175781,
+          "silent_trials": 0
+        },
+        "MN11V": {
+          "hz": 49.375,
+          "silent_trials": 0
+        },
+        "MN12D": {
+          "hz": 0.0,
+          "silent_trials": 32
+        }
+      },
+      "mixed": {
+        "MN9": {
+          "hz": 0.0,
+          "silent_trials": 32
+        },
+        "MN6": {
+          "hz": 0.0,
+          "silent_trials": 32
+        },
+        "MN11D": {
+          "hz": 0.0,
+          "silent_trials": 32
+        },
+        "MN11V": {
+          "hz": 0.0,
+          "silent_trials": 32
+        },
+        "MN12D": {
+          "hz": 0.0,
+          "silent_trials": 32
+        }
+      }
+    }
+  ],
+  "odor_outputs": [
+    {
+      "cue": "banana",
+      "training": "reward",
+      "rates": {
+        "MBON_ap": 39.375,
+        "MBON_av": 11.875,
+        "MBON02": 0.0,
+        "MBON07": 0.0,
+        "MBON08": 0.0,
+        "MBON09": 0.0,
+        "MBON10": 0.0,
+        "MBON13": 0.0,
+        "MBON15": 0.0,
+        "MBON16": 0.0,
+        "MBON17": 0.0,
+        "MBON18": 0.0,
+        "MBON19": 29.27083396911621,
+        "MBON20": 0.0,
+        "MBON21": 0.0,
+        "MBON22": 0.0,
+        "MBON23": 0.0,
+        "MBON24": 6.875,
+        "MBON25": 0.0,
+        "MBON26": 0.0,
+        "MBON27": 0.0,
+        "MBON28": 0.0,
+        "MBON29": 0.0,
+        "MBON30": 0.0,
+        "MBON31": 0.0,
+        "MBON32": 0.0,
+        "MBON33": 0.0,
+        "MBON34": 0.0,
+        "MBON35": 0.0
+      }
+    },
+    {
+      "cue": "banana",
+      "training": "punish",
+      "rates": {
+        "MBON_ap": 0.0,
+        "MBON_av": 2.1666667461395264,
+        "MBON02": 0.0,
+        "MBON07": 0.0,
+        "MBON08": 0.0,
+        "MBON09": 0.0,
+        "MBON10": 0.0,
+        "MBON13": 0.0,
+        "MBON15": 0.0,
+        "MBON16": 0.0,
+        "MBON17": 0.0,
+        "MBON18": 0.0,
+        "MBON19": 0.0,
+        "MBON20": 0.0,
+        "MBON21": 0.0,
+        "MBON22": 0.0,
+        "MBON23": 0.0,
+        "MBON24": 0.0,
+        "MBON25": 0.0,
+        "MBON26": 0.0,
+        "MBON27": 0.0,
+        "MBON28": 0.0,
+        "MBON29": 0.0,
+        "MBON30": 0.0,
+        "MBON31": 0.0,
+        "MBON32": 0.0,
+        "MBON33": 0.0,
+        "MBON34": 0.0,
+        "MBON35": 0.0
+      }
+    },
+    {
+      "cue": "apple_vinegar",
+      "training": "reward",
+      "rates": {
+        "MBON_ap": 18.41666603088379,
+        "MBON_av": 4.333333492279053,
+        "MBON02": 0.0,
+        "MBON07": 0.0,
+        "MBON08": 0.0,
+        "MBON09": 0.0,
+        "MBON10": 0.0,
+        "MBON13": 0.0,
+        "MBON15": 0.0,
+        "MBON16": 0.0,
+        "MBON17": 0.0,
+        "MBON18": 0.0,
+        "MBON19": 24.89583396911621,
+        "MBON20": 0.0,
+        "MBON21": 0.0,
+        "MBON22": 0.0,
+        "MBON23": 0.0,
+        "MBON24": 0.0,
+        "MBON25": 0.0,
+        "MBON26": 0.0,
+        "MBON27": 0.0,
+        "MBON28": 0.0,
+        "MBON29": 0.0,
+        "MBON30": 0.0,
+        "MBON31": 0.0,
+        "MBON32": 0.0,
+        "MBON33": 0.0,
+        "MBON34": 0.0,
+        "MBON35": 0.0
+      }
+    },
+    {
+      "cue": "apple_vinegar",
+      "training": "punish",
+      "rates": {
+        "MBON_ap": 0.0,
+        "MBON_av": 0.0,
+        "MBON02": 0.0,
+        "MBON07": 0.0,
+        "MBON08": 0.0,
+        "MBON09": 0.0,
+        "MBON10": 0.0,
+        "MBON13": 0.0,
+        "MBON15": 0.0,
+        "MBON16": 0.0,
+        "MBON17": 0.0,
+        "MBON18": 0.0,
+        "MBON19": 0.0,
+        "MBON20": 0.0,
+        "MBON21": 0.0,
+        "MBON22": 0.0,
+        "MBON23": 0.0,
+        "MBON24": 0.0,
+        "MBON25": 0.0,
+        "MBON26": 0.0,
+        "MBON27": 0.0,
+        "MBON28": 0.0,
+        "MBON29": 0.0,
+        "MBON30": 0.0,
+        "MBON31": 0.0,
+        "MBON32": 0.0,
+        "MBON33": 0.0,
+        "MBON34": 0.0,
+        "MBON35": 0.0
+      }
+    },
+    {
+      "cue": "yeast",
+      "training": "reward",
+      "rates": {
+        "MBON_ap": 0.0,
+        "MBON_av": 0.0,
+        "MBON02": 0.0,
+        "MBON07": 0.0,
+        "MBON08": 0.0,
+        "MBON09": 0.0,
+        "MBON10": 0.0,
+        "MBON13": 0.0,
+        "MBON15": 0.0,
+        "MBON16": 0.0,
+        "MBON17": 0.0,
+        "MBON18": 0.0,
+        "MBON19": 0.0,
+        "MBON20": 0.0,
+        "MBON21": 0.0,
+        "MBON22": 0.0,
+        "MBON23": 0.0,
+        "MBON24": 0.0,
+        "MBON25": 0.0,
+        "MBON26": 0.0,
+        "MBON27": 0.0,
+        "MBON28": 0.0,
+        "MBON29": 0.0,
+        "MBON30": 0.0,
+        "MBON31": 0.0,
+        "MBON32": 0.0,
+        "MBON33": 0.0,
+        "MBON34": 0.0,
+        "MBON35": 0.0
+      }
+    },
+    {
+      "cue": "yeast",
+      "training": "punish",
+      "rates": {
+        "MBON_ap": 0.0,
+        "MBON_av": 0.0,
+        "MBON02": 0.0,
+        "MBON07": 0.0,
+        "MBON08": 0.0,
+        "MBON09": 0.0,
+        "MBON10": 0.0,
+        "MBON13": 0.0,
+        "MBON15": 0.0,
+        "MBON16": 0.0,
+        "MBON17": 0.0,
+        "MBON18": 0.0,
+        "MBON19": 0.0,
+        "MBON20": 0.0,
+        "MBON21": 0.0,
+        "MBON22": 0.0,
+        "MBON23": 0.0,
+        "MBON24": 0.0,
+        "MBON25": 0.0,
+        "MBON26": 0.0,
+        "MBON27": 0.0,
+        "MBON28": 0.0,
+        "MBON29": 0.0,
+        "MBON30": 0.0,
+        "MBON31": 0.0,
+        "MBON32": 0.0,
+        "MBON33": 0.0,
+        "MBON34": 0.0,
+        "MBON35": 0.0
+      }
+    },
+    {
+      "cue": "grape",
+      "training": "reward",
+      "rates": {
+        "MBON_ap": 18.41666603088379,
+        "MBON_av": 4.208333492279053,
+        "MBON02": 0.0,
+        "MBON07": 0.0,
+        "MBON08": 0.0,
+        "MBON09": 0.0,
+        "MBON10": 0.0,
+        "MBON13": 0.0,
+        "MBON15": 0.0,
+        "MBON16": 0.0,
+        "MBON17": 0.0,
+        "MBON18": 0.0,
+        "MBON19": 25.20833396911621,
+        "MBON20": 0.0,
+        "MBON21": 0.0,
+        "MBON22": 0.0,
+        "MBON23": 0.0,
+        "MBON24": 7.083333492279053,
+        "MBON25": 0.0,
+        "MBON26": 0.0,
+        "MBON27": 0.0,
+        "MBON28": 0.0,
+        "MBON29": 0.0,
+        "MBON30": 0.0,
+        "MBON31": 0.0,
+        "MBON32": 0.0,
+        "MBON33": 0.0,
+        "MBON34": 0.0,
+        "MBON35": 0.0
+      }
+    },
+    {
+      "cue": "grape",
+      "training": "punish",
+      "rates": {
+        "MBON_ap": 0.0,
+        "MBON_av": 0.0,
+        "MBON02": 0.0,
+        "MBON07": 0.0,
+        "MBON08": 0.0,
+        "MBON09": 0.0,
+        "MBON10": 0.0,
+        "MBON13": 0.0,
+        "MBON15": 0.0,
+        "MBON16": 0.0,
+        "MBON17": 0.0,
+        "MBON18": 0.0,
+        "MBON19": 0.0,
+        "MBON20": 0.0,
+        "MBON21": 0.0,
+        "MBON22": 0.0,
+        "MBON23": 0.0,
+        "MBON24": 0.0,
+        "MBON25": 0.0,
+        "MBON26": 0.0,
+        "MBON27": 0.0,
+        "MBON28": 0.0,
+        "MBON29": 0.0,
+        "MBON30": 0.0,
+        "MBON31": 0.0,
+        "MBON32": 0.0,
+        "MBON33": 0.0,
+        "MBON34": 0.0,
+        "MBON35": 0.0
+      }
+    }
+  ],
+  "development": {
+    "fit_individuals": [
+      0,
+      3,
+      7,
+      8,
+      9,
+      11,
+      12,
+      13,
+      15
+    ],
+    "validation_individuals": [
+      1,
+      2,
+      14
+    ],
+    "diagnostics": {
+      "rows": 132,
+      "unavoidable_errors_from_identical_features": 20,
+      "empirical_accuracy_ceiling": 0.8484848484848485,
+      "zero_feature_rows_by_label": {
+        "rest": 36,
+        "walk": 0,
+        "turn_left": 0,
+        "turn_right": 0,
+        "feed": 0,
+        "escape": 0,
+        "groom": 0,
+        "approach": 8,
+        "avoid": 12
+      }
+    },
+    "logistic": {
+      "accuracy": 0.8181818127632141,
+      "confusion_matrix": [
+        [
+          36,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          12,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          4,
+          0,
+          8,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          12,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          12,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          12,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          12,
+          0,
+          0
+        ],
+        [
+          8,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          4,
+          0
+        ],
+        [
+          12,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      ]
+    },
+    "mlp": {
+      "accuracy": 0.8181818127632141,
+      "confusion_matrix": [
+        [
+          36,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          12,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          8,
+          0,
+          0,
+          0,
+          0,
+          0,
+          4
+        ],
+        [
+          0,
+          0,
+          0,
+          12,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          12,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          12,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          12,
+          0,
+          0
+        ],
+        [
+          8,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          4,
+          0
+        ],
+        [
+          12,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      ]
+    }
+  },
+  "bundle_scales": {
+    "olfaction_mb": 0.1875,
+    "feeding": 0.0625,
+    "escape": 0.000244140625,
+    "steering": 0.03125,
+    "grooming": 0.0078125
+  }
+}

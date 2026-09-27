@@ -57,7 +57,7 @@ def test_measured_sanity_gates_pass_after_homeostasis() -> None:
     )
     assert checks["learning"]["passed"], checks
     assert abs(checks["learning"]["baseline_pi"]) < 0.2
-    assert DEFAULT_VERSION == "toy-v0"
+    assert DEFAULT_VERSION == "malecns-v1.0"
     assert all(isinstance(row["passed"], bool) for row in checks.values())
     print(json.dumps(checks))
 

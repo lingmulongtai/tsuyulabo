@@ -15,10 +15,13 @@ import torch
 
 from tsuyu_brain.circuit import Circuit, simulate
 from tsuyu_brain.connectome.malecns_normalization import normalize_mbon_inputs
+from tsuyu_brain.connectome.malecns_outputs import EXTRA_OUTPUTS
 from tsuyu_brain.connectome.malecns_selection import (
     ANNOTATION_COLUMNS,
     SEED,
     Selection,
+    add_output_populations,
+    output_census,
     resolve_transmitters,
     select_circuits,
 )
@@ -189,7 +192,8 @@ def build(
     bridge_names = {"feeding", "grooming"}
     bridging = [s for s in selections if s.name in bridge_names | {"steering"}]
     sensory = pd.concat([s.groups[g] for s in bridging for g in s.inputs]).bodyId
-    targets = pd.concat([s.groups[g] for s in bridging for g in s.outputs]).bodyId
+    expanded = [add_output_populations(s, rows) for s in bridging]
+    targets = pd.concat([s.groups[g] for s in expanded for g in s.outputs]).bodyId
     path = raw / FILES["weights"]
     bridge_edges = scan_edges(
         path,
@@ -210,6 +214,27 @@ def build(
         add_visual_relays(s, rows, bridge_edges, middle) if s.name == "steering" else s
         for s in selections
     ]
+    expanded = []
+    additions = {}
+    for selection in selections:
+        updated = add_output_populations(selection, rows)
+        if selection.name in bridge_names:
+            extra_outputs = tuple(g for g in updated.outputs if g not in selection.outputs)
+            updated = replace(
+                add_bridges(replace(updated, outputs=extra_outputs), rows, bridge_edges),
+                outputs=updated.outputs,
+            )
+        original_ids = set(pd.concat(list(selection.groups.values())).bodyId)
+        additions[selection.name] = [
+            {"group": group, "type": name, "count": int(count), "reason": updated.rules[group]}
+            for group, frame in updated.groups.items()
+            for name, count in frame[~frame.bodyId.isin(original_ids)]
+            .type.value_counts()
+            .sort_index()
+            .items()
+        ]
+        expanded.append(updated)
+    selections = expanded
     del bridge_edges
     all_ids = pd.concat([frame for s in selections for frame in s.groups.values()]).bodyId.unique()
     edges = scan_edges(
@@ -235,10 +260,12 @@ def build(
         "steering tonic current approximates omitted background drive",
         "storage": "compressed CSR float32; normalized values rounded once to float32",
         "decoder_features": {
-            "count": 68,
+            "count": 68 + 7 * len(EXTRA_OUTPUTS),
+            "additional_outputs": list(EXTRA_OUTPUTS),
             "schema": "8 output means; 6 equal-duration windows per output; "
             "6 right-left and 6 approach-avoid differences; steering centered on "
-            "the same individual's neutral response (also for shuffled circuits)",
+            "the same individual's neutral response (also for shuffled circuits); "
+            "append mean and six windows for each additional anatomical output",
             "reason": "preserve temporal responses and remove individual tonic offsets; "
             "output-only features with unchanged classifiers and held-out individuals",
         },
@@ -291,12 +318,16 @@ def build(
             "edges": int(circuit.weights.count_nonzero()),
             "group_counts": counts,
             "selection_rules": selection.rules,
+            "output_additions": output_census(rows, selection),
+            "extraction_additions": additions[selection.name],
             "selected_types": {
                 g: frame.type.value_counts().sort_index().to_dict()
                 for g, frame in selection.groups.items()
             },
             "scale": scale,
-            "scale_reason": "retain prior global scale calibration; normalize only MB and steering",
+            "scale_reason": "explicit circuit-wide CLI scale; W8 compares only global scales "
+            "at independent seed 19 and the fixed development split; normalization formulas "
+            "and their budgets stay fixed (see reports/output-scale-sweep.json)",
             "input_rate_hz": 180.0,
             "input_rate_reason": "retain the original 180 Hz input convention",
             "normalization": normalization,
