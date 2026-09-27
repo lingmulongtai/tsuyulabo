@@ -687,6 +687,58 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/sumo/bouts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** History */
+        get: operations["history_v1_sumo_bouts_get"];
+        put?: never;
+        /** Start */
+        post: operations["start_v1_sumo_bouts_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/sumo/bouts/{bout_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Replay */
+        get: operations["replay_v1_sumo_bouts__bout_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/sumo/challenges": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Challenges */
+        get: operations["challenges_v1_sumo_challenges_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/team": {
         parameters: {
             query?: never;
@@ -949,6 +1001,47 @@ export interface components {
             /** Question */
             question: string;
         };
+        /** BoutReplay */
+        BoutReplay: {
+            /** Adult Id */
+            adult_id: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Id */
+            id: string;
+            /** Opponent Id */
+            opponent_id: string | null;
+            /** Opponent Name */
+            opponent_name: string;
+            replay: components["schemas"]["SumoResult"];
+            /** Reward */
+            reward: number;
+            /** Won */
+            won: boolean;
+        };
+        /** BoutSummary */
+        BoutSummary: {
+            /** Adult Id */
+            adult_id: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Id */
+            id: string;
+            /** Opponent Id */
+            opponent_id: string | null;
+            /** Opponent Name */
+            opponent_name: string;
+            /** Reward */
+            reward: number;
+            /** Won */
+            won: boolean;
+        };
         /** BrainActivity */
         BrainActivity: {
             /** Duration Ms */
@@ -962,6 +1055,32 @@ export interface components {
              * @enum {string}
              */
             scenario: "rest" | "sugar" | "bitter" | "sugar+bitter" | "looming" | "light_left" | "light_right" | "antenna_touch" | "liked_odor" | "disliked_odor";
+        };
+        /** Challenger */
+        Challenger: {
+            /** Id */
+            id: string;
+            /** Level */
+            level: number;
+            /** Name */
+            name: string;
+            /** Owner Name */
+            owner_name: string;
+            /** Strain */
+            strain: string;
+            /** Traits */
+            traits: string[];
+        };
+        /** Challenges */
+        Challenges: {
+            /** Males */
+            males: components["schemas"]["Challenger"][];
+            /** Opponents */
+            opponents: components["schemas"]["Challenger"][];
+            /** Remaining */
+            remaining: number;
+            /** Streak */
+            streak: number;
         };
         /** CircadianResponse */
         CircadianResponse: {
@@ -1477,6 +1596,13 @@ export interface components {
             /** Id */
             id: string;
         };
+        /** StartBout */
+        StartBout: {
+            /** Adult Id */
+            adult_id: string;
+            /** Opponent Id */
+            opponent_id: string;
+        };
         /** StartWeekRequest */
         StartWeekRequest: {
             /** Parents */
@@ -1506,6 +1632,28 @@ export interface components {
         SubscriptionResponse: {
             /** Subscribed */
             subscribed: boolean;
+        };
+        /** SumoFrame */
+        SumoFrame: {
+            /** Actions */
+            actions: string[];
+            /** Positions */
+            positions: number[];
+            /** Push */
+            push: number[];
+            /** Retreats */
+            retreats: number[];
+            /** Tick */
+            tick: number;
+        };
+        /** SumoResult */
+        SumoResult: {
+            /** Frames */
+            frames: components["schemas"]["SumoFrame"][];
+            /** Reason */
+            reason: string;
+            /** Winner */
+            winner: number;
         };
         /** TeamRequest */
         TeamRequest: {
@@ -3145,6 +3293,112 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    history_v1_sumo_bouts_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BoutSummary"][];
+                };
+            };
+        };
+    };
+    start_v1_sumo_bouts_post: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StartBout"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BoutReplay"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    replay_v1_sumo_bouts__bout_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                bout_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BoutReplay"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    challenges_v1_sumo_challenges_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Challenges"];
                 };
             };
         };
