@@ -37,4 +37,5 @@ def test_breakdown_and_rewards() -> None:
     assert result.points == 5900 and result.care_miss == 1
     assert (result.shizuku, result.research_points) == (983, 147)
     assert rewards(4000, 0.05) == (666, 105)
-    assert rewards(-1) == (-1, -1)
+    assert rewards(-1) == (0, 0)
+    assert rewards(-9000, 0.1) == (0, 0)
