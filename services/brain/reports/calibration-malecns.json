@@ -1,591 +1,288 @@
-[
-  {
-    "circuit": "feeding",
-    "scale": 0.0078125,
-    "input_rate_hz": 180,
-    "rates": [
-      {
-        "MN9": 0.0
-      },
-      {
-        "MN9": 0.0
-      },
-      {
-        "MN9": 0.0
-      }
-    ]
+{
+  "seed": 19,
+  "trials": 8,
+  "input_rate_hz": 180,
+  "duration_ms": 300,
+  "selection": {
+    "kc_budget": "40 is the tested budget closest to neutral untrained PI",
+    "apl_factor": "untrained banana mean KC Hz / mean APL Hz; shared by both pools",
+    "sign_budget": "4 balances E/I while retaining unilateral responses; 2 is weak",
+    "tonic": "fixed 1.15 background current, matching walking baseline; never fit per cell",
+    "scales": "retain previous global scales; no threshold, plasticity, or trait tuning"
   },
-  {
-    "circuit": "feeding",
-    "scale": 0.015625,
-    "input_rate_hz": 180,
-    "rates": [
-      {
-        "MN9": 0.0
-      },
-      {
-        "MN9": 0.0
-      },
-      {
-        "MN9": 0.0
+  "records": [
+    {
+      "circuit": "olfaction_mb",
+      "kc_budget": 20,
+      "apl_factor": 0.019091383972609885,
+      "baseline_pi": 0.4859541654586792,
+      "rates": {
+        "KC": 7.527083873748779,
+        "APL": 396.6666564941406,
+        "MBON_ap": 17.70833396911621,
+        "MBON_av": 6.125
       }
-    ]
-  },
-  {
-    "circuit": "feeding",
-    "scale": 0.03125,
-    "input_rate_hz": 180,
-    "rates": [
-      {
-        "MN9": 0.0
-      },
-      {
-        "MN9": 0.0
-      },
-      {
-        "MN9": 0.0
+    },
+    {
+      "circuit": "olfaction_mb",
+      "kc_budget": 40,
+      "apl_factor": 0.019091383972609885,
+      "baseline_pi": 0.10012932866811752,
+      "rates": {
+        "KC": 7.433332920074463,
+        "APL": 396.4583435058594,
+        "MBON_ap": 15.291666984558105,
+        "MBON_av": 12.5
       }
-    ]
-  },
-  {
-    "circuit": "feeding",
-    "scale": 0.0625,
-    "input_rate_hz": 180,
-    "rates": [
-      {
-        "MN9": 0.0
-      },
-      {
-        "MN9": 2.0833332538604736
-      },
-      {
-        "MN9": 0.625
+    },
+    {
+      "circuit": "olfaction_mb",
+      "kc_budget": 60,
+      "apl_factor": 0.019091383972609885,
+      "baseline_pi": -0.25708094239234924,
+      "rates": {
+        "KC": 7.347916126251221,
+        "APL": 396.6666564941406,
+        "MBON_ap": 11.333333015441895,
+        "MBON_av": 19.16666603088379
       }
-    ]
-  },
-  {
-    "circuit": "feeding",
-    "scale": 0.125,
-    "input_rate_hz": 180,
-    "rates": [
-      {
-        "MN9": 0.0
-      },
-      {
-        "MN9": 240.625
-      },
-      {
-        "MN9": 214.375
+    },
+    {
+      "circuit": "olfaction_mb",
+      "kc_budget": 80,
+      "apl_factor": 0.019091383972609885,
+      "baseline_pi": -0.49403810501098633,
+      "rates": {
+        "KC": 7.252084255218506,
+        "APL": 396.25,
+        "MBON_ap": 8.625,
+        "MBON_av": 25.45833396911621
       }
-    ]
-  },
-  {
-    "circuit": "feeding",
-    "scale": 0.25,
-    "input_rate_hz": 180,
-    "rates": [
-      {
-        "MN9": 0.0
-      },
-      {
-        "MN9": 316.875
-      },
-      {
-        "MN9": 311.25
+    },
+    {
+      "circuit": "olfaction_mb",
+      "kc_budget": 100,
+      "apl_factor": 0.019091383972609885,
+      "baseline_pi": -0.5437817573547363,
+      "rates": {
+        "KC": 7.210416793823242,
+        "APL": 395.4166564941406,
+        "MBON_ap": 9.375,
+        "MBON_av": 31.70833396911621
       }
-    ]
-  },
-  {
-    "circuit": "escape",
-    "scale": 0.000244140625,
-    "input_rate_hz": 180,
-    "rates": [
-      {
-        "DNp01": 0.0
-      },
-      {
-        "DNp01": 25.41666603088379
+    },
+    {
+      "circuit": "olfaction_mb",
+      "kc_budget": 120,
+      "apl_factor": 0.019091383972609885,
+      "baseline_pi": -0.5055453181266785,
+      "rates": {
+        "KC": 7.125,
+        "APL": 396.0416564941406,
+        "MBON_ap": 12.125,
+        "MBON_av": 36.91666793823242
       }
-    ]
-  },
-  {
-    "circuit": "escape",
-    "scale": 0.00048828125,
-    "input_rate_hz": 180,
-    "rates": [
-      {
-        "DNp01": 0.0
+    },
+    {
+      "circuit": "steering",
+      "sign_budget": 2,
+      "tonic": {
+        "visual_relay": 1.15,
+        "DNa02_L": 1.15,
+        "DNa02_R": 1.15
       },
-      {
-        "DNp01": 77.5
-      }
-    ]
-  },
-  {
-    "circuit": "escape",
-    "scale": 0.0009765625,
-    "input_rate_hz": 180,
-    "rates": [
-      {
-        "DNp01": 0.0
-      },
-      {
-        "DNp01": 144.5833282470703
-      }
-    ]
-  },
-  {
-    "circuit": "escape",
-    "scale": 0.001953125,
-    "input_rate_hz": 180,
-    "rates": [
-      {
-        "DNp01": 0.0
-      },
-      {
-        "DNp01": 226.875
-      }
-    ]
-  },
-  {
-    "circuit": "escape",
-    "scale": 0.00390625,
-    "input_rate_hz": 180,
-    "rates": [
-      {
-        "DNp01": 0.0
-      },
-      {
-        "DNp01": 305.625
-      }
-    ]
-  },
-  {
-    "circuit": "escape",
-    "scale": 0.0078125,
-    "input_rate_hz": 180,
-    "rates": [
-      {
-        "DNp01": 0.0
-      },
-      {
-        "DNp01": 363.125
-      }
-    ]
-  },
-  {
-    "circuit": "escape",
-    "scale": 0.015625,
-    "input_rate_hz": 180,
-    "rates": [
-      {
-        "DNp01": 0.0
-      },
-      {
-        "DNp01": 399.7916564941406
-      }
-    ]
-  },
-  {
-    "circuit": "escape",
-    "scale": 0.03125,
-    "input_rate_hz": 180,
-    "rates": [
-      {
-        "DNp01": 0.0
-      },
-      {
-        "DNp01": 400.0
-      }
-    ]
-  },
-  {
-    "circuit": "escape",
-    "scale": 0.0625,
-    "input_rate_hz": 180,
-    "rates": [
-      {
-        "DNp01": 0.0
-      },
-      {
-        "DNp01": 400.0
-      }
-    ]
-  },
-  {
-    "circuit": "escape",
-    "scale": 0.125,
-    "input_rate_hz": 180,
-    "rates": [
-      {
-        "DNp01": 0.0
-      },
-      {
-        "DNp01": 400.0
-      }
-    ]
-  },
-  {
-    "circuit": "escape",
-    "scale": 0.25,
-    "input_rate_hz": 180,
-    "rates": [
-      {
-        "DNp01": 0.0
-      },
-      {
-        "DNp01": 400.0
-      }
-    ]
-  },
-  {
-    "circuit": "olfaction_mb",
-    "scale": 0.0078125,
-    "input_rate_hz": 180,
-    "rates": [
-      {
-        "MBON_ap": 0.0,
-        "MBON_av": 0.0,
-        "KC": 0.0
-      },
-      {
-        "MBON_ap": 0.0,
-        "MBON_av": 0.0,
-        "KC": 0.0
-      }
-    ]
-  },
-  {
-    "circuit": "olfaction_mb",
-    "scale": 0.015625,
-    "input_rate_hz": 180,
-    "rates": [
-      {
-        "MBON_ap": 0.0,
-        "MBON_av": 0.0,
-        "KC": 0.0
-      },
-      {
-        "MBON_ap": 0.0,
-        "MBON_av": 0.0,
-        "KC": 0.28541669249534607
-      }
-    ]
-  },
-  {
-    "circuit": "olfaction_mb",
-    "scale": 0.03125,
-    "input_rate_hz": 180,
-    "rates": [
-      {
-        "MBON_ap": 0.0,
-        "MBON_av": 0.0,
-        "KC": 0.0
-      },
-      {
-        "MBON_ap": 0.0,
-        "MBON_av": 0.0,
-        "KC": 1.5229166746139526
-      }
-    ]
-  },
-  {
-    "circuit": "olfaction_mb",
-    "scale": 0.0625,
-    "input_rate_hz": 180,
-    "rates": [
-      {
-        "MBON_ap": 0.0,
-        "MBON_av": 0.0,
-        "KC": 0.0
-      },
-      {
-        "MBON_ap": 0.0,
-        "MBON_av": 0.0,
-        "KC": 2.7937498092651367
-      }
-    ]
-  },
-  {
-    "circuit": "olfaction_mb",
-    "scale": 0.125,
-    "input_rate_hz": 180,
-    "rates": [
-      {
-        "MBON_ap": 0.0,
-        "MBON_av": 0.0,
-        "KC": 0.0
-      },
-      {
-        "MBON_ap": 0.0,
-        "MBON_av": 0.0,
-        "KC": 5.204166889190674
-      }
-    ]
-  },
-  {
-    "circuit": "olfaction_mb",
-    "scale": 0.25,
-    "input_rate_hz": 180,
-    "rates": [
-      {
-        "MBON_ap": 0.0,
-        "MBON_av": 0.0,
-        "KC": 0.0
-      },
-      {
-        "MBON_ap": 86.16666412353516,
-        "MBON_av": 0.0,
-        "KC": 11.924999237060547
-      }
-    ]
-  },
-  {
-    "circuit": "olfaction_mb",
-    "scale": 0.1875,
-    "input_rate_hz": 180,
-    "rates": [
-      {
-        "MBON_ap": 0.0,
-        "MBON_av": 0.0,
-        "KC": 0.0
-      },
-      {
-        "MBON_ap": 7.125,
-        "MBON_av": 0.0,
-        "KC": 7.572916507720947
-      }
-    ]
-  },
-  {
-    "circuit": "olfaction_mb",
-    "scale": 0.375,
-    "input_rate_hz": 180,
-    "rates": [
-      {
-        "MBON_ap": 0.0,
-        "MBON_av": 0.0,
-        "KC": 0.0
-      },
-      {
-        "MBON_ap": 138.9583282470703,
-        "MBON_av": 0.0,
-        "KC": 20.006250381469727
-      }
-    ]
-  },
-  {
-    "circuit": "olfaction_mb",
-    "scale": 0.5,
-    "input_rate_hz": 180,
-    "rates": [
-      {
-        "MBON_ap": 0.0,
-        "MBON_av": 0.0,
-        "KC": 0.0
-      },
-      {
-        "MBON_ap": 154.7916717529297,
-        "MBON_av": 0.0,
-        "KC": 24.804166793823242
-      }
-    ]
-  },
-  {
-    "circuit": "olfaction_mb",
-    "scale": 1.0,
-    "input_rate_hz": 180,
-    "rates": [
-      {
-        "MBON_ap": 0.0,
-        "MBON_av": 0.0,
-        "KC": 0.0
-      },
-      {
-        "MBON_ap": 158.0833282470703,
-        "MBON_av": 0.0,
-        "KC": 36.16875076293945
-      }
-    ]
-  },
-  {
-    "circuit": "steering",
-    "scale": 0.0078125,
-    "input_rate_hz": 180,
-    "rates": [
-      {
-        "DNa02_L": 0.0,
-        "DNa02_R": 0.0,
-        "walking_DN": 23.33333396911621
-      },
-      {
-        "DNa02_L": 0.0,
-        "DNa02_R": 0.0,
-        "walking_DN": 23.33333396911621
-      }
-    ]
-  },
-  {
-    "circuit": "steering",
-    "scale": 0.015625,
-    "input_rate_hz": 180,
-    "rates": [
-      {
-        "DNa02_L": 0.0,
-        "DNa02_R": 0.0,
-        "walking_DN": 23.33333396911621
-      },
-      {
-        "DNa02_L": 0.0,
-        "DNa02_R": 0.0,
-        "walking_DN": 23.33333396911621
-      }
-    ]
-  },
-  {
-    "circuit": "steering",
-    "scale": 0.03125,
-    "input_rate_hz": 180,
-    "rates": [
-      {
-        "DNa02_L": 0.0,
-        "DNa02_R": 0.0,
-        "walking_DN": 23.33333396911621
-      },
-      {
-        "DNa02_L": 0.0,
-        "DNa02_R": 0.0,
-        "walking_DN": 23.33333396911621
-      }
-    ]
-  },
-  {
-    "circuit": "steering",
-    "scale": 0.0625,
-    "input_rate_hz": 180,
-    "rates": [
-      {
-        "DNa02_L": 0.0,
-        "DNa02_R": 0.0,
-        "walking_DN": 23.33333396911621
-      },
-      {
-        "DNa02_L": 0.0,
-        "DNa02_R": 0.0,
-        "walking_DN": 23.33333396911621
-      }
-    ]
-  },
-  {
-    "circuit": "steering",
-    "scale": 0.125,
-    "input_rate_hz": 180,
-    "rates": [
-      {
-        "DNa02_L": 10.0,
-        "DNa02_R": 0.0,
-        "walking_DN": 23.33333396911621
-      },
-      {
-        "DNa02_L": 10.0,
-        "DNa02_R": 0.0,
-        "walking_DN": 23.33333396911621
-      }
-    ]
-  },
-  {
-    "circuit": "steering",
-    "scale": 0.25,
-    "input_rate_hz": 180,
-    "rates": [
-      {
+      "stimulus": {},
+      "rates": {
         "DNa02_L": 23.33333396911621,
-        "DNa02_R": 0.0,
-        "walking_DN": 23.33333396911621
+        "DNa02_R": 20.0,
+        "walking_DN": 25.0
+      }
+    },
+    {
+      "circuit": "steering",
+      "sign_budget": 2,
+      "tonic": {
+        "visual_relay": 1.15,
+        "DNa02_L": 1.15,
+        "DNa02_R": 1.15
       },
-      {
+      "stimulus": {
+        "photoreceptor_L": 1
+      },
+      "rates": {
         "DNa02_L": 23.33333396911621,
-        "DNa02_R": 0.0,
+        "DNa02_R": 20.0,
         "walking_DN": 23.33333396911621
       }
-    ]
-  },
-  {
-    "circuit": "grooming",
-    "scale": 0.0078125,
-    "input_rate_hz": 180,
-    "rates": [
-      {
-        "aDN": 0.0
+    },
+    {
+      "circuit": "steering",
+      "sign_budget": 2,
+      "tonic": {
+        "visual_relay": 1.15,
+        "DNa02_L": 1.15,
+        "DNa02_R": 1.15
       },
-      {
-        "aDN": 10.833333015441895
-      }
-    ]
-  },
-  {
-    "circuit": "grooming",
-    "scale": 0.015625,
-    "input_rate_hz": 180,
-    "rates": [
-      {
-        "aDN": 0.0
+      "stimulus": {
+        "photoreceptor_R": 1
       },
-      {
-        "aDN": 179.5833282470703
+      "rates": {
+        "DNa02_L": 23.33333396911621,
+        "DNa02_R": 23.33333396911621,
+        "walking_DN": 23.33333396911621
       }
-    ]
-  },
-  {
-    "circuit": "grooming",
-    "scale": 0.03125,
-    "input_rate_hz": 180,
-    "rates": [
-      {
-        "aDN": 0.0
+    },
+    {
+      "circuit": "steering",
+      "sign_budget": 2,
+      "tonic": {
+        "visual_relay": 1.15,
+        "DNa02_L": 1.15,
+        "DNa02_R": 1.15
       },
-      {
-        "aDN": 278.75
-      }
-    ]
-  },
-  {
-    "circuit": "grooming",
-    "scale": 0.0625,
-    "input_rate_hz": 180,
-    "rates": [
-      {
-        "aDN": 0.0
+      "stimulus": {
+        "photoreceptor_L": 1,
+        "photoreceptor_R": 1
       },
-      {
-        "aDN": 332.1875
+      "rates": {
+        "DNa02_L": 25.41666603088379,
+        "DNa02_R": 25.41666603088379,
+        "walking_DN": 21.875
       }
-    ]
-  },
-  {
-    "circuit": "grooming",
-    "scale": 0.125,
-    "input_rate_hz": 180,
-    "rates": [
-      {
-        "aDN": 0.0
+    },
+    {
+      "circuit": "steering",
+      "sign_budget": 4,
+      "tonic": {
+        "visual_relay": 1.15,
+        "DNa02_L": 1.15,
+        "DNa02_R": 1.15
       },
-      {
-        "aDN": 357.7083435058594
+      "stimulus": {},
+      "rates": {
+        "DNa02_L": 16.66666603088379,
+        "DNa02_R": 13.333333015441895,
+        "walking_DN": 28.33333396911621
       }
-    ]
-  },
-  {
-    "circuit": "grooming",
-    "scale": 0.25,
-    "input_rate_hz": 180,
-    "rates": [
-      {
-        "aDN": 0.0
+    },
+    {
+      "circuit": "steering",
+      "sign_budget": 4,
+      "tonic": {
+        "visual_relay": 1.15,
+        "DNa02_L": 1.15,
+        "DNa02_R": 1.15
       },
-      {
-        "aDN": 384.375
+      "stimulus": {
+        "photoreceptor_L": 1
+      },
+      "rates": {
+        "DNa02_L": 19.58333396911621,
+        "DNa02_R": 13.333333015441895,
+        "walking_DN": 21.25
       }
-    ]
-  }
-]
+    },
+    {
+      "circuit": "steering",
+      "sign_budget": 4,
+      "tonic": {
+        "visual_relay": 1.15,
+        "DNa02_L": 1.15,
+        "DNa02_R": 1.15
+      },
+      "stimulus": {
+        "photoreceptor_R": 1
+      },
+      "rates": {
+        "DNa02_L": 23.33333396911621,
+        "DNa02_R": 36.66666793823242,
+        "walking_DN": 31.66666603088379
+      }
+    },
+    {
+      "circuit": "steering",
+      "sign_budget": 4,
+      "tonic": {
+        "visual_relay": 1.15,
+        "DNa02_L": 1.15,
+        "DNa02_R": 1.15
+      },
+      "stimulus": {
+        "photoreceptor_L": 1,
+        "photoreceptor_R": 1
+      },
+      "rates": {
+        "DNa02_L": 30.83333396911621,
+        "DNa02_R": 32.5,
+        "walking_DN": 18.125
+      }
+    },
+    {
+      "circuit": "steering",
+      "sign_budget": 8,
+      "tonic": {
+        "visual_relay": 1.15,
+        "DNa02_L": 1.15,
+        "DNa02_R": 1.15
+      },
+      "stimulus": {},
+      "rates": {
+        "DNa02_L": 3.3333332538604736,
+        "DNa02_R": 3.3333332538604736,
+        "walking_DN": 55.0
+      }
+    },
+    {
+      "circuit": "steering",
+      "sign_budget": 8,
+      "tonic": {
+        "visual_relay": 1.15,
+        "DNa02_L": 1.15,
+        "DNa02_R": 1.15
+      },
+      "stimulus": {
+        "photoreceptor_L": 1
+      },
+      "rates": {
+        "DNa02_L": 6.666666507720947,
+        "DNa02_R": 3.3333332538604736,
+        "walking_DN": 34.79166793823242
+      }
+    },
+    {
+      "circuit": "steering",
+      "sign_budget": 8,
+      "tonic": {
+        "visual_relay": 1.15,
+        "DNa02_L": 1.15,
+        "DNa02_R": 1.15
+      },
+      "stimulus": {
+        "photoreceptor_R": 1
+      },
+      "rates": {
+        "DNa02_L": 32.91666793823242,
+        "DNa02_R": 76.25,
+        "walking_DN": 81.875
+      }
+    },
+    {
+      "circuit": "steering",
+      "sign_budget": 8,
+      "tonic": {
+        "visual_relay": 1.15,
+        "DNa02_L": 1.15,
+        "DNa02_R": 1.15
+      },
+      "stimulus": {
+        "photoreceptor_L": 1,
+        "photoreceptor_R": 1
+      },
+      "rates": {
+        "DNa02_L": 59.58333206176758,
+        "DNa02_R": 65.0,
+        "walking_DN": 5.833333492279053
+      }
+    }
+  ]
+}
