@@ -498,6 +498,74 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/races/current": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Current */
+        get: operations["current_v1_races_current_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/races/current/entry": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Enter */
+        post: operations["enter_v1_races_current_entry_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/races/current/ranking": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Ranking */
+        get: operations["ranking_v1_races_current_ranking_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/races/entries/{entry_id}/replay": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Replay */
+        get: operations["replay_v1_races_entries__entry_id__replay_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/shiori/ask": {
         parameters: {
             query?: never;
@@ -784,6 +852,18 @@ export interface components {
             /** Typical Wake */
             typical_wake: string | null;
         };
+        /** CurrentRace */
+        CurrentRace: {
+            /**
+             * Deadline
+             * Format: date-time
+             */
+            deadline: string;
+            maze: components["schemas"]["MazeGeometry"];
+            my_entry: components["schemas"]["RaceEntryView"] | null;
+            /** Week */
+            week: string;
+        };
         /** DailyAttempt */
         DailyAttempt: {
             /**
@@ -924,6 +1004,15 @@ export interface components {
             /** Path */
             path: number[];
         };
+        /** EnterRace */
+        EnterRace: {
+            /** Adult Id */
+            adult_id: string;
+            /** Placements */
+            placements: components["schemas"]["MazeToken"][];
+            /** Week */
+            week: string;
+        };
         /** ExperimentRequest */
         ExperimentRequest: {
             /**
@@ -998,6 +1087,47 @@ export interface components {
             /** Valence */
             valence?: ("reward" | "punish") | null;
         };
+        /** MazeFrame */
+        MazeFrame: {
+            /** Heading */
+            heading: number;
+            /** X */
+            x: number;
+            /** Y */
+            y: number;
+        };
+        /** MazeGeometry */
+        MazeGeometry: {
+            /** Goal */
+            goal: number[];
+            /** Grid */
+            grid: string[];
+            /** Start */
+            start: number[];
+        };
+        /** MazeResult */
+        MazeResult: {
+            /** Distance Left */
+            distance_left: number;
+            /** Frames */
+            frames: components["schemas"]["MazeFrame"][];
+            /** Reached */
+            reached: boolean;
+            /** Steps */
+            steps: number;
+        };
+        /** MazeToken */
+        MazeToken: {
+            /**
+             * Cue
+             * @enum {string}
+             */
+            cue: "banana" | "apple_vinegar" | "yeast" | "grape" | "blue_light";
+            /** X */
+            x: number;
+            /** Y */
+            y: number;
+        };
         /** ProfilePatch */
         ProfilePatch: {
             /** Display Name */
@@ -1006,6 +1136,58 @@ export interface components {
             favorite_adult_id?: string | null;
             /** Title */
             title?: string | null;
+        };
+        /** RaceEntryView */
+        RaceEntryView: {
+            /** Adult Id */
+            adult_id: string;
+            /** Id */
+            id: string;
+            /** Job Id */
+            job_id: string;
+            /** Placements */
+            placements: components["schemas"]["MazeToken"][];
+            /** Status */
+            status: string;
+            /**
+             * Submitted At
+             * Format: date-time
+             */
+            submitted_at: string;
+        };
+        /** RaceRank */
+        RaceRank: {
+            /** Display Name */
+            display_name: string;
+            /** Distance Left */
+            distance_left: number;
+            /** Entry Id */
+            entry_id: string;
+            /** Is Me */
+            is_me: boolean;
+            /** Rank */
+            rank: number;
+            /** Reached */
+            reached: boolean;
+            /** Steps */
+            steps: number;
+            /** User Id */
+            user_id: string;
+        };
+        /** RaceRanking */
+        RaceRanking: {
+            /** Entries */
+            entries: components["schemas"]["RaceRank"][];
+            /** Week */
+            week: string;
+        };
+        /** RaceReplay */
+        RaceReplay: {
+            entry: components["schemas"]["RaceEntryView"];
+            maze: components["schemas"]["MazeGeometry"];
+            result: components["schemas"]["MazeResult"] | null;
+            /** Week */
+            week: string;
         };
         /** RenameAdult */
         RenameAdult: {
@@ -2300,6 +2482,112 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PuzzleResult"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    current_v1_races_current_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CurrentRace"];
+                };
+            };
+        };
+    };
+    enter_v1_races_current_entry_post: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EnterRace"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RaceEntryView"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    ranking_v1_races_current_ranking_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RaceRanking"];
+                };
+            };
+        };
+    };
+    replay_v1_races_entries__entry_id__replay_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                entry_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RaceReplay"];
                 };
             };
             /** @description Validation Error */

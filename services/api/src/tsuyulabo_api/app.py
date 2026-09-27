@@ -28,6 +28,7 @@ from tsuyulabo_api.routers import (
     jobs,
     odds,
     puzzles,
+    races,
     shiori,
     sleep,
     team,
@@ -45,6 +46,7 @@ from tsuyulabo_api.services.jobs import (
     JobFunction,
     JobQueue,
 )
+from tsuyulabo_api.services.maze_race import handler as maze_handler
 from tsuyulabo_api.services.shiori import handler as shiori_handler
 from tsuyulabo_api.settings import Settings
 
@@ -65,6 +67,7 @@ def create_app(
     adapter = brain_adapter or BrainAdapter()
     handlers = {
         "brain.experiment": experiment_handler(sessions, adapter),
+        "brain.maze_run": maze_handler(),
         "shiori.answer": shiori_handler(sessions),
     } | dict(brain_handlers or {})
     redis = (
@@ -150,6 +153,7 @@ def create_app(
         weeks.router,
         puzzles.router,
         daily_circuit.router,
+        races.router,
         adults.router,
         team.router,
         inventory.router,
