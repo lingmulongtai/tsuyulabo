@@ -3,6 +3,7 @@ import type { HomeData } from "@/lib/types";
 import { Pupa } from "../art/Stages";
 import { DailyCircuitCard } from "../daily/DailyCircuitCard";
 import { RaceCard } from "../race/RaceCard";
+import { SumoCard } from "../sumo/SumoCard";
 import { CurrencyPill, Meter } from "../ui/primitives";
 import { CircadianRing } from "../sleep/CircadianRing";
 import { ActionGrid } from "./ActionGrid";
@@ -84,6 +85,7 @@ export function HomeScreen({ data, hero, footer }: { data: HomeData; hero?: Reac
       {data.todo.length > 0 && <TodoList todo={data.todo} />}
       <DailyCircuitCard />
       <RaceCard />
+      <SumoCard />
       <TeamStrip team={data.team} />
       {footer}
     </div>
