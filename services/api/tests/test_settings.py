@@ -23,3 +23,25 @@ def test_defaults_and_environment(monkeypatch: pytest.MonkeyPatch) -> None:
 def test_invalid_mode() -> None:
     with pytest.raises(ValidationError):
         Settings(brain_mode="invalid", _env_file=None)
+
+
+@pytest.mark.parametrize(
+    "secret", ["", "short", "x" * 31, "local-development-only-change-before-deploying"]
+)
+def test_production_rejects_unsafe_secret(monkeypatch: pytest.MonkeyPatch, secret: str) -> None:
+    monkeypatch.setenv("TSUYU_ENV", "production")
+    monkeypatch.setenv("JWT_SECRET", secret)
+    with pytest.raises(ValidationError, match="JWT_SECRET"):
+        Settings(_env_file=None)
+
+
+def test_production_accepts_explicit_secret(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("TSUYU_ENV", "production")
+    settings = Settings(jwt_secret="x" * 32, _env_file=None)
+    assert settings.environment == "production"
+
+
+def test_unknown_environment_fails_closed(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("TSUYU_ENV", "prodution")
+    with pytest.raises(ValidationError):
+        Settings(_env_file=None)
