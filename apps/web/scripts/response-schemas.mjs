@@ -7,8 +7,9 @@ const arr = items => ({ type: "array", items });
 const nullable = schema => ({ anyOf: [schema, { type: "null" }] });
 const en = (...values) => ({ type: "string", enum: values });
 const dict = (value = {}) => ({ type: "object", additionalProperties: value });
-const adultBase = { id: str, name: str, sex: en("m", "f"), strain: en("wild", "white", "yellow", "ebony", "curly", "vestigial"), stars: num, traits: arr(str), skills: dict(bool), level: num, preferences: dict(num) };
+const adultBase = { id: str, name: str, sex: en("m", "f"), strain: en("wild", "white", "yellow", "ebony", "curly", "vestigial"), stars: num, traits: arr(str), skills: dict(bool), level: num, preferences: dict(num), genotype: ref("Genotype"), phenotypes: arr(en("wild", "white", "yellow", "ebony", "curly", "vestigial")), mutation: nullable(obj({ locus: en("w", "y", "e", "Cy", "vg"), copy: num })) };
 export const schemas = {
+  Genotype: obj({ sex: en("m", "f"), w: arr(en("+", "w")), y: arr(en("+", "y")), e: arr(en("+", "e")), Cy: arr(en("+", "Cy")), vg: arr(en("+", "vg")) }),
   Slot: en("morning", "noon", "night"),
   Stage: en("egg", "larva1", "larva2", "larva3", "wandering", "pupa", "adult"),
   ActionKind: en("meal", "training", "cleaning", "temperature", "pupation_site", "sleep", "wake"),
@@ -30,7 +31,7 @@ export const schemas = {
   Puzzle: obj({ puzzle_id: str, kind: en("meal", "training", "cleaning", "temperature", "pupation_site"), params: dict(), issued_at: str, expires_at: str }),
   PuzzleResult: obj({ valid: bool, score: num, lines: num, max_combo: num, theme_cells: num, great_success: bool, stars: num, hirameki: bool, hit: bool, grades: arr(en("perfect", "good", "miss")), grade: en("perfect", "good", "miss"), effects: dict({ anyOf: [num, bool] }), seq: num, event_id: str }, ["valid", "score", "lines", "max_combo", "theme_cells", "great_success", "stars", "hirameki", "hit", "grades", "grade", "effects"]),
   Presentation: obj({ meal_points: num, training_points: num, care_points: num, care_miss: num, penalty: num, points: num, rank: ref("WeekRank"), shizuku: num, research_points: num }),
-  Eclosion: obj({ omen_sequence: arr(num), tier: num, adult: obj(adultBase) }),
+  Eclosion: obj({ omen_sequence: arr(num), tier: num, lethal_redraws: num, adult: obj(adultBase) }),
   SleepStart: obj({ id: str, started_at: str }),
   SleepEnd: obj({ id: str, hours: num, bonus: num, energy_recovered: dict(num) }),
   Collection: obj({ materials: dict(num), shizuku: num, exp: dict(num), team: ref("Team") }),

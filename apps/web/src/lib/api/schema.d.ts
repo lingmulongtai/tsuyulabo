@@ -602,6 +602,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/weeks/friend-mating": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Friend Mating */
+        post: operations["friend_mating_v1_weeks_friend_mating_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/zukan": {
         parameters: {
             query?: never;
@@ -751,6 +768,14 @@ export interface components {
             /** Material */
             material: string;
         };
+        /** StartWeekRequest */
+        StartWeekRequest: {
+            /** Parents */
+            parents?: [
+                string,
+                string
+            ] | null;
+        };
         /** TeamRequest */
         TeamRequest: {
             /** Adult Ids */
@@ -768,6 +793,15 @@ export interface components {
             msg: string;
             /** Error Type */
             type: string;
+        };
+        Genotype: {
+            /** @enum {string} */
+            sex: "m" | "f";
+            w: ("+" | "w")[];
+            y: ("+" | "y")[];
+            e: ("+" | "e")[];
+            Cy: ("+" | "Cy")[];
+            vg: ("+" | "vg")[];
         };
         /** @enum {string} */
         Slot: "morning" | "noon" | "night";
@@ -842,6 +876,13 @@ export interface components {
             preferences: {
                 [key: string]: number;
             };
+            genotype: components["schemas"]["Genotype"];
+            phenotypes: ("wild" | "white" | "yellow" | "ebony" | "curly" | "vestigial")[];
+            mutation: {
+                /** @enum {string} */
+                locus: "w" | "y" | "e" | "Cy" | "vg";
+                copy: number;
+            } | null;
             week_id: string;
             subskills: string[];
             level_cap: number;
@@ -939,6 +980,7 @@ export interface components {
         Eclosion: {
             omen_sequence: number[];
             tier: number;
+            lethal_redraws: number;
             adult: {
                 id: string;
                 name: string;
@@ -955,6 +997,13 @@ export interface components {
                 preferences: {
                     [key: string]: number;
                 };
+                genotype: components["schemas"]["Genotype"];
+                phenotypes: ("wild" | "white" | "yellow" | "ebony" | "curly" | "vestigial")[];
+                mutation: {
+                    /** @enum {string} */
+                    locus: "w" | "y" | "e" | "Cy" | "vg";
+                    copy: number;
+                } | null;
             };
         };
         SleepStart: {
@@ -2129,7 +2178,11 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["StartWeekRequest"] | null;
+            };
+        };
         responses: {
             /** @description Successful Response */
             201: {
@@ -2218,6 +2271,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Presentation"];
+                };
+            };
+        };
+    };
+    friend_mating_v1_weeks_friend_mating_post: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Successful Response */
+            501: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
                 };
             };
         };

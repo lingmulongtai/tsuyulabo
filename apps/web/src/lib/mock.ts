@@ -2,6 +2,7 @@ import type { HomeData, TeamMemberSummary } from "./types";
 
 const demoMember = (id: string, name: string, bag: number): TeamMemberSummary => ({
   id, name, strain: "wild", sex: "f", level: 12, energy: 80, bag: { banana: bag },
+  genotype: { sex: "f", w: ["+", "+"], y: ["+", "+"], e: ["+", "+"], Cy: ["+", "+"], vg: ["+", "+"] }, phenotypes: ["wild"], mutation: null,
   week_id: "w-demo", stars: 3, traits: [], subskills: [], skills: {}, preferences: {},
   level_cap: 40, exp: 0, created_at: "2026-09-27T04:00:00+09:00", slot: 0,
   shizuku: 0, pending_exp: bag,

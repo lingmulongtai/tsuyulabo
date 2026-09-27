@@ -378,6 +378,34 @@
         "title": "SendGift",
         "type": "object"
       },
+      "StartWeekRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "parents": {
+            "anyOf": [
+              {
+                "maxItems": 2,
+                "minItems": 2,
+                "prefixItems": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ],
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Parents"
+          }
+        },
+        "title": "StartWeekRequest",
+        "type": "object"
+      },
       "TeamRequest": {
         "additionalProperties": false,
         "properties": {
@@ -1939,6 +1967,23 @@
             }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/StartWeekRequest"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Body"
+              }
+            }
+          }
+        },
         "responses": {
           "201": {
             "content": {
@@ -2046,6 +2091,44 @@
           }
         },
         "summary": "Read Presentation"
+      }
+    },
+    "/v1/weeks/friend-mating": {
+      "post": {
+        "operationId": "friend_mating_v1_weeks_friend_mating_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Idempotency-Key",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "501": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Friend Mating"
       }
     },
     "/v1/zukan": {
