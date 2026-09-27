@@ -309,3 +309,62 @@ button {
     animation: none;
   }
 }
+
+/* ------------------------------------------------------------------
+   Behaviour poses (driven by the brain model's decoder)
+   ------------------------------------------------------------------ */
+.ts-groom {
+  animation: ts-groom 0.45s ease-in-out infinite alternate;
+  transform-origin: 120px 160px;
+}
+@keyframes ts-groom {
+  from { transform: translateY(0) rotate(-4deg); }
+  to { transform: translateY(-4px) rotate(4deg); }
+}
+.ts-proboscis {
+  animation: ts-proboscis 0.8s ease-in-out infinite alternate;
+  transform-origin: 120px 131px;
+}
+@keyframes ts-proboscis {
+  from { transform: scaleY(0.4); }
+  to { transform: scaleY(1); }
+}
+@keyframes bh-walk {
+  0%, 100% { transform: translateX(-18%) scaleX(1); }
+  49% { transform: translateX(18%) scaleX(1); }
+  50% { transform: translateX(18%) scaleX(-1); }
+  99% { transform: translateX(-18%) scaleX(-1); }
+}
+@keyframes bh-turn-left {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(-24deg) translateX(-6%); }
+}
+@keyframes bh-turn-right {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(24deg) translateX(6%); }
+}
+@keyframes bh-escape {
+  0%, 60%, 100% { transform: translateY(0) scale(1); }
+  70% { transform: translateY(-38%) scale(0.92) rotate(-8deg); }
+  85% { transform: translateY(-10%) scale(0.98); }
+}
+@keyframes bh-approach {
+  0%, 100% { transform: translateX(-14%); }
+  60% { transform: translateX(16%); }
+}
+@keyframes bh-avoid {
+  0%, 100% { transform: translateX(10%); }
+  50% { transform: translateX(-20%) rotate(-6deg); }
+}
+.bh-walk { animation: bh-walk 4.2s linear infinite; }
+.bh-turn_left { animation: bh-turn-left 2.4s ease-in-out infinite; transform-origin: 50% 80%; }
+.bh-turn_right { animation: bh-turn-right 2.4s ease-in-out infinite; transform-origin: 50% 80%; }
+.bh-escape { animation: bh-escape 1.6s cubic-bezier(0.2, 0.8, 0.3, 1) infinite; }
+.bh-approach { animation: bh-approach 2.8s ease-in-out infinite; }
+.bh-avoid { animation: bh-avoid 2.4s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ts-groom, .ts-proboscis, .bh-walk, .bh-turn_left, .bh-turn_right, .bh-escape, .bh-approach, .bh-avoid {
+    animation: none;
+  }
+}
