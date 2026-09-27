@@ -2,9 +2,13 @@ from __future__ import annotations
 
 from typing import Any
 
+import pytest
 from sqlalchemy import select
+from tsuyulabo_api.brain_adapter import BrainAdapter
 from tsuyulabo_api.db.models import CareEvent, LedgerAccount
+from tsuyulabo_api.domain.team import material_weights
 from tsuyulabo_api.routers import adults, friends, home, inventory, puzzles, sleep, team, weeks
+from tsuyulabo_api.services import game as game_service
 from tsuyulabo_api.services.ledger import verify_balance
 
 from .game_support import GameClient
@@ -12,7 +16,12 @@ from .puzzle_solvers import play
 from .test_team_routes import put_team
 
 
-async def test_full_week_from_guest_to_collection_and_level_up(sessions: Any) -> None:
+@pytest.mark.parametrize("real_engine", [False, pytest.param(True, marks=pytest.mark.eval)])
+async def test_full_week_from_guest_to_collection_and_level_up(
+    sessions: Any, monkeypatch: pytest.MonkeyPatch, real_engine: bool
+) -> None:
+    if real_engine:
+        monkeypatch.setattr(game_service, "randbits", lambda bits: 42)
     routers = (
         weeks.router,
         puzzles.router,
@@ -27,6 +36,10 @@ async def test_full_week_from_guest_to_collection_and_level_up(sessions: Any) ->
         GameClient(sessions, *routers) as game,
         GameClient(sessions, friends.router) as friend,
     ):
+        baseline = 0.0
+        if real_engine:
+            game.app.state.brain_adapter = engine = BrainAdapter()
+            baseline = engine.preferences(engine.new())["banana"]
         assert (
             await game.post("/v1/friends", {"friend_code": friend.user["friend_code"]})
         ).status_code == 201
@@ -39,7 +52,7 @@ async def test_full_week_from_guest_to_collection_and_level_up(sessions: Any) ->
                 assert state["clock"]["research_day"] == day
                 assert state["clock"]["slot"] == slot
                 await play(game, sessions, "meal")
-                if day >= 2:
+                if day >= 2 and (not real_engine or day == 2):
                     trained = await play(game, sessions, "training")
                     assert trained["stars"] == 3
                 if slot == "morning":
@@ -60,8 +73,14 @@ async def test_full_week_from_guest_to_collection_and_level_up(sessions: Any) ->
         eclosed = await game.post("/v1/weeks/current/eclose")
         assert eclosed.status_code == 200, eclosed.text
         adult = eclosed.json()["adult"]
-        assert adult["preferences"]["banana"] > 0.6
-        assert adult["skills"]["banana_search"]
+        if real_engine:
+            # Three ordinary 3-star puzzles use strength .36, not the engine eval's 1.0.
+            assert adult["preferences"]["banana"] > baseline + 0.1
+            weights = material_weights(adult["preferences"])
+            assert weights["banana"] > material_weights({})["banana"]
+        else:
+            assert adult["preferences"]["banana"] > 0.6
+            assert adult["skills"]["banana_search"]
         notification = (await friend.get("/v1/notifications")).json()[0]
         assert (
             notification["kind"] == "eclosion"
@@ -70,6 +89,8 @@ async def test_full_week_from_guest_to_collection_and_level_up(sessions: Any) ->
         assert (await put_team(game, [adult["id"]])).status_code == 200
         await game.advance(hours=8)
         collected = (await game.post("/v1/team/collect")).json()
+        if real_engine:
+            assert collected["materials"]["banana"] == max(collected["materials"].values())
         assert sum(collected["materials"].values()) == 12
         assert collected["team"]["members"][0]["level"] == 2
         level = await game.post(f"/v1/adults/{adult['id']}/level-up")
@@ -84,7 +105,7 @@ async def test_full_week_from_guest_to_collection_and_level_up(sessions: Any) ->
             )
             assert [e.seq for e in events] == list(range(1, len(events) + 1))
             assert sum(e.kind == "meal" for e in events) == 21
-            assert sum(e.kind == "training" for e in events) == 18
+            assert sum(e.kind == "training" for e in events) == (3 if real_engine else 18)
             for account in await session.scalars(select(LedgerAccount)):
                 assert await verify_balance(session, account.id)
 

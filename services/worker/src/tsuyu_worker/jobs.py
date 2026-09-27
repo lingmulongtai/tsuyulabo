@@ -9,11 +9,13 @@ from typing import Any
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
-from tsuyu_shiori.features import JST, answer_question, morning_memo
+from tsuyu_shiori.features import JST, morning_memo
 from tsuyu_shiori.gateway import Provider
 from tsuyu_shiori.tools import ExperimentArguments
+from tsuyulabo_api.brain_adapter import BrainAdapter
 from tsuyulabo_api.db.models import Job, ShioriMessage, User
 from tsuyulabo_api.db.session import create_engine, session_factory
+from tsuyulabo_api.services import experiments, shiori, training
 from tsuyulabo_api.settings import Settings
 
 from .adapters import SQLLab, SQLRecordStore, conversation_scope
@@ -43,10 +45,17 @@ async def perform(
     provider: Provider | None,
     brain: BrainEngine | None,
 ) -> dict[str, Any]:
+    if kind == "brain.training":
+        return await training.apply_pending(session, BrainAdapter(), params | {"user_id": user_id})
+    if kind == "brain.experiment" and "snapshot" in params:
+        await SQLRecordStore(session, user_id).fly_week(params["fly_id"])
+        return await experiments.perform(session, BrainAdapter(), params | {"user_id": user_id})
+    if kind in {"shiori.answer", "shiori_answer"}:
+        return await shiori.perform(session, user_id, params, provider, brain)
     store = SQLRecordStore(session, user_id)
     lab = SQLLab(session, user_id, brain)
     week_id, fly_id = await conversation_scope(store, params)
-    if kind == "brain_run_experiment":
+    if kind in {"brain_run_experiment", "brain.experiment"}:
         arguments = ExperimentArguments.model_validate(
             {
                 "fly_id": fly_id,
@@ -63,28 +72,7 @@ async def perform(
             "result": record.data,
             "cost": {"usd": 0.0},
         }
-    if kind != "shiori_answer":
-        raise ValueError("unknown job kind")
-    question = params.get("question")
-    if not isinstance(question, str):
-        raise ValueError("question is required")
-    answer = await answer_question(
-        question, store=store, lab=lab, week_id=week_id, fly_id=fly_id, provider=provider
-    )
-    session.add_all(
-        [
-            ShioriMessage(user_id=user_id, role="user", text=question, evidence=[], cost={}),
-            ShioriMessage(
-                user_id=user_id,
-                role="assistant",
-                text=answer.text,
-                evidence=answer.evidence_ids,
-                cost=answer.cost,
-            ),
-        ]
-    )
-    await session.flush()
-    return answer.to_dict()
+    raise ValueError("unknown job kind")
 
 
 async def run_job(
@@ -97,9 +85,12 @@ async def run_job(
     brain: BrainEngine | None = None,
 ) -> dict[str, Any]:
     async with session_source(sessions) as factory, factory() as session, session.begin():
-        job = await session.scalar(select(Job).where(Job.id == job_id).with_for_update())
-        if job is None:
+        owner = await session.scalar(select(Job.user_id).where(Job.id == job_id))
+        if owner is None:
             raise ValueError("job not found")
+        # Match training/eclosion lock order so simultaneous deliveries cannot deadlock.
+        await session.scalar(select(User).where(User.id == owner).with_for_update())
+        job = await session.scalar(select(Job).where(Job.id == job_id).with_for_update())
         if job.status in {"succeeded", "failed"}:
             return job.result or {"error": job.error}
         # The row lock lasts until status, messages and experiments commit together.
@@ -107,9 +98,13 @@ async def run_job(
         job.status = "running"
         try:
             async with session.begin_nested():
-                if job.kind != kind:
+                aliases = {
+                    "brain_run_experiment": "brain.experiment",
+                    "shiori_answer": "shiori.answer",
+                }
+                if aliases.get(job.kind, job.kind) != aliases.get(kind, kind):
                     raise ValueError("job kind does not match handler")
-                inputs = params if params is not None else (job.result or {}).get("input", {})
+                inputs = job.params or params or (job.result or {}).get("input", {})
                 result = await perform(session, job.user_id, kind, inputs, provider, brain)
         except Exception:
             job.status, job.result = "failed", None
@@ -224,4 +219,13 @@ def inline_handlers(
 
         return invoke
 
-    return {kind: handler(kind) for kind in ("brain_run_experiment", "shiori_answer")}
+    return {
+        kind: handler(kind)
+        for kind in (
+            "brain.experiment",
+            "brain.training",
+            "shiori.answer",
+            "brain_run_experiment",
+            "shiori_answer",
+        )
+    }

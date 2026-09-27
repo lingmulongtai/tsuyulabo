@@ -113,6 +113,7 @@ class BrainClient:
     async def submit(self, user_id: str, kind: str, params: dict[str, Any]) -> Job:
         async with self.sessions() as session, session.begin():
             job = await create_job(session, user_id, kind)
+            job.params = params
             job_id = job.id
         try:
             await self.queue.enqueue(job_id, kind, params)

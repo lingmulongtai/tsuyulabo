@@ -4,13 +4,13 @@ from copy import deepcopy
 from types import SimpleNamespace
 
 import pytest
-from tsuyu_worker import brain_adapter
 from tsuyu_worker.brain_adapter import (
     BrainSnapshot,
     BrainUnavailable,
     FakeBrainEngine,
     RealBrainEngine,
 )
+from tsuyulabo_api.services import shiori_brain as brain_adapter
 
 
 def test_fake_is_deterministic_and_does_not_mutate() -> None:
@@ -20,19 +20,19 @@ def test_fake_is_deterministic_and_does_not_mutate() -> None:
     assert snapshot == original
 
 
-def test_real_adapter_passes_copies_and_replays(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_real_adapter_decodes_without_replaying(monkeypatch: pytest.MonkeyPatch) -> None:
     def run(state: dict, cue: str, trials: int, seed: int) -> dict:
         state["mutated"] = True
         return {"toward": trials, "away": 0}
 
     api = SimpleNamespace(
-        generate_individual=lambda *args: {},
-        new_fly_state=lambda _: {},
-        apply_training=lambda *args: ({"trained": True}, 0.5),
+        FlyState=SimpleNamespace(from_bytes=lambda _: {}),
         run_odor_choice=run,
     )
     monkeypatch.setattr(brain_adapter, "import_module", lambda _: api)
-    snapshot = BrainSnapshot("f", training=[{"cue": "banana", "valence": "reward"}])
+    snapshot = BrainSnapshot(
+        "f", learned_weights=b"codec", training=[{"cue": "banana", "valence": "reward"}]
+    )
     original = deepcopy(snapshot)
     assert RealBrainEngine().run_odor_choice(snapshot, "banana", 20, 4)["toward"] == 20
     assert snapshot == original

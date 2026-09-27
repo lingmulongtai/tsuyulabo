@@ -30,12 +30,12 @@ def rank_for(points: int) -> str:
 
 
 def rewards(points: int, rp_bonus: float = 0) -> tuple[int, int]:
-    """Apply the spec's floor formulas, including negative totals (no unstated clamp)."""
+    """Apply floor formulas without debiting players for negative point totals."""
     if rp_bonus < 0:
         raise ValueError("bonus must be nonnegative")
     return (
-        floor(points / c.PRESENTATION_SHIZUKU_DIVISOR),
-        floor(points / c.PRESENTATION_RP_DIVISOR * (1 + rp_bonus)),
+        max(0, floor(points / c.PRESENTATION_SHIZUKU_DIVISOR)),
+        max(0, floor(points / c.PRESENTATION_RP_DIVISOR * (1 + rp_bonus))),
     )
 
 

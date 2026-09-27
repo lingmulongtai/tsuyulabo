@@ -39,7 +39,7 @@ async def sessions(tmp_path: Path) -> AsyncIterator[async_sessionmaker[AsyncSess
                 user_id="u",
                 week_id="w",
                 name="ツユ",
-                sex="F",
+                sex="f",
                 strain="wild",
                 stars=1,
                 brain_params={"associations": {"banana": 0.4}},

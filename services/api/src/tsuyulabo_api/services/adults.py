@@ -35,8 +35,6 @@ def apply_progress(adult: Adult, state: rules.AdultProgress) -> None:
 
 
 def payload(adult: Adult, brain: BrainAdapter | None = None) -> dict[str, Any]:
-    if not adult.preferences and brain is not None:
-        adult.preferences = brain.preferences(adult.brain_snapshot)
     return {
         "id": adult.id,
         "week_id": adult.week_id,

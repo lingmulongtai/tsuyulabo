@@ -16,7 +16,7 @@ def test_progress_and_cached_preferences() -> None:
         exp=89,
         subskills=[],
         energy=100,
-        preferences={},
+        preferences={"banana": 0},
         brain_snapshot=FakeBrain().new(),
     )
     apply_progress(adult, add_exp(progress(adult), 1, Random(42)))

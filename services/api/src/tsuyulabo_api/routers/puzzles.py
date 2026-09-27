@@ -13,6 +13,8 @@ from tsuyulabo_api.domain.puzzles import cleaning, meal, pupation_site, temperat
 from tsuyulabo_api.domain.puzzles.common import verify_wall_clock
 from tsuyulabo_api.errors import APIError
 from tsuyulabo_api.services import week as service
+from tsuyulabo_api.services.brain_state import snapshot as brain_snapshot
+from tsuyulabo_api.services.brain_state import store as store_brain
 from tsuyulabo_api.services.clock import game_now
 from tsuyulabo_api.services.game import Brain, CurrentClock, CurrentUser, Session, record_care, rng
 from tsuyulabo_api.services.idempotency import IdempotentRoute
@@ -150,13 +152,14 @@ async def submit(
         if request.app.state.settings.brain_mode == "queue":
             result |= {"association": None, "skill_unlocked": None}
         else:
-            state.brain_snapshot, value = brain.train(
-                state.brain_snapshot,
+            learned, value = brain.train(
+                brain_snapshot(state),
                 cue,
                 valence,
                 result["learning_strength"],
                 random.getrandbits(63),
             )
+            store_brain(state, learned, brain)
             skill = training.skill_unlocked(cue, value)
             result |= {
                 "association": {"cue": cue, "valence": valence, "value": value},

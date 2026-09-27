@@ -1,15 +1,14 @@
-"""Lazy façade boundary; no engine internals or pickle in persisted state.
+"""Lazy facade; JSON transport envelopes wrap the engine's compact byte codec.
 
-Until the engine defines its byte codec, snapshots contain individual generation
-inputs and the short, seeded training history (at most 18 entries per week).
-Reconstruction uses only public façade calls and preserves learning at eclosion.
-The commander can replace this codec without changing routers or stored effects.
+Rows store decoded bytes and parameters; training history is audit data only.
+Legacy replay snapshots are accepted for conversion on writes or explicit backfill.
 """
 
 from __future__ import annotations
 
+import base64
 from copy import deepcopy
-from dataclasses import asdict, is_dataclass
+from dataclasses import asdict, is_dataclass, replace
 from importlib import import_module
 from typing import Any
 
@@ -27,54 +26,60 @@ class BrainAdapter:
         except ModuleNotFoundError as exc:
             raise APIError("brain_unavailable", "脳エンジンを準備中です", 503) from exc
 
-    def params(self, snapshot: dict[str, Any]) -> Any:
-        api = self.api
-        if snapshot["default"]:
-            # W1's default_params is expected to be re-exported by the public façade.
-            return api.default_params()
-        return api.generate_individual(**snapshot["individual"])
-
     def restore(self, snapshot: dict[str, Any]) -> Any:
-        state = self.api.new_fly_state(self.params(snapshot))
-        for event in snapshot["training"]:
+        if snapshot.get("state"):
+            return self.api.FlyState.from_bytes(base64.b64decode(snapshot["state"], validate=True))
+        params = (
+            self.api.default_params()
+            if snapshot.get("default", True)
+            else self.api.generate_individual(**snapshot["individual"])
+        )
+        state = self.api.new_fly_state(params)
+        for event in snapshot.get("training", []):
             state, _ = self.api.apply_training(state, **event)
         return state
 
+    def encode(self, state: Any, training: list[dict[str, Any]]) -> dict[str, Any]:
+        params = state.params
+        return {
+            "state": base64.b64encode(state.to_bytes()).decode("ascii"),
+            "params": asdict(params) if is_dataclass(params) else dict(params),
+            "training": deepcopy(training),
+        }
+
     def new(self) -> dict[str, Any]:
-        snapshot = {"default": True, "individual": {}, "training": []}
-        self.restore(snapshot)
-        return snapshot
+        return self.encode(self.api.new_fly_state(self.api.default_params()), [])
 
     def eclose(
         self, snapshot: dict[str, Any], traits: list[str], sex: str, seed: int
     ) -> tuple[dict[str, Any], dict[str, Any]]:
-        snapshot = deepcopy(snapshot)
-        snapshot.update(default=False, individual={"traits": traits, "sex": sex, "seed": seed})
-        self.restore(snapshot)
-        params = self.params(snapshot)
-        encoded = asdict(params) if is_dataclass(params) else dict(params)
-        return snapshot, encoded
+        params = self.api.generate_individual(traits=traits, sex=sex.lower(), seed=seed)
+        # Adult gains change without replaying or changing the learned weights.
+        state = replace(self.restore(snapshot), params=params)
+        updated = self.encode(state, snapshot.get("training", []))
+        return updated, updated["params"]
 
     def train(
         self, snapshot: dict[str, Any], cue: str, valence: str, strength: float, seed: int
     ) -> tuple[dict[str, Any], float]:
         event = {"cue": cue, "valence": valence, "strength": strength, "seed": seed}
-        _, association = self.api.apply_training(self.restore(snapshot), **event)
-        updated = deepcopy(snapshot)
-        updated["training"].append(event)
-        return updated, float(association)
+        state, association = self.api.apply_training(self.restore(snapshot), **event)
+        return self.encode(state, [*snapshot.get("training", []), event]), float(association)
 
     def preferences(self, snapshot: dict[str, Any]) -> dict[str, float]:
         state = self.restore(snapshot)
         return {
-            cue: float(self.api.preference_index(state, cue, seed=0, trials=100)) for cue in CUES
+            cue: float(self.api.preference_index(state, cue, seed=0, trials=20)) for cue in CUES
         }
 
     def behavior(self, snapshot: dict[str, Any], context: dict[str, Any]) -> dict[str, float]:
-        return self.api.predict_behavior(self.restore(snapshot), context)
+        inputs = {
+            key: context[key] for key in ("scenario", "cue", "intensity", "seed") if key in context
+        }
+        return self.api.predict_behavior(self.restore(snapshot), inputs)
 
     def experiment(self, snapshot: dict[str, Any], cue: str, trials: int, seed: int) -> dict:
-        return self.api.run_odor_choice(deepcopy(self.restore(snapshot)), cue, trials, seed)
+        return self.api.run_odor_choice(self.restore(snapshot), cue, trials, seed)
 
 
 def get_brain(request: Request) -> BrainAdapter:
