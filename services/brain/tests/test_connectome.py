@@ -9,10 +9,10 @@ from tsuyu_brain.params import default_params
 
 def test_topologies() -> None:
     for name in CIRCUIT_NAMES:
-        circuit = load_circuit(name)
+        circuit = load_circuit(name, "toy-v0")
         assert torch.equal(circuit.weights, build_circuit(name).weights)
         assert circuit.version == "toy-v0"
-    mb = load_circuit("olfaction_mb")
+    mb = load_circuit("olfaction_mb", "toy-v0")
     assert (mb.weights[mb.groups["PN"], mb.groups["KC"]].count_nonzero(dim=0) == 6).all()
     assert mb.groups["KC"].stop - mb.groups["KC"].start == 200
     assert (mb.weights[mb.groups["APL"]] <= 0).all()

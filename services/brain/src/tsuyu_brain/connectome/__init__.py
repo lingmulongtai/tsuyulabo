@@ -8,8 +8,8 @@ from pathlib import Path
 from tsuyu_brain.circuit import Circuit
 from tsuyu_brain.connectome.toy_v0 import build_circuit
 
-DEFAULT_VERSION = "toy-v0"
-VERSIONS = (DEFAULT_VERSION, "malecns-v1.0")
+DEFAULT_VERSION = "malecns-v1.0"
+VERSIONS = ("toy-v0", DEFAULT_VERSION)
 
 
 @lru_cache(maxsize=10)

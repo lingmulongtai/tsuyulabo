@@ -8,7 +8,7 @@ from tsuyu_brain.params import default_params
 
 
 def test_scenario_output_features() -> None:
-    state = new_fly_state(default_params())
+    state = new_fly_state(default_params(), "toy-v0")
     for scenario, output in [
         ("sugar", "MN9"),
         ("looming", "DNp01"),
