@@ -31,6 +31,10 @@ class Decoder:
             return self.logits(features).softmax(dim=-1)
 
     def save(self, path: str | Path) -> None:
+        if self.mean.numel() != len(FEATURES):
+            raise ValueError(
+                "only the promoted toy feature schema can be saved as a game checkpoint"
+            )
         path = Path(path)
         path.parent.mkdir(parents=True, exist_ok=True)
         torch.save(
@@ -65,7 +69,8 @@ def train_decoder(
     if kind not in {"logistic", "mlp"} or epochs < 1:
         raise ValueError("invalid decoder kind or epochs")
     generator = torch.Generator().manual_seed(seed)
-    sizes = [len(FEATURES), len(LABELS)] if kind == "logistic" else [len(FEATURES), 16, len(LABELS)]
+    width = data.features.shape[1]
+    sizes = [width, len(LABELS)] if kind == "logistic" else [width, 16, len(LABELS)]
     weights: list[Tensor] = []
     for n_in, n_out in zip(sizes[:-1], sizes[1:], strict=True):
         weights.extend(

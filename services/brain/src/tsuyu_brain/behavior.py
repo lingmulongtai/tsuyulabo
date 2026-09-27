@@ -99,13 +99,16 @@ def scenario_features(
     duration_ms: float = 300,
     shuffle_seed: int | None = None,
 ) -> Tensor:
-    """Return [batch, 8] time-averaged rates. Odor states must already be trained.
+    """Return mean rates (toy) or mean/window rates and contrasts (MaleCNS).
 
     Walk adds a tonic arousal drive; rest retains low spontaneous walking-DN firing.
     Scenario names never enter the decoder's numeric input.
     """
     params, jobs = scenario_inputs(state, scenario, cue=cue, intensity=intensity)
     features = torch.zeros(batch, len(FEATURES))
+    from tsuyu_brain.decoder.features import WINDOWS, temporal_features, window_rates
+
+    windows = torch.zeros(batch, len(FEATURES), WINDOWS)
     for name, stimulus in jobs.items():
         circuit = (
             learned_circuit(state) if name == "olfaction_mb" else load_circuit(name, state.version)
@@ -117,4 +120,6 @@ def scenario_features(
             features[:, FEATURES.index(group)] = (result.rates[group] * result.window_ms).sum(
                 1
             ) / duration_ms
-    return features
+            if state.version == "malecns-v1.0":
+                windows[:, FEATURES.index(group)] = window_rates(result, group)
+    return temporal_features(features, windows) if state.version == "malecns-v1.0" else features
