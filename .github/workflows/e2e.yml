@@ -1,0 +1,77 @@
+name: End-to-end week
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "23 18 * * *" # 03:23 JST daily; never runs on push/PR.
+
+permissions:
+  contents: read
+
+concurrency:
+  group: e2e-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  week:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      E2E_BASE_URL: http://localhost:3000
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+      NEXT_PUBLIC_DEV_TOOLS: "1"
+      TSUYU_DEV_TOOLS: "1"
+      BRAIN_MODE: queue
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Check circuit solver
+        run: npm run test:e2e:helpers -w @tsuyulabo/web
+      - name: Start the backend stack
+        run: |
+          docker compose up -d --build postgres redis migrate api worker
+          curl --fail --silent --show-error --retry 60 --retry-all-errors --retry-delay 2 \
+            --max-time 5 --retry-max-time 180 http://localhost:8000/healthz
+          test "$(docker compose ps --status running -q worker | wc -l)" -eq 1
+      - name: Build and start the web app
+        run: |
+          npm run build -w @tsuyulabo/web
+          npm run start -w @tsuyulabo/web > "$RUNNER_TEMP/tsuyu-web.log" 2>&1 &
+          echo "$!" > "$RUNNER_TEMP/tsuyu-web.pid"
+          curl --fail --silent --show-error --output /dev/null --retry 30 --retry-all-errors \
+            --retry-delay 2 --max-time 5 --retry-max-time 90 "$E2E_BASE_URL"
+      - name: Play the smoke and golden path specs
+        run: npm run test:e2e -w @tsuyulabo/web
+      - name: Collect service logs
+        if: always()
+        run: |
+          mkdir -p apps/web/test-results
+          docker compose ps -a > apps/web/test-results/compose-status.txt
+          docker compose logs --no-color > apps/web/test-results/compose.log 2>&1
+          if [ -f "$RUNNER_TEMP/tsuyu-web.log" ]; then
+            cp "$RUNNER_TEMP/tsuyu-web.log" apps/web/test-results/web-server.log
+          fi
+      - name: Upload browser report and failure traces
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-report-${{ github.run_attempt }}
+          path: |
+            apps/web/playwright-report/
+            apps/web/test-results/
+          retention-days: 14
+          if-no-files-found: warn
+      - name: Stop services
+        if: always()
+        run: |
+          if [ -f "$RUNNER_TEMP/tsuyu-web.pid" ]; then
+            kill "$(cat "$RUNNER_TEMP/tsuyu-web.pid")" || true
+          fi
+          docker compose down --volumes

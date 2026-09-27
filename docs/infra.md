@@ -152,6 +152,57 @@ Dependabot PRs still run evaluations and upload artifacts but cannot post using 
 tokens. A repository policy denying comment writes produces a warning, not an evaluation failure.
 The workflow uses `pull_request`, never `pull_request_target` to execute contributed code.
 
+## Browser end-to-end tests
+
+The Playwright suite uses the real API and a fresh guest per test. The short smoke spec receives
+an egg; the golden path plays all seven research days, both circuit sizes, cleaning, temperature,
+pupation, presentation, and eclosion, then checks the same adult in `/team` and `/adults/[id]`.
+It plays four real 30-second meals (other meal slots can count as care misses), so allow about
+2–4 minutes. It does not require a particular random reward or rank. Time advances only through
+the visible dev panel; the circuit solver reads public puzzle parameters from the UI's response.
+
+From the repository root, in PowerShell:
+
+```powershell
+npm.cmd ci
+npx.cmd playwright install chromium
+$env:TSUYU_DEV_TOOLS = '1'
+$env:NEXT_PUBLIC_DEV_TOOLS = '1'
+$env:NEXT_PUBLIC_API_URL = 'http://localhost:8000'
+docker compose up -d --build postgres redis migrate api worker
+npm.cmd run build -w @tsuyulabo/web
+npm.cmd run start -w @tsuyulabo/web
+```
+
+In another terminal at the repository root:
+
+```powershell
+$env:E2E_BASE_URL = 'http://localhost:3000' # optional; this is the default
+$env:NEXT_PUBLIC_API_URL = 'http://localhost:8000'
+npm.cmd run test:e2e -w @tsuyulabo/web
+npm.cmd run test:e2e:smoke -w @tsuyulabo/web # just the quick smoke spec
+npm.cmd run test:e2e:helpers -w @tsuyulabo/web # circuit solver unit tests
+npm.cmd run test:e2e:report -w @tsuyulabo/web
+```
+
+An existing `docker compose up` or host dev server also works with both dev-tool flags enabled.
+Public environment values must be set before building Next.js, and the runner's API URL must
+match that build. For a different web origin, configure API `CORS_ORIGINS` accordingly. Tests
+leave their guest records in the development database; they never reset shared data.
+On Unix use `npm` / `npx` and `export`. If the sandbox cannot write the browser cache, set
+`PLAYWRIGHT_BROWSERS_PATH` to a directory inside `.codex-runs/` for both install and test commands.
+
+Without a stack, validate discovery with `npm.cmd run test:e2e -w @tsuyulabo/web -- --list`
+(equivalent to `npx.cmd playwright test --list` from `apps/web`). Discovery does not execute tests.
+HTML reports live in `apps/web/playwright-report/`; failed tests retain screenshots, videos, and
+traces in `apps/web/test-results/`. Open a trace with `npx.cmd playwright show-trace <trace.zip>`.
+
+`.github/workflows/e2e.yml` runs only on manual dispatch and nightly at 18:23 UTC (03:23 JST).
+It builds the Compose backend, builds/starts the web with dev tools enabled, runs the suite, and
+uploads reports, failure traces, and service logs for 14 days even on failure. It uses no paid
+provider credentials. Browser installation and reporting follow the
+[Playwright CI guidance](https://playwright.dev/docs/ci).
+
 ## Future deployment
 
 The [project proposal](spec/kikakusho-v0.2.txt) plans Vercel for the web, Cloud Run for API and
