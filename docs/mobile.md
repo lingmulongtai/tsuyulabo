@@ -6,7 +6,7 @@ Android アプリは `apps/mobile/` の Capacitor 8 プロジェクトです。�
 
 ## Android デバッグ APK
 
-GitHub Actions の `Android alpha` を手動実行すると、Node 22 と JDK 17 を使って `npm ci`、`npx cap sync android`、`./gradlew assembleDebug` を実行し、APK をワークフローの artifact に保存します。CI の実行番号を Android の `versionCode` に、タグ名を `versionName` に使います。`v*-alpha*` タグでは、同じ APK を GitHub の prerelease に添付し、`docs/releases/<tag>.md` をリリースノートに使用します。タグに対応するノートを先に追加し、タグは別途作成してください。
+GitHub Actions の `Android alpha` を手動実行すると、Node 22 と JDK 21（Capacitor の要件）を使って `npm ci`、`npx cap sync android`、`./gradlew assembleDebug` を実行し、APK をワークフローの artifact に保存します。CI の実行番号を Android の `versionCode` に、タグ名を `versionName` に使います。`v*-alpha*` タグでは、同じ APK を GitHub の prerelease に添付し、`docs/releases/<tag>.md` をリリースノートに使用します。タグに対応するノートを先に追加し、タグは別途作成してください。
 
 ローカルに Android SDK がある場合の手順:
 
