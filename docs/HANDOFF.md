@@ -8,7 +8,7 @@
 - フェーズ: W3 完了 → W4 進行中。**アルファの1週間ループが Web + API + ワーカー + DB で通しで遊べる状態**
 - main にあるもの: 全画面が API につながった Web（ホーム、ごはん・しつけ・そうじ・温度・場所えらび・睡眠、研究発表会、羽化、
   チーム、成虫の詳細＋脳モデルで動く行動、脳ビューア、図鑑、フレンド、シオリ、開発用の時計）、ゲーム API、本物の脳エンジン
-  （既定は toy-v0。MaleCNS v1.0 の回路も同梱、6 項目中 3 項目合格）、シオリ、ワーカー、docker compose、CI
+  （**既定は本物の配線 MaleCNS v1.0**、6 項目すべて合格。合成の toy-v0 も同梱）、シオリ、ワーカー、docker compose、CI
 - テスト: Python 597 件（+ eval）、Web 254 件。ruff / typecheck / lint / build も通過。GitHub Actions も緑
 - ブラウザで通しプレイ確認済み: 卵 → 時間スキップ → 発表会（ケアミスで減点・報酬 0）→ 羽化（サーバーの抽選）→ 成虫ページ → 脳ビューア
 - 実行中のタスクはなし（2026-09-27 15:06 時点）。マイグレーションの先頭は 0010
@@ -136,3 +136,6 @@ git push
   Android の CI は 4 回目で成功（setup-android をやめてランナーの SDK を使う、Gradle の versionName の括弧、JDK 21）。
   **プレリリース v0.1.0-alpha.1 を公開**: https://github.com/lingmulongtai/tsuyulabo/releases/tag/v0.1.0-alpha.1
   （デバッグ署名 APK 4.3 MB。アプリは Vercel の公開デモを読み込む）。次のアルファは docs/releases/<tag>.md を書いてから `v0.1.0-alpha.N` タグを push。
+- 2026-09-27 夕方 Claude: W8-decoder をマージ。MaleCNS から出力ニューロン 279 個を追加抽出し、デコーダーが 88.6%（検証用データでは 81.8%）。
+  **6 項目すべて合格したので、ゲームの既定の脳を本物の配線 `malecns-v1.0` に切り替えた。** Python 618 件 + eval 7 件が通過。
+  docker compose でも本物の配線で `scripts/smoke_api.py` が通ることを確認。残りの課題: 一部の匂いの反応が「じっとしている」にまとまる。
