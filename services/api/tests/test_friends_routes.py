@@ -3,10 +3,11 @@ from __future__ import annotations
 from typing import Any
 from uuid import uuid4
 
-from tsuyulabo_api.db.models import Friendship, User
+from tsuyulabo_api.db.models import Friendship, TeamSlot, User
 from tsuyulabo_api.routers import friends, inventory, weeks
 from tsuyulabo_api.services.ledger import add_material
 
+from .adult_fixtures import make_adult
 from .game_support import GameClient
 
 
@@ -70,3 +71,33 @@ async def test_friend_capacity_checks_both_users(sessions: Any) -> None:
         response = await a.post("/v1/friends", {"friend_code": b.user["friend_code"]})
         assert response.json()["error"]["code"] == "friend_limit"
         assert (await a.get("/v1/friends")).json() == []
+
+
+async def test_lab_exposes_only_public_display_fields(sessions: Any) -> None:
+    async with (
+        GameClient(sessions, friends.router, weeks.router) as viewer,
+        GameClient(sessions, friends.router, weeks.router) as owner,
+    ):
+        adult_id = await make_adult(sessions, owner)
+        async with sessions() as session, session.begin():
+            session.add(
+                TeamSlot(
+                    user_id=owner.user["id"],
+                    slot=0,
+                    adult_id=adult_id,
+                    bag={"items": ["banana"], "shizuku": 42, "pending_exp": 99},
+                    last_computed_at=owner.clock.now(),
+                )
+            )
+        await owner.post("/v1/weeks")
+        await viewer.post("/v1/friends", {"friend_code": owner.user["friend_code"]})
+        response = await viewer.get(f"/v1/friends/{owner.user['id']}/lab")
+        assert response.status_code == 200
+        lab = response.json()
+        assert set(lab["user"]) == {"id", "display_name"}
+        public = {"id", "name", "sex", "strain", "stars", "level"}
+        assert set(lab["adults"][0]) == public
+        assert set(lab["team"]) == {"members"}
+        assert set(lab["team"]["members"][0]) == public | {"slot"}
+        assert set(lab["week"]) == {"stage", "research_day", "fly"}
+        assert set(lab["week"]["fly"]) == {"hunger", "cleanliness", "mood_label"}

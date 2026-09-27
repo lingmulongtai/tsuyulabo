@@ -5,16 +5,24 @@ from typing import Any
 from fastapi import APIRouter
 from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import delete, func, select
-from tsuyulabo_api.db.models import Adult, Friendship, Gift, Like, Notification, User, Week
+from tsuyulabo_api.db.models import (
+    Adult,
+    Friendship,
+    Gift,
+    Like,
+    Notification,
+    TeamSlot,
+    User,
+    Week,
+)
 from tsuyulabo_api.domain import constants as c
 from tsuyulabo_api.domain.clock import game_day
 from tsuyulabo_api.domain.friends import validate_code
 from tsuyulabo_api.errors import APIError
 from tsuyulabo_api.routers.users import CurrentUser as AuthenticatedUser
-from tsuyulabo_api.services import adults, team
 from tsuyulabo_api.services import week as week_service
 from tsuyulabo_api.services.clock import game_now
-from tsuyulabo_api.services.game import Brain, CurrentClock, CurrentUser, Session, reward
+from tsuyulabo_api.services.game import CurrentClock, CurrentUser, Session, reward
 from tsuyulabo_api.services.idempotency import IdempotentRoute
 from tsuyulabo_api.services.ledger import add_material, remove_material
 
@@ -111,11 +119,16 @@ async def remove_friend(
 
 @router.get("/friends/{friend_id}/lab")
 async def lab(
-    friend_id: str, user: AuthenticatedUser, session: Session, clock: CurrentClock, brain: Brain
+    friend_id: str, user: AuthenticatedUser, session: Session, clock: CurrentClock
 ) -> dict[str, Any]:
     friend = await lock_pair(session, user.id, friend_id)
     now = game_now(clock, friend)
-    members = await team.settle(session, friend.id, now, brain)
+    members = await session.execute(
+        select(TeamSlot.slot, Adult)
+        .join(Adult, TeamSlot.adult_id == Adult.id)
+        .where(TeamSlot.user_id == friend.id, Adult.user_id == friend.id)
+        .order_by(TeamSlot.slot)
+    )
     week = await session.scalar(
         select(Week).where(Week.user_id == friend.id, Week.status == "active")
     )
@@ -125,14 +138,26 @@ async def lab(
         current = {
             "stage": detail["stage"],
             "research_day": detail["research_day"],
-            "fly": detail["fly"],
+            "fly": {key: detail["fly"][key] for key in ("hunger", "cleanliness", "mood_label")},
         }
     flies = await session.scalars(select(Adult).where(Adult.user_id == friend.id))
     return {
         "user": {"id": friend.id, "display_name": friend.display_name},
-        "adults": [adults.payload(adult, brain) for adult in flies],
-        "team": team.payload(members),
+        "adults": [public_adult(adult) for adult in flies],
+        "team": {"members": [public_adult(adult) | {"slot": slot} for slot, adult in members]},
         "week": current,
+    }
+
+
+def public_adult(adult: Adult) -> dict[str, Any]:
+    # Allowlist the fields rendered by friend cards; owner serializers grow independently.
+    return {
+        "id": adult.id,
+        "name": adult.name,
+        "sex": adult.sex,
+        "strain": adult.strain,
+        "stars": adult.stars,
+        "level": adult.level,
     }
 
 
