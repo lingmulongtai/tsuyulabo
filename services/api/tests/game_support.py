@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import json
 from copy import deepcopy
+from dataclasses import asdict, dataclass
 from datetime import datetime, timedelta
 from typing import Any
 from uuid import uuid4
@@ -13,34 +15,49 @@ from tsuyulabo_api.routers import dev, users
 from .http_support import router_app
 
 
+@dataclass
+class FakeState:
+    params: dict
+    values: dict
+
+    def to_bytes(self) -> bytes:
+        return json.dumps(asdict(self)).encode()
+
+    @classmethod
+    def from_bytes(cls, value: bytes) -> FakeState:
+        return cls(**json.loads(value))
+
+
 class FakeFacade:
+    FlyState = FakeState
+
     def default_params(self) -> dict:
         return {}
 
     def generate_individual(self, **kwargs: Any) -> dict:
         return kwargs
 
-    def new_fly_state(self, params: dict) -> dict:
-        return {"params": params, "values": {}}
+    def new_fly_state(self, params: dict) -> FakeState:
+        return FakeState(params, {})
 
     def apply_training(
-        self, state: dict, cue: str, valence: str, strength: float, seed: int
+        self, state: FakeState, cue: str, valence: str, strength: float, seed: int
     ) -> tuple:
         state = deepcopy(state)
         value = max(
-            -1, min(1, state["values"].get(cue, 0) + strength * (1 if valence == "reward" else -1))
+            -1, min(1, state.values.get(cue, 0) + strength * (1 if valence == "reward" else -1))
         )
-        state["values"][cue] = value
+        state.values[cue] = value
         return state, value
 
     def preference_index(self, state: dict, cue: str, seed: int, trials: int) -> float:
-        return state["values"].get(cue, 0)
+        return state.values.get(cue, 0)
 
     def predict_behavior(self, state: dict, context: dict) -> dict:
         return {"walk": 0.75, "rest": 0.25}
 
     def run_odor_choice(self, state: dict, cue: str, trials: int, seed: int) -> dict:
-        toward = round(trials * (1 + state["values"].get(cue, 0)) / 2)
+        toward = round(trials * (1 + state.values.get(cue, 0)) / 2)
         return {"toward": toward, "away": trials - toward}
 
 
