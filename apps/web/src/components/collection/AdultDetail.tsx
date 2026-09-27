@@ -3,10 +3,11 @@ import { useState } from "react";
 import { useAdult, useLevelUp, useRenameAdult } from "@/lib/api/hooks";
 import { preferencePercent, SKILL_LABELS, SUBSKILL_LABELS, TRAIT_LABELS } from "@/lib/display";
 import { CUE_INFO } from "@/game/labels";
+import { genotypeNotation, phenotypes } from "@/game/genetics";
 import type { Cue } from "@/game/puzzles/types";
 import { AdultBehavior } from "./AdultBehavior";
 import { STRAIN_LABELS } from "../art/palette";
-import { Button, Card, Meter, SectionTitle, Stars } from "../ui/primitives";
+import { Button, Card, Meter, SectionTitle, Stars, TruthBadge } from "../ui/primitives";
 import { ErrorCard, QueryState } from "../ui/QueryState";
 import { AskShiori } from "../shiori/AskShiori";
 
@@ -48,6 +49,16 @@ export function AdultDetail({ id }: { id: string }) {
       {level.data && <p role="status" className="mt-2 text-leaf">Lv.{level.data.level}になりました！</p>}
     </Card>
     {level.error && <ErrorCard error={level.error} retry={() => level.mutate(id)} />}
+    <SectionTitle aside={<TruthBadge kind="real" />}>遺伝子型</SectionTitle>
+    <Card className="space-y-3 p-4">
+      <p className="text-sm">{data.sex === "f" ? "♀ XX" : "♂ XY"} ・ {data.phenotypes.map(p => STRAIN_LABELS[p].name).join("・")}</p>
+      <dl className="flex flex-wrap gap-2">{genotypeNotation(data.genotype).map(({ locus, notation, carrier }) => <div key={locus} className="rounded-xl bg-bg px-3 py-2">
+        <dt className="text-xs text-muted">{locus}</dt><dd className="font-mono">{notation}</dd>{carrier && <dd className="text-xs text-leaf">保因</dd>}
+      </div>)}</dl>
+      <p className="text-xs text-muted">＋ は野生型。保因は、見た目に現れない変異を受け継いでいること。本物の優性・劣性と性染色体のしくみを使っています。</p>
+      {data.strain !== "wild" && phenotypes(data.genotype)[0] === "wild" && <p className="text-xs text-muted">以前の記録から引き継いだ個体です。見た目の記録を残し、遺伝子型は野生型から始めています。</p>}
+      {data.mutation && <p className="text-xs text-leaf">羽化のときに {data.mutation.locus} の新しい変異が生まれました。</p>}
+    </Card>
     <SectionTitle>生まれつきの特性</SectionTitle>
     <Card className="flex flex-wrap gap-2 p-4">{data.traits.map(trait => <span key={trait} className="rounded-full bg-tint-leaf px-3 py-1 text-sm font-bold text-leaf">{TRAIT_LABELS[trait] ?? "新しい特性"}</span>)}</Card>
     <SectionTitle>サブスキル</SectionTitle>
