@@ -4,7 +4,7 @@
 
 Reads <clone-dir>/.codex-runs/commits.jsonl. Each line:
 
-    {"message": "feat(brain): add lif neuron population", "body": "optional", "files": ["path", ...]}
+    {"message": "feat(brain): add lif neurons", "body": "optional", "files": ["path", ...]}
 
 Commits are created in order with the Codex trailer. A file that appears in several entries is
 committed with the first entry that lists it (its final content). Changed files that no entry
@@ -46,18 +46,24 @@ def changed_files(repo: Path) -> set[str]:
     return files
 
 
+def _is_pending(path: str, pending: set[str]) -> bool:
+    prefix = path.rstrip("/") + "/"
+    return path in pending or any(p.startswith(prefix) for p in pending)
+
+
 def main() -> int:
     repo = Path(sys.argv[1]).resolve()
     dry = "--dry-run" in sys.argv
     plan_path = repo / ".codex-runs" / "commits.jsonl"
-    plan = [json.loads(line) for line in plan_path.read_text(encoding="utf-8").splitlines() if line.strip()]
+    lines = plan_path.read_text(encoding="utf-8-sig").splitlines()
+    plan = [json.loads(line) for line in lines if line.strip()]
 
     pending = changed_files(repo)
     done: set[str] = set()
     made = 0
     for step in plan:
         files = [f.replace("\\", "/") for f in step["files"]]
-        files = [f for f in files if f not in done and (f in pending or any(p.startswith(f.rstrip("/") + "/") for p in pending))]
+        files = [f for f in files if f not in done and _is_pending(f, pending)]
         if not files:
             print(f"skip (nothing left to commit): {step['message']}")
             continue
