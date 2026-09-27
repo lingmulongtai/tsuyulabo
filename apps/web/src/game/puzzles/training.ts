@@ -1,4 +1,5 @@
 import type { Stars, TrainingParams, TrainingSubmission, TrainingVerifyResult } from "./types";
+import { timesReason } from "./timing";
 
 export interface TrainingState {
   readonly params: TrainingParams;
@@ -65,30 +66,25 @@ export function verifyTraining(
   params: TrainingParams, submission: TrainingSubmission,
 ): TrainingVerifyResult {
   const { path, elapsed_ms } = submission;
-  const { n, checkpoints } = params;
-  if (!Number.isFinite(elapsed_ms) || elapsed_ms < 0) {
-    return { valid: false, reason: "non_monotonic_time" };
-  }
-  if (path.length !== n * n) return { valid: false, reason: "wrong_length" };
+  const { n } = params;
+  if (!Array.isArray(path) || path.length !== n * n) return { valid: false, reason: "wrong_length" };
   if (path.some((cell) => !inBounds(n, cell))) return { valid: false, reason: "out_of_bounds" };
   if (new Set(path).size !== path.length) return { valid: false, reason: "revisit" };
-  if (path[0] !== checkpoints.find((cp) => cp.k === 1)?.cell) {
+  if (path.some((cell, i) => i > 0 && !neighbors(n, path[i - 1]).includes(cell))) {
+    return { valid: false, reason: "not_adjacent" };
+  }
+  const checkpoints = [...params.checkpoints].sort((a, b) => a.k - b.k);
+  if (path[0] !== checkpoints[0]?.cell) {
     return { valid: false, reason: "bad_start" };
   }
-  const lastK = Math.max(...checkpoints.map((cp) => cp.k));
-  if (path.at(-1) !== checkpoints.find((cp) => cp.k === lastK)?.cell) {
+  if (path.at(-1) !== checkpoints.at(-1)?.cell) {
     return { valid: false, reason: "bad_end" };
   }
-  let nextK = 1;
-  for (let i = 0; i < path.length; i++) {
-    if (i > 0 && !neighbors(n, path[i - 1]).includes(path[i])) {
-      return { valid: false, reason: "not_adjacent" };
-    }
-    const checkpoint = checkpoints.find((cp) => cp.cell === path[i]);
-    if (checkpoint) {
-      if (checkpoint.k !== nextK) return { valid: false, reason: "checkpoint_order" };
-      nextK++;
-    }
+  const positions = checkpoints.map((cp) => path.indexOf(cp.cell));
+  if (positions.some((position, i) => i > 0 && position < positions[i - 1])) {
+    return { valid: false, reason: "checkpoint_order" };
   }
+  const reason = timesReason([], elapsed_ms);
+  if (reason) return { valid: false, reason };
   return { valid: true, stars: starsFor(n, elapsed_ms) };
 }

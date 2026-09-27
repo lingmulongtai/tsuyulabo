@@ -1,3 +1,4 @@
+import { timesReason } from "./timing";
 import type {
   Ingredient, InvalidReason, MealMove, MealParams, MealScore, MealSubmission,
   MealVerifyResult, Shape,
@@ -56,8 +57,9 @@ export function currentHand(state: MealState): number[] {
 }
 
 function placementReason(state: MealState, p: number, r: number, c: number): InvalidReason | null {
+  if (!Number.isInteger(p)) return "not_in_hand";
   if (state.moves.some((move) => move.p === p)) return "already_placed";
-  if (!Number.isInteger(p) || !currentHand(state).includes(p)) return "not_in_hand";
+  if (!currentHand(state).includes(p)) return "not_in_hand";
   const { rows, cols, pieces } = state.params;
   const cells = SHAPES[pieces[p].shape].map(([dr, dc]) => [r + dr, c + dc]);
   if (!Number.isInteger(r) || !Number.isInteger(c) ||
@@ -81,7 +83,7 @@ export class MealMoveError extends Error {
 /** Throws MealMoveError on an illegal move; the input state is never changed. */
 export function place(state: MealState, p: number, r: number, c: number, t: number): MealPlacement {
   const previousT = state.moves.at(-1)?.t ?? 0;
-  if (!Number.isFinite(t) || t < previousT) throw new MealMoveError("non_monotonic_time");
+  if (!Number.isInteger(t) || t < previousT) throw new MealMoveError("non_monotonic_time");
   if (t > state.params.time_limit_ms + 1500) throw new MealMoveError("time_exceeded");
   const reason = placementReason(state, p, r, c);
   if (reason) throw new MealMoveError(reason);
@@ -133,18 +135,20 @@ export function isOver(state: MealState, elapsedMs: number): boolean {
 }
 
 export function verifyMeal(params: MealParams, submission: MealSubmission): MealVerifyResult {
-  if (!Number.isFinite(submission.elapsed_ms) || submission.elapsed_ms < 0) {
-    return { valid: false, reason: "non_monotonic_time" };
+  if (!Array.isArray(submission.moves) || submission.moves.some((move) =>
+    move === null || typeof move !== "object" || Array.isArray(move))) {
+    return { valid: false, reason: "wrong_length" };
   }
+  const reason = timesReason(
+    submission.moves.map((move) => move.t), submission.elapsed_ms, false, params.time_limit_ms + 1500,
+  );
+  if (reason) return { valid: false, reason };
   let state = createMealGame(params);
   try {
     for (const { p, r, c, t } of submission.moves) state = place(state, p, r, c, t).state;
   } catch (error) {
     if (error instanceof MealMoveError) return { valid: false, reason: error.reason };
     throw error;
-  }
-  if (submission.elapsed_ms < (state.moves.at(-1)?.t ?? 0)) {
-    return { valid: false, reason: "non_monotonic_time" };
   }
   const { score, lines, max_combo, theme_cells } = state;
   return { valid: true, score, lines, max_combo, theme_cells };

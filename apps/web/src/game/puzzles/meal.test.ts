@@ -99,6 +99,21 @@ describe("meal", () => {
   });
 
   const move = { p: 0, r: 0, c: 0, t: 10 };
+  it("validates all timing before replaying any placement", () => {
+    for (const t of [0.5, 9]) {
+      expect(verifyMeal(defaults, {
+        moves: [{ ...move, p: 99 }, { ...move, t }], elapsed_ms: 10,
+      })).toEqual({ valid: false, reason: "non_monotonic_time" });
+    }
+    expect(verifyMeal(defaults, { moves: [{ ...move, p: 99 }], elapsed_ms: 9 }))
+      .toEqual({ valid: false, reason: "non_monotonic_time" });
+    expect(verifyMeal(defaults, { moves: [], elapsed_ms: 0.5 }))
+      .toEqual({ valid: false, reason: "non_monotonic_time" });
+    expect(verifyMeal(defaults, { moves: [], elapsed_ms: 600000 }).valid).toBe(true);
+    expect(verifyMeal(defaults, { moves: [{ ...move, t: -1 }], elapsed_ms: 600001 }))
+      .toEqual({ valid: false, reason: "time_exceeded" });
+  });
+
   it.each([
     ["not_in_hand", [{ ...move, p: 3 }]],
     ["not_in_hand", [{ ...move, p: -1 }]],

@@ -89,8 +89,8 @@ describe("training", () => {
     ["out_of_bounds", [0, 1, 2, 5, 4, 3, 6, 9, 8]],
     ["out_of_bounds", [0, 1, 2, 5, 4, 3, 6, 0.5, 8]],
     ["revisit", [0, 1, 2, 5, 4, 3, 6, 0, 8]],
-    ["bad_start", [1, 0, 2, 5, 4, 3, 6, 7, 8]],
-    ["bad_end", [0, 1, 2, 5, 4, 3, 6, 8, 7]],
+    ["not_adjacent", [1, 0, 2, 5, 4, 3, 6, 7, 8]],
+    ["not_adjacent", [0, 1, 2, 5, 4, 3, 6, 8, 7]],
     ["not_adjacent", [0, 2, 1, 5, 4, 3, 6, 7, 8]],
   ] as const)("rejects %s", (reason, path) => {
     expect(verifyTraining(params, { path, elapsed_ms: 0 })).toEqual({ valid: false, reason });
@@ -106,7 +106,7 @@ describe("training", () => {
   });
 
   it("rejects invalid elapsed time", () => {
-    for (const elapsed_ms of [-1, NaN, Infinity]) {
+    for (const elapsed_ms of [-1, 0.5, NaN, Infinity]) {
       expect(verifyTraining(params, { path: solution, elapsed_ms })).toEqual({
         valid: false, reason: "non_monotonic_time",
       });
@@ -118,5 +118,22 @@ describe("training", () => {
     for (const path of [solution, [0, 3, 6, 7, 4, 1, 2, 5, 8]]) {
       expect(verifyTraining(config, { path, elapsed_ms: 10000 })).toEqual({ valid: true, stars: 1 });
     }
+  });
+
+  it("checks endpoints after adjacency and path errors before elapsed time", () => {
+    expect(verifyTraining(params, { path: [...solution].reverse(), elapsed_ms: -1 }))
+      .toEqual({ valid: false, reason: "bad_start" });
+    expect(verifyTraining(params, {
+      path: [0, 1, 2, 5, 8, 7, 6, 3, 4], elapsed_ms: -1,
+    })).toEqual({ valid: false, reason: "bad_end" });
+    expect(verifyTraining(params, { path: [], elapsed_ms: -1 }))
+      .toEqual({ valid: false, reason: "wrong_length" });
+  });
+
+  it("includes the issuance lifetime boundary", () => {
+    expect(verifyTraining(params, { path: solution, elapsed_ms: 600000 }))
+      .toEqual({ valid: true, stars: 1 });
+    expect(verifyTraining(params, { path: solution, elapsed_ms: 600001 }))
+      .toEqual({ valid: false, reason: "time_exceeded" });
   });
 });
