@@ -1,0 +1,458 @@
+{
+  "version": "malecns-v1.0",
+  "dataset": "male-cns:v1.0",
+  "seed": 1729,
+  "source": "https://male-cns.janelia.org/download/",
+  "sources": {
+    "annotations": {
+      "file": "body-annotations-male-cns-v1.0-minconf-0.5.feather",
+      "rows": 211577,
+      "columns": {
+        "assignedOlHex1": "double",
+        "assignedOlHex2": "double",
+        "bodyId": "int64",
+        "flywireType": "string",
+        "group": "double",
+        "instance": "string",
+        "somaSide": "string",
+        "statusLabel": "dictionary<values=string, indices=int8, ordered=1>",
+        "superclass": "string",
+        "type": "string",
+        "vfbId": "string",
+        "hemibrainType": "string",
+        "itoleeHl": "string",
+        "supertype": "string",
+        "birthtime": "string",
+        "mancBodyid": "double",
+        "mancGroup": "double",
+        "mancType": "string",
+        "subclass": "string",
+        "synonyms": "string",
+        "class": "string",
+        "rootSide": "string",
+        "somaNeuromere": "string",
+        "trumanHl": "string",
+        "dimorphism": "string",
+        "matchingNotes": "string",
+        "entryNerve": "string",
+        "mancSerial": "double",
+        "mcnsSerial": "double",
+        "serialMotif": "string",
+        "fruDsx": "string",
+        "exitNerve": "string",
+        "receptorType": "string",
+        "somaLocation": "list<item: int64>",
+        "tosomaLocation": "list<item: int64>",
+        "status": "string"
+      },
+      "sha256": "2177e246113e4cfbf1e7772ec37c6da1955ff22e8063d0b1f833101f99a9a3b2"
+    },
+    "transmitters": {
+      "file": "body-neurotransmitters-male-cns-v1.0.feather",
+      "rows": 1835518,
+      "columns": {
+        "body": "int64",
+        "cell_type": "string",
+        "total_nt_predictions": "int32",
+        "predicted_nt_confidence": "double",
+        "predicted_nt": "string",
+        "ground_truth": "string",
+        "celltype_total_nt_predictions": "int32",
+        "celltype_predicted_nt": "string",
+        "celltype_predicted_nt_confidence": "double",
+        "consensus_nt": "string"
+      },
+      "sha256": "95c9289220663abeb3409f3ad9e5a7f8a53f8093f5139d15502cd08da8879621"
+    },
+    "weights": {
+      "file": "connectome-weights-male-cns-v1.0-minconf-0.5.feather",
+      "rows": 151856684,
+      "columns": {
+        "body_pre": "int64",
+        "body_post": "int64",
+        "weight": "int64"
+      },
+      "sha256": "e35da783d1c686b2b58b3b87cd6a403ae43bfcfba8bff28e08ef752c1a56afc1"
+    }
+  },
+  "license": "CC-BY-4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0/",
+  "attribution": "FlyEM / HHMI Janelia; University of Cambridge; MRC LMB; Google Research",
+  "citation": "Berg et al. (2026), Cell 189:5504-5526.e15, doi:10.1016/j.cell.2026.08.015",
+  "sign_policy": "body predicted_nt; unresolved predictions fall back to consensus_nt; ACh +1, GABA -1, Glu -1, histamine -1, dopamine +1 current surrogate; remaining unknown transmitters excluded; receptor specificity unmodeled",
+  "boundary": "induced subgraphs only; no fabricated neurons/edges; no edge normalization; weights = synapse count * presynaptic sign * one circuit scale",
+  "storage": "compressed CSR float32 preserves scaled counts; already below 2 MB",
+  "circuits": {
+    "olfaction_mb": {
+      "neurons": 987,
+      "edges": 37341,
+      "group_counts": {
+        "ORN": 452,
+        "PN": 27,
+        "KC": 200,
+        "APL": 2,
+        "MBON_ap": 10,
+        "MBON_av": 10,
+        "PAM": 248,
+        "PPL1": 6,
+        "visual": 32
+      },
+      "selection_rules": {
+        "ORN": "exact ORN_ types for DM1, DM2, DM3, DM4, VA2, VM2, DL1, DC2",
+        "PN": "same glomeruli; exact uniglomerular _(ad|l|v|lv)PN suffix",
+        "KC": "type starts KC; uniform seeded sample of 200 bodies",
+        "APL": "type APL",
+        "MBON_ap": "MBON11, MBON12, MBON14",
+        "MBON_av": "MBON01, MBON03, MBON04, MBON05, MBON06",
+        "PAM": "reward-associated PAM01,02,04,05,06,07,08,09,10,11,15",
+        "PPL1": "punishment-associated PPL101,103,106",
+        "visual": "32 seeded R8p photoreceptors; no fabricated relay"
+      },
+      "selected_types": {
+        "ORN": {
+          "ORN_DC2": 22,
+          "ORN_DL1": 83,
+          "ORN_DM1": 74,
+          "ORN_DM2": 54,
+          "ORN_DM3": 63,
+          "ORN_DM4": 32,
+          "ORN_VA2": 83,
+          "ORN_VM2": 41
+        },
+        "PN": {
+          "DC2_adPN": 4,
+          "DL1_adPN": 4,
+          "DM1_lPN": 2,
+          "DM2_lPN": 4,
+          "DM3_adPN": 2,
+          "DM3_vPN": 2,
+          "DM4_adPN": 2,
+          "DM4_vPN": 2,
+          "VA2_adPN": 2,
+          "VM2_adPN": 3
+        },
+        "KC": {
+          "KCa'b'-ap1": 9,
+          "KCa'b'-ap2": 14,
+          "KCa'b'-m": 11,
+          "KCab-c": 26,
+          "KCab-m": 31,
+          "KCab-p": 5,
+          "KCab-s": 32,
+          "KCg-d": 11,
+          "KCg-m": 61
+        },
+        "APL": {
+          "APL": 2
+        },
+        "MBON_ap": {
+          "MBON11": 2,
+          "MBON12": 4,
+          "MBON14": 4
+        },
+        "MBON_av": {
+          "MBON01": 2,
+          "MBON03": 2,
+          "MBON04": 2,
+          "MBON05": 2,
+          "MBON06": 2
+        },
+        "PAM": {
+          "PAM01": 44,
+          "PAM02": 17,
+          "PAM04": 32,
+          "PAM05": 20,
+          "PAM06": 28,
+          "PAM07": 14,
+          "PAM08": 50,
+          "PAM09": 9,
+          "PAM10": 15,
+          "PAM11": 15,
+          "PAM15": 4
+        },
+        "PPL1": {
+          "PPL101": 2,
+          "PPL103": 2,
+          "PPL106": 2
+        },
+        "visual": {
+          "R8p": 32
+        }
+      },
+      "scale": 0.1875,
+      "input_rate_hz": 180.0,
+      "todos": [
+        "TODO: reconstruct visual relays to visual KCs; blue_light is incomplete.",
+        "TODO: validate fruit-cue glomerular mixtures; current cue mapping is a game convention.",
+        "TODO: review predicted dopamine in KCs against consensus acetylcholine; both map to positive current here."
+      ],
+      "files": {
+        "olfaction_mb.npz": "8a83088efc1c6e16918cd2ee563ffeb1ed03e473d516c65500f1afc512694d45",
+        "olfaction_mb.json": "a5ea4fde57315702c306a845b6320e1a3c9c89b55b0810ee9116724dc35157b3"
+      }
+    },
+    "feeding": {
+      "neurons": 113,
+      "edges": 2334,
+      "group_counts": {
+        "Gr64f": 34,
+        "Gr66a": 35,
+        "feeding_interneuron": 42,
+        "MN9": 2
+      },
+      "selection_rules": {
+        "Gr64f": "LB3b/c, putative Gr64f sweet GRNs (Tastekin et al. 2026 Fig 2E)",
+        "Gr66a": "LB1a-d, putative bitter GRNs mapped using Gr33a (same Fig 2E)",
+        "feeding_interneuron": "GNG108/Roundup, GNG120/Roundtree, GNG175/Usnea, ANXXX462a/Clavicle, DNge080/Rounddown, DNg67/Fudog; plus two-hop bridges; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending",
+        "MN9": "type MN9"
+      },
+      "selected_types": {
+        "Gr64f": {
+          "LB3b": 11,
+          "LB3c": 23
+        },
+        "Gr66a": {
+          "LB1a": 11,
+          "LB1b": 3,
+          "LB1c": 16,
+          "LB1d": 5
+        },
+        "feeding_interneuron": {
+          "ANXXX462a": 2,
+          "DNg67": 2,
+          "DNge031": 2,
+          "DNge036": 1,
+          "DNge056": 1,
+          "DNge057": 1,
+          "DNge067": 1,
+          "DNge080": 2,
+          "DNge100": 1,
+          "DNge105": 1,
+          "GNG029": 1,
+          "GNG036": 1,
+          "GNG041": 2,
+          "GNG043": 2,
+          "GNG057": 1,
+          "GNG089": 2,
+          "GNG108": 2,
+          "GNG116": 2,
+          "GNG120": 2,
+          "GNG131": 1,
+          "GNG173": 1,
+          "GNG175": 2,
+          "GNG176": 1,
+          "GNG208": 1,
+          "GNG220": 2,
+          "GNG297": 1,
+          "GNG341": 1,
+          "GNG393": 2,
+          "GNG568": 1
+        },
+        "MN9": {
+          "MN9": 2
+        }
+      },
+      "scale": 0.0625,
+      "input_rate_hz": 180.0,
+      "todos": [
+        "TODO: verify Gr66a expression per body; Gr66a is a game input alias for LB1a-d bitter GRNs, not a molecular annotation in this release."
+      ],
+      "files": {
+        "feeding.npz": "6038996c691aea3aa7625f9d61bf5a034c9a908fc262501a102107251bc1126f",
+        "feeding.json": "38ea8d58a19d50b882f4c25701e17dc4c6a8cc97507cb907554fbf4c66c5e15a"
+      }
+    },
+    "escape": {
+      "neurons": 313,
+      "edges": 20607,
+      "group_counts": {
+        "LPLC2": 185,
+        "LC4": 126,
+        "DNp01": 2
+      },
+      "selection_rules": {
+        "LPLC2": "exact type LPLC2",
+        "LC4": "exact type LC4",
+        "DNp01": "exact type DNp01"
+      },
+      "selected_types": {
+        "LPLC2": {
+          "LPLC2": 185
+        },
+        "LC4": {
+          "LC4": 126
+        },
+        "DNp01": {
+          "DNp01": 2
+        }
+      },
+      "scale": 0.000244140625,
+      "input_rate_hz": 180.0,
+      "todos": [],
+      "files": {
+        "escape.npz": "8bf8153717a2dad643d4181ffe19e513a5eccb464bd91686cfe60aef08ee9176",
+        "escape.json": "000d77bc0574bd4042cfc24d0c01029fc5f739575bbd712ff33b48c040041f65"
+      }
+    },
+    "steering": {
+      "neurons": 132,
+      "edges": 3,
+      "group_counts": {
+        "photoreceptor_L": 64,
+        "photoreceptor_R": 64,
+        "DNa02_L": 1,
+        "DNa02_R": 1,
+        "walking_DN": 2
+      },
+      "selection_rules": {
+        "photoreceptor_L": "64 seeded R8p/y; rootSide L",
+        "photoreceptor_R": "64 seeded R8p/y; rootSide R",
+        "DNa02_L": "DNa02, somaSide L",
+        "DNa02_R": "DNa02, somaSide R",
+        "walking_DN": "DNp09 (Braun et al. 2024); model tonic drive retained"
+      },
+      "selected_types": {
+        "photoreceptor_L": {
+          "R8p": 33,
+          "R8y": 31
+        },
+        "photoreceptor_R": {
+          "R8p": 29,
+          "R8y": 35
+        },
+        "DNa02_L": {
+          "DNa02": 1
+        },
+        "DNa02_R": {
+          "DNa02": 1
+        },
+        "walking_DN": {
+          "DNp09": 2
+        }
+      },
+      "scale": 0.03125,
+      "input_rate_hz": 180.0,
+      "todos": [
+        "TODO: include the multi-stage visual steering pathway; direct photoreceptor to DNa02 wiring is not assumed."
+      ],
+      "files": {
+        "steering.npz": "1198b4b3674846e309597a80efa3ad838f4fe7881b12096c5e8aef4267c3e8bf",
+        "steering.json": "f2c358d83741349a43f6a2775a19c6bc7e106dd0f51e3c88d8e31c9b78532dbd"
+      }
+    },
+    "grooming": {
+      "neurons": 524,
+      "edges": 8037,
+      "group_counts": {
+        "JO": 424,
+        "aDN": 4,
+        "grooming_interneuron": 96
+      },
+      "selection_rules": {
+        "JO": "JO-C*, JO-E*, JO-F*, JO-mz; exclude JO-unclear",
+        "aDN": "DNg62/aDN1 and DNge078/aDN2 (annotation synonyms Hampel 2015)",
+        "grooming_interneuron": "; add up to 96 annotated two-hop sensory->body->output bridges; rank min(sum sensory input, sum output counts) descending, bodyId ascending"
+      },
+      "selected_types": {
+        "JO": {
+          "JO-CA1": 10,
+          "JO-CA2": 9,
+          "JO-CL": 19,
+          "JO-CM": 30,
+          "JO-ED1": 18,
+          "JO-ED2_a": 38,
+          "JO-ED2_b": 21,
+          "JO-ED2_c": 14,
+          "JO-EV1": 50,
+          "JO-EV2": 36,
+          "JO-EV3": 45,
+          "JO-EV4": 1,
+          "JO-EV5": 23,
+          "JO-EV6": 21,
+          "JO-FD1": 4,
+          "JO-FD2": 4,
+          "JO-FV": 70,
+          "JO-mz": 11
+        },
+        "aDN": {
+          "DNg62": 2,
+          "DNge078": 2
+        },
+        "grooming_interneuron": {
+          "ALIN4": 1,
+          "AN00A002": 1,
+          "AN05B005": 2,
+          "AN05B009": 2,
+          "AN05B010": 1,
+          "AN05B029": 1,
+          "AN05B036": 1,
+          "AN05B040": 1,
+          "AN05B046": 1,
+          "AN05B054_a": 1,
+          "AN05B058": 1,
+          "AN12B001": 1,
+          "AN17A076": 1,
+          "ANXXX013": 2,
+          "ANXXX108": 1,
+          "BM": 11,
+          "BM_InOm": 1,
+          "CB0591": 2,
+          "DNd03": 1,
+          "DNde005": 1,
+          "DNde006": 1,
+          "DNg17": 1,
+          "DNg20": 1,
+          "DNg21": 1,
+          "DNg22": 1,
+          "DNg59": 2,
+          "DNg70": 1,
+          "DNg74_a": 1,
+          "DNg81": 2,
+          "DNg84": 2,
+          "DNg87": 1,
+          "DNg98": 1,
+          "DNge011": 2,
+          "DNge012": 2,
+          "DNge027": 1,
+          "DNge031": 1,
+          "DNge039": 2,
+          "DNge044": 2,
+          "DNge104": 1,
+          "DNge122": 1,
+          "DNge132": 2,
+          "DNge133": 2,
+          "GNG203": 2,
+          "GNG300": 2,
+          "GNG351": 1,
+          "GNG423": 3,
+          "GNG448": 2,
+          "GNG449": 2,
+          "GNG450": 1,
+          "GNG451": 1,
+          "GNG493": 1,
+          "GNG502": 1,
+          "GNG504": 1,
+          "GNG509": 1,
+          "GNG575": 2,
+          "GNG594": 1,
+          "GNG611": 2,
+          "GNG612": 1,
+          "OCG06": 1,
+          "SAD070": 1,
+          "SAD093": 2,
+          "VES001": 1,
+          "WED060": 2
+        }
+      },
+      "scale": 0.0078125,
+      "input_rate_hz": 180.0,
+      "todos": [
+        "TODO: verify identities of graph-selected grooming interneurons against aBN1/2."
+      ],
+      "files": {
+        "grooming.npz": "41cdc69b5242c30b82095edfae5c30ac0419a4d83f2a1968b6da63d9e7159274",
+        "grooming.json": "5eed850d28e4d24674c4bcc5142b2d3d463b60a9573d08784197afb857bb9548"
+      }
+    }
+  }
+}
