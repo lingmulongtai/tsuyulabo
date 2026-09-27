@@ -21,11 +21,17 @@ def sleep_bonus(hours: float) -> int:
     return floor(min(hours, c.SLEEP_BONUS_MAX_HOURS) * c.SLEEP_SHIZUKU_PER_HOUR)
 
 
-def energy_recovery(hours: float, energy_up: float = 0) -> float:
+def energy_recovery(hours: float, energy_up: float = 0, circadian_multiplier: float = 1) -> float:
     if hours < 0 or energy_up < 0:
         raise ValueError("negative duration or bonus")
+    if not 1 <= circadian_multiplier <= 1 + c.CIRCADIAN_MAX_ENERGY_BONUS:
+        raise ValueError("invalid circadian multiplier")
     return min(
-        c.STAT_MAX, min(hours, c.SLEEP_MAX_HOURS) * c.SLEEP_ENERGY_PER_HOUR * (1 + energy_up)
+        c.STAT_MAX,
+        min(hours, c.SLEEP_MAX_HOURS)
+        * c.SLEEP_ENERGY_PER_HOUR
+        * (1 + energy_up)
+        * circadian_multiplier,
     )
 
 
@@ -37,12 +43,18 @@ class SleepResult:
     energy: float
 
 
-def wake(slept_at: datetime, woke_at: datetime, energy: float, energy_up: float = 0) -> SleepResult:
+def wake(
+    slept_at: datetime,
+    woke_at: datetime,
+    energy: float,
+    energy_up: float = 0,
+    circadian_multiplier: float = 1,
+) -> SleepResult:
     """Pass the member's energy after gathering has been settled to woke_at."""
     if slot_of(slept_at) != "night" or slot_of(woke_at) != "morning":
         raise ValueError("sleep requires night and wake requires morning")
     if not 0 <= energy <= c.STAT_MAX:
         raise ValueError("invalid energy")
     hours = sleep_duration(slept_at, woke_at)
-    recovery = energy_recovery(hours, energy_up)
+    recovery = energy_recovery(hours, energy_up, circadian_multiplier)
     return SleepResult(hours, sleep_bonus(hours), recovery, min(c.STAT_MAX, energy + recovery))
