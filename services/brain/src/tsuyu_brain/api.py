@@ -27,6 +27,7 @@ from tsuyu_brain.learning import (
 )
 from tsuyu_brain.maze import maze_policy
 from tsuyu_brain.params import BrainParams, default_params
+from tsuyu_brain.sumo import sumo_policy
 
 __all__ = [
     "BehaviorContext",
@@ -41,6 +42,7 @@ __all__ = [
     "run_odor_choice",
     "activity",
     "maze_policy",
+    "sumo_policy",
 ]
 
 
