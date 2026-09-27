@@ -13,7 +13,8 @@ import pandas as pd
 import pyarrow.dataset as ds
 import torch
 
-from tsuyu_brain.circuit import Circuit
+from tsuyu_brain.circuit import Circuit, simulate
+from tsuyu_brain.connectome.malecns_normalization import normalize_mbon_inputs
 from tsuyu_brain.connectome.malecns_selection import (
     ANNOTATION_COLUMNS,
     SEED,
@@ -21,7 +22,13 @@ from tsuyu_brain.connectome.malecns_selection import (
     resolve_transmitters,
     select_circuits,
 )
+from tsuyu_brain.connectome.malecns_visual import (
+    add_visual_relays,
+    normalize_steering,
+    visual_frontiers,
+)
 from tsuyu_brain.connectome.npz_io import save_circuit
+from tsuyu_brain.params import default_params
 
 FILES = {
     "annotations": "body-annotations-male-cns-v1.0-minconf-0.5.feather",
@@ -180,7 +187,7 @@ def build(
     if set(scales) - {s.name for s in selections}:
         raise ValueError("unknown circuit in scales")
     bridge_names = {"feeding", "grooming"}
-    bridging = [s for s in selections if s.name in bridge_names]
+    bridging = [s for s in selections if s.name in bridge_names | {"steering"}]
     sensory = pd.concat([s.groups[g] for s in bridging for g in s.inputs]).bodyId
     targets = pd.concat([s.groups[g] for s in bridging for g in s.outputs]).bodyId
     path = raw / FILES["weights"]
@@ -191,6 +198,17 @@ def build(
     )
     selections = [
         add_bridges(s, rows, bridge_edges) if s.name in bridge_names else s for s in selections
+    ]
+    steering = next(s for s in selections if s.name == "steering")
+    incoming, outgoing = visual_frontiers(steering, bridge_edges)
+    middle = scan_edges(
+        path,
+        ds.field("body_pre").isin(incoming.index.to_numpy())
+        & ds.field("body_post").isin(outgoing.index.to_numpy()),
+    )
+    selections = [
+        add_visual_relays(s, rows, bridge_edges, middle) if s.name == "steering" else s
+        for s in selections
     ]
     del bridge_edges
     all_ids = pd.concat([frame for s in selections for frame in s.groups.values()]).bodyId.unique()
@@ -212,15 +230,46 @@ def build(
         "sign_policy": "body predicted_nt; unresolved predictions fall back to consensus_nt; "
         "ACh +1, GABA -1, Glu -1, histamine -1, dopamine +1 current surrogate; "
         "remaining unknown transmitters excluded; receptor specificity unmodeled",
-        "boundary": "induced subgraphs only; no fabricated neurons/edges; no edge normalization; "
-        "weights = synapse count * presynaptic sign * one circuit scale",
-        "storage": "compressed CSR float32 preserves scaled counts; already below 2 MB",
+        "boundary": "induced subgraphs only; no fabricated neurons/edges; weights = synapse "
+        "count * presynaptic sign * circuit scale * documented normalization factors; "
+        "steering tonic current approximates omitted background drive",
+        "storage": "compressed CSR float32; normalized values rounded once to float32",
+        "decoder_features": {
+            "count": 68,
+            "schema": "8 output means; 6 equal-duration windows per output; "
+            "6 right-left and 6 approach-avoid differences",
+            "reason": "calibrated 8-mean decoder remains below 85%; preserve temporal "
+            "responses without changing classifier, labels, or held-out individuals",
+        },
         "circuits": {},
     }
     output.mkdir(parents=True, exist_ok=True)
     for selection in selections:
         scale = scales.get(selection.name, 1 / 32)
         circuit, records = make_circuit(selection, edges, scale)
+        normalization = {}
+        if selection.name == "olfaction_mb":
+            stimulus = {
+                "ORN": torch.tensor(
+                    [float(row["type"] == "ORN_DM1") for row in records[circuit.groups["ORN"]]]
+                )
+            }
+            threads = torch.get_num_threads()
+            try:
+                torch.set_num_threads(1)
+                reference = simulate(circuit, stimulus, default_params(), batch=8, seed=19)
+            finally:
+                torch.set_num_threads(threads)
+            circuit, normalization = normalize_mbon_inputs(circuit, reference.neuron_rates.mean(0))
+            normalization["reference"] = {
+                "cue": "banana/DM1",
+                "seed": 19,
+                "trials": 8,
+                "duration_ms": 300,
+                "input_rate_hz": 180,
+            }
+        elif selection.name == "steering":
+            circuit, normalization = normalize_steering(circuit)
         target = output / f"{selection.name}.npz"
         save_circuit(circuit, target, {"dataset": "male-cns:v1.0", "license": "CC-BY-4.0"})
         metadata_path = target.with_suffix(".json")
@@ -246,7 +295,10 @@ def build(
                 for g, frame in selection.groups.items()
             },
             "scale": scale,
+            "scale_reason": "retain prior global scale calibration; normalize only MB and steering",
             "input_rate_hz": 180.0,
+            "input_rate_reason": "retain the original 180 Hz input convention",
+            "normalization": normalization,
             "todos": todos,
             "files": {target.name: sha256(target), metadata_path.name: sha256(metadata_path)},
         }

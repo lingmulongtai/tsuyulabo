@@ -41,6 +41,14 @@ def test_committed_edges_equal_raw_synapse_counts() -> None:
             if pre in index and post in index:
                 expected[index[pre], index[post]] += count
         actual = sparse.load_npz(data_directory() / f"{name}.npz").toarray()
-        recovered = actual * np.array(data["signs"])[:, None]
-        recovered /= manifest["circuits"][name]["scale"]
-        np.testing.assert_array_equal(recovered, expected)
+        info = manifest["circuits"][name]
+        expected = (expected * np.array(data["signs"])[:, None] * info["scale"]).astype(np.float32)
+        normalization = info.get("normalization", {})
+        for projection, gains in normalization.get("projection_factors", {}).items():
+            source, target = projection.split("->")
+            expected[slice(*data["groups"][source]), slice(*data["groups"][target])] *= np.array(
+                gains, dtype=np.float32
+            )
+        for sign, gains in normalization.get("source_sign_factors", {}).items():
+            expected[np.array(data["signs"]) == int(sign)] *= np.array(gains, dtype=np.float32)
+        np.testing.assert_array_equal(actual, expected)

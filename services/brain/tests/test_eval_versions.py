@@ -48,23 +48,23 @@ def test_versioned_report_and_failed_cli_exit(
 
 
 @pytest.mark.eval
-def test_measured_sanity_gates_report_failures_honestly() -> None:
+def test_measured_sanity_gates_pass_after_homeostasis() -> None:
     checks = brain_eval.sanity_metrics("malecns-v1.0")
     assert checks["sugar_mn9"]["passed"], checks
     assert checks["looming_dnp01"]["passed"], checks
     assert checks["bitter_suppression"]["passed"] == (
         checks["bitter_suppression"]["mixed_hz"] < 0.5 * checks["bitter_suppression"]["sugar_hz"]
     )
-    # The extracted MB fails the bidirectional PI gate. Keep the game default unchanged.
-    assert not checks["learning"]["passed"], checks
+    assert checks["learning"]["passed"], checks
+    assert abs(checks["learning"]["baseline_pi"]) < 0.2
     assert DEFAULT_VERSION == "toy-v0"
     assert all(isinstance(row["passed"], bool) for row in checks.values())
     print(json.dumps(checks))
 
 
 @pytest.mark.eval
-def test_missing_visual_path_does_not_fake_trait_significance() -> None:
+def test_measured_visual_relays_support_trait_significance() -> None:
     metrics = brain_eval.trait_metrics(version="malecns-v1.0")
-    assert metrics["passed"] is False
-    assert metrics["p_one_sided"] is None
-    assert metrics["wild_mean_right_fraction"] == metrics["trait_mean_right_fraction"] == 0
+    assert metrics["passed"], metrics
+    assert 0 < metrics["wild_mean_right_fraction"] < metrics["trait_mean_right_fraction"] < 1
+    assert metrics["p_one_sided"] < 0.01
