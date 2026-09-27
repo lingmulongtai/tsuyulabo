@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { IBM_Plex_Mono, Kiwi_Maru, Zen_Maru_Gothic } from "next/font/google";
 import "./globals.css";
+import { Providers } from "./Providers";
 
 const zenMaru = Zen_Maru_Gothic({
   variable: "--font-zen-maru",
@@ -41,7 +42,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="ja" className={`${zenMaru.variable} ${kiwiMaru.variable} ${plexMono.variable} h-full antialiased`}>
-      <body className="min-h-full">{children}</body>
+      <body className="min-h-full"><Providers>{children}</Providers></body>
     </html>
   );
 }
