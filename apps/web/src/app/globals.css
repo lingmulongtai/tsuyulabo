@@ -232,3 +232,80 @@ button {
     animation: none;
   }
 }
+
+/* ------------------------------------------------------------------
+   Particles and eclosion effects
+   ------------------------------------------------------------------ */
+@keyframes burst-fly {
+  0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0.2) rotate(var(--rot)); opacity: 0; }
+}
+.burst-pt {
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--c);
+  animation: burst-fly 0.95s cubic-bezier(0.15, 0.7, 0.3, 1) forwards;
+  pointer-events: none;
+}
+.burst-pt.sq {
+  border-radius: 2px;
+  width: 7px;
+  height: 11px;
+}
+
+@keyframes shake-hard {
+  0%, 100% { transform: translateX(0) rotate(0); }
+  20% { transform: translateX(-5px) rotate(-4deg); }
+  40% { transform: translateX(5px) rotate(4deg); }
+  60% { transform: translateX(-4px) rotate(-3deg); }
+  80% { transform: translateX(4px) rotate(3deg); }
+}
+.shake-hard {
+  animation: shake-hard 0.32s linear infinite;
+}
+
+@keyframes glow-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.85; }
+  50% { transform: scale(1.12); opacity: 1; }
+}
+.glow-pulse {
+  animation: glow-pulse 0.9s ease-in-out infinite;
+}
+
+@keyframes spin-slow {
+  to { transform: rotate(360deg); }
+}
+.spin-slow {
+  animation: spin-slow 3s linear infinite;
+}
+
+@keyframes drop-in {
+  0% { transform: translateY(-120%) scale(1.4) rotate(-12deg); opacity: 0; }
+  60% { transform: translateY(6%) scale(0.95) rotate(3deg); opacity: 1; }
+  100% { transform: translateY(0) scale(1) rotate(0); }
+}
+.drop-in {
+  animation: drop-in 0.7s cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+}
+
+@keyframes slide-cut {
+  0% { transform: translateX(110%); }
+  15%, 85% { transform: translateX(0); }
+  100% { transform: translateX(-110%); }
+}
+.slide-cut {
+  animation: slide-cut 1.2s cubic-bezier(0.3, 0.8, 0.3, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .burst-pt,
+  .shake-hard,
+  .glow-pulse,
+  .spin-slow,
+  .drop-in,
+  .slide-cut {
+    animation: none;
+  }
+}
