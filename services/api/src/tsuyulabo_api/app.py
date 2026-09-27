@@ -44,6 +44,7 @@ from tsuyulabo_api.services.jobs import (
     JobFunction,
     JobQueue,
 )
+from tsuyulabo_api.services.shiori import handler as shiori_handler
 from tsuyulabo_api.settings import Settings
 
 
@@ -61,9 +62,10 @@ def create_app(
     engine = create_engine(settings.database_url)
     sessions = session_factory(engine)
     adapter = brain_adapter or BrainAdapter()
-    handlers = {"brain.experiment": experiment_handler(sessions, adapter)} | dict(
-        brain_handlers or {}
-    )
+    handlers = {
+        "brain.experiment": experiment_handler(sessions, adapter),
+        "shiori.answer": shiori_handler(sessions),
+    } | dict(brain_handlers or {})
     redis = (
         Redis.from_url(settings.redis_url, socket_connect_timeout=1, socket_timeout=1)
         if settings.redis_url
