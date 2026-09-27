@@ -19,6 +19,8 @@ dependencies = [
     "httpx>=0.28",
     "tsuyu-brain",
     "tsuyu-shiori",
+    "pywebpush>=2.0.3,<3",
+    "cryptography>=44",
 ]
 
 [tool.uv.sources]

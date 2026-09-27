@@ -17,6 +17,9 @@ class Settings(BaseSettings):
     jwt_secret: SecretStr = SecretStr("local-development-only-change-before-deploying")
     dev_tools: bool = Field(default=False, validation_alias="TSUYU_DEV_TOOLS")
     brain_mode: Literal["inline", "queue"] = "inline"
+    vapid_public_key: str | None = None
+    vapid_private_key: SecretStr | None = None
+    vapid_subject: str = "mailto:admin@example.com"
     cors_origins: list[str] = Field(default_factory=lambda: ["http://localhost:3000"])
 
     @model_validator(mode="after")

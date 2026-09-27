@@ -21,7 +21,7 @@ export function HomeScreen({ data, hero, footer }: { data: HomeData; hero?: Reac
 
   return (
     <div className="flex flex-col gap-4 px-4 pt-[max(14px,env(safe-area-inset-top))]">
-      <header className="flex items-center justify-between gap-2">
+      <header className="flex flex-wrap items-center justify-between gap-2">
         <div className="min-w-0">
           <div className="text-xs font-bold text-muted">{SLOT_GREETING[clock.slot]}、研究員さん</div>
           <h1 className="font-kiwi text-xl leading-tight">
@@ -36,6 +36,7 @@ export function HomeScreen({ data, hero, footer }: { data: HomeData; hero?: Reac
           </h1>
         </div>
         <div className="flex shrink-0 items-center gap-1.5">
+          <Link href="/settings" aria-label="通知の設定" className="rounded-full p-2 text-sm text-muted focus-visible:outline-2 focus-visible:outline-leaf">設定</Link>
           <Link href="/care/sleep" aria-label={`体内時計ゲージ ${data.circadian.gauge}、いっしょにねるへ`} className="rounded-full focus-visible:outline-2 focus-visible:outline-ai">
             <CircadianRing gauge={data.circadian.gauge} compact />
           </Link>

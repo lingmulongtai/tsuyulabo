@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="ja">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#e8f2ef">
+<title>ひとやすみ中 | ツユラボ</title>
+<style>
+  :root { color-scheme: light dark; --bg:#e8f2ef; --card:#fffdf5; --ink:#233d36; --leaf:#1f8579; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font-family:system-ui,sans-serif; line-height:1.8; }
+  main { max-width:440px; min-height:100dvh; margin:auto; padding:max(32px,env(safe-area-inset-top)) 20px; }
+  header { font-weight:700; margin-bottom:40px; }
+  article { border:1px solid #86a59a55; border-radius:28px; background:var(--card); padding:28px 24px; text-align:center; box-shadow:0 12px 32px #173d3310; }
+  h1 { font-size:1.5rem; } p { font-size:.95rem; }
+  svg { width:96px; height:96px; }
+  a { display:block; margin-top:24px; border-radius:16px; padding:12px; background:var(--leaf); color:white; font-weight:700; text-decoration:none; }
+  a:focus-visible { outline:3px solid #d7263d; outline-offset:4px; }
+  @media(prefers-color-scheme:dark) { :root { --bg:#0f1d1a; --card:#20352e; --ink:#e8f2ef; } }
+</style>
+<main>
+  <header>ツユラボ</header>
+  <article>
+    <svg viewBox="0 0 96 96" role="img" aria-label="葉っぱの上でひとやすみ">
+      <path d="M15 70Q10 18 80 17Q88 75 15 70Z" fill="#8bc6a4"/>
+      <path d="M17 71L67 32" stroke="#1f8579" stroke-width="4" stroke-linecap="round"/>
+      <ellipse cx="53" cy="52" rx="22" ry="13" fill="#f2dbad"/>
+      <path d="M61 49l5 2-5 2" fill="none" stroke="#533f32" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    <h1>つながるまで、ひとやすみ</h1>
+    <p>いまは研究室につながりません。<br>通信が戻ったら、また会いにきてね。</p>
+    <p>ごはんやお世話の記録には、インターネット接続が必要です。</p>
+    <a href="/">もう一度、研究室を開く</a>
+  </article>
+</main>
+</html>
