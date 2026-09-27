@@ -45,5 +45,9 @@ def test_scenarios_use_state_connectome_version() -> None:
         .mean(1)
     )
     assert torch.equal(features[:, 0], expected)
-    assert features.shape == (2, 8)
+    assert features.shape == (2, 68)
     assert torch.isfinite(features).all()
+    assert torch.allclose(features[:, 8:14].mean(1), expected)
+    # Signed contrasts are neural outputs, never scenario-label indicators.
+    assert torch.equal(features[:, 56:62], features[:, 26:32] - features[:, 20:26])
+    assert torch.equal(features[:, 62:68], features[:, 44:50] - features[:, 50:56])

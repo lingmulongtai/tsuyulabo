@@ -40,9 +40,18 @@ def test_measured_artifact_contract(name: str) -> None:
         assert circuit.signs[index] == sign_map[row["effective_nt"]]
         assert row["effective_nt"] == row[row["nt_source"]]
     counts = circuit.weights.abs() / info["scale"]
-    assert torch.equal(counts, counts.round())
+    normalization = info.get("normalization", {})
+    for projection, gains in normalization.get("projection_factors", {}).items():
+        source, target = projection.split("->")
+        counts[circuit.groups[source], circuit.groups[target]] /= torch.tensor(gains)
+    for sign, gains in normalization.get("source_sign_factors", {}).items():
+        mask = circuit.signs == int(sign)
+        counts[mask] /= torch.tensor(gains)
+    assert torch.allclose(counts, counts.round(), rtol=1e-6, atol=1e-4)
     for filename, digest in info["files"].items():
         assert hashlib.sha256((data_directory() / filename).read_bytes()).hexdigest() == digest
+        if filename.endswith(".json"):
+            assert b"\r\n" not in (data_directory() / filename).read_bytes()
 
 
 def test_default_provenance_and_small_bundle() -> None:

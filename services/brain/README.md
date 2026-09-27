@@ -108,7 +108,8 @@ sentience or consciousness.
 
 ## Decoder and evaluation
 
-The decoder sees eight output-neuron rates, never scenario IDs or stimulus labels.
+The toy decoder sees eight output-neuron mean rates. MaleCNS adds output windows
+and signed contrasts (below); neither decoder sees scenario IDs or stimulus labels.
 Both multinomial logistic regression and a 16-hidden-unit tanh MLP use handwritten
 logits/losses with torch autograd and Adam. Data defaults to 16 individuals × 11
 scenarios × 4 trials (704 rows), varying traits, sex, intensity, cues, and seeds.
@@ -199,8 +200,9 @@ hashes both NPZ and JSON artifacts; loading checks them.
 Arrow projects columns and filters 65,536-row batches with single-batch readahead.
 The 1.1 GB weights file is scanned, never converted wholesale to pandas or a dense
 matrix. Only retained small subgraphs become dense tensors at runtime. Compressed
-CSR float32 preserves scaled counts exactly here; the entire bundle is below
-0.8 MB, so lossy float16 matrix storage is unnecessary.
+CSR float32 stores normalized weights; the entire bundle remains below 2 MB.
+The source audit reconstructs each weight from raw counts and recorded factors.
+JSON artifacts and reports use LF, so their committed bytes match manifest hashes.
 
 ### Cell selection and aliases
 
@@ -209,7 +211,7 @@ CSR float32 preserves scaled counts exactly here; the entire bundle is below
 | `olfaction_mb` | ORNs for DM1/2/3/4, VA2, VM2, DL1, DC2; matching uniglomerular ad/l/v/lv PNs; 200 seeded KCs; APL; MBONs below; reward PAMs; punishment PPL1s; 32 R8p photoreceptors | 987 |
 | `feeding` | LB3b/c sugar and LB1a–d bitter GRNs; MN9; named feeding cells and measured two-hop intermediates | 113 |
 | `escape` | exact LPLC2, LC4, DNp01 (giant fiber) types | 313 |
-| `steering` | 64 R8p/y photoreceptors per root side; DNa02 per soma side; DNp09 walking neurons | 132 |
+| `steering` | 64 R8p/y per root side; DNa02 per soma side; DNp09; 192 measured visual relay bodies | 324 |
 | `grooming` | JO-C/E/F/mz; DNg62 and DNge078; measured two-hop intermediates | 524 |
 
 Sampling uses NumPy's seeded generator, seed 1729, after sorting body IDs. The
@@ -287,70 +289,122 @@ scales, Poisson rates, pooled outputs, and dopamine learning.
 **Game:** fruit labels, glomerular encoding, traits, tonic walking drive, and
 scenario/decoder labels. Banana/DM1, vinegar/DM2, yeast/DM3, and grape/DM4 are game
 channel assignments, not validated odor-response maps. The R8→visual-KC route
-and multi-stage photoreceptor→DNa02 route are incomplete; no direct synthetic
-edge replaces them. A missing population remains an empty, silent group with a
+is still incomplete. Steering now retains measured three-hop paths; longer
+paths and boundary input are omitted. No direct synthetic edge replaces them. A missing population remains an empty, silent group with a
 manifest TODO. A test of implementation correctness is not a passed promotion gate.
+
+### Calibration and visual relays
+
+All original synapse identities and source signs are preserved. No thresholds,
+learning rates, trait offsets, or cue labels were adjusted. Input rate remains
+180 Hz. The five global scales remain feeding 1/16, escape 1/4096, olfaction 3/16,
+steering 1/32, and grooming 1/128. Feeding, escape, and grooming weights are unchanged.
+
+**Mushroom body.** Each MBON's existing KC afferents are multiplied by
+`40 / sum(abs(KC weights into that MBON))`. A zero-input column stays zero.
+This equalizes total available KC drive without changing afferent ratios or
+creating connections. Budgets 20, 40, 60, 80, 100, and 120 were tested; 40 gives
+the closest-to-neutral untrained banana PI in the seed-19 calibration (+0.100).
+
+The unnormalized APL population fires at 396.667 Hz while the sampled KC
+population averages 7.573 Hz. Into **both** MBON pools, APL weights receive the
+same factor `mean KC Hz / mean APL Hz = 0.019091383972609885`. Rates come from
+one untrained banana/DM1 reference simulation (seed 19, eight trials, 300 ms,
+180 Hz); they are not taken from trained states or evaluation seeds. This is
+an explicit homeostatic approximation to the sampled circuit's feedback
+imbalance. APL→KC and all other MB projections stay unchanged. The manifest
+records the reference, budgets, rationale, and every multiplier. New experimental
+MaleCNS states should be recreated from this calibrated bundle; prior serialized
+states retain their old learned KC magnitudes.
+
+**Steering topology.** In two bounded scans, find sensory→a and b→DNa02 endpoints,
+then measured a→b edges. Rank complete paths by the smallest of summed sensory→a,
+a→b, and summed b→DNa02 counts, breaking ties by body IDs. Retain whole relay pairs
+until the 192-body budget, then retain every measured edge in the induced subgraph.
+This gives 324 actual neurons with no pooling or invented connectivity. The exact
+body IDs, 86 relay types, type counts, and selection rule are in the JSON/manifest.
+Examples include R8→MeVPLp1→PS059→DNa02 and R8→Tm5c→LLPC1→DNa02;
+other retained types include MeLo1/2, Tm37, LT51, LPT22, PS077, and MeVPMe3.
+These paths are facts about this extract, not claims of a uniquely identified
+phototaxis pathway.
+
+**Steering homeostasis.** Histaminergic photoreceptors keep their negative signs.
+A zero-background LIF relay cannot convey an inhibitory signal, so the relay
+population and both DNa02 groups receive a shared tonic current of 1.15, the
+existing walking model's near-threshold background value. This represents
+omitted background drive, not measured connectivity. Within each target, the
+available positive and negative afferents are separately normalized to magnitude
+4; absent sign strata stay absent. No left/right-specific tuning is used. This
+balances excitation/inhibition in the bounded extract and permits disinhibition.
+Budgets 2, 4, and 8 were compared at seed 19: 2 gives weak unilateral responses;
+4 retains responses without the large spontaneous walking drive seen at 8.
+The manifest records both source-sign multiplier vectors and the tonic current.
+The small trait effect depends on these explicit model assumptions.
+
+**Decoder features.** The calibrated circuits with the original eight means
+reach 66.48% logistic / 64.20% MLP accuracy, below the 85% gate. The measured
+version therefore uses 68 output-only features: the eight means, six time windows
+for each of the same eight output groups, and six-window right-minus-left and
+approach-minus-avoid contrasts. Windows span equal fractions of a trial (50 ms
+at the evaluation's 300 ms duration); partial windows are weighted by overlap.
+The classifier is unchanged: logistic regression and a 16-hidden-unit tanh MLP,
+400 epochs, the original seeds and grouped individual split. The toy checkpoint
+retains its eight-feature contract. Experimental feature models cannot be saved
+with a misleading toy checkpoint schema.
 
 ### Reproduce ingestion and evaluation
 
-All commands run from the repository root. Arrow/pandas are in the `ingest`
-optional extra of `tsuyu-brain`; runtime installation does not require them.
+Run from the repository root. Arrow/pandas are optional ingestion dependencies.
 
 ```powershell
 .\.tools\uv.exe sync --all-packages --extra ingest
-.\.tools\uv.exe run --all-packages --extra ingest python services/brain/scripts/ingest_malecns.py --inspect
 .\.tools\uv.exe run --all-packages --extra ingest python services/brain/scripts/ingest_malecns.py --seed 1729 --scale feeding=0.0625 --scale escape=0.000244140625 --scale olfaction_mb=0.1875 --scale steering=0.03125 --scale grooming=0.0078125
-.\.tools\uv.exe run python services/brain/scripts/calibrate_malecns.py
-.\.tools\uv.exe run python -m tsuyu_brain.eval --version malecns-v1.0
-.\.tools\uv.exe run pytest services/brain
-.\.tools\uv.exe run pytest services/brain -m eval
+.\.tools\uv.exe run --all-packages --extra ingest python services/brain/scripts/calibrate_malecns.py --output services/brain/reports/calibration-malecns.json
+.\.tools\uv.exe run python -m tsuyu_brain.eval --version malecns-v1.0 --output services/brain/reports
+.\.tools\uv.exe run pytest
+.\.tools\uv.exe run pytest -m eval
 .\.tools\uv.exe run ruff check services/brain
+.\.tools\uv.exe run ruff format --check services/brain
 ```
 
-Ingestion defaults to scale 1/32 for experimentation; the explicit flags above
-reproduce the bundled calibration. All input rates remain 180 Hz. Only one global
-scale per circuit was tuned; thresholds, learning rate, individual traits, and
-edge ratios were unchanged. The sweep uses seed 19; evaluation uses independent
-fixed seeds 71/81 plus its original individual/decoder seeds. Feeding uses the
-first tested scale producing sugar activation and bitter suppression; escape and
-grooming use their lowest tested active scale. Olfaction uses the lowest tested
-scale yielding MBON activity. Steering retains 1/32 because scaling cannot
-supply the missing visual pathway.
-
-The evaluation writes `eval-results/brain/report-malecns.md` and `.json`; it exits
-1 when any gate fails. Toy reports retain their original filenames. Committed
-copies and the complete calibration sweep are in `services/brain/reports/`.
-Unit tests check the artifacts and runtime contracts. Slow tests check the
-measured responses and report known gate failures explicitly. With raw files and
-the ingest extra present, an additional slow audit verifies source SHA-256s and
-that every stored edge is exactly the original count times its sign and scale.
+The homeostasis sweep reconstructs integer counts from the bundled factors before
+reapplying normalization; the separate raw-source audit verifies those counts
+against all three original Feather SHA-256s and every retained edge. Calibration
+uses seed 19; evaluation keeps independent seeds 71/81 and its original
+individual/decoder seeds. The topology selection never uses simulated behavior.
+The final report includes normalization provenance and all confusion matrices.
+A failed promotion gate still exits 1. Passing implementation tests do not waive it.
 
 ### Evaluation result for the bundled extract
 
-Full evaluation on PyTorch 2.14.0: **3/6 gates pass; do not promote the default**.
-The full MaleCNS decoder evaluation took about 17 minutes on this Windows host;
-it reruns all 16 individuals for each of three shuffle controls.
+Full evaluation on PyTorch 2.14.0+cpu: **5/6 gates pass, up from 3/6**.
+**`toy-v0` remains the default** because decoder accuracy is still below 85%.
+The root README's toy evaluation table is therefore unchanged.
 
 | Gate | Result | Measurement |
 | --- | --- | --- |
 | sugar → MN9 | pass | 2.917 Hz versus 0 at rest |
 | looming → DNp01 | pass | 25.417 Hz versus 0 at rest |
-| bitter suppression | pass | sugar+bitter 1.146 Hz, 39.3% of sugar alone |
-| three-session learning | fail | baseline PI +1; reward ΔPI 0; punishment ΔPI −1 |
-| right-turner trait | fail | both populations have zero right-turn fraction; p undefined |
-| decoder / shuffled control | fail | logistic and MLP 46.59%; shuffled MLP 40.91% for all three seeds; drop 5.68 percentage points |
+| bitter suppression | pass | mixed 1.146 Hz, 39.3% of sugar alone |
+| three-session learning | pass | baseline PI +0.082687; reward ΔPI +0.471248; punishment ΔPI −1.082687 |
+| right-turner trait | pass | wild 0.523745 vs trait 0.539187; one-sided p = 0.00001384845; 32 flies/group |
+| decoder / shuffled control | fail | logistic 75.57%, MLP 78.98%; shuffled 43.18%, 40.34%, 39.77%; average drop 37.88 percentage points |
 
-The reward criterion requires +0.3 and has no headroom from this extract's
-baseline PI +1. The trait criterion lacks a complete sensory pathway. Decoder
-accuracy is below 85% and the shuffled drop below 10 percentage points. These
-failures are not waived by the passing implementation tests; `toy-v0` remains
-the default. Missing visual relays, functional annotation uncertainty, and the
-response imbalance require further scientific work, not per-edge tuning here.
+The shuffled-control requirement now passes, but **both** classifiers still miss
+the unchanged 85% accuracy threshold. Of the MLP's 37 errors on 176 held-out rows,
+20 confuse rest and feed, 12 miss approach/avoid labels, three miss left turns,
+and two miss grooming. The visual-to-KC route remains incomplete; passing the
+banana learning gate does not validate every cue. Further work must address
+these response ambiguities without changing the classifier or evaluation labels.
+The CLI correctly exits 1 for this remaining promotion failure.
 
-Validation: 60 fast tests passed (26.7 s), 8 slow tests passed (236 s), Ruff lint
-and format checks passed, and a built wheel contains all 11 circuit assets.
-The slow suite verifies both measured responses and honest failure reporting;
-it does not assert that the unvalidated extract passes all promotion gates.
+Validation: `uv run pytest` passed **381 tests**; `uv run pytest -m eval` passed
+**13 tests**, including the real-Feather source audit. Repository-wide Ruff lint,
+brain formatting, artifact checksums, LF checks, and whitespace checks pass.
+The bundle is 758,332 bytes. No raw data or experimental decoder checkpoint is
+committed. The evaluation gate failure is distinct from passing implementation
+and regression tests.
+
 See [full Markdown report](reports/report-malecns.md),
 [JSON measurements and confusion matrices](reports/report-malecns.json), and
-[39-condition scale sweep](reports/calibration-malecns.json).
+[homeostasis sweep](reports/calibration-malecns.json).
