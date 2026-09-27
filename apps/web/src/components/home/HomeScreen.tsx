@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { HomeData } from "@/lib/types";
-import { Card, CurrencyPill, Meter } from "../ui/primitives";
+import { Pupa } from "../art/Stages";
+import { CurrencyPill, Meter } from "../ui/primitives";
 import { ActionGrid } from "./ActionGrid";
 import { ShioriBubble } from "./ShioriBubble";
 import { TeamStrip } from "./TeamStrip";
@@ -10,7 +11,8 @@ import { WeekStrip } from "./WeekStrip";
 
 const SLOT_GREETING = { morning: "おはよう", noon: "こんにちは", night: "こんばんは" } as const;
 
-export function HomeScreen({ data, footer }: { data: HomeData; footer?: React.ReactNode }) {
+/** `hero` is shown right under the header (e.g. the "receive an egg" call to action when no week is running). */
+export function HomeScreen({ data, hero, footer }: { data: HomeData; hero?: React.ReactNode; footer?: React.ReactNode }) {
   const { clock, week, fly, balances } = data;
   const night = clock.slot === "night";
 
@@ -38,13 +40,24 @@ export function HomeScreen({ data, footer }: { data: HomeData; footer?: React.Re
 
       {week && <WeekStrip researchDay={week.research_day} />}
 
-      {week?.ready_to_eclose && <Link href="/presentation" className="press rounded-3xl focus-visible:outline-2 focus-visible:outline-banana">
-        <Card className="border-banana bg-tint-banana p-5 text-center shadow-[0_0_28px_-8px_rgba(255,213,74,.7)]">
-          <p className="mb-1 text-sm text-muted">1週間の記録がそろいました</p>
-          <h2 className="font-kiwi text-xl">研究発表会へ</h2>
-          <p className="mt-1 text-sm text-muted">今週の成果を振り返って、羽化を見届けよう。</p>
-        </Card>
-      </Link>}
+      {hero}
+
+      {week?.ready_to_eclose && (
+        <Link
+          href="/presentation"
+          className="press relative block overflow-hidden rounded-[28px] bg-[radial-gradient(circle_at_80%_20%,#3b5f66,#10201d_70%)] p-5 text-white shadow-[0_0_36px_-10px_rgba(255,213,74,.8)] ring-2 ring-[#ffd54a]/70 focus-visible:outline-2 focus-visible:outline-banana"
+        >
+          <div className="absolute -right-3 -top-2 w-28 opacity-90 motion-safe:animate-pulse">
+            <Pupa eyeShow={1} className="w-full" label="" />
+          </div>
+          <p className="text-xs font-bold tracking-widest text-[#ffd54a]">SUNDAY NIGHT</p>
+          <h2 className="font-kiwi text-2xl">研究発表会へ</h2>
+          <p className="mt-1 max-w-[62%] text-sm text-white/80">1週間の記録がそろいました。成果を振り返って、羽化を見届けよう。</p>
+          <span className="mt-3 inline-flex items-center gap-1 rounded-full bg-[#ffd54a] px-4 py-1.5 text-sm font-bold text-[#3d2a05]">
+            発表会をはじめる →
+          </span>
+        </Link>
+      )}
 
       {week && fly ? (
         <Terrarium stage={fly.stage} researchDay={week.research_day} moodLabel={fly.mood_label} night={night} />
@@ -60,8 +73,8 @@ export function HomeScreen({ data, footer }: { data: HomeData; footer?: React.Re
 
       {data.shiori.memo && <ShioriBubble text={data.shiori.memo.text} evidence={data.shiori.memo.evidence} />}
 
-      <ActionGrid todo={data.todo} />
-      <TodoList todo={data.todo} />
+      {data.todo.length > 0 && <ActionGrid todo={data.todo} />}
+      {data.todo.length > 0 && <TodoList todo={data.todo} />}
       <TeamStrip team={data.team} />
       {footer}
     </div>
