@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from tsuyulabo_api.brain_adapter import BrainAdapter
 from tsuyulabo_api.db.models import Adult
 from tsuyulabo_api.domain import adults as rules
+from tsuyulabo_api.domain import genetics
 from tsuyulabo_api.domain.constants import SUBSKILL_LEVELS
 from tsuyulabo_api.errors import APIError
 
@@ -41,6 +42,9 @@ def payload(adult: Adult, brain: BrainAdapter | None = None) -> dict[str, Any]:
         "name": adult.name,
         "sex": adult.sex,
         "strain": adult.strain,
+        "genotype": adult.genotype,
+        "phenotypes": expressed_phenotypes(adult),
+        "mutation": adult.mutation,
         "stars": adult.stars,
         "traits": adult.traits,
         "subskills": adult.subskills,
@@ -52,3 +56,9 @@ def payload(adult: Adult, brain: BrainAdapter | None = None) -> dict[str, Any]:
         "preferences": adult.preferences,
         "created_at": adult.created_at,
     }
+
+
+def expressed_phenotypes(adult: Adult) -> list[str]:
+    traits = genetics.phenotypes(adult.genotype)
+    # Legacy strains predate genotype storage and remain historical discoveries.
+    return [adult.strain] if traits == ["wild"] and adult.strain != "wild" else traits
