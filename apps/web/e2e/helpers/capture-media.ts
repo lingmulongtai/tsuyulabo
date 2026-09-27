@@ -48,7 +48,7 @@ export class MediaCapture {
   }
 
   async finish(summary: object) {
-    expect(this.shots).toHaveLength(13);
+    expect(this.shots).toHaveLength(15);
     await writeFile(path.join(rawRoot, "capture.json"), JSON.stringify({
       viewport: { width: 390, height: 844, deviceScaleFactor: 2 },
       ...summary, shots: this.shots, chapters: this.chapters,

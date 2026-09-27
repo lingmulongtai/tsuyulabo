@@ -98,4 +98,4 @@ encode.child.stdin.end();
 await encode.completed;
 if ((await stat(temporary)).size >= 8_000_000) throw new Error("Video exceeds 8 MB");
 await rename(temporary, output);
-console.log(`Saved 26 WebP images and a 75-second highlight video to docs/media (raw duration ${duration.toFixed(1)}s).`);
+console.log(`Saved 30 WebP images and a 75-second highlight video to docs/media (raw duration ${duration.toFixed(1)}s).`);
