@@ -227,8 +227,14 @@ class SQLLab:
         return experiment_record(row)
 
 
-async def conversation_scope(store: SQLRecordStore, params: dict[str, Any]) -> tuple[str, str]:
-    """Resolve defaults while proving supplied week and fly belong to the same user/week."""
+async def conversation_scope(
+    store: SQLRecordStore, params: dict[str, Any], *, fallback_to_latest: bool = False
+) -> tuple[str, str]:
+    """Resolve defaults while proving supplied week and fly belong to the same user/week.
+
+    Morning memos only make sense for a running week; questions may also be about the latest
+    finished week (e.g. right after eclosion), so they pass ``fallback_to_latest``.
+    """
     week_id, fly_id = params.get("week_id"), params.get("fly_id")
     week: Week | None
     if fly_id:
@@ -239,11 +245,16 @@ async def conversation_scope(store: SQLRecordStore, params: dict[str, Any]) -> t
     if week_id:
         week = await store.week(week_id)
     else:
+        mine = select(Week).where(Week.user_id == store.user_id)
         week = await store.session.scalar(
-            select(Week)
-            .where(Week.user_id == store.user_id, Week.status == "active")
-            .order_by(Week.started_at.desc())
+            mine.where(Week.status == "active").order_by(Week.started_at.desc())
         )
+        if week is None and fallback_to_latest:
+            week = await store.session.scalar(mine.order_by(Week.started_at.desc()))
         if week is None:
-            raise ValueError("no active week")
+            raise NoRecordsYet("no active week")
     return week.id, week.adult_id or week.id
+
+
+class NoRecordsYet(ValueError):
+    """There is no week to talk about, so there is nothing Shiori can cite."""
