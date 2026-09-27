@@ -24,7 +24,7 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '17'
+          java-version: '21'
       # ubuntu-latest ships the Android SDK (ANDROID_HOME); setup-android@v3 fails trying to install 'tools'.
       - name: Check Android SDK
         run: |
