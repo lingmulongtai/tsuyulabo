@@ -3,18 +3,11 @@
 import { useState } from "react";
 import { CUE_INFO, VALENCE_INFO } from "@/game/labels";
 import type { Cue, Valence } from "@/game/puzzles/types";
+import { CueIcon } from "../art/CueIcon";
 import { ShioriBubble } from "../home/ShioriBubble";
 import { Button, TruthBadge } from "../ui/primitives";
 
 const CUES: Cue[] = ["banana", "apple_vinegar", "yeast", "grape", "blue_light"];
-const CUE_COLOR: Record<Cue, string> = {
-  banana: "#F2C94C",
-  apple_vinegar: "#E5484D",
-  yeast: "#E6D5B4",
-  grape: "#8E6BD8",
-  blue_light: "#5EC8F2",
-};
-
 /** Choose what to teach before the circuit puzzle: a cue (odour / light) and a sweet or bitter outcome. */
 export function TeachPicker({ remaining, tip, disabled, onPick }: { remaining?: number; tip?: string; disabled?: boolean; onPick: (cue: Cue, valence: Valence) => void }) {
   const [cue, setCue] = useState<Cue>("banana");
@@ -40,7 +33,7 @@ export function TeachPicker({ remaining, tip, disabled, onPick }: { remaining?: 
               aria-pressed={cue === c}
               className={`press flex flex-col items-center gap-1 whitespace-nowrap rounded-2xl border-2 bg-surface-2 py-2 text-[0.66rem] font-bold ${cue === c ? "border-ai" : "border-line-soft"}`}
             >
-              <span className="size-7 rounded-full shadow-inner" style={{ background: c === "blue_light" ? "radial-gradient(circle,#dff6ff,#5ec8f2)" : CUE_COLOR[c] }} />
+              <CueIcon cue={c} size={28} />
               {CUE_INFO[c].short}
             </button>
           ))}
