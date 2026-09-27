@@ -1,8 +1,8 @@
 # Tsuyu background worker
 
 The worker binds Shiori's protocols to the API's SQLAlchemy models and session factory.
-It never changes the API or brain packages. Tests create the real API schema in SQLite and
-inject an explicit fake brain; Redis is not needed for direct job calls or tests.
+The shared SQL/Shiori bindings live in `tsuyulabo_api.services` and are re-exported by the worker.
+Tests use SQLite with explicit fakes or the real brain codec; Redis is not needed for direct calls.
 
 ```powershell
 .\.tools\uv.exe run pytest services/shiori services/worker
@@ -21,7 +21,7 @@ engine and a shared cached provider, and shutdown disposes the engine.
 The registered arq names are `brain_run_experiment`, `shiori_answer`,
 `shiori_morning_memo`, and `run_brain_job`. The latter accepts `(job_id, kind, params)`
 and matches the current API `ArqJobQueue` dispatch contract. Job kinds are
-`brain_run_experiment` and `shiori_answer`.
+`brain.experiment`, `brain.training`, and `shiori.answer`. Legacy underscore names remain aliases.
 
 Direct calls use the functions in `tsuyu_worker.jobs`:
 
@@ -43,11 +43,12 @@ Omit `sessions` to create a short-lived engine using API settings. User identity
 comes from the job row or authenticated host, never tool arguments. Explicit fly/week IDs
 are checked for ownership and consistency; absent IDs resolve to the active week.
 
-**Current schema integration:** `Job` has no input column. Existing queue callers pass
-`params` separately. To invoke only by job ID, persist `job.result = {"input": params}`
-while the job is pending; completion replaces it with the final result. No migration is
-required. The commander's API routes must choose one of these input paths. Q&A requires
-`question`; experiments accept `fly_id`, `cue`, `trials`, and `seed`.
+**Input persistence:** the API commits `Job.params` before dispatch. The worker prefers these
+persisted inputs; direct callers may still supply `params` for older jobs. The legacy
+`result = {"input": params}` convention is accepted for old pending jobs. Canonical experiment
+inputs include a base64 snapshot, experiment ID and game timestamp; the worker uses the exact
+accepted snapshot, not a newer state. Training consumes ordered accepted care events and updates
+larval/adult bytes and preference caches transactionally, including late completion after eclosion.
 
 The API's existing `InlineJobQueue` owns job status itself. Bind its handlers with
 `inline_handlers(sessions, authenticated_user_id, provider=..., brain=...)` and pass the
@@ -92,27 +93,23 @@ raises `BrainUnavailable` when absent; fake measurements are never silently subs
 Tests explicitly inject `FakeBrainEngine`. A missing engine does not prevent imports,
 ordinary record-only Q&A, or memo generation.
 
-`BrainSnapshot` holds copied adult parameters/bytes and ordered training records.
-For a week without stored brain state, the adapter deterministically creates an individual
-and replays `training` care payloads (`cue`, `valence`, `learning_strength` or `strength`,
-optional `seed`). Association lookup reads a recorded `association_value` or `value`;
-it does not invent a fresh measurement. Experiments run on private state and are persisted
-with a per-user `#c-N` sequence, params, counts and engine name. Adult columns remain unchanged.
+`BrainSnapshot` holds copied adult or larval parameters and `FlyState` bytes. Both API and worker
+use the public `tsuyu_brain.api.FlyState.from_bytes` codec and lower-case `m` / `f` sex values.
+Stored bytes are authoritative; audit training is never replayed after decoding them. Old API
+replay snapshots are understood for migration compatibility. Run the API's documented backfill
+before serving existing databases. Missing states fail explicitly rather than inventing a fly.
 
-W1's task specifies the façade but not the exact byte codec. The isolated default seam
-expects `tsuyu_brain.learning.FlyState.from_bytes(blob)` for stored adult states and
-`tsuyu_brain.params.BrainParams(**params)` when no blob exists. After W1 merges, the
-commander must confirm these names, the `F`/`M` sex convention, and the persisted training
-seed/initial-state convention, or adapt this one module. A blob is treated as a complete
-serialized state and is not followed by another training replay. A weights-only codec
-must instead combine the weights with the persisted parameters in this adapter.
+Shiori experiments operate on private decoded states. Association lookup supports the API's
+nested `association: {cue, valence, value}` audit payload. Standalone worker/Shiori experiments
+use `#c-N` evidence IDs; API experiment results retain their `display_id: c-N` response contract.
 
 ## Validation
 
 The suite covers ownership, copy-only experiments, duplicate delivery, transactional
 rollback, both API dispatch paths, JST scheduling and memo deduplication. HTTP providers
-are tested with mocked transports. Live Redis, PostgreSQL locks and real brain codec
-integration require checks in the combined stack after the parallel branches merge.
+are tested with mocked transports. Real engine tests cover both stored larvae and adults, copy-only experiments, Shiori answers,
+and the exact API arq payloads for all three canonical job kinds. Live Redis/PostgreSQL
+integration still requires those external services.
 
 Optional source type check (the API package currently has no `py.typed` marker):
 

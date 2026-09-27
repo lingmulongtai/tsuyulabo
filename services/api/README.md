@@ -47,7 +47,8 @@ Game-time advances do not extend tokens or change the 24-hour idempotency retent
 
 Guest registration creates an eight-character friend code and grants 300 shizuku through the ledger.
 The three balance fields are `shizuku`, `research_points`, and `kohaku`; kohaku transfers are disabled
-in alpha. `research_rank` is currently `null`: the specs do not yet define its progression formula.
+in alpha. `research_rank` is `min(99, 1 + lifetime_earned_research_points // 100)`.
+Positive research-point ledger credits count toward rank; spending never lowers it.
 Favorite adults must belong to the authenticated user. Null clears the title or favorite adult.
 
 ## Game endpoints
@@ -66,9 +67,7 @@ Team changes settle gathering first. Removed adults keep their bags and fraction
 `adults.gathering`; adding them again restores the bag without crediting time spent off the team.
 Collection transfers materials, shizuku and experience, preserving fractional shizuku/items.
 
-The existing presentation rules intentionally return negative rewards for negative point totals.
-These are ledger debits and can return `insufficient_funds` at eclosion; this branch does not change
-that game-economy rule. The commander should resolve whether negative rewards should be clamped.
+Presentation rewards are clamped to zero when points are negative; eclosion never debits wallets.
 
 ## Transactions and worker integration
 
@@ -92,11 +91,12 @@ that game-economy rule. The commander should resolve whether negative rewards sh
 - `create_app(..., brain_handlers={"learn": callable})` registers inline Python handlers. Each takes
   a JSON parameter object and returns a JSON result object; async handlers are also supported.
   `app.state.brain_client.submit(user_id, kind, params)` persists a job, commits it, then dispatches.
-  Call this convenience method outside a route-owned transaction. The brain package is still being
-  implemented independently. The game app registers `brain.experiment` in inline mode.
-- Queue mode enqueues arq `run_brain_job(job_id, kind, params)` with `_job_id=job_id`. The W2 worker
-  must implement that function and update the committed job row. Status values are `pending`,
-  `running`, `succeeded`, and `failed`. This task implements the enqueue side only.
+  Call this convenience method outside a route-owned transaction. The game app registers `brain.experiment` and `shiori.answer` in inline mode.
+  Shiori defaults to the Mock provider; its shared SQL bindings live in the API package so the
+  API-only deployment does not need to install the worker package.
+- Queue mode enqueues arq `run_brain_job(job_id, kind, params)` with `_job_id=job_id`. The worker
+  implements that function and updates the committed job row. Status values are `pending`,
+  `running`, `succeeded`, and `failed`. The worker reads persisted `jobs.params` and tolerates duplicate deliveries.
 - Game routes persist `jobs.params` in the same transaction as accepted effects, then dispatch after
   commit. SQL and Redis are not one atomic transaction: process termination between commit and
   enqueue can leave a pending job. Its persisted kind/params are sufficient to redispatch; a periodic
@@ -108,13 +108,13 @@ that game-economy rule. The commander should resolve whether negative rewards sh
   responses. Training workers apply pending events in sequence order and tolerate redelivery.
   Learning that finishes after eclosion also updates the adult's brain and cached preferences.
 
-Worker handler registration (the worker itself is outside this branch):
+Worker handler registration:
 
 | Job kind | Handler contract |
 | --- | --- |
 | `brain.experiment` | `services.experiments.handler(session_factory, brain_adapter)` returns an async JSON handler; stores an experiment with a user-scoped sequence and `display_id: c-<seq>` |
 | `brain.training` | `services.training.handler(session_factory, brain_adapter)` applies accepted training, updates puzzle/care results, and completes associated jobs |
-| `shiori.answer` | Receives `{user_id, question, game_now}`; the Shiori worker supplies the answer handler |
+| `shiori.answer` | Receives `{user_id, question, game_now}`; shared `services.shiori` runs inline or in the worker |
 
 Both Python handler factories are in the `tsuyulabo_api` package. Job inputs are internal: the public
 job endpoint does not expose brain snapshots or RNG seeds. Daily memo readers expect
@@ -122,15 +122,27 @@ job endpoint does not expose brain snapshots or RNG seeds. Daily memo readers ex
 
 ## Brain boundary
 
-`brain_adapter.py` imports only `tsuyu_brain.api`, lazily. Without that independently developed
-package, brain-dependent requests return `503 brain_unavailable`; tests inject a deterministic fake.
-The façade must expose `default_params` as well as the six functions in W1-brain item 9.
-`generate_individual` parameters must be a dataclass or a JSON-compatible mapping.
+`brain_adapter.py` imports only `tsuyu_brain.api`, lazily. Missing engines fail explicitly.
+The public facade exports `FlyState`, `BrainParams`, `default_params`, and the simulation functions.
+Sex is `m` / `f` throughout. Behavior calls pass only the engine's supported context fields.
 
-The interim persistence codec stores individual-generation arguments and seeded training history
-(at most 18 events), then reconstructs through public façade calls. It avoids depending on an
-unpublished engine byte codec. The commander can replace it with the engine's finalized codec at
-integration; no brain internals are imported and the brain package is untouched.
+Adults and larvae store `FlyState.to_bytes()` in `learned_weights`, queryable `BrainParams` JSON
+in `brain_params`, and cached preference indices in `preferences`. The byte codec contains its
+version, parameters and float16 weights; it is not pickle. `brain_snapshot.training` and care
+records remain audit logs. Redis experiment inputs carry a base64 envelope of the same bytes.
+Training restores bytes once, applies one learning update, and refreshes the preference cache.
+Eclosion replaces individual parameters while preserving learned weights. Home/adult list reads
+never invoke simulations, including when a legacy row lacks its cache.
+
+For an existing replay-based database, stop API/workers, upgrade Alembic, then run:
+
+```powershell
+.\.tools\uv.exe run python services/api/scripts/backfill_brain_states.py
+```
+
+The backfill converts legacy snapshots and populates caches; it is safe to rerun. Run it before
+resuming traffic. Keeping this conversion outside the schema migration avoids importing PyTorch
+inside Alembic or replaying historical training during ordinary reads.
 
 ## Migrations and tests
 
@@ -158,3 +170,13 @@ eight hours, collects and levels up. A second scenario neglects days 2–5 and v
 misses and normal rank. Queue tests cover the three-second deadline, late adult updates and replay.
 The export command writes `apps/web/src/lib/api/openapi.json` without starting the app or loading
 the brain engine. Mutation headers are part of the live and exported OpenAPI schema.
+
+Real-engine integration and timing checks:
+
+```powershell
+.\.tools\uv.exe run pytest -m eval
+```
+
+The real full-week scenario trains banana+reward exactly three times, compares the eclosed
+preference with baseline, and verifies banana-favoured team gathering. The SQLite timing check
+requires trained home reads below 300 ms and rejects any brain work on cached adult/team reads.
