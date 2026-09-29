@@ -4,26 +4,34 @@
 
 ## いまの状態（サマリー）
 
-- 日付: 2026-09-27（午後）
-- フェーズ: W3 完了 → W4 進行中。**アルファの1週間ループが Web + API + ワーカー + DB で通しで遊べる状態**
-- main にあるもの: 全画面が API につながった Web（ホーム、ごはん・しつけ・そうじ・温度・場所えらび・睡眠、研究発表会、羽化、
-  チーム、成虫の詳細＋脳モデルで動く行動、脳ビューア、図鑑、フレンド、シオリ、開発用の時計）、ゲーム API、本物の脳エンジン
-  （**既定は本物の配線 MaleCNS v1.0**、6 項目すべて合格。合成の toy-v0 も同梱）、シオリ、ワーカー、docker compose、CI
-- テスト: Python 597 件（+ eval）、Web 254 件。ruff / typecheck / lint / build も通過。GitHub Actions も緑
-- ブラウザで通しプレイ確認済み: 卵 → 時間スキップ → 発表会（ケアミスで減点・報酬 0）→ 羽化（サーバーの抽選）→ 成虫ページ → 脳ビューア
-- 実行中のタスクはなし（2026-09-27 15:06 時点）。マイグレーションの先頭は 0010
-- MaleCNS v1.0 の生データ（約 1.1 GB、オーナー許可済み）は `C:\Users\lingm\dev\tsuyulabo-agents\W3-malecns\data\raw\malecns-v1.0\`
-  （W4-malecns-calibrate のクローンにもコピー）。git には入れない
-- Codex の使用量は 11:26 頃に一度上限に達したが、オーナーが同日リセットした（再開済み）。
-- **オーナー向けチェックリスト**:
-  1. Vercel CLI にログインして `docs/deploy.md` の手順で Web を公開（API なしでもデモ案内のトップになる）
-  2. API を公開するなら Cloud Run + Neon + Upstash（`docs/deploy.md`）。GitHub の Secrets を入れると `deploy.yml` が動く
-  3. Codex のサンドボックス設定（Codex に直接コミットさせたい場合）
-  4. プレイ動画を作るなら `winget install ffmpeg` → `docs/media/README.md` の 1 行を実行
-  5. git の author メール（学校のアドレス）を公開リポジトリで使い続けるか決める
-- オーナーが帰宅後にやること（元のメモ）: Codex のサンドボックス設定、Vercel CLI のログイン
-- ローカルで pytest が `PermissionError: ...\Temp\pytest-of-lingm` になるときは `PYTEST_DEBUG_TEMPROOT=/c/Users/lingm/.cache/pytest-tmp` を付ける
-  （Codex のサンドボックスが作った一時フォルダの権限のせい）。
+- 日付: 2026-09-29。**開発は別の PC に移る。新しい PC ではまず [NEW_PC.md](NEW_PC.md) を読む**（セットアップ、メールの設定、
+  旧 PC にだけあるもの）。
+- フェーズ: アルファ（フェーズ1）完成 → フェーズ2・3 の機能も main に入った。実行中のタスクはなし。
+- main にあるもの:
+  - **1週間の育成ループ**: ホーム、ごはん（ブロックパズル）、しつけ（回路パズル）、そうじ、温度、場所えらび、睡眠、研究発表会、
+    羽化（サーバーの抽選）。すべて API につながっている。
+  - **羽化のあと**: 研究チーム、成虫の詳細（脳モデルで動く行動）、名前、脳ビューア、図鑑、フレンド、シオリ、交配と本物の遺伝、
+    お見合い、迷路レース、今日の回路、いっしょにねる、Web Push、**見た目コンテスト**、**なわばりずもう**。
+  - **脳エンジン**: 既定は本物の配線 **MaleCNS v1.0**（6 項目すべて合格、デコーダー 88.6%）。合成の `toy-v0` も同梱。
+  - シオリ（Mock で全部動く。API キーを入れると Anthropic / OpenAI）、arq ワーカー、docker compose、CI 5 本
+    （ci / eval / e2e / deploy / android）、Capacitor の Android アプリ。
+- テスト: Python 618 件 + eval 7 件、Web の lint / typecheck / test / build、Playwright の1週間通しプレイ。GitHub Actions は緑。
+- マイグレーションの先頭は **0012**（0011 コンテスト → 0012 ずもう）。
+- 公開: Web デモ https://tsuyulabo.vercel.app 、Android プレリリース
+  [v0.1.0-alpha.1](https://github.com/lingmulongtai/tsuyulabo/releases/tag/v0.1.0-alpha.1)。API は未公開。
+- **オーナー向けチェックリスト**（残り）:
+  1. API を公開するなら Cloud Run + Neon + Upstash を用意して GitHub の Secrets を入れる（`docs/deploy.md`）。
+     公開すると Web とアプリで育成・フレンドが遊べる。
+  2. Android の本番署名用の keystore を作る（`docs/mobile.md`）。iOS には Mac・Xcode・Apple Developer が必要。
+  3. プレイ動画を作るなら FFmpeg のフル版を入れる。
+  4. GitHub の「Keep my email addresses private」を有効にする。
+- 次の候補:
+  - API の公開（上の 1）。
+  - シオリの実 LLM → 自作 LLM（保留中。オーナーは最終的に自作したい）。提案した段階:
+    ① API で基準を作る → ② 小さな公開モデル（0.5〜3B）を自動生成データで LoRA 追加学習し、LM Studio / llama.cpp で動かす →
+    ③ 夜の研究日誌だけ、ごく小さい GPT を一から作る。
+  - 脳: 一部の匂い（酵母）の反応が「じっとしている」にまとまる。検証用データでは 81.8%。
+  - Web Push の実機での配信確認、プレイ動画。
 
 ## オーナーの希望（2026-09-27 の指示）
 
@@ -101,9 +109,7 @@ git push
 
 ## 未解決・オーナーに確認したいこと
 
-- git の author が学校のメールアドレス（`2025m011@kuas.ac.jp`）。Public リポジトリなのでコミットに表示される。気になるなら GitHub の noreply アドレスに変える。
-- Vercel CLI は未インストール・未ログイン。デプロイにはオーナーのログインが必要かもしれない。
-- 本物の配線データ（MaleCNS）のダウンロード可否。
+- （2026-09-27 に全部解決: メールは noreply に変えて履歴も書き換え、Vercel は公開済み、MaleCNS はダウンロード済み）
 
 ## Log
 
@@ -139,3 +145,5 @@ git push
 - 2026-09-27 夕方 Claude: W8-decoder をマージ。MaleCNS から出力ニューロン 279 個を追加抽出し、デコーダーが 88.6%（検証用データでは 81.8%）。
   **6 項目すべて合格したので、ゲームの既定の脳を本物の配線 `malecns-v1.0` に切り替えた。** Python 618 件 + eval 7 件が通過。
   docker compose でも本物の配線で `scripts/smoke_api.py` が通ることを確認。残りの課題: 一部の匂いの反応が「じっとしている」にまとまる。
+- 2026-09-29 Claude: 開発を別の PC に移すため、再開の手順を [NEW_PC.md](NEW_PC.md) にまとめ、このサマリーを最新にした。
+  `run-codex.sh` のクローンと uv の場所を、ユーザーのホームフォルダから決めるようにした（旧 PC では同じ場所になる）。
