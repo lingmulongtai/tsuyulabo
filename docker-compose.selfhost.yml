@@ -1,0 +1,42 @@
+# Self-hosted production on the owner's PC, layered over docker-compose.yml (see docs/selfhost.md):
+#
+#   docker compose -f docker-compose.yml -f docker-compose.selfhost.yml --env-file <selfhost.env> up -d --build
+#
+# The web app stays on Vercel; Tailscale Funnel publishes the API from 127.0.0.1:8000.
+# Required values have no defaults so a missing env file fails loudly instead of using dev secrets.
+
+x-selfhost-environment: &selfhost-environment
+  TSUYU_ENV: production
+  TSUYU_DEV_TOOLS: "0"
+  BRAIN_MODE: queue
+  DATABASE_URL: ${DATABASE_URL:?set DATABASE_URL in the self-host env file}
+  JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET in the self-host env file}
+  CORS_ORIGINS: ${CORS_ORIGINS:?set CORS_ORIGINS in the self-host env file}
+  VAPID_PUBLIC_KEY: ${VAPID_PUBLIC_KEY:-}
+  VAPID_PRIVATE_KEY: ${VAPID_PRIVATE_KEY:-}
+  VAPID_SUBJECT: ${VAPID_SUBJECT:-mailto:admin@example.com}
+  SHIORI_PROVIDER: ${SHIORI_PROVIDER:-mock}
+
+services:
+  postgres:
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in the self-host env file}
+
+  redis:
+    restart: unless-stopped
+
+  migrate:
+    environment: *selfhost-environment
+
+  api:
+    restart: unless-stopped
+    environment: *selfhost-environment
+
+  worker:
+    restart: unless-stopped
+    environment: *selfhost-environment
+
+  # Vercel serves the web app; keep the dev server out of `up`.
+  web:
+    profiles: ["local-web"]
