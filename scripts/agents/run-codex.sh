@@ -19,10 +19,10 @@ TASK="$1"
 BRANCH="$2"
 EFFORT="${3:-medium}"
 MODEL="${4:-gpt-6-sol}"
-AGENTS_DIR="${AGENTS_DIR:-/c/Users/lingm/dev/tsuyulabo-agents}"
+AGENTS_DIR="${AGENTS_DIR:-$HOME/dev/tsuyulabo-agents}"
 REPO_URL="${REPO_URL:-https://github.com/lingmulongtai/tsuyulabo.git}"
 CLONE="$AGENTS_DIR/$TASK"
-UV_BIN="${UV_BIN:-/c/Users/lingm/bin/uv.exe}"
+UV_BIN="${UV_BIN:-$(command -v uv.exe || command -v uv || echo "$HOME/bin/uv.exe")}"
 
 # The Codex CLI bundled with the desktop app (the standalone one in ~/.codex is too old for the model).
 APP_DIR="$(powershell.exe -NoProfile -Command '(Get-AppxPackage OpenAI.Codex).InstallLocation' | tr -d '\r')"
