@@ -11,9 +11,12 @@
   Tailscale Funnel `https://ozg14.tail4204cd.ts.net` → Vercel が `/v1` を転送。秘密の値は `~/.tsuyulabo/selfhost.env`。
   デプロイは `scripts/selfhost/deploy.ps1`（push 済みの `origin/main` を出す）。
 - フェーズ: アルファ（フェーズ1）完成 → フェーズ2・3 の機能も main に入った。
-- **実行中**: シオリ専用モデルの LoRA 学習 v1（Claude が WSL2 Ubuntu で実行。`~/shiori-gpu/adapter-v1`、1 エポック 250 ステップ、
-  1 ステップ約 45 秒。ログは `~/.tsuyulabo/train-v1.log`）。手順は `ml/shiori-lora/README.md`。WSL には build-essential と
-  flash-linear-attention を追加済み（入れないと 2.2 倍遅い）。
+- **シオリ専用モデル（LoRA）**: v1（`tsuyu-shiori:2b-lora-v1`、Ollama に登録済み）は回数 100%・検証 100%・平均 2.1 秒。
+  ただし学習に使っていない言い回しを含む 159 問では 85.5%、「なんで？」・最大・論文・攻撃などが 0%（データの 72% が回数の質問）。
+  → `--balanced` で作り直したデータ（`data/shiori-sft-balanced`）で **v2 を学習中**（`~/shiori-gpu/adapter-v2`、ログ
+  `~/.tsuyulabo/train-v2.log`、約 3 時間）。終わったら `ml/shiori-lora/README.md` の 4・5 で書き出し・登録・評価。
+  合格（159 問で 90% 以上、なんで？も正しい）なら本番を `SHIORI_PROVIDER=ollama` に。WSL には build-essential と
+  flash-linear-attention を追加済み（入れないと 2.2 倍遅い）。llama.cpp の依存は torch を上書きしないように gguf-py だけ入れる。
 - サーバーの守り（W12）: 本番は `RATE_GUEST_HOUR=60`（Funnel が XFF を Vercel の IP で上書きするので、IP ごとの上限は
   ゆるくし、全体の 1 日 200 人で守る）。値は `~/.tsuyulabo/selfhost.env`。
 - シオリのローカル LLM（W9/W10、[local-llm.md](../services/shiori/reports/local-llm.md)）: 既製の qwen3.5:4b は回数の正答率
