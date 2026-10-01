@@ -14,6 +14,20 @@ class Settings(BaseSettings):
         default="development", validation_alias="TSUYU_ENV"
     )
     redis_url: str | None = None
+    rate_limits_enabled: bool = True
+    trusted_proxy_hops: int = Field(default=1, ge=0, le=16)
+    rate_guest_hour: int = Field(default=5, ge=1)
+    rate_guest_day_global: int = Field(default=200, ge=1)
+    rate_guest_fallback_hour_global: int = Field(default=10, ge=1)
+    rate_shiori_minute: int = Field(default=10, ge=1)
+    rate_shiori_day: int = Field(default=100, ge=1)
+    rate_brain_minute: int = Field(default=20, ge=1)
+    rate_puzzle_minute: int = Field(default=60, ge=1)
+    rate_friends_minute: int = Field(default=30, ge=1)
+    rate_authenticated_minute: int = Field(default=300, ge=1)
+    job_max_per_user: int = Field(default=2, ge=1)
+    job_max_total: int = Field(default=20, ge=1)
+    job_busy_retry_after: int = Field(default=10, ge=1)
     jwt_secret: SecretStr = SecretStr("local-development-only-change-before-deploying")
     dev_tools: bool = Field(default=False, validation_alias="TSUYU_DEV_TOOLS")
     brain_mode: Literal["inline", "queue"] = "inline"
