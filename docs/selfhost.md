@@ -14,7 +14,8 @@ Web は今までどおり Vercel、API だけをこの PC から **Tailscale Fun
 ## 1. 最初に 1 回だけ
 
 1. **WSL2 と Docker Desktop** を入れる（管理者の PowerShell。途中で再起動）。この PC では Docker Desktop はユーザー単位で
-   入っていて、CLI は `%LOCALAPPDATA%\Programs\DockerDesktopesourcesin` にある。
+   入っていて、CLI は `%LOCALAPPDATA%\Programs\DockerDesktop
+esourcesin` にある。
 
    ```powershell
    wsl --install --no-distribution
@@ -78,15 +79,27 @@ Android アプリも Vercel の URL を読み込むので、同じ経路を通�
 
 ## 4. バックアップ
 
+**毎朝 5:00 に自動で取っている**（タスク スケジューラ「tsuyulabo-backup」、2026-10-01 登録。PC が止まっていて逃したら、
+次に起動したときに実行）。保存先:
+
+| 場所 | 残す数 | 意味 |
+| --- | --- | --- |
+| `C:\Users\lingm\tsuyulabo-backups\` | 14 | ふだん戻す用。`backup.log` に毎回の結果 |
+| `F:\tsuyulabo-backups\`（USB の外付け SSD） | 30 | C ドライブが壊れても残る。外れていたら警告だけ出して続ける |
+
+学校の OneDrive には置かない（遊んでいる人のデータなので）。手で取るとき:
+
 ```powershell
-powershell -ExecutionPolicy Bypass -File scripts/selfhost/backup.ps1
+powershell -ExecutionPolicy Bypass -File scripts/selfhost/backup.ps1 -MirrorDirs "F:\tsuyulabo-backups"
 ```
 
-`~/tsuyulabo-backups/tsuyulabo-<日時>.dump` に保存し、新しい 14 個だけ残す。毎日自動で取るなら、タスク スケジューラに登録する:
+タスクは本番用 clone（`C:\Users\lingm\srv\tsuyulabo`）のスクリプトを動かす。登録し直すとき:
 
 ```powershell
-$action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-ExecutionPolicy Bypass -File `"$HOME\srv\tsuyulabo\scripts\selfhost\backup.ps1`""
-Register-ScheduledTask -TaskName "tsuyulabo-backup" -Action $action -Trigger (New-ScheduledTaskTrigger -Daily -At 5:00)
+$script = "$HOME\srv\tsuyulabo\scripts\selfhost\backup.ps1"; $log = "$HOME\tsuyulabo-backups\backup.log"
+$arg = "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -Command `"& '$script' -MirrorDirs 'F:\tsuyulabo-backups' *>> '$log'`""
+$settings = New-ScheduledTaskSettingsSet -StartWhenAvailable -ExecutionTimeLimit (New-TimeSpan -Minutes 30) -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries
+Register-ScheduledTask -TaskName "tsuyulabo-backup" -Action (New-ScheduledTaskAction -Execute "powershell.exe" -Argument $arg) -Trigger (New-ScheduledTaskTrigger -Daily -At 5:00) -Settings $settings
 ```
 
 戻すとき（中身を全部置き換える。先に今の状態もバックアップする）:
