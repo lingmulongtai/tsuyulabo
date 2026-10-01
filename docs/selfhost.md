@@ -6,14 +6,15 @@ Web は今までどおり Vercel、API だけをこの PC から **Tailscale Fun
 
 ```
 スマホ・ブラウザ ──https──> tsuyulabo.vercel.app（Web、Vercel）
-        │
-        └──https──> ozg14.tail4204cd.ts.net（Tailscale Funnel）──> 127.0.0.1:8000（この PC の Docker）
-                                                                      api / worker / postgres / redis
+                                │ /v1/* と /healthz を転送
+                                └──https──> ozg14.tail4204cd.ts.net（Tailscale Funnel）
+                                                 └──> 127.0.0.1:8000（この PC の Docker: api / worker / postgres / redis）
 ```
 
 ## 1. 最初に 1 回だけ
 
-1. **WSL2 と Docker Desktop** を入れる（管理者の PowerShell。途中で再起動）。
+1. **WSL2 と Docker Desktop** を入れる（管理者の PowerShell。途中で再起動）。この PC では Docker Desktop はユーザー単位で
+   入っていて、CLI は `%LOCALAPPDATA%\Programs\DockerDesktopesourcesin` にある。
 
    ```powershell
    wsl --install --no-distribution
@@ -55,16 +56,25 @@ powershell -ExecutionPolicy Bypass -File scripts/selfhost/deploy.ps1
 
 ## 3. Web と API をつなぐ（Vercel）
 
-Vercel の Production の環境変数 `NEXT_PUBLIC_API_URL` を `https://ozg14.tail4204cd.ts.net`（末尾に `/v1` を付けない）にして、
-再公開する。ビルドのときに埋め込まれる値なので、変えたら必ず再公開する。
+ブラウザは API を**直接呼ばない**。Web と同じ `https://tsuyulabo.vercel.app/v1/...` に送り、Vercel が自宅サーバーへ転送する
+（[proxy.ts](../apps/web/src/lib/api/proxy.ts)）。直接呼ぶと、Tailscale につないだ端末では `ozg14.tail4204cd.ts.net` が
+プライベートな 100.x のアドレスになり、Chrome の Local Network Access に止められるため（2026-10-01 に確認）。
+
+Vercel の Production の環境変数（ビルドのときに使う値なので、変えたら必ず再公開する）:
+
+| 変数 | 値 | 意味 |
+| --- | --- | --- |
+| `NEXT_PUBLIC_API_URL` | `https://tsuyulabo.vercel.app` | ブラウザが API を呼ぶ先（Web 自身） |
+| `TSUYU_API_PROXY_TARGET` | `https://ozg14.tail4204cd.ts.net` | Vercel が転送する先（ブラウザには出ない） |
+| `NEXT_PUBLIC_DEV_TOOLS` | `0` | 時間スキップなどを出さない |
 
 ```powershell
-npx.cmd --yes vercel@60.1.3 env add NEXT_PUBLIC_API_URL production
-npx.cmd --yes vercel@60.1.3 deploy --prod
+npx.cmd --yes vercel@60.1.3 env ls production
+npx.cmd --yes vercel@60.1.3 deploy --prod --yes
 ```
 
-API 側の `CORS_ORIGINS` は `https://tsuyulabo.vercel.app` だけを許可している。Android アプリも Vercel の URL を読み込むので、
-これで足りる。
+API 側の `CORS_ORIGINS` は `https://tsuyulabo.vercel.app` だけを許可している（転送されたリクエストにも Origin が付くため）。
+Android アプリも Vercel の URL を読み込むので、同じ経路を通る。
 
 ## 4. バックアップ
 
@@ -97,6 +107,8 @@ docker compose --project-name tsuyulabo-server logs --tail 50 api worker
 
 - **PC が止まるとゲームも止まる**: スリープ、シャットダウン、Windows Update の再起動のあいだは遊べない。再起動のあとは
   Windows にサインインすると Docker Desktop が立ち上がり、コンテナも自動で戻る（`restart: unless-stopped`）。
+- **CPU は冷えにくい**（液体金属の劣化）。api と worker は 2 コアずつ、PyTorch は 2 スレッドに絞っている。
+  変えるときは env ファイルに `SELFHOST_API_CPUS` / `SELFHOST_WORKER_CPUS` / `SELFHOST_TORCH_THREADS` を書く。
 - 公開しているのは API（ポート 8000）だけ。Postgres と Redis は `127.0.0.1` にしか出していない。
 - 開発用の時間スキップは本番では無効（`TSUYU_DEV_TOOLS=0`）。`scripts/smoke_api.py` は本番では最後まで通らないので、
   開発用の `docker compose up` で試す。
