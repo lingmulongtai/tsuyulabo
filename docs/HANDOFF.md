@@ -115,6 +115,8 @@ git push
 | W6-shiori-answers | シオリの Mock 回答を話題別に、引用は関連する少数だけに | Codex | feat/shiori-answers | マージ済み |
 | W3-web-app | API クライアント、フック、ホームとごはんの接続、残りの画面 | Codex | feat/web-app | マージ済み |
 | W3-malecns | MaleCNS v1.0 から回路を作って評価（3/6 合格、既定は toy-v0 のまま） | Codex | feat/malecns | マージ済み |
+| W9-selfhost | オーナーの PC で API を本番公開（Docker、Tailscale Funnel、Vercel の転送、バックアップ） | Claude | main | 完了 |
+| W9-shiori-local | シオリをローカル LLM（Ollama）で動かし、実モデルで評価する | Codex | feat/shiori-local | 実行中 |
 
 ## 決めたこと（理由つき）
 
@@ -164,3 +166,13 @@ git push
   docker compose でも本物の配線で `scripts/smoke_api.py` が通ることを確認。残りの課題: 一部の匂いの反応が「じっとしている」にまとまる。
 - 2026-09-29 Claude: 開発を別の PC に移すため、再開の手順を [NEW_PC.md](NEW_PC.md) にまとめ、このサマリーを最新にした。
   `run-codex.sh` のクローンと uv の場所を、ユーザーのホームフォルダから決めるようにした（旧 PC では同じ場所になる）。
+- 2026-09-29 Claude（新しい PC）: ドキュメントを読んで引き継ぎ。オーナーに方針を確認（上の「2026-09-29 / 10-01 の指示」）。
+  OneDrive 内で `.venv` を作り直したら OneDrive の同期で git と pytest が固まったので、作業場所を `C:\Users\lingm\dev\tsuyulabo` に移した。
+  自宅サーバー用の compose（`docker-compose.selfhost.yml`）、秘密の値の生成、デプロイ・バックアップのスクリプト、`docs/selfhost.md` を追加。
+  Ollama で小さいモデルを試した（gemma4:e4b は 6 GB の GPU に収まらない → qwen3.5:4b / 2b を採用）。W9-shiori-local の指示書を書いた。
+- 2026-10-01 Claude: WSL2 と Docker Desktop が入ったので**本番を公開**。`deploy.ps1` で `tsuyulabo-server` を起動、Tailscale Funnel で
+  `https://ozg14.tail4204cd.ts.net` に出し、Vercel を本番モードで再公開。Tailscale につないだ端末では API の名前が 100.x になり、
+  Chrome の Local Network Access に止められたので、**Vercel が `/v1` を自宅サーバーへ転送する方式**にした（`TSUYU_API_PROXY_TARGET`）。
+  あわせて API に Private Network Access の応答を追加。Playwright で本番のゲスト作成とホーム表示を確認。
+  CPU が冷えない PC なので api / worker を 2 コアずつに制限。電源モードをバランスにしたらローカル LLM が 2.7 → 42 トークン/秒に。
+  W9-shiori-local を Codex（gpt-6.1-sol）に投入。
