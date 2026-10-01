@@ -39,7 +39,7 @@ htmlcov/
 # Data / artifacts
 data/raw/
 data/cache/
-data/shiori-sft/
+data/shiori-sft*/
 ml/shiori-lora/artifacts/
 *.sqlite3
 *.db
