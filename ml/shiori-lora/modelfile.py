@@ -8,12 +8,17 @@ from pathlib import Path
 
 
 def compose(base: str, gguf: str) -> str:
-    if 'TEMPLATE """' not in base or not re.search(r"(?m)^FROM\s+", base):
+    # Ollama 0.34 ships qwen3.5 with a one-line TEMPLATE plus built-in RENDERER/PARSER for tools.
+    native = re.search(r"(?m)^(RENDERER|PARSER)\s+\S", base) and re.search(r"(?m)^TEMPLATE\s", base)
+    if not (native or 'TEMPLATE """' in base) or not re.search(r"(?m)^FROM\s+", base):
         raise ValueError("capture ollama show BASE --modelfile, including its TEMPLATE")
     if re.search(r"(?m)^ADAPTER\s+", base):
         raise ValueError("expected an unadapted base Modelfile")
     if any(c in gguf for c in ('"', "\n", "\r")):
         raise ValueError("invalid GGUF path")
+    if 'TEMPLATE """' not in base:
+        # No multi-line template text to protect: swap the first top-level FROM only.
+        return re.sub(r"(?m)^FROM[^\r\n]*", lambda _: f'FROM "{gguf}"', base, count=1)
     # Replace exactly the top-level FROM before TEMPLATE; do not touch template text.
     prefix, template = base.split('TEMPLATE """', 1)
     prefix, count = re.subn(r"(?m)^FROM[^\r\n]*", lambda _: f'FROM "{gguf}"', prefix, count=1)
