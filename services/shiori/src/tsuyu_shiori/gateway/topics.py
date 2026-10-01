@@ -23,8 +23,10 @@ KINDS = {
     "pupation_site": "場所えらび",
     "sleep": "睡眠",
     "eclosion": "羽化・特性",
+    "presentation": "研究発表会",
 }
 WORDS = {
+    "presentation": ("発表会", "ランク"),
     "sleep": ("睡眠", "眠", "寝", "ねむ", "おやすみ"),
     "eclosion": ("羽化", "特性", "素質", "成虫", "性別"),
     "meal": ("ごはん", "食事", "大成功", "えさ", "餌"),
@@ -121,7 +123,9 @@ def observations(
             hours = data.get("hours")
             detail = f"{hours:.1f}時間" if hours is not None else "開始のみで、長さは未確定"
             sentences.append(f"直近の睡眠は{detail}です {latest['id']}。")
-        elif topic == "meal" and "大成功" in question:
+        elif topic == "meal" and (
+            "大成功" in question or any(r["data"].get("great_success") is True for r in selected)
+        ):
             successes = [r for r in selected if r["data"].get("great_success") is True]
             sentences.append(
                 f"ごはんの大成功は{len(successes)}回記録されています "
@@ -131,6 +135,8 @@ def observations(
             traits = data.get("traits")
             detail = f"特性は「{'・'.join(traits)}」" if traits else "羽化"
             sentences.append(f"{detail}が記録されています {latest['id']}。")
+        elif topic == "presentation" and "rank" in data:
+            sentences.append(f"研究発表会のランクは{data['rank']}です {latest['id']}。")
         else:
             detail = f"、直近のスコアは{data['score']}" if data.get("score") is not None else ""
             sentences.append(f"{label}は{len(selected)}回{detail}です {refs}。")

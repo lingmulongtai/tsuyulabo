@@ -26,6 +26,8 @@ from tsuyu_shiori.eval_grading import (
     has_facts,
     number,
 )
+from tsuyu_shiori.eval_metrics import token_metrics
+from tsuyu_shiori.eval_open import open_questions
 from tsuyu_shiori.features import JST, answer_question
 from tsuyu_shiori.gateway import CachedProvider, MockProvider, OllamaProvider, Provider
 from tsuyu_shiori.records import MemoryLab, MemoryRecordStore, Record
@@ -143,6 +145,7 @@ async def evaluate(
     store, questions = synthesize(seed)
     topics = topic_questions(store)
     cases = [(q, n, "count") for q, n in questions] + [(q, parts, "topic") for q, parts in topics]
+    cases += [(q, facts, "open") for q, facts in open_questions(store)]
     if limit is not None:
         if limit < 1:
             raise ValueError("limit must be positive")
@@ -211,6 +214,7 @@ async def evaluate(
         "passed": accuracy >= 0.8
         and rate >= 0.95
         and topic_accuracy == 1
+        and accuracy_for("open") >= 0.7
         and readability_rate == 1,
         "provider": provider.cache_namespace,
         "seed": seed,
@@ -221,6 +225,7 @@ async def evaluate(
         "fallback_rate": fallback_count / len(results),
         "delivered_accuracy": accuracy_for("count", "delivered_correct"),
         "delivered_topic_accuracy": accuracy_for("topic", "delivered_correct"),
+        "delivered_open_accuracy": accuracy_for("open", "delivered_correct"),
         "latency_mean_seconds": sum(latencies) / len(latencies),
         "latency_p95_seconds": latencies[math.ceil(len(latencies) * 0.95) - 1],
         "input_tokens": sum(r["cost"]["input_tokens"] for r in results),
@@ -229,9 +234,12 @@ async def evaluate(
             sum(item["eval_count"] for item in generation) / duration if duration else None
         ),
         "load_seconds": sum(item["load_duration"] for item in generation) / 1_000_000_000,
+        "generation_limit_count": sum(item.get("generation_limited", 0) for item in generation),
         "questions": len(results),
         "accuracy": accuracy,
         "topic_accuracy": topic_accuracy,
+        "open_accuracy": accuracy_for("open"),
+        **token_metrics(results),
         "readability_rate": readability_rate,
         "max_ids_per_answer": max(r["readability"]["id_count"] for r in results),
         "max_answer_length": max(r["readability"]["length"] for r in results),
@@ -241,6 +249,7 @@ async def evaluate(
             "accuracy": 0.8,
             "verification_rate": 0.95,
             "topic_accuracy": 1,
+            "open_accuracy": 0.7,
             "readability_rate": 1,
             "max_ids_per_answer": 6,
             "max_answer_length": 160,
@@ -262,6 +271,7 @@ def write_report(report: dict[str, Any], directory: Path) -> None:
         f"- Questions: {report['questions']}",
         f"- Accuracy: {report['accuracy']:.3f}",
         f"- Topic accuracy: {report['topic_accuracy']:.3f}",
+        f"- Open accuracy: {report['open_accuracy']:.3f}",
         f"- Readability rate: {report['readability_rate']:.3f}",
         f"- Maximum IDs / characters: {report['max_ids_per_answer']} / "
         f"{report['max_answer_length']}",
@@ -273,6 +283,12 @@ def write_report(report: dict[str, Any], directory: Path) -> None:
         f"{report['latency_p95_seconds']:.2f}",
         f"- Input / output tokens: {report['input_tokens']} / {report['output_tokens']}",
         "",
+        f"- Input tokens per question mean / max: "
+        f"{report['input_tokens_mean_per_question']:.1f} / "
+        f"{report['input_tokens_max_per_question']}",
+        f"- Maximum input tokens per model call: {report['input_tokens_max_per_call']}",
+        "",
+        "Question input sums every model call; context occupancy is per call.",
         "Accuracy, verification and readability grade original provider output before fallback.",
         "This gate checks generated counts, expected topic observations, citation existence,",
         "and readability; it does not prove semantic entailment or live-provider quality.",
