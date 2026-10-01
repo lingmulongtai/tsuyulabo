@@ -6,6 +6,7 @@ from .base import Cost, Provider, Response, ToolCall
 from .cache import CachedProvider, MemoryCache, RedisCache
 from .http import AnthropicProvider, OpenAIProvider
 from .mock import MockProvider
+from .ollama import OllamaProvider
 
 __all__ = [
     "AnthropicProvider",
@@ -13,6 +14,7 @@ __all__ = [
     "Cost",
     "MemoryCache",
     "MockProvider",
+    "OllamaProvider",
     "OpenAIProvider",
     "Provider",
     "RedisCache",
@@ -24,7 +26,12 @@ __all__ = [
 
 def default_provider() -> Provider:
     name = os.getenv("SHIORI_PROVIDER", "mock").lower()
-    providers = {"mock": MockProvider, "anthropic": AnthropicProvider, "openai": OpenAIProvider}
+    providers = {
+        "mock": MockProvider,
+        "anthropic": AnthropicProvider,
+        "openai": OpenAIProvider,
+        "ollama": OllamaProvider,
+    }
     if name not in providers:
-        raise ValueError("SHIORI_PROVIDER must be mock, anthropic, or openai")
+        raise ValueError("SHIORI_PROVIDER must be mock, anthropic, openai, or ollama")
     return CachedProvider(providers[name]())
