@@ -7,7 +7,8 @@
 
 名前の由来：ショウジョウバエの学名 *Drosophila* は、ギリシャ語で「露を好むもの」。
 
-> **公開デモ: https://tsuyulabo.vercel.app** （ミニゲームの練習と演出のデモ。バックエンドは未公開）
+> **遊ぶ: https://tsuyulabo.vercel.app** （育成・フレンドまで遊べるアルファ版。サーバーは開発者の PC で動いているので、
+> 止まっていることがあります。[しくみ](docs/selfhost.md)）
 > **Android アルファ版（APK）**: [v0.1.0-alpha.1](https://github.com/lingmulongtai/tsuyulabo/releases/tag/v0.1.0-alpha.1)（デバッグ署名。インストール方法はリリースノート）
 >
 > **状態: アルファ版を開発中。** 企画書: [docs/spec/kikakusho-v0.2.html](docs/spec/kikakusho-v0.2.html) ／
