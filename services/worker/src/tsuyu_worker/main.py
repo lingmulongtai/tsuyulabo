@@ -15,6 +15,7 @@ from tsuyulabo_api.services.push import WebPushSender
 from tsuyulabo_api.settings import Settings
 
 from . import jobs
+from .config import WorkerConfig
 from .push import send_reminders
 from .schedule import nightly_memos
 
@@ -93,6 +94,7 @@ async def friend_push(ctx: dict[str, Any]) -> dict[str, Any]:
 
 
 class WorkerSettings:
+    max_jobs = WorkerConfig().max_jobs
     redis_settings = RedisSettings.from_dsn(os.getenv("REDIS_URL", "redis://localhost:6379/0"))
     functions = [
         func(arq_brain_run_experiment, name="brain_run_experiment"),
