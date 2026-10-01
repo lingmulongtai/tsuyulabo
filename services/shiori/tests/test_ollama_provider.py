@@ -15,7 +15,7 @@ async def test_native_chat_tools_and_replay(arguments: dict | str) -> None:
         assert str(request.url) == "http://localhost:11434/api/chat"
         body = json.loads(request.content)
         requests.append(body)
-        assert body["options"] == {"num_ctx": 8192, "temperature": 0.2}
+        assert body["options"] == {"num_ctx": 8192, "num_predict": 512, "temperature": 0.2}
         assert body["think"] is body["stream"] is False
         assert body["keep_alive"] == "30m"
         assert body["tools"][0]["function"]["parameters"] == {"type": "object"}
@@ -86,16 +86,27 @@ def test_environment_and_cache_identity(monkeypatch: pytest.MonkeyPatch) -> None
         "OLLAMA_QA_MODEL": "custom-qa",
         "OLLAMA_JOURNAL_MODEL": "custom-journal",
         "OLLAMA_NUM_CTX": "4096",
+        "OLLAMA_NUM_PREDICT": "256",
         "OLLAMA_TIMEOUT": "60",
         "OLLAMA_KEEP_ALIVE": "5m",
     }.items():
         monkeypatch.setenv(key, value)
     provider = OllamaProvider()
     assert provider.num_ctx == 4096 and provider.timeout == 60 and provider.keep_alive == "5m"
+    assert provider.num_predict == 256
     assert provider.model_for("qa") == "custom-qa"
     assert provider.model_for("journal") == "custom-journal"
     assert provider.cache_namespace != OllamaProvider(qa_model="other").cache_namespace
     assert provider.cache_namespace != OllamaProvider(journal_model="other").cache_namespace
+    monkeypatch.setenv("OLLAMA_NUM_PREDICT", "512")
+    assert provider.cache_namespace != OllamaProvider().cache_namespace
+
+
+@pytest.mark.parametrize("value", ["0", "-1"])
+def test_prediction_limit_must_be_positive(monkeypatch: pytest.MonkeyPatch, value: str) -> None:
+    monkeypatch.setenv("OLLAMA_NUM_PREDICT", value)
+    with pytest.raises(ValueError, match="OLLAMA_NUM_PREDICT"):
+        OllamaProvider()
 
 
 async def test_existing_id_and_http_errors() -> None:

@@ -117,7 +117,9 @@ async def run_agent(
             messages.append(
                 {
                     "role": "system",
-                    "content": "記録未取得です。回答せず、必ずget_care_eventsを呼んでください。",
+                    "content": "記録未取得です。質問に必要な記録ツールを呼んでください。"
+                    "回数にはcount_care_events、観察にはget_care_events、"
+                    "好みにはget_associationやrun_odor_choiceを使います。",
                 }
             )
             continue
@@ -144,7 +146,12 @@ async def run_agent(
                 except (ValueError, KeyError):
                     result = {"error": "invalid_tool_arguments_or_missing_record"}
                 tool_results[key] = result
-            retrieved = retrieved or "error" not in result
+            retrieved = retrieved or (
+                "error" not in result
+                and call.name
+                in {"get_care_events", "count_care_events", "get_association", "run_odor_choice"}
+            )
+            allowed_ids.update(result.get("ids", []))
             for record in result.get("records", []) + result.get("sleep_sessions", []):
                 allowed_ids.add(record["id"])
                 if record["kind"] == "experiment" and record["id"] not in experiments:

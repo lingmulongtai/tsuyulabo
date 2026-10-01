@@ -14,13 +14,14 @@ From the repository root in PowerShell:
 
 The last command writes ignored `eval-results/shiori-mock-mock-qa/report.json` and `report.md`, and exits
 nonzero unless count accuracy is at least 0.80, sentence verification is at least 0.95,
-and topic accuracy and readability are both 1.0.
+topic accuracy and readability are both 1.0, and open accuracy is at least 0.70.
 `--seed` and `--output-dir` are available. The evaluation generates 42 count questions from
 a synthetic week, including zero counts, different days, cues and reinforcement types,
-plus nine topic questions. Readability requires nonempty answers of at most 160 characters,
+plus nine topic questions and ten realistic open questions (preferences, sleep,
+presentation rank, and most frequent training). Readability requires nonempty answers of at most 160 characters,
 at most six citation occurrences total, and one to four citations in every sentence.
 Rejected sentences also fail readability, so verification cannot hide uncited prose.
-It measures template accuracy and citation validity, not live-model reasoning quality.
+It checks facts and citation validity; it does not prove semantic entailment.
 
 ## Offline answers
 
@@ -79,7 +80,7 @@ payload = answer.to_dict()
 
 `morning_memo`, `coach_tip`, and `presentation_host` accept the same host dependencies as
 keyword arguments. Morning memos select the previous JST civil day's care and sleep
-sessions starting after noon that day. Pass an aware `now` for reproducible generation.
+sessions starting after noon that day and before the memo creation time. Pass an aware `now` for reproducible generation.
 The coach accepts a `cue`. Presentation ranks come from a persisted `presentation`
 care record with `data.rank`, so the rank has its own verifiable evidence.
 Missing records produce fewer sentences or an explicit empty-state status instead of fabricated evidence.
@@ -93,12 +94,44 @@ uses `#0001` for care, `#c-1` for experiments and `#s-<uuid>` for sleep. Data co
 care carries `research_day`, `cue`, `valence`, optional `value`; sleep carries `hours`;
 experiments carry `toward`, `away`, `cue`, `trials`, and `seed`.
 
-The four tools validate arguments, reject out-of-conversation week/fly IDs, and cap trials
+The five tools validate arguments, reject out-of-conversation week/fly IDs, and cap trials
 at 1,000. The host lab owns state loading and copying; brain state is never entrusted to
 the language model. A normal run makes at most four provider calls and executes at most four
 tools per step; the last step allows only a final answer. Empty-answer Mock recovery
 is bounded separately as described below. Repeated identical tool calls
 reuse their result within the run, including persisted experiments.
+
+## Compact record tools
+
+Both `get_care_events` and `count_care_events` accept `week_id` and optional
+`kinds`, `research_day` (1–7), `cue`, `valence`. Conditions intersect. Filtering runs
+**after** host retrieval, so the API's existing DB-backed `RecordStore` remains unchanged.
+Omitted kinds include all care and sleep records; `[]` selects none. Missing data fields
+do not match their filters. Morning memo time windows apply to both tools.
+The cue/valence enums carry Japanese labels in the schema, including イースト=yeast.
+
+`get_care_events` returns `records`, `sleep_sessions`, `total`, `truncated`.
+The combined arrays contain at most 20 records, newest first. `total` counts all matching
+records before the cap. Request `kinds=["sleep"]` to examine sleep without other care.
+Records contain `id`, `kind`, `research_day`, optional `occurred_at`, and `data` limited
+to cue, valence, value, score, great_success, traits, rank and hours. Internal payloads,
+week/fly identity and other unused data stay out of the model context.
+
+`count_care_events` returns exact `count`, up to four citation `ids`, and `filters`
+with week_id and all conditions (null for omitted conditions). For a zero count,
+IDs refer to inspected records in the same feature time window, not matching events;
+no records means no IDs. Counts never depend on the capped list. For example:
+
+```json
+{"count": 3, "ids": ["#0042", "#0041", "#0040"], "filters": {
+  "week_id": "week", "kinds": ["training"], "research_day": 2,
+  "cue": "banana", "valence": "reward"
+}}
+```
+
+The general prompt has two brief tool-use examples, without a fixed answer template.
+Any successful care/count/association/experiment tool satisfies the retrieval guard;
+paper search alone does not. Only returned IDs can be cited.
 
 ## Providers and caching
 
@@ -168,10 +201,12 @@ LoRA models.
 | `OLLAMA_QA_MODEL` | `qwen3.5:4b` | Questions and coaching |
 | `OLLAMA_JOURNAL_MODEL` | `qwen3.5:2b-q4_K_M` | Journal and morning memo |
 | `OLLAMA_NUM_CTX` | `8192` | Always sent; avoids Ollama's huge default context |
+| `OLLAMA_NUM_PREDICT` | `512` | Positive per-call generation cap; also part of cache identity |
 | `OLLAMA_KEEP_ALIVE` | `30m` | Model residency |
 | `OLLAMA_TIMEOUT` | `120` | Request timeout in seconds |
 
-Every request sends `stream=false`, `think=false`, and temperature 0.2. Leaked think
+Every request sends `stream=false`, `think=false`, temperature 0.2 and the generation cap.
+The cap bounds runaway output; reaching it can leave partial text for verification/recovery. Leaked think
 blocks are removed. Native prompt/output token counts are recorded with zero USD cost.
 A connection error names the endpoint. No CPU inference setting is forced.
 
@@ -191,9 +226,11 @@ Live evaluation is opt-in, sequential and forbidden in CI:
 $env:SHIORI_LIVE_EVAL = "1"
 # First debug a small sample. A limited report does not certify the full gates.
 .\.tools\uv.exe run python -m tsuyu_shiori.eval --provider ollama --limit 3
-# Full QA evaluation (42 count questions + 9 topics), once per model:
+# Full QA evaluation (42 counts + 9 topics + 10 open questions), once per model:
 .\.tools\uv.exe run python -m tsuyu_shiori.eval --provider ollama --qa-model qwen3.5:4b
 .\.tools\uv.exe run python -m tsuyu_shiori.eval --provider ollama --qa-model qwen3.5:2b-q4_K_M
+# Three morning memos from the journal model on the same synthetic week:
+.\.tools\uv.exe run python -m tsuyu_shiori.eval_memos --provider ollama --journal-model qwen3.5:2b-q4_K_M
 Remove-Item Env:SHIORI_LIVE_EVAL
 ```
 
@@ -201,12 +238,21 @@ Remove-Item Env:SHIORI_LIVE_EVAL
 QA, not journal generation). `--limit N`, `--seed`, and `--output-dir` are supported.
 Reports go to ignored `eval-results/shiori-<provider>-<sanitized-qa-model>/`. Model-name
 punctuation becomes `-`. Each JSON result includes latency, tokens and fallback status;
-summary metrics include mean/p95 latency (nearest rank), generation tokens/s and load time.
-Accuracy, topic accuracy, verification and readability grade the original verified model
-answer **before recovery**; `delivered_accuracy` and `delivered_topic_accuracy` separately
+summary metrics include mean/p95 latency (nearest rank), generation tokens/s, load time
+and calls stopped at the generation limit (`generation_limit_count`).
+Input tokens per question report mean/max sums across model calls; maximum tokens per call
+measures the largest single context. These are different quantities. Mock tokens remain estimates.
+Accuracy, topic/open accuracy, verification and readability grade the original verified model
+answer **before recovery**; `delivered_accuracy`, `delivered_topic_accuracy` and
+`delivered_open_accuracy` separately
 measure what the user receives. Fallbacks therefore cannot make an invalid model pass.
 Count grading accepts a number beside 回, rejecting conflicting counts. Topic grading
 checks numeric values, action counts and record IDs rather than Mock sentence templates.
-The Mock gate thresholds remain unchanged. Live tests skip unless `SHIORI_LIVE_EVAL=1`
+Existing Mock thresholds remain unchanged, with the open gate added at 0.70. Live tests skip unless `SHIORI_LIVE_EVAL=1`
 and always skip in CI. If generation drops to a few tokens/s, record the observed speed
 and possible power-saving mode; do not switch to CPU inference.
+
+`eval_memos` saves three morning samples (September 23, 25, 28 at 08:00 JST),
+including native/delivered text, verification, fallback status, latency and tokens.
+It uses the journal model and previous-day/night windows, excludes future sleep,
+and requires the same live opt-in as QA evaluation. `--output` selects its JSON path.

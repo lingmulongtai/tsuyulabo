@@ -14,7 +14,11 @@ def count_records(question: str, records: list[dict[str, Any]]) -> list[dict[str
     selected = records
     day = re.search(r"(?:研究)?(\d+)日目", question)
     if day:
-        selected = [r for r in selected if r["data"].get("research_day") == int(day[1])]
+        selected = [
+            r
+            for r in selected
+            if r.get("research_day", r["data"].get("research_day")) == int(day[1])
+        ]
     else:
         weekday = next(
             (i for i, name in enumerate("月火水木金土日") if f"{name}曜" in question), None
@@ -64,8 +68,52 @@ class MockProvider:
         question = request["question"]
         counting = any(word in question for word in ("何回", "回数", "件数"))
         results = [json.loads(m["content"]) for m in messages if m["role"] == "tool"]
+        weekday = any(f"{day}曜" in question for day in "月火水木金土日")
         if not results:
-            calls = [ToolCall("care", "get_care_events", {"week_id": request["week_id"]})]
+            topic = topic_in(question)
+            arguments: dict[str, Any] = {"week_id": request["week_id"]}
+            if topic and request.get("feature", "answer") == "answer":
+                arguments["kinds"] = [topic]
+            if counting:
+                day = re.search(r"(?:研究)?(\d+)日目", question)
+                if day:
+                    arguments["research_day"] = int(day[1])
+                cue = cue_in(question)
+                if cue:
+                    arguments["cue"] = cue
+                if "罰" in question or "punish" in question:
+                    arguments["valence"] = "punish"
+                elif any(w in question for w in ("報酬", "reward", "ごほうび")):
+                    arguments["valence"] = "reward"
+                if not topic:
+                    arguments["kinds"] = [
+                        "training",
+                        "meal",
+                        "cleaning",
+                        "temperature",
+                        "pupation_site",
+                        "eclosion",
+                        "presentation",
+                    ]
+            if "いちばん多" in question:
+                return self.response(
+                    messages,
+                    tool_calls=[
+                        ToolCall(
+                            cue,
+                            "count_care_events",
+                            {"week_id": request["week_id"], "kinds": ["training"], "cue": cue},
+                        )
+                        for cue in CUES
+                    ][:4],
+                )
+            calls = [
+                ToolCall(
+                    "care",
+                    "count_care_events" if counting and not weekday else "get_care_events",
+                    arguments,
+                )
+            ]
             cue = cue_in(question)
             if cue and topic_in(question) == "training" and not counting:
                 calls.extend(self.measure(request["fly_id"], cue))
@@ -75,6 +123,42 @@ class MockProvider:
                 calls.append(ToolCall("papers", "search_papers", {"query": question, "k": 2}))
             return self.response(messages, tool_calls=calls[:4])
 
+        counts = [result for result in results if "count" in result]
+        if counts and counting:
+            result = counts[0]
+            refs = " ".join(result["ids"][:2])
+            return self.response(
+                messages,
+                text=compact(
+                    [
+                        f"該当する記録は{result['count']}回です {refs}。",
+                        f"この回数は確認できた記録の範囲です {refs}。",
+                    ]
+                ),
+            )
+        if counts and "いちばん多" in question:
+            missing = [cue for cue in CUES if cue not in {r["filters"]["cue"] for r in counts}]
+            if missing and tools:
+                return self.response(
+                    messages,
+                    tool_calls=[
+                        ToolCall(
+                            cue,
+                            "count_care_events",
+                            {"week_id": request["week_id"], "kinds": ["training"], "cue": cue},
+                        )
+                        for cue in missing
+                    ],
+                )
+            result = max(counts, key=lambda r: r["count"])
+            cue = result["filters"]["cue"]
+            refs = " ".join(result["ids"][:2])
+            return self.response(
+                messages,
+                text=compact(
+                    [f"比較したしつけでは{CUES[cue]}が最多で{result['count']}回です {refs}。"]
+                ),
+            )
         # Association results may reuse a training ID; preserve both views of the record.
         records = [r for result in results for r in result.get("records", [])]
         care = list(
@@ -82,6 +166,29 @@ class MockProvider:
         )
         sleeps = [r for result in results for r in result.get("sleep_sessions", [])]
         papers = [p for result in results for p in result.get("papers", [])]
+        if not care and not sleeps and not records and tools and not counts:
+            return self.response(
+                messages,
+                tool_calls=[
+                    ToolCall(
+                        "inspected",
+                        "count_care_events",
+                        {"week_id": request["week_id"], "kinds": [topic_in(question)]},
+                    )
+                ],
+            )
+        if not records and not sleeps and counts:
+            refs = " ".join(counts[0]["ids"][:1])
+            label = KINDS.get(topic_in(question), "お世話")
+            return self.response(
+                messages,
+                text=compact(
+                    [
+                        f"確認した今週の記録には、{label}の該当記録がありません {refs}。",
+                        f"次は{label}の記録を残してから、一緒に確かめましょう {refs}。",
+                    ]
+                ),
+            )
         sentences: list[str] = []
         feature = request.get("feature", "answer")
         if feature == "answer" and topic_in(question) == "training" and not counting:
@@ -96,6 +203,16 @@ class MockProvider:
             )
             if cue and not measured and tools:
                 return self.response(messages, tool_calls=self.measure(request["fly_id"], cue))
+        if counting and weekday and any(r.get("truncated") for r in results):
+            return self.response(
+                messages,
+                text=compact(
+                    [
+                        "取得した一覧は一部のため、曜日別の全件数はこの結果だけでは確認できません "
+                        f"{citations(care + sleeps, 1)}。"
+                    ]
+                ),
+            )
         if counting and (care or sleeps):
             selected = count_records(question, sleeps if topic_in(question) == "sleep" else care)
             evidence = selected or care + sleeps
@@ -122,12 +239,16 @@ class MockProvider:
                     f"次のしつけ前後も比べましょう {citations(care)}。"
                 )
         elif feature == "answer":
-            sentences.extend(observations(question, care, sleeps, records))
+            observed = observations(question, care, sleeps, records)
+            if any(r.get("truncated") for r in results):
+                # A capped view supports measurements, not a week's exact frequency.
+                observed = [s for s in observed if "回の記録" not in s and "回記録" not in s]
+            sentences.extend(observed)
         else:
             if care:
-                sentences.append(f"お世話の記録は{len(care)}件あります {citations(care)}。")
+                sentences.append(f"確認したお世話の記録は{len(care)}件あります {citations(care)}。")
             if sleeps:
-                sleep = sleeps[-1]
+                sleep = newest(sleeps)[0]
                 if sleep["data"].get("hours") is not None:
                     sentences.append(
                         f"睡眠の記録は{sleep['data']['hours']:.1f}時間です {sleep['id']}。"
@@ -135,7 +256,7 @@ class MockProvider:
                 else:
                     sentences.append(f"睡眠の開始が記録されています {sleep['id']}。")
             if feature == "morning" and care:
-                last = care[-1]
+                last = newest(care)[0]
                 label = KINDS.get(last["kind"], "お世話")
                 sentences.append(f"直近のお世話は{label}でした {last['id']}。")
             for record in records:

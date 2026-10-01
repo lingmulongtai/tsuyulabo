@@ -48,6 +48,7 @@ async def morning_memo(
         care_since=(today - timedelta(days=1)).isoformat(),
         care_until=today.isoformat(),
         sleep_since=(today - timedelta(hours=12)).isoformat(),
+        sleep_until=now.isoformat(),
     )
     return await run_agent(
         "前日のお世話と前夜の睡眠の朝のメモをお願いします。",
