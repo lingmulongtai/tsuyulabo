@@ -16,6 +16,8 @@ x-selfhost-environment: &selfhost-environment
   VAPID_PRIVATE_KEY: ${VAPID_PRIVATE_KEY:-}
   VAPID_SUBJECT: ${VAPID_SUBJECT:-mailto:admin@example.com}
   SHIORI_PROVIDER: ${SHIORI_PROVIDER:-mock}
+  # The host CPU cools poorly: keep PyTorch from spreading brain jobs over every core.
+  OMP_NUM_THREADS: ${SELFHOST_TORCH_THREADS:-2}
 
 services:
   postgres:
@@ -32,10 +34,12 @@ services:
   api:
     restart: unless-stopped
     environment: *selfhost-environment
+    cpus: ${SELFHOST_API_CPUS:-2}
 
   worker:
     restart: unless-stopped
     environment: *selfhost-environment
+    cpus: ${SELFHOST_WORKER_CPUS:-2}
 
   # Vercel serves the web app; keep the dev server out of `up`.
   web:
