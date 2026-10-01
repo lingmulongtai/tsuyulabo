@@ -44,6 +44,8 @@ git clone https://github.com/lingmulongtai/tsuyulabo.git
   - `.venv` と `node_modules` は旧 PC の絶対パスを持っていて、別の PC では動かない。
   - 2 台で同時に `.git` を触ると壊れる。**作業する PC は 1 台だけにして、切り替える前に push、始める前に pull。**
 - OneDrive に置き続けたい場合も、中身は git で同期する（`git pull`）。
+- **2026-09-29 の新しい PC では `C:\Users\lingm\dev\tsuyulabo` に clone した。** OneDrive 内で `.venv`（約 2 万ファイル）を
+  作り直したら、OneDrive の同期にファイルをつかまれて `git commit` も pytest も固まった。OneDrive の外に置くこと。
 
 ## 3. 動かす
 
@@ -83,10 +85,11 @@ uv run python scripts/smoke_api.py   # 動いているスタックを通しで�
 
 - **アトミックコミットを徹底**。1 コミット = 1 つの変更。細かく、たくさん（[AGENTS.md](../AGENTS.md)）。
 - **学校のメールアドレスは絶対に出さない**（上の「0」）。
-- **Claude は指揮官とデザイナー、実装は Codex**。タスクの指示は `docs/agent-tasks/<task>.md` に書いてコミットしてから投げる。
-- **Codex と Claude の使用量を見ながら進める**。Codex のモデルは作業の重さで選ぶ:
+- **Claude は指揮官とデザイナー、実装は Codex と Antigravity**。タスクの指示は `docs/agent-tasks/<task>.md` に書いて
+  コミットしてから投げる。Codex は上限が 10% 以下になったら使用量リセットを使ってよい（2026-10-01 オーナー）。
+- **Codex と Claude の使用量を見ながら進める**（Claude には 5 時間ごとの上限がある）。Codex のモデルは作業の重さで選ぶ:
   - `gpt-6-luna`: 簡単な作業、機械的な作業
-  - `gpt-6-sol`（既定）: ふつうの機能
+  - `gpt-6.1-sol`（既定）: ふつうの機能
   - `gpt-6-astra`: 難しい研究だけ（例: デコーダー改善）
   - reasoning effort の既定は medium
 - Codex はサンドボックス（workspace-write）で動かす。サンドボックスを外す設定は使わない。
@@ -112,4 +115,4 @@ git push
 | --- | --- | --- |
 | Web の公開デモ | https://tsuyulabo.vercel.app | リポジトリ直下で `vercel deploy --prod --yes`（プロジェクト `tsuyulabo`、Root Directory `apps/web`、`NEXT_PUBLIC_DEV_TOOLS=0`、API の URL なし＝デモモード）。Git Bash で `vercel api` を使うときは `MSYS_NO_PATHCONV=1` |
 | Android アルファ（APK） | [v0.1.0-alpha.1](https://github.com/lingmulongtai/tsuyulabo/releases/tag/v0.1.0-alpha.1) | `docs/releases/<tag>.md` を書いてから `v0.1.0-alpha.N` タグを push → `android.yml` がプレリリースを作る |
-| API | 未公開 | Cloud Run + Neon + Upstash。GitHub の Secrets を入れると `deploy.yml` が動く（[deploy.md](deploy.md)） |
+| API | オーナーの PC（`https://ozg14.tail4204cd.ts.net`、Web からは Vercel が転送） | `scripts/selfhost/deploy.ps1`（[selfhost.md](selfhost.md)）。Cloud Run の手順は [deploy.md](deploy.md) に残してある |
