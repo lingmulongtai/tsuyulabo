@@ -9,6 +9,13 @@ x-backend-environment: &backend-environment
   CORS_ORIGINS: ${CORS_ORIGINS:-["http://localhost:3000"]}
   ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
   OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+  SHIORI_PROVIDER: ${SHIORI_PROVIDER:-mock}
+  OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
+  OLLAMA_QA_MODEL: ${OLLAMA_QA_MODEL:-qwen3.5:4b}
+  OLLAMA_JOURNAL_MODEL: ${OLLAMA_JOURNAL_MODEL:-qwen3.5:2b-q4_K_M}
+  OLLAMA_NUM_CTX: ${OLLAMA_NUM_CTX:-8192}
+  OLLAMA_KEEP_ALIVE: ${OLLAMA_KEEP_ALIVE:-30m}
+  OLLAMA_TIMEOUT: ${OLLAMA_TIMEOUT:-120}
 
 services:
   postgres:
@@ -55,6 +62,7 @@ services:
         condition: service_healthy
 
   api:
+    extra_hosts: ["host.docker.internal:host-gateway"]
     build:
       context: .
       dockerfile: services/api/Dockerfile
@@ -68,6 +76,7 @@ services:
         condition: service_healthy
 
   worker:
+    extra_hosts: ["host.docker.internal:host-gateway"]
     build:
       context: .
       dockerfile: services/worker/Dockerfile

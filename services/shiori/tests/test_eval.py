@@ -33,6 +33,8 @@ async def test_gate_rejects_provider_that_only_invents_evidence() -> None:
     report = await evaluate(Invented())
     assert not report["passed"]
     assert report["accuracy"] == report["verification_rate"] == 0
+    assert report["fallback_count"] == report["questions"]
+    assert report["delivered_accuracy"] == report["delivered_topic_accuracy"] == 1
 
 
 @pytest.mark.parametrize(
@@ -61,3 +63,14 @@ async def test_readability_gate_rejects_correct_but_verbose_provider() -> None:
     report = await evaluate(Verbose())
     assert report["accuracy"] == report["topic_accuracy"] == report["verification_rate"] == 1
     assert report["readability_rate"] == 0 and not report["passed"]
+
+
+async def test_limit_latency_tokens_and_report(tmp_path: Path) -> None:
+    report = await evaluate(limit=2)
+    assert report["questions"] == 2
+    assert report["latency_p95_seconds"] >= report["latency_mean_seconds"] > 0
+    assert report["input_tokens"] > 0 and report["output_tokens"] > 0
+    assert report["fallback_count"] == 0
+    write_report(report, tmp_path)
+    with pytest.raises(ValueError, match="positive"):
+        await evaluate(limit=0)

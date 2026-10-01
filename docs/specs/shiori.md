@@ -24,6 +24,8 @@
 - `gateway/`: LLM ゲートウェイ。`Provider` インターフェース（`complete(messages, tools, model) -> Response`）。
   - `MockProvider`（既定。テンプレートと記録から決定的に文章を作る。API キーなしで全部動く）
   - `AnthropicProvider`、`OpenAIProvider`（`httpx` で直接叩く。キーは環境変数 `ANTHROPIC_API_KEY` / `OPENAI_API_KEY`）
+  - `OllamaProvider`（`SHIORI_PROVIDER=ollama` を明示したときだけ。ホストPCの
+    `/api/chat` を使い、APIキー不要。既定は引き続き `mock`）
   - モデルの使い分け: 質問応答 = 中くらいのモデル、夜の日誌 = 軽いモデル。応答キャッシュ（同じ入力 → 同じ出力、Redis またはメモリ）。
   - 呼び出しごとにトークン数と概算コストを記録。
 - `agent/`: ツール呼び出しのループ（最大 4 ステップ）。
@@ -38,3 +40,36 @@
 - 育成記録から問題と正解を自動生成（例: 「火曜にりんご酢で罰を何回覚えた？」→ 記録から正解 3）。
 - 指標: 正答率、根拠の検証率（捨てられなかった文の割合）、1 回答あたりのコスト。
 - MockProvider でも回る（CI は Mock で回す）。
+
+## ローカルLLM（Ollama）
+
+`OLLAMA_BASE_URL` はホスト実行時 `http://127.0.0.1:11434`、Compose 内では
+`http://host.docker.internal:11434`。API と worker は host-gateway を登録する。
+QA モデルは `OLLAMA_QA_MODEL`（既定 `qwen3.5:4b`）、日誌・朝のメモは
+`OLLAMA_JOURNAL_MODEL`（既定 `qwen3.5:2b-q4_K_M`）で自由に変更できる。
+将来の LoRA モデルも同じ設定で選ぶ。キャッシュは両方のモデル名で分離する。
+
+全リクエストに `stream=false`、`think=false`、temperature 0.2 と
+`OLLAMA_NUM_CTX`（既定8192）を送る。巨大な既定コンテキストによるGPU退避を避ける。
+`OLLAMA_KEEP_ALIVE` は既定30m、`OLLAMA_TIMEOUT` は既定120秒。
+ツール呼び出しを含むネイティブassistantメッセージとツール結果を毎回再送する。
+トークンは `prompt_eval_count` / `eval_count` を記録し、金額は0 USDとする。
+
+記録を取得する前の回答は受け入れず、残りステップでツール呼び出しを促す。
+検証済み本文が空なら、同じコンテキストと取得済みツール結果を使って Mock で再生成する。
+`stopped_reason="fallback"` と `fallback_used=true` を返し、元モデルの検証結果を
+`provider_verification` に保持する。Mock 自体のテンプレート・判断は変更しない。
+根拠が全くない場合だけ `empty_state=true` の記録取得案内を返す。この案内は
+個体の説明ではなくUIの状態表示であり、架空の根拠IDや検証成功を付けない。
+通常の最大4モデル呼び出しに加え、空回答の回復に限り最大4回のオフラインMock呼び出しを許す。
+同じ実験引数の結果を再利用し、実験を重複させない。上記4つの約束は変えない。
+
+評価は `--provider mock|ollama`（既定mock）、`--qa-model`、`--journal-model`、
+`--limit N` を受け付ける。実測は `SHIORI_LIVE_EVAL=1` が必要で、CIでは常に禁止。
+回数・トピックは文言テンプレートではなく数値、観測内容、IDで採点する。
+正答率・検証率・読みやすさはフォールバック前の元モデル出力で計測し、代替回答後の
+正答率も別に記録する。既存のMockゲート（回数0.8以上、検証0.95以上、
+トピックと読みやすさ1.0）は維持する。各回答の遅延、平均/p95、トークン、
+フォールバック件数を `eval-results/shiori-<provider>-<model>/` に保存する。
+ファイル名ではモデル名の記号をハイフンに変換する。実測レポートは
+`services/shiori/reports/local-llm.md`。実測前のデバッグにはlimitを使い、CPU推論は強制しない。

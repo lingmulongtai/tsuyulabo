@@ -12,7 +12,7 @@ From the repository root in PowerShell:
 .\.tools\uv.exe run python -m tsuyu_shiori.eval
 ```
 
-The last command writes ignored `eval-results/shiori/report.json` and `report.md`, and exits
+The last command writes ignored `eval-results/shiori-mock-mock-qa/report.json` and `report.md`, and exits
 nonzero unless count accuracy is at least 0.80, sentence verification is at least 0.95,
 and topic accuracy and readability are both 1.0.
 `--seed` and `--output-dir` are available. The evaluation generates 42 count questions from
@@ -33,8 +33,9 @@ and learning questions read associations and run 20 odor-choice trials through t
 host's copy-only lab; count questions do not run experiments.
 
 Missing topic records are stated explicitly with a suggestion to collect observations.
-If no existing evidence ID is available at all, the provider returns empty text to
-preserve the citation contract; the question UI displays a request for care records.
+If no existing evidence ID is available at all, Mock still generates no claims.
+The agent returns a nonempty UI status with `empty_state=true` and no citations or
+verification success; it asks for care records without inventing evidence.
 Traits are described only when present in returned records, never inferred from care.
 Older or live-provider answers can still have many evidence chips: the question UI
 shows six initially and a native `+N件` disclosure for the rest.
@@ -81,7 +82,7 @@ keyword arguments. Morning memos select the previous JST civil day's care and sl
 sessions starting after noon that day. Pass an aware `now` for reproducible generation.
 The coach accepts a `cue`. Presentation ranks come from a persisted `presentation`
 care record with `data.rank`, so the rank has its own verifiable evidence.
-Missing records produce fewer sentences or empty text instead of fabricated evidence.
+Missing records produce fewer sentences or an explicit empty-state status instead of fabricated evidence.
 
 The result contains text, evidence IDs, experiments, a verification report, and per-call
 token/cost accounting. `ai_label` and `disclaimer` are separate UI metadata: display both.
@@ -94,8 +95,9 @@ experiments carry `toward`, `away`, `cue`, `trials`, and `seed`.
 
 The four tools validate arguments, reject out-of-conversation week/fly IDs, and cap trials
 at 1,000. The host lab owns state loading and copying; brain state is never entrusted to
-the language model. A run makes at most four provider calls and executes at most four
-tools per step; the last step allows only a final answer. Repeated identical tool calls
+the language model. A normal run makes at most four provider calls and executes at most four
+tools per step; the last step allows only a final answer. Empty-answer Mock recovery
+is bounded separately as described below. Repeated identical tool calls
 reuse their result within the run, including persisted experiments.
 
 ## Providers and caching
@@ -106,12 +108,13 @@ reuse their result within the run, including persisted experiments.
 | --- | --- | --- | --- |
 | `anthropic` | `ANTHROPIC_API_KEY` | `claude-haiku-4-5` | `claude-sonnet-4-6` |
 | `openai` | `OPENAI_API_KEY` | `gpt-4.1-nano` | `gpt-4.1-mini` |
+| `ollama` | none | `qwen3.5:2b-q4_K_M` | `qwen3.5:4b` |
 
 Override models with `ANTHROPIC_JOURNAL_MODEL`, `ANTHROPIC_QA_MODEL`,
 `OPENAI_JOURNAL_MODEL`, and `OPENAI_QA_MODEL`. The raw-httpx implementations follow the
 [Messages tool protocol](https://platform.claude.com/docs/en/agents-and-tools/tool-use/handle-tool-calls)
 and [Responses function-calling protocol](https://developers.openai.com/api/docs/guides/function-calling).
-HTTP tests use `httpx.MockTransport`; no paid calls are made by tests or evaluation.
+HTTP tests use `httpx.MockTransport`; default tests and evaluation make no live calls.
 
 Token counts come from vendor usage fields. Cost is an estimate using configurable
 `<VENDOR>_INPUT_USD_PER_MILLION` and `<VENDOR>_OUTPUT_USD_PER_MILLION` rates, or the
@@ -125,7 +128,7 @@ dollars and increment `cache_hits`.
 provider, model, tools and the entire conversation, including week/fly identity and tool
 results. Use `CachedProvider(provider, RedisCache(redis_async_client, ttl=3600))` for a
 shared cache; the host owns the client and its lifetime. Do not store raw API keys in a
-cache namespace. HTTP errors propagate and are not cached. Requests have a 30-second timeout.
+cache namespace. HTTP errors propagate and are not cached. Cloud requests have a 30-second timeout; Ollama defaults to 120 seconds.
 
 ## Evidence, research and model boundaries
 
@@ -149,3 +152,61 @@ not a semantic embedding model. To upgrade, version the corpus/index, install a 
 capable embedding model, re-embed every document and query with the same model, and
 migrate the vector dimension/index together. Evaluate Japanese retrieval before switching
 the production retriever; do not mix old hashing vectors and new semantic vectors.
+
+## Local Ollama
+
+Read [the measured local report](reports/local-llm.md) before switching the backend.
+Keep `SHIORI_PROVIDER=mock` until then. `SHIORI_PROVIDER=ollama` needs no API key.
+The adapter uses the [native chat API](https://docs.ollama.com/api/chat), replays assistant
+messages with tool calls, and returns tool results with `tool_name`. Both QA and journal
+model names enter the cache namespace. Model names are configuration, including future
+LoRA models.
+
+| Variable | Host default | Purpose |
+| --- | --- | --- |
+| `OLLAMA_BASE_URL` | `http://127.0.0.1:11434` | Ollama endpoint (Compose: `http://host.docker.internal:11434`) |
+| `OLLAMA_QA_MODEL` | `qwen3.5:4b` | Questions and coaching |
+| `OLLAMA_JOURNAL_MODEL` | `qwen3.5:2b-q4_K_M` | Journal and morning memo |
+| `OLLAMA_NUM_CTX` | `8192` | Always sent; avoids Ollama's huge default context |
+| `OLLAMA_KEEP_ALIVE` | `30m` | Model residency |
+| `OLLAMA_TIMEOUT` | `120` | Request timeout in seconds |
+
+Every request sends `stream=false`, `think=false`, and temperature 0.2. Leaked think
+blocks are removed. Native prompt/output token counts are recorded with zero USD cost.
+A connection error names the endpoint. No CPU inference setting is forced.
+
+The agent rejects answers before retrieval and asks again within its four-call budget.
+If all verified sentences are lost, an offline Mock recovery uses the same context,
+feature limits and tool-result cache. This can add at most four Mock calls; repeated
+identical experiments are reused. If all original tool calls failed validation, recovery
+uses those failed results without broadening retrieval or starting experiments.
+`fallback_used=true` and `stopped_reason="fallback"` mark recovery. `provider_text` is
+the original verified text and `provider_verification` records its verification; regular
+`verification` describes the displayed recovery. Token accounting retains the original
+provider's calls, excluding Mock's synthetic estimates during recovery.
+
+Live evaluation is opt-in, sequential and forbidden in CI:
+
+```powershell
+$env:SHIORI_LIVE_EVAL = "1"
+# First debug a small sample. A limited report does not certify the full gates.
+.\.tools\uv.exe run python -m tsuyu_shiori.eval --provider ollama --limit 3
+# Full QA evaluation (42 count questions + 9 topics), once per model:
+.\.tools\uv.exe run python -m tsuyu_shiori.eval --provider ollama --qa-model qwen3.5:4b
+.\.tools\uv.exe run python -m tsuyu_shiori.eval --provider ollama --qa-model qwen3.5:2b-q4_K_M
+Remove-Item Env:SHIORI_LIVE_EVAL
+```
+
+`--journal-model` overrides the journal model selection (these evaluation questions use
+QA, not journal generation). `--limit N`, `--seed`, and `--output-dir` are supported.
+Reports go to ignored `eval-results/shiori-<provider>-<sanitized-qa-model>/`. Model-name
+punctuation becomes `-`. Each JSON result includes latency, tokens and fallback status;
+summary metrics include mean/p95 latency (nearest rank), generation tokens/s and load time.
+Accuracy, topic accuracy, verification and readability grade the original verified model
+answer **before recovery**; `delivered_accuracy` and `delivered_topic_accuracy` separately
+measure what the user receives. Fallbacks therefore cannot make an invalid model pass.
+Count grading accepts a number beside 回, rejecting conflicting counts. Topic grading
+checks numeric values, action counts and record IDs rather than Mock sentence templates.
+The Mock gate thresholds remain unchanged. Live tests skip unless `SHIORI_LIVE_EVAL=1`
+and always skip in CI. If generation drops to a few tokens/s, record the observed speed
+and possible power-saving mode; do not switch to CPU inference.
