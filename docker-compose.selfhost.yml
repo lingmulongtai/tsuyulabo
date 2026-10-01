@@ -16,6 +16,12 @@ x-selfhost-environment: &selfhost-environment
   VAPID_PRIVATE_KEY: ${VAPID_PRIVATE_KEY:-}
   VAPID_SUBJECT: ${VAPID_SUBJECT:-mailto:admin@example.com}
   SHIORI_PROVIDER: ${SHIORI_PROVIDER:-mock}
+  OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
+  OLLAMA_QA_MODEL: ${OLLAMA_QA_MODEL:-qwen3.5:4b}
+  OLLAMA_JOURNAL_MODEL: ${OLLAMA_JOURNAL_MODEL:-qwen3.5:2b-q4_K_M}
+  OLLAMA_NUM_CTX: ${OLLAMA_NUM_CTX:-8192}
+  OLLAMA_KEEP_ALIVE: ${OLLAMA_KEEP_ALIVE:-30m}
+  OLLAMA_TIMEOUT: ${OLLAMA_TIMEOUT:-120}
   # The host CPU cools poorly: keep PyTorch from spreading brain jobs over every core.
   OMP_NUM_THREADS: ${SELFHOST_TORCH_THREADS:-2}
 
@@ -32,11 +38,13 @@ services:
     environment: *selfhost-environment
 
   api:
+    extra_hosts: ["host.docker.internal:host-gateway"]
     restart: unless-stopped
     environment: *selfhost-environment
     cpus: ${SELFHOST_API_CPUS:-2}
 
   worker:
+    extra_hosts: ["host.docker.internal:host-gateway"]
     restart: unless-stopped
     environment: *selfhost-environment
     cpus: ${SELFHOST_WORKER_CPUS:-2}
