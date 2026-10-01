@@ -11,7 +11,10 @@
   Tailscale Funnel `https://ozg14.tail4204cd.ts.net` → Vercel が `/v1` を転送。秘密の値は `~/.tsuyulabo/selfhost.env`。
   デプロイは `scripts/selfhost/deploy.ps1`（push 済みの `origin/main` を出す）。
 - フェーズ: アルファ（フェーズ1）完成 → フェーズ2・3 の機能も main に入った。
-- **実行中**: W9-shiori-local（Codex、`feat/shiori-local`）— シオリをローカル LLM（Ollama の qwen3.5:4b / 2b）で動かし、評価する。
+- **実行中**: W11-shiori-lora-data（Codex、`feat/shiori-lora-data`）— シオリ用の小さいモデルを LoRA で学習するための
+  学習データ（コードで作る理想の手本）と学習スクリプト（`ml/shiori-lora/`、WSL2 で動かす）。
+- シオリのローカル LLM（W9/W10、[local-llm.md](../services/shiori/reports/local-llm.md)）: 既製の qwen3.5:4b は回数の正答率
+  33〜64%、根拠を落とす。2b はほぼ 0%。本番の既定は Mock のまま。次は LoRA で自前のモデルを作る。
 - main にあるもの:
   - **1週間の育成ループ**: ホーム、ごはん（ブロックパズル）、しつけ（回路パズル）、そうじ、温度、場所えらび、睡眠、研究発表会、
     羽化（サーバーの抽選）。すべて API につながっている。
@@ -116,7 +119,9 @@ git push
 | W3-web-app | API クライアント、フック、ホームとごはんの接続、残りの画面 | Codex | feat/web-app | マージ済み |
 | W3-malecns | MaleCNS v1.0 から回路を作って評価（3/6 合格、既定は toy-v0 のまま） | Codex | feat/malecns | マージ済み |
 | W9-selfhost | オーナーの PC で API を本番公開（Docker、Tailscale Funnel、Vercel の転送、バックアップ） | Claude | main | 完了 |
-| W9-shiori-local | シオリをローカル LLM（Ollama）で動かし、実モデルで評価する | Codex | feat/shiori-local | 実行中 |
+| W9-shiori-local | シオリをローカル LLM（Ollama）で動かし、実モデルで評価する（4B 64% / 2B 2%、既定は Mock） | Codex | feat/shiori-local | マージ済み |
+| W10-shiori-tools | 小さいモデル向けのツール（絞り込み、回数の集計、日本語の選択肢）と open 質問の評価（4B 33%、悪化） | Codex | feat/shiori-tools | マージ済み |
+| W11-shiori-lora-data | LoRA 用の理想の手本データと、WSL2 で動かす学習・書き出しスクリプト | Codex | feat/shiori-lora-data | 実行中 |
 
 ## 決めたこと（理由つき）
 
