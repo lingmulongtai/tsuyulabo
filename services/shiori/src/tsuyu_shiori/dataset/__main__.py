@@ -15,9 +15,14 @@ def main() -> None:
     parser.add_argument("--out", type=Path, default=Path("data/shiori-sft"))
     parser.add_argument("--train-size", type=int, default=4000)
     parser.add_argument("--valid-size", type=int, default=400)
+    parser.add_argument(
+        "--balanced", action="store_true", help="thin day counts; both phrasings for the rest"
+    )
     args = parser.parse_args()
     try:
-        stats = asyncio.run(export_dataset(args.out, args.train_size, args.valid_size))
+        stats = asyncio.run(
+            export_dataset(args.out, args.train_size, args.valid_size, args.balanced)
+        )
     except ValueError as exc:
         parser.error(str(exc))
     print(json.dumps(stats, ensure_ascii=False, indent=2))

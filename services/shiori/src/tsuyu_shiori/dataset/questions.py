@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass
+from random import Random
 from typing import Any
 
 from tsuyu_shiori.gateway.topics import CUES
@@ -123,3 +124,19 @@ def questions(variant: int = 0) -> list[Question]:
         if not intent.startswith("count") and intent not in {"preference", "why"}:
             add(intent)
     return result
+
+
+DAY_COUNTS = {"count_day", "count_weekday"}
+
+
+def balanced_questions(seed: int, day_counts: int = 8) -> list[Question]:
+    """One world's questions with day/weekday counts thinned out and both train phrasings
+    for every other intent. The plain mix is 70 of 98 day counts, which taught LoRA v1
+    perfect counting but left 「なんで？」, maxima, research and refusals near 0%."""
+    variant = seed % 2
+    base, other = questions(variant), questions(1 - variant)
+    daily = [i for i, q in enumerate(base) if q.intent in DAY_COUNTS]
+    chosen = sorted(Random(seed).sample(daily, min(day_counts, len(daily))))
+    rest = [q for q in base if q.intent not in DAY_COUNTS]
+    again = [q for q in other if q.intent not in DAY_COUNTS | {"count_cue", "count_valence"}]
+    return [base[i] for i in chosen] + rest + again
