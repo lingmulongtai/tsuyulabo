@@ -21,7 +21,8 @@ def has_facts(text: str, patterns: list[str]) -> bool:
 
 
 def number(value: str) -> str:
-    return rf"(?<![\d.+-])\+?{re.escape(value)}(?![\d.])"
+    suffix = r"0*" if "." in value else r"(?:\.0+)?"
+    return rf"(?<![\d.+-])\+?{re.escape(value)}{suffix}(?![\d.])"
 
 
 def citation(evidence_id: str) -> str:

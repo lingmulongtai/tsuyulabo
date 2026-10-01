@@ -33,3 +33,9 @@ def test_ambiguous_counts_and_numeric_boundaries() -> None:
     assert not has_facts("結果 #90030。", [citation("#9003")])
     assert has_facts("大成功の記録は1回です #9002。", [SUCCESS])
     assert not has_facts("大成功の記録 #9002。報酬1回 #9001。", [SUCCESS])
+
+
+def test_equivalent_decimal_facts_accept_trailing_zeros() -> None:
+    assert has_facts("値は-0.40です。", [number("-0.4")])
+    assert has_facts("スコア80.0です。", [number("80")])
+    assert not has_facts("値は-0.41です。", [number("-0.4")])
