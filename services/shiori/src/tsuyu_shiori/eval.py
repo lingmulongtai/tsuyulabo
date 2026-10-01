@@ -306,6 +306,9 @@ def main() -> None:
     parser.add_argument("--qa-model")
     parser.add_argument("--journal-model")
     parser.add_argument("--limit", type=int)
+    parser.add_argument(
+        "--test-file", type=Path, help="also score oracle JSONL and its .meta.jsonl"
+    )
     args = parser.parse_args()
     if args.limit is not None and args.limit < 1:
         parser.error("--limit must be positive")
@@ -320,8 +323,17 @@ def main() -> None:
     safe_model = "".join(c if c.isalnum() or c in "-_." else "-" for c in model)
     directory = args.output_dir or Path(f"eval-results/shiori-{args.provider}-{safe_model}")
     report = asyncio.run(evaluate(provider, seed=args.seed, limit=args.limit, progress=True))
+    if args.test_file is not None:
+        from tsuyu_shiori.eval_dataset import evaluate_file
+
+        report["heldout"] = asyncio.run(evaluate_file(provider, args.test_file, limit=args.limit))
+        # Keep the existing 61-question gate unchanged; the extra score is diagnostic.
+        summary = {k: v for k, v in report["heldout"].items() if k != "results"}
+        print(json.dumps({"heldout": summary}, ensure_ascii=False, indent=2))
     write_report(report, directory)
-    print(json.dumps({k: v for k, v in report.items() if k != "results"}, indent=2))
+    print(
+        json.dumps({k: v for k, v in report.items() if k not in {"results", "heldout"}}, indent=2)
+    )
     raise SystemExit(0 if report["passed"] else 1)
 
 
