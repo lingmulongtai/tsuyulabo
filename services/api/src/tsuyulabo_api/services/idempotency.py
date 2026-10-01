@@ -17,6 +17,7 @@ from tsuyulabo_api.auth.dependencies import authenticate_user
 from tsuyulabo_api.db.economy import IdempotencyKey
 from tsuyulabo_api.db.operations import insert_if_absent
 from tsuyulabo_api.errors import APIError, error_response
+from tsuyulabo_api.services.guest_limits import check_guest
 from tsuyulabo_api.services.request_body import read_body
 
 GUEST_SCOPE = "00000000-0000-0000-0000-000000000000"
@@ -60,6 +61,8 @@ class IdempotentRoute(APIRoute):
         async def handle(request: Request) -> Response:
             if request.method not in MUTATING_METHODS:
                 return await original(request)
+            if request.url.path == "/v1/auth/guest":
+                await check_guest(request)
             key = require_key(request)
             body = await read_body(request)
             identity = (
@@ -108,6 +111,13 @@ class IdempotentRoute(APIRoute):
                             response = await original(request)
                         except (APIError, RequestValidationError, HTTPException) as exc:
                             await mutation.rollback()
+                            # Admission failures have no domain effects and must be retryable
+                            # with the same key after capacity returns (rollback the claim too).
+                            if isinstance(exc, APIError) and exc.code in {
+                                "rate_limited",
+                                "server_busy",
+                            }:
+                                raise
                             response = error_response(exc)
                         else:
                             if response.status_code >= 400:
