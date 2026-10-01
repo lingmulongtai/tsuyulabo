@@ -31,14 +31,20 @@ class OllamaProvider:
         self.journal_model = journal_model or os.getenv("OLLAMA_JOURNAL_MODEL", "qwen3.5:2b-q4_K_M")
         self.keep_alive = os.getenv("OLLAMA_KEEP_ALIVE", "30m")
         self.num_ctx = int(os.getenv("OLLAMA_NUM_CTX", "8192"))
+        self.num_predict = int(os.getenv("OLLAMA_NUM_PREDICT", "512"))
         self.timeout = float(os.getenv("OLLAMA_TIMEOUT", "120"))
         self.generation_stats: list[dict[str, int]] = []
-        if self.num_ctx <= 0 or self.timeout <= 0:
-            raise ValueError("OLLAMA_NUM_CTX and OLLAMA_TIMEOUT must be positive")
+        if self.num_ctx <= 0 or self.num_predict <= 0 or self.timeout <= 0:
+            raise ValueError(
+                "OLLAMA_NUM_CTX, OLLAMA_NUM_PREDICT and OLLAMA_TIMEOUT must be positive"
+            )
 
     @property
     def cache_namespace(self) -> str:
-        return f"ollama:v1:{self.base_url}:{self.qa_model}:{self.journal_model}:{self.num_ctx}"
+        return (
+            f"ollama:v2:{self.base_url}:{self.qa_model}:{self.journal_model}:"
+            f"{self.num_ctx}:{self.num_predict}"
+        )
 
     def model_for(self, purpose: str) -> str:
         return self.journal_model if purpose == "journal" else self.qa_model
@@ -63,7 +69,11 @@ class OllamaProvider:
             "stream": False,
             "think": False,
             "keep_alive": self.keep_alive,
-            "options": {"num_ctx": self.num_ctx, "temperature": 0.2},
+            "options": {
+                "num_ctx": self.num_ctx,
+                "num_predict": self.num_predict,
+                "temperature": 0.2,
+            },
         }
         url = f"{self.base_url}/api/chat"
         try:
@@ -79,7 +89,13 @@ class OllamaProvider:
         result.raise_for_status()
         data = result.json()
         self.generation_stats.append(
-            {key: data.get(key, 0) for key in ("eval_count", "eval_duration", "load_duration")}
+            {
+                **{
+                    key: data.get(key, 0)
+                    for key in ("eval_count", "eval_duration", "load_duration")
+                },
+                "generation_limited": int(data.get("done_reason") == "length"),
+            }
         )
         native = deepcopy(data["message"])
         text = re.sub(r"<think>.*?</think>", "", native.get("content", ""), flags=re.S).strip()
