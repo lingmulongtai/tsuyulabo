@@ -27,20 +27,18 @@
   CI の `api-postgres`（失敗しても止めないジョブ）だけ以前から赤い（テスト 2 件が CI の環境変数を拾う）。
 - マイグレーションの先頭は **0012**（0011 コンテスト → 0012 ずもう）。
 - 実装の担当: **Codex**（`run-codex.sh`、既定 gpt-6.1-sol。上限が 10% 以下ならリセットを使ってよい）と **Antigravity**
-  （アプリと IDE にサインイン済み。`run-antigravity.sh` の起動方法はまだ確認中）。
+  （アプリと IDE にサインイン済み。CLI の `antigravity-ide chat` は指示がエージェントに届かず、自動化は保留。
+  Codex が上限のときは、指示書をオーナーが Antigravity に貼る。下書きは `~/.tsuyulabo/drafts/`）。
+- バックアップ: 毎朝 5:00 にタスク スケジューラ「tsuyulabo-backup」が C ドライブと F ドライブ（USB の外付け SSD）に取る。
 - この PC の注意: **CPU が冷えない**（液体金属の劣化）。長い CPU の処理は避ける（全テストは約 9 分）。GPU は冷える。
   電源モードが省電力だと GPU が 390 MHz に張り付いてローカル LLM が 10 倍以上遅くなる（バランスなら qwen3.5:4b で 42 トークン/秒）。
 - **オーナー向けチェックリスト**（残り）:
-  1. 毎日のバックアップをタスク スケジューラに登録してよいか（`docs/selfhost.md` の 4）。
-  2. スタートアップの「DJIStudio.quicklook」をオフにする（裏で GPU を使う）。
-  3. Android の本番署名用の keystore を作る（`docs/mobile.md`）。iOS には Mac・Xcode・Apple Developer が必要。
-  4. GitHub の「Keep my email addresses private」を有効にする。
+  1. スタートアップの「DJIStudio.quicklook」をオフにする（裏で GPU を使う）。
+  2. Android の本番署名用の keystore を作る（`docs/mobile.md`）。iOS には Mac・Xcode・Apple Developer が必要。
+  3. GitHub の「Keep my email addresses private」を有効にする。
 - 次の候補:
-  - W9 の結果を見て、本番のシオリをローカル LLM に切り替える（`SHIORI_PROVIDER=ollama`、worker から `host.docker.internal:11434`）。
-  - 自作 LLM: ② 小さな公開モデル（qwen3.5:2b など）を自動生成データで LoRA 追加学習して Ollama で動かす →
-    ③ 夜の研究日誌だけ、ごく小さい GPT を一から作る。
-  - Antigravity の起動方法を確かめて、小さなタスクから渡す。
-  - デザイン: ホームの「今日の回路」カードで「毎朝4時更新」がスマホ幅で 1 文字だけ折り返す。
+  - **LoRA で学習したシオリ専用モデル**（`tsuyu-shiori:2b-lora-v1`、`ml/shiori-lora/README.md`）を評価し、合格なら本番を
+    `SHIORI_PROVIDER=ollama` に切り替える（worker から `host.docker.internal:11434`）。その次は ③ 夜の研究日誌用の小さい GPT を一から。
   - 脳: 一部の匂い（酵母）の反応が「じっとしている」にまとまる。検証用データでは 81.8%。
   - Web Push の実機での配信確認、プレイ動画。
 
