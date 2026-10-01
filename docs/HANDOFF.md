@@ -11,12 +11,13 @@
   Tailscale Funnel `https://ozg14.tail4204cd.ts.net` → Vercel が `/v1` を転送。秘密の値は `~/.tsuyulabo/selfhost.env`。
   デプロイは `scripts/selfhost/deploy.ps1`（push 済みの `origin/main` を出す）。
 - フェーズ: アルファ（フェーズ1）完成 → フェーズ2・3 の機能も main に入った。
-- **シオリ専用モデル（LoRA）**: v1（`tsuyu-shiori:2b-lora-v1`、Ollama に登録済み）は回数 100%・検証 100%・平均 2.1 秒。
-  ただし学習に使っていない言い回しを含む 159 問では 85.5%、「なんで？」・最大・論文・攻撃などが 0%（データの 72% が回数の質問）。
-  → `--balanced` で作り直したデータ（`data/shiori-sft-balanced`）で **v2 を学習中**（`~/shiori-gpu/adapter-v2`、ログ
-  `~/.tsuyulabo/train-v2.log`、約 3 時間）。終わったら `ml/shiori-lora/README.md` の 4・5 で書き出し・登録・評価。
-  合格（159 問で 90% 以上、なんで？も正しい）なら本番を `SHIORI_PROVIDER=ollama` に。WSL には build-essential と
-  flash-linear-attention を追加済み（入れないと 2.2 倍遅い）。llama.cpp の依存は torch を上書きしないように gguf-py だけ入れる。
+- **本番のシオリは自作モデル `tsuyu-shiori:2b-lora-v2`**（2026-10-02 切り替え。`~/.tsuyulabo/selfhost.env` の
+  `SHIORI_PROVIDER=ollama`、`OLLAMA_QA_MODEL` / `OLLAMA_JOURNAL_MODEL`、`OLLAMA_KEEP_ALIVE=24h`）。学習に使っていない
+  言い回しを含む 159 問で 91.8%（Mock 79.9%）、根拠の検証 100%、平均 2.3 秒。朝のメモは未学習なので Mock に戻る。
+  詳細と残りの弱点（記録のない匂いの値を作る、最大・論文・攻撃が 0%）は
+  [lora-models.md](../services/shiori/reports/lora-models.md)。v3 は朝のメモと弱点のデータを足して再学習。
+  学習の環境は WSL2 Ubuntu の `~/shiori-gpu/`（venv、base-2b、adapter-v1/v2、llama.cpp）。手順は `ml/shiori-lora/README.md`。
+  Ollama が止まっていると、シオリは Mock の答えに戻る（Ollama アプリはスタートアップで起動する）。
 - サーバーの守り（W12）: 本番は `RATE_GUEST_HOUR=60`（Funnel が XFF を Vercel の IP で上書きするので、IP ごとの上限は
   ゆるくし、全体の 1 日 200 人で守る）。値は `~/.tsuyulabo/selfhost.env`。
 - シオリのローカル LLM（W9/W10、[local-llm.md](../services/shiori/reports/local-llm.md)）: 既製の qwen3.5:4b は回数の正答率
@@ -126,6 +127,7 @@ git push
 | W9-shiori-local | シオリをローカル LLM（Ollama）で動かし、実モデルで評価する（4B 64% / 2B 2%、既定は Mock） | Codex | feat/shiori-local | マージ済み |
 | W10-shiori-tools | 小さいモデル向けのツール（絞り込み、回数の集計、日本語の選択肢）と open 質問の評価（4B 33%、悪化） | Codex | feat/shiori-tools | マージ済み |
 | W11-shiori-lora-data | LoRA 用の理想の手本データと、WSL2 で動かす学習・書き出しスクリプト | Codex | feat/shiori-lora-data | マージ済み |
+| W13-shiori-lora | LoRA v1（偏ったデータ、85.5%）→ v2（`--balanced`、91.8%）を学習し、本番のシオリを v2 に切り替え | Claude | main | 完了 |
 | W12-server-guard | Redis のレート制限、ゲスト作成の上限、ジョブの受付制限、worker の同時実行 2 | Codex | feat/server-guard | マージ済み |
 
 ## 決めたこと（理由つき）
