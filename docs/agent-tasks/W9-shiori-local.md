@@ -16,10 +16,11 @@ The owner wants Shiori to use a real LLM **running on the owner's PC**, with no 
 
 Later we will LoRA-finetune a small model and serve it through Ollama, so nothing may assume a specific model name.
 
-Measured on this PC (2026-09-29): generation is slow right now — about 2.7 tokens/s for `qwen3.5:4b` and 7.7
-tokens/s for `qwen3.5:2b-q4_K_M` — because the GPU is held at its minimum clock and shared with desktop apps. So a
-full 42-question live eval takes a long time: build and debug with `--limit`, and run the full eval once at the end.
-`qwen3.5:4b` sometimes answers **without calling a tool** and invents a number (「0 回」); the prompt and agent loop
+Measured on this PC (2026-10-01, GPU fully used): about 42 tokens/s for `qwen3.5:4b` and 83 tokens/s for
+`qwen3.5:2b-q4_K_M` (≈10 s to load a model the first time). If generation suddenly drops to a few tokens/s, the PC
+is in a power-saving mode — note it in the report rather than working around it. The host CPU cools poorly, so do
+not run CPU inference (`num_gpu: 0`) or long CPU-heavy loops; build and debug the live eval with `--limit` and run
+the full eval once per model at the end. `qwen3.5:4b` sometimes answers **without calling a tool** and invents a number (「0 回」); the prompt and agent loop
 must make it look the records up first. Ollama's native `/api/chat` returns tool calls from these models, e.g.
 `{"role":"assistant","content":"","tool_calls":[{"id":"call_8wwh3b05","function":{"index":0,"name":"get_care_events","arguments":{"week_id":"w1"}}}]}`.
 Ollama loads models with a huge default context (131072) unless `options.num_ctx` is set, which pushes most of the
