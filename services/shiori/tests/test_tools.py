@@ -10,7 +10,7 @@ async def test_tools_validate_scope_and_persist_evidence() -> None:
         [Record("#0001", "training", {"cue": "banana", "value": 0.5}, "w", "f")]
     )
     context = ToolContext(store, MemoryLab(store, {"f": {"banana": 0.5}}), "w", "f")
-    assert len(SCHEMAS) == 4
+    assert len(SCHEMAS) == 5
     care = await execute(context, "get_care_events", {"week_id": "w"})
     assert care["records"][0]["id"] == "#0001"
     result = await execute(context, "run_odor_choice", {"fly_id": "f", "cue": "banana"})

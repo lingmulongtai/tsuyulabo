@@ -21,7 +21,7 @@ async def test_mock_only_uses_tool_evidence() -> None:
         }
     ]
     result = await provider.complete(messages, [], "mock")
-    assert result.tool_calls[0].name == "get_care_events"
+    assert result.tool_calls[0].name == "count_care_events"
     messages.append(
         {
             "role": "tool",
@@ -75,7 +75,8 @@ async def test_learning_question_follows_latest_cue_without_dumping_46_records()
         fly_id="f",
         provider=MockProvider(),
     )
-    assert "ごほうび46回" in answer.text and "+0.47" in answer.text
+    assert "46回" not in answer.text and "20回の記録" not in answer.text
+    assert "+0.47" in answer.text
     assert "コピーで20回" in answer.text and "接近15回" in answer.text
     assert answer.evidence_ids == ["#0046", "#c-1"]
     assert answer.verification.rate == 1 and answer.steps == 3
