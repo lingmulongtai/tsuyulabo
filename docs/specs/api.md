@@ -17,6 +17,27 @@ FastAPI。ベースパス `/v1`。OpenAPI は `/openapi.json`（Web の型はこ
 
 主なコード: `unauthorized`, `validation_error`, `not_found`, `idempotency_key_required`, `no_active_week`, `week_already_active`, `slot_already_used`, `daily_limit_reached`, `not_available_today`, `puzzle_expired`, `puzzle_already_submitted`, `invalid_submission`, `insufficient_funds`, `team_full`, `level_cap_reached`, `friend_limit`, `already_friends`, `dev_tools_disabled`.
 
+## 負荷制限（429 / 503）
+
+- Redis の Lua による原子的な固定窓カウンターを全 API プロセスで共有する。日次は UTC 0 時、分・時間窓も Redis の実時刻を使い、ゲームの時間スキップではリセットしない。窓境界では短時間に最大 2 窓分を送れる。
+- ゲスト作成は接続元 IP ごと 5 回/時、全体 200 回/日。Redis 障害・未設定時はログを残し、ゲストだけ API プロセスごと全体 10 回/時のメモリ制限を使う。他の操作は fail open。複数プロセス・再起動をまたぐ障害時の全体保証はない。
+- 認証済み操作はユーザーごと全体 300 回/分に加え、シオリ POST は 10 回/分・100 回/日、個体の実験・behavior・brain/activity（GET 含む）は 20 回/分、puzzles・daily-circuit は 60 回/分、friends は 30 回/分。対象グループ内でカウンターを共有する。失敗・冪等再送も入口の回数を消費し、上限に達したリクエストはカウンターを増やさない。公開 clock/odds/healthz と未認証リクエストは対象外。
+- 上限超過は **429 `rate_limited`**。`Retry-After` は次の受付までの正の整数秒で、`details.retry_after` と一致する。
+
+```json
+{ "error": { "code": "rate_limited", "message": "少し時間をおいてから、もう一度ためしてね", "details": { "retry_after": 20 } } }
+```
+
+- brain / Shiori（しつけ・レース含む）の受付は、DB の pending/running ジョブをユーザーごと 2 件・全体 20 件までに制限する。Postgres のトランザクション advisory lock（SQLite は writer lock）で件数確認とジョブ作成を直列化し、全体上限の競合を防ぐ。完了・失敗・ロールバックで枠を解放する。Redis レート制限が止まってもこの制限は有効。
+- 受付枠がない場合は、ジョブもゲーム操作の変更も保存せず、**503 `server_busy`** と `Retry-After: 10`（設定可能）、`details.retry_after: 10` を返す。429 / 503 は冪等キーに保存せず、待ってから同じキーで再送できる。
+
+```json
+{ "error": { "code": "server_busy", "message": "研究所が混み合っています。少し時間をおいてから、もう一度ためしてね", "details": { "retry_after": 10 } } }
+```
+
+- Web はこれらのエラーを自動再試行せず、日本語の案内を出す。同じ API メソッド・パスへの再送は `Retry-After` 経過まで通信せず同じエラーを返す。待ち時間はヘッダーと本文の長い方を採用する。
+- 接続元 IP・各上限・障害時の運用は [selfhost.md](../selfhost.md) に従う。テストでは `create_app(rate_limiter=RateLimiter(MemoryCounter(...)))` で実時刻・Redis を置換できる。`RATE_LIMITS_ENABLED=false` はレート制限だけを無効にし、ジョブ受付上限は維持する。
+
 ## 認証（アルファ）
 
 - `POST /v1/auth/guest` → ゲストユーザーを作り、JWT（HS256、`sub` = user_id、有効期限 90 日）を返す。

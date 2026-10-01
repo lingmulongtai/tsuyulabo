@@ -1,6 +1,6 @@
 "use client";
 import { useQuery } from "@tanstack/react-query";
-import { api, unwrap } from "./client";
+import { api, ApiError, unwrap } from "./client";
 import type { components } from "./schema";
 import { useApiMutation, useApiQuery } from "./query";
 
@@ -9,7 +9,7 @@ export const useShioriAsk = () => useApiMutation((question: string, headers) => 
 export function useJob(id?: string) {
   return useQuery({ queryKey: ["jobs", id], enabled: Boolean(id),
     queryFn: ({ signal }) => unwrap(api.GET("/v1/jobs/{job_id}", { signal, params: { path: { job_id: id! } } })),
-    retry: 1,
+    retry: (count, error) => count < 1 && error instanceof ApiError && error.retryable,
     refetchInterval: query => query.state.error || (query.state.data && ["succeeded", "failed"].includes(query.state.data.status)) ? false : 1500,
   });
 }

@@ -50,6 +50,7 @@ from tsuyulabo_api.services.jobs import (
     JobQueue,
 )
 from tsuyulabo_api.services.maze_race import handler as maze_handler
+from tsuyulabo_api.services.ratelimit import RateLimiter, RedisCounter
 from tsuyulabo_api.services.shiori import handler as shiori_handler
 from tsuyulabo_api.settings import Settings
 
@@ -61,12 +62,14 @@ def create_app(
     auth_provider: AuthProvider | None = None,
     brain_handlers: Mapping[str, JobFunction] | None = None,
     brain_adapter: BrainAdapter | None = None,
+    rate_limiter: RateLimiter | None = None,
 ) -> FastAPI:
     settings = settings or Settings()
     if settings.brain_mode == "queue" and not settings.redis_url:
         raise ValueError("REDIS_URL is required when BRAIN_MODE=queue")
     engine = create_engine(settings.database_url)
     sessions = session_factory(engine)
+    sessions.configure(info={"guard_settings": settings})
     adapter = brain_adapter or BrainAdapter()
     handlers = {
         "brain.experiment": experiment_handler(sessions, adapter),
@@ -109,6 +112,7 @@ def create_app(
         settings.jwt_secret.get_secret_value()
     )
     app.state.redis = redis
+    app.state.rate_limiter = rate_limiter or RateLimiter(RedisCounter(redis) if redis else None)
     app.state.job_queue = queue
     app.state.brain_client = BrainClient(sessions, queue)
     app.state.brain_adapter = adapter
@@ -118,6 +122,7 @@ def create_app(
         allow_credentials=True,
         allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
         allow_headers=["Authorization", "Content-Type", "Idempotency-Key"],
+        expose_headers=["Retry-After"],
         # The self-hosted API resolves to a private Tailscale address on tailnet devices, and
         # Chrome's Private Network Access preflight must be answered for allowed origins only.
         allow_private_network=True,

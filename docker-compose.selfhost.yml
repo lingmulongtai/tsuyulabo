@@ -24,6 +24,7 @@ x-selfhost-environment: &selfhost-environment
   OLLAMA_TIMEOUT: ${OLLAMA_TIMEOUT:-120}
   # The host CPU cools poorly: keep PyTorch from spreading brain jobs over every core.
   OMP_NUM_THREADS: ${SELFHOST_TORCH_THREADS:-2}
+  WORKER_MAX_JOBS: ${WORKER_MAX_JOBS:-2}
 
 services:
   postgres:
