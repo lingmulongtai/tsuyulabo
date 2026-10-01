@@ -156,8 +156,8 @@ def train(args: argparse.Namespace, rows: dict[str, Any], stats: dict[str, Any])
         warmup_ratio=0.05,
         logging_steps=1,
         eval_strategy="steps",
-        eval_steps=25,
-        save_steps=25,
+        eval_steps=args.eval_steps,
+        save_steps=args.eval_steps,
         save_total_limit=2,
         report_to="none",
         seed=1000,
@@ -171,14 +171,18 @@ def train(args: argparse.Namespace, rows: dict[str, Any], stats: dict[str, Any])
         model=model,
         args=config,
         train_dataset=encoded["train"],
-        eval_dataset=encoded["valid"],
+        eval_dataset=(
+            encoded["valid"].select(range(min(args.valid_limit, len(encoded["valid"]))))
+            if args.valid_limit
+            else encoded["valid"]
+        ),
         processing_class=tokenizer,
         data_collator=DataCollatorForSeq2Seq(tokenizer, label_pad_token_id=-100),
     )
     # Loss is a per-example mean; let Trainer divide by accumulation steps.
     trainer.model_accepts_loss_kwargs = False
     trainer.train()
-    metrics = trainer.evaluate()
+    metrics = trainer.evaluate(eval_dataset=encoded["valid"])
     trainer.save_model(str(args.out))
     tokenizer.save_pretrained(args.out)
     metrics["peak_cuda_memory_bytes"] = torch.cuda.max_memory_allocated()
@@ -196,6 +200,11 @@ def main() -> None:
     parser.add_argument("--epochs", type=float, default=2)
     parser.add_argument("--max-steps", type=int, default=-1)
     parser.add_argument("--lr", type=float, default=2e-4)
+    # Periodic validation over all 400 rows costs ~9 min on the RTX 4050; the final eval stays full.
+    parser.add_argument("--eval-steps", type=int, default=25)
+    parser.add_argument(
+        "--valid-limit", type=int, default=0, help="rows for periodic eval; 0 = all"
+    )
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
     if args.base not in {"Qwen/Qwen3.5-2B", "Qwen/Qwen3.5-4B"} and not Path(args.base).is_dir():
@@ -206,6 +215,8 @@ def main() -> None:
         parser.error("--max-steps must be -1 or positive")
     if not math.isfinite(args.lr) or not 0 < args.lr < 1:
         parser.error("--lr must be finite and between 0 and 1")
+    if args.eval_steps < 1 or args.valid_limit < 0:
+        parser.error("--eval-steps must be positive and --valid-limit must be zero or positive")
     if args.out.exists() and (not args.out.is_dir() or any(args.out.iterdir())):
         parser.error("--out must be absent or empty; use a new run directory")
     try:
