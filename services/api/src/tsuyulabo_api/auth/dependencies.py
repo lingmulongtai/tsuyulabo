@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from tsuyulabo_api.db.session import get_session
 from tsuyulabo_api.db.users import User
 from tsuyulabo_api.errors import APIError
+from tsuyulabo_api.services.request_limits import check_user
 
 
 async def authenticate_user(request: Request, session: AsyncSession) -> User:
@@ -18,6 +19,7 @@ async def authenticate_user(request: Request, session: AsyncSession) -> User:
     user = await session.get(User, user_id)
     if user is None:
         raise APIError("unauthorized", "認証が必要です", 401)
+    await check_user(request, user.id)
     return user
 
 
