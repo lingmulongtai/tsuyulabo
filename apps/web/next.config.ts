@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { apiRewrites } from "./src/lib/api/proxy";
 
 const nextConfig: NextConfig = {
   async headers() {
@@ -8,6 +9,9 @@ const nextConfig: NextConfig = {
       { key: "Content-Security-Policy", value: "default-src 'self'; script-src 'self'" },
       { key: "X-Content-Type-Options", value: "nosniff" },
     ] }];
+  },
+  async rewrites() {
+    return apiRewrites(process.env.TSUYU_API_PROXY_TARGET);
   },
 };
 
