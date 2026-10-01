@@ -11,11 +11,15 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 from tsuyulabo_api.db.base import new_id, utc_now
 from tsuyulabo_api.db.research import Job
 from tsuyulabo_api.errors import APIError
+from tsuyulabo_api.services.backpressure import admit_job
 
 JobFunction = Callable[[dict[str, Any]], dict[str, Any] | Awaitable[dict[str, Any]]]
 
 
 async def create_job(session: AsyncSession, user_id: str, kind: str) -> Job:
+    settings = session.info.get("guard_settings")
+    if settings is not None:
+        await admit_job(session, user_id, settings)
     job = Job(id=new_id(), user_id=user_id, kind=kind, status="pending")
     session.add(job)
     await session.flush()
