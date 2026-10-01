@@ -4,9 +4,14 @@
 
 ## いまの状態（サマリー）
 
-- 日付: 2026-09-29。**開発は別の PC に移る。新しい PC ではまず [NEW_PC.md](NEW_PC.md) を読む**（セットアップ、メールの設定、
-  旧 PC にだけあるもの）。
-- フェーズ: アルファ（フェーズ1）完成 → フェーズ2・3 の機能も main に入った。実行中のタスクはなし。
+- 日付: 2026-10-01。開発は新しい PC（ROG Zephyrus G14）に移った。**作業場所は `C:\Users\lingm\dev\tsuyulabo`**
+  （OneDrive の外）。OneDrive 内の古いコピーは使わない（OneDrive の同期で git が固まった）。セットアップは [NEW_PC.md](NEW_PC.md)。
+- **本番が遊べる**: https://tsuyulabo.vercel.app で育成・フレンドまで遊べる。API は**オーナーの PC で自宅サーバー**として動く
+  （[selfhost.md](selfhost.md)）: Docker のプロジェクト `tsuyulabo-server`（本番用 clone `C:\Users\lingm\srv\tsuyulabo`）→
+  Tailscale Funnel `https://ozg14.tail4204cd.ts.net` → Vercel が `/v1` を転送。秘密の値は `~/.tsuyulabo/selfhost.env`。
+  デプロイは `scripts/selfhost/deploy.ps1`（push 済みの `origin/main` を出す）。
+- フェーズ: アルファ（フェーズ1）完成 → フェーズ2・3 の機能も main に入った。
+- **実行中**: W9-shiori-local（Codex、`feat/shiori-local`）— シオリをローカル LLM（Ollama の qwen3.5:4b / 2b）で動かし、評価する。
 - main にあるもの:
   - **1週間の育成ループ**: ホーム、ごはん（ブロックパズル）、しつけ（回路パズル）、そうじ、温度、場所えらび、睡眠、研究発表会、
     羽化（サーバーの抽選）。すべて API につながっている。
@@ -15,21 +20,24 @@
   - **脳エンジン**: 既定は本物の配線 **MaleCNS v1.0**（6 項目すべて合格、デコーダー 88.6%）。合成の `toy-v0` も同梱。
   - シオリ（Mock で全部動く。API キーを入れると Anthropic / OpenAI）、arq ワーカー、docker compose、CI 5 本
     （ci / eval / e2e / deploy / android）、Capacitor の Android アプリ。
-- テスト: Python 618 件 + eval 7 件、Web の lint / typecheck / test / build、Playwright の1週間通しプレイ。GitHub Actions は緑。
+- テスト: Python 621 件 + eval 7 件、Web の lint / typecheck / test / build、Playwright の1週間通しプレイ。
+  CI の `api-postgres`（失敗しても止めないジョブ）だけ以前から赤い（テスト 2 件が CI の環境変数を拾う）。
 - マイグレーションの先頭は **0012**（0011 コンテスト → 0012 ずもう）。
-- 公開: Web デモ https://tsuyulabo.vercel.app 、Android プレリリース
-  [v0.1.0-alpha.1](https://github.com/lingmulongtai/tsuyulabo/releases/tag/v0.1.0-alpha.1)。API は未公開。
+- 実装の担当: **Codex**（`run-codex.sh`、既定 gpt-6.1-sol。上限が 10% 以下ならリセットを使ってよい）と **Antigravity**
+  （アプリと IDE にサインイン済み。`run-antigravity.sh` の起動方法はまだ確認中）。
+- この PC の注意: **CPU が冷えない**（液体金属の劣化）。長い CPU の処理は避ける（全テストは約 9 分）。GPU は冷える。
+  電源モードが省電力だと GPU が 390 MHz に張り付いてローカル LLM が 10 倍以上遅くなる（バランスなら qwen3.5:4b で 42 トークン/秒）。
 - **オーナー向けチェックリスト**（残り）:
-  1. API を公開するなら Cloud Run + Neon + Upstash を用意して GitHub の Secrets を入れる（`docs/deploy.md`）。
-     公開すると Web とアプリで育成・フレンドが遊べる。
-  2. Android の本番署名用の keystore を作る（`docs/mobile.md`）。iOS には Mac・Xcode・Apple Developer が必要。
-  3. プレイ動画を作るなら FFmpeg のフル版を入れる。
+  1. 毎日のバックアップをタスク スケジューラに登録してよいか（`docs/selfhost.md` の 4）。
+  2. スタートアップの「DJIStudio.quicklook」をオフにする（裏で GPU を使う）。
+  3. Android の本番署名用の keystore を作る（`docs/mobile.md`）。iOS には Mac・Xcode・Apple Developer が必要。
   4. GitHub の「Keep my email addresses private」を有効にする。
 - 次の候補:
-  - API の公開（上の 1）。
-  - シオリの実 LLM → 自作 LLM（保留中。オーナーは最終的に自作したい）。提案した段階:
-    ① API で基準を作る → ② 小さな公開モデル（0.5〜3B）を自動生成データで LoRA 追加学習し、LM Studio / llama.cpp で動かす →
+  - W9 の結果を見て、本番のシオリをローカル LLM に切り替える（`SHIORI_PROVIDER=ollama`、worker から `host.docker.internal:11434`）。
+  - 自作 LLM: ② 小さな公開モデル（qwen3.5:2b など）を自動生成データで LoRA 追加学習して Ollama で動かす →
     ③ 夜の研究日誌だけ、ごく小さい GPT を一から作る。
+  - Antigravity の起動方法を確かめて、小さなタスクから渡す。
+  - デザイン: ホームの「今日の回路」カードで「毎朝4時更新」がスマホ幅で 1 文字だけ折り返す。
   - 脳: 一部の匂い（酵母）の反応が「じっとしている」にまとまる。検証用データでは 81.8%。
   - Web Push の実機での配信確認、プレイ動画。
 
@@ -39,7 +47,16 @@
 - **アトミックコミットを徹底**（数が多くなってよい）。
 - Claude は指揮官。Codex（使用量に余裕あり）をどんどん使う。デザインは Claude。
 - GitHub は **Public**。構成は**企画書どおりのフルスタック**。Vercel へのデプロイは OK。
-- 作業フォルダは OneDrive 内のまま（問題が出たら OneDrive の外に clone し直す）。
+- 作業フォルダは OneDrive 内のまま（問題が出たら OneDrive の外に clone し直す）。→ 2026-09-29 に問題が出たので外に移した。
+
+## オーナーの希望（2026-09-29 / 10-01 の指示）
+
+- この PC をサーバーにしてよい。AI（シオリの LLM）もこの PC でローカルに動かしてよい。
+- 優先順位: ① API をこの PC で公開 → ② シオリをローカル LLM → ③ 自作 LLM（LoRA まで）→ ④ 磨き込み・新機能。
+- 公開は Tailscale Funnel。Antigravity には Claude から自動で渡す。ローカル AI は「既製モデル → LoRA」まで。
+- 実装は Codex と Antigravity の両方を使ってよい（Codex は上限が近いとき使用量リセットを使ってよい）。
+- Claude も多めに使ってよいが、5 時間の上限があるので配分に気をつける。
+- DJI Studio が裏で GPU を使うのは嫌なので、止めてよい。CPU は冷えないので無理をさせない。
 
 ## Codex の動かし方
 
