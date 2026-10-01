@@ -4,7 +4,7 @@
 #
 #   scripts/agents/run-codex.sh <task-id> <branch> [reasoning-effort] [model]
 #
-# Model tiers (keep usage down): gpt-6-luna for easy or mechanical work, gpt-6-sol (default) for
+# Model tiers (keep usage down): gpt-6-luna for easy or mechanical work, gpt-6.1-sol (default) for
 # normal features, gpt-6-astra only for hard research. Effort defaults to medium.
 #
 # The sandbox cannot write to .git, so Codex does not commit. It writes a commit plan to
@@ -18,7 +18,7 @@ MAIN_REPO="$(cd "$(dirname "$0")/../.." && pwd)"
 TASK="$1"
 BRANCH="$2"
 EFFORT="${3:-medium}"
-MODEL="${4:-gpt-6-sol}"
+MODEL="${4:-gpt-6.1-sol}"
 AGENTS_DIR="${AGENTS_DIR:-$HOME/dev/tsuyulabo-agents}"
 REPO_URL="${REPO_URL:-https://github.com/lingmulongtai/tsuyulabo.git}"
 CLONE="$AGENTS_DIR/$TASK"
@@ -68,7 +68,9 @@ commit to .codex-runs/commits.jsonl, in order, as you finish each step.
 Use uv via .\\.tools\\uv.exe (e.g. '.\\.tools\\uv.exe run pytest services/brain'). Use npm.cmd / npx.cmd
 instead of npm / npx (PowerShell execution policy blocks the .ps1 shims).
 Stay inside this directory. Do not edit docs/HANDOFF.md even if the brief says so (the commander keeps the log;
-put your report in your final message instead). Your task brief follows.
+put your report in your final message instead).
+The owner explicitly allows you to use your usage reset if your usage limit has 10% or less remaining, so the task
+does not stop halfway. Your task brief follows.
 
 $(cat "$BRIEF")"
 
