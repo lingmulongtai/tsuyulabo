@@ -1,0 +1,6 @@
+# Generated from: ollama show qwen3.5:2b-q4_K_M --modelfile
+# Use modelfile.py to replace FROM and preserve everything else byte-for-byte.
+# This sketch is documentation; do not pass the placeholders to ollama create.
+FROM "{{ABSOLUTE_WINDOWS_PATH_TO_MERGED_Q4_K_M_GGUF}}"
+# {{EXACT_BASE_TEMPLATE_SYSTEM_AND_PARAMETER_LINES}}
+# Qwen3.5 safetensors ADAPTER compatibility is not established: merge + GGUF instead.
