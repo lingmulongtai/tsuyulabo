@@ -11,8 +11,11 @@
   Tailscale Funnel `https://ozg14.tail4204cd.ts.net` → Vercel が `/v1` を転送。秘密の値は `~/.tsuyulabo/selfhost.env`。
   デプロイは `scripts/selfhost/deploy.ps1`（push 済みの `origin/main` を出す）。
 - フェーズ: アルファ（フェーズ1）完成 → フェーズ2・3 の機能も main に入った。
-- **実行中**: W11-shiori-lora-data（Codex、`feat/shiori-lora-data`）— シオリ用の小さいモデルを LoRA で学習するための
-  学習データ（コードで作る理想の手本）と学習スクリプト（`ml/shiori-lora/`、WSL2 で動かす）。
+- **実行中**: シオリ専用モデルの LoRA 学習 v1（Claude が WSL2 Ubuntu で実行。`~/shiori-gpu/adapter-v1`、1 エポック 250 ステップ、
+  1 ステップ約 45 秒。ログは `~/.tsuyulabo/train-v1.log`）。手順は `ml/shiori-lora/README.md`。WSL には build-essential と
+  flash-linear-attention を追加済み（入れないと 2.2 倍遅い）。
+- サーバーの守り（W12）: 本番は `RATE_GUEST_HOUR=60`（Funnel が XFF を Vercel の IP で上書きするので、IP ごとの上限は
+  ゆるくし、全体の 1 日 200 人で守る）。値は `~/.tsuyulabo/selfhost.env`。
 - シオリのローカル LLM（W9/W10、[local-llm.md](../services/shiori/reports/local-llm.md)）: 既製の qwen3.5:4b は回数の正答率
   33〜64%、根拠を落とす。2b はほぼ 0%。本番の既定は Mock のまま。次は LoRA で自前のモデルを作る。
 - main にあるもの:
@@ -119,7 +122,8 @@ git push
 | W9-selfhost | オーナーの PC で API を本番公開（Docker、Tailscale Funnel、Vercel の転送、バックアップ） | Claude | main | 完了 |
 | W9-shiori-local | シオリをローカル LLM（Ollama）で動かし、実モデルで評価する（4B 64% / 2B 2%、既定は Mock） | Codex | feat/shiori-local | マージ済み |
 | W10-shiori-tools | 小さいモデル向けのツール（絞り込み、回数の集計、日本語の選択肢）と open 質問の評価（4B 33%、悪化） | Codex | feat/shiori-tools | マージ済み |
-| W11-shiori-lora-data | LoRA 用の理想の手本データと、WSL2 で動かす学習・書き出しスクリプト | Codex | feat/shiori-lora-data | 実行中 |
+| W11-shiori-lora-data | LoRA 用の理想の手本データと、WSL2 で動かす学習・書き出しスクリプト | Codex | feat/shiori-lora-data | マージ済み |
+| W12-server-guard | Redis のレート制限、ゲスト作成の上限、ジョブの受付制限、worker の同時実行 2 | Codex | feat/server-guard | マージ済み |
 
 ## 決めたこと（理由つき）
 
