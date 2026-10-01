@@ -68,6 +68,27 @@ async def test_factory_health_errors_cors_and_routes(engine: AsyncEngine) -> Non
         )
         assert cors.status_code == 200
         assert cors.headers["access-control-allow-origin"] == "http://localhost:3000"
+        # Tailnet devices resolve the self-hosted API to a private address, so Chrome asks first.
+        private = await client.options(
+            "/v1/auth/guest",
+            headers={
+                "Origin": "http://localhost:3000",
+                "Access-Control-Request-Method": "POST",
+                "Access-Control-Request-Headers": "Content-Type, Idempotency-Key",
+                "Access-Control-Request-Private-Network": "true",
+            },
+        )
+        assert private.status_code == 200
+        assert private.headers["access-control-allow-private-network"] == "true"
+        foreign = await client.options(
+            "/v1/auth/guest",
+            headers={
+                "Origin": "https://evil.example",
+                "Access-Control-Request-Method": "POST",
+                "Access-Control-Request-Private-Network": "true",
+            },
+        )
+        assert foreign.status_code == 400
         schema = (await client.get("/openapi.json")).json()
         assert "/v1/auth/guest" in schema["paths"]
 

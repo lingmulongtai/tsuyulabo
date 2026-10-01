@@ -118,6 +118,9 @@ def create_app(
         allow_credentials=True,
         allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
         allow_headers=["Authorization", "Content-Type", "Idempotency-Key"],
+        # The self-hosted API resolves to a private Tailscale address on tailnet devices, and
+        # Chrome's Private Network Access preflight must be answered for allowed origins only.
+        allow_private_network=True,
     )
     for exception in (APIError, RequestValidationError, HTTPException, Exception):
         app.add_exception_handler(exception, exception_handler)
