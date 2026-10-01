@@ -24,6 +24,8 @@ def error_response(exc: Exception) -> JSONResponse:
     headers = None
     if isinstance(exc, APIError):
         code, message, status, details = exc.code, exc.message, exc.status_code, exc.details
+        if code in {"rate_limited", "server_busy"} and "retry_after" in details:
+            headers = {"Retry-After": str(details["retry_after"])}
     elif isinstance(exc, RequestValidationError):
         code, message, status = "validation_error", "入力内容を確認してください", 422
         # Context may contain non-JSON exceptions; omit it and avoid echoing raw input.
