@@ -5,8 +5,8 @@ import { usePathname } from "next/navigation";
 import { BookTabIcon, FriendsTabIcon, HomeTabIcon, TeamTabIcon } from "../ui/icons";
 
 const TABS = [
-  { href: "/", label: "おせわ", Icon: HomeTabIcon },
-  { href: "/team", label: "チーム", Icon: TeamTabIcon },
+  { href: "/", label: "お世話", Icon: HomeTabIcon },
+  { href: "/team", label: "コロニー", Icon: TeamTabIcon },
   { href: "/zukan", label: "図鑑", Icon: BookTabIcon },
   { href: "/friends", label: "フレンド", Icon: FriendsTabIcon },
 ] as const;
@@ -16,7 +16,7 @@ export function TabBar() {
   return (
     <nav
       aria-label="メインメニュー"
-      className="sticky bottom-0 z-30 grid grid-cols-4 border-t border-line-soft bg-surface-2/92 backdrop-blur pb-[env(safe-area-inset-bottom)]"
+      className="sticky bottom-0 z-30 grid grid-cols-4 border-t border-line-soft bg-surface-2 backdrop-blur-xl pb-[env(safe-area-inset-bottom)]"
     >
       {TABS.map(({ href, label, Icon }) => {
         const active = href === "/" ? pathname === "/" : pathname.startsWith(href);
@@ -25,8 +25,8 @@ export function TabBar() {
             key={href}
             href={href}
             aria-current={active ? "page" : undefined}
-            className={`flex flex-col items-center gap-0.5 pt-2 pb-2.5 text-[0.7rem] font-bold transition-colors ${
-              active ? "text-eye" : "text-muted hover:text-ink"
+            className={`flex flex-col items-center gap-0.5 pt-2 pb-2.5 text-[0.7rem] font-medium transition-colors min-h-14 ${
+              active ? "text-banana" : "text-muted hover:text-ink"
             }`}
           >
             <Icon size={24} />
