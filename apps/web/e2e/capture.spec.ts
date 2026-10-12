@@ -5,7 +5,7 @@ import { captureMeal, captureSite, captureTiming, captureTraining } from "./help
 import { MediaCapture, rawRoot } from "./helpers/capture-media";
 import { advanceTime, apiAction, openGuestHome, receiveEgg, type Schemas } from "./helpers/session";
 
-test("capture a well cared-for week and the research notebook @capture", async ({ page }, testInfo) => {
+test("capture a well cared-for week and the raising diary @capture", async ({ page }, testInfo) => {
   const media = new MediaCapture();
   await media.prepare(page);
   await openGuestHome(page);
@@ -22,7 +22,7 @@ test("capture a well cared-for week and the research notebook @capture", async (
         if (slot > 0) await advanceTime(page, "next_slot");
         await captureMeal(page, media, day === 3 && slot === 0);
         if (day === 3 && slot === 0) {
-          await expect(page.getByRole("heading", { level: 1 })).toContainText("研究3日目");
+          await expect(page.getByRole("heading", { level: 1 })).toContainText("3日目");
           await media.shot(page, "home");
         }
         if (day >= 2) await captureTraining(page, media, day === 3 && slot === 0);
@@ -32,7 +32,7 @@ test("capture a well cared-for week and the research notebook @capture", async (
   }
 
   const presentation = await apiAction<Schemas["Presentation"]>(page,
-    "/v1/weeks/current/presentation", "GET", () => page.getByRole("link", { name: /研究発表会へ/ }).click());
+    "/v1/weeks/current/presentation", "GET", () => page.getByRole("link", { name: /羽化の日へ/ }).click());
   expect(["gold", "rainbow"]).toContain(presentation.rank);
   expect(presentation.care_points).toBeGreaterThanOrEqual(3000);
   await expect(page.getByRole("button", { name: "羽化を見る", exact: true })).toBeVisible();
@@ -40,25 +40,26 @@ test("capture a well cared-for week and the research notebook @capture", async (
   await media.shot(page, "presentation");
   await page.getByRole("button", { name: "羽化を見る", exact: true }).click();
   const eclosion = await apiAction<Schemas["Eclosion"]>(page,
-    "/v1/weeks/current/eclose", "POST", () => page.getByRole("button", { name: "羽化させる", exact: true }).click());
+    "/v1/weeks/current/eclose", "POST", () => page.getByRole("button", { name: "羽化を見届ける", exact: true }).click());
   await expect(page.getByRole("button", { name: "飼育室へ", exact: true })).toBeVisible();
   await page.waitForTimeout(1800);
   await media.shot(page, "eclosion");
   await page.getByRole("button", { name: "飼育室へ", exact: true }).click();
-  await expect(page.getByText("脳のモデルが選んだ行動", { exact: false })).toBeVisible();
+  await expect(page.getByText("この子の動き。", { exact: false })).toBeVisible();
   await page.waitForTimeout(4500);
   await media.shot(page, "adult");
 
-  await page.getByRole("link", { name: "この子の脳をのぞく →" }).click();
+  await page.getByRole("link", { name: "この子の反応を見る →" }).click();
   await expect(page.getByLabel("何をしてみる？")).toHaveValue("sugar");
+  await page.getByText("反応のしくみを詳しく見る", { exact: true }).click();
   await page.getByRole("button", { name: "再生", exact: true }).click();
   await page.waitForTimeout(1750);
   await expect(page.getByRole("button", { name: "一時停止", exact: true })).toBeVisible();
   await media.shot(page, "brain");
 
   await page.goto("/team");
-  await page.getByRole("button", { name: "チームに選ぶ", exact: true }).click();
-  await apiAction(page, "/v1/team", "PUT", () => page.getByRole("button", { name: "このチームにする（1/5）", exact: true }).click());
+  await page.getByRole("button", { name: "コロニーに選ぶ", exact: true }).click();
+  await apiAction(page, "/v1/team", "PUT", () => page.getByRole("button", { name: "このコロニーにする（1/5）", exact: true }).click());
   await page.goto("/");
   await advanceTime(page, "next_slot");
   await page.goto("/team");
