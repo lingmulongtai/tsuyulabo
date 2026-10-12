@@ -14,7 +14,7 @@ export function MatingInbox() {
   return <section className="space-y-3" aria-label="お見合いの申込">
     <SectionTitle>お見合いのおたより</SectionTitle>
     <QueryState query={inbox}>{data => <>
-      {data.incoming.length === 0 && data.outgoing.length === 0 && <Card className="p-4 text-sm text-muted">お見合いのおたよりはまだありません。フレンドの研究室で成虫を選んで申し込めます。</Card>}
+      {data.incoming.length === 0 && data.outgoing.length === 0 && <Card className="p-4 text-sm text-muted">お見合いのおたよりはまだありません。フレンドの飼育棚で成虫を選んで申し込めます。</Card>}
       {data.incoming.map(proposal => <MatingMessage key={proposal.id} proposal={proposal} incoming />)}
       {data.outgoing.length > 0 && <details className="space-y-3"><summary className="cursor-pointer text-sm font-bold text-leaf">送ったおたより（{data.outgoing.length}件）</summary>{data.outgoing.map(proposal => <MatingMessage key={proposal.id} proposal={proposal} incoming={false} />)}</details>}
     </>}</QueryState>
