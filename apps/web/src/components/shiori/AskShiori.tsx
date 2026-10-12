@@ -5,7 +5,6 @@ import { shioriAnswer } from "@/lib/display";
 import { ShioriBubble } from "../home/ShioriBubble";
 import { Button, Card, TruthBadge } from "../ui/primitives";
 import { ErrorCard } from "../ui/QueryState";
-import { EvidenceChips } from "./EvidenceChips";
 
 export function AskShiori({ initialQuestion = "", context = "" }: { initialQuestion?: string; context?: string }) {
   const [question, setQuestion] = useState(initialQuestion);
@@ -32,13 +31,12 @@ export function AskShiori({ initialQuestion = "", context = "" }: { initialQuest
       <p className="text-xs text-muted">ゲーム内のモデルで測った結果です</p>
     </Card>
     {ask.error && <ErrorCard error={ask.error} retry={send} />}
-    {working && <Card className="p-5 text-sm text-ai"><p role="status" className="motion-safe:animate-pulse">シオリが記録や実験を確かめています。少し待っていてね。</p></Card>}
+    {working && <Card className="p-5 text-sm text-ai"><p role="status" className="motion-safe:animate-pulse">シオリがこの子の育ちを確かめています。少しお待ちください。</p></Card>}
     {job.error && <ErrorCard error={job.error} retry={() => void job.refetch()} />}
     {job.data?.status === "failed" && <ErrorCard error={new Error(typeof job.data.error?.message === "string" ? job.data.error.message : "調べものがうまくいきませんでした。もう一度質問できます。")} />}
     {job.data?.status === "succeeded" && (answer.answer ? <>
       <div>
-        <ShioriBubble title="シオリからの答え" text={answer.answer} />
-        <EvidenceChips key={jobId} evidence={answer.evidence} />
+        <ShioriBubble title="シオリからの答え" text={answer.answer} evidence={answer.evidence} />
       </div>
       <p className="px-3 text-xs text-muted">ゲーム内のモデルで測った結果です</p>
     </> : <Card className="p-4 text-sm text-muted">答えの根拠となる記録がまだ足りません。お世話の記録を残してから、もう一度聞いてみてください。</Card>)}

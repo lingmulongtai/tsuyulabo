@@ -3,10 +3,10 @@ import { useId } from "react";
 export type ShioriMood = "normal" | "smile" | "surprised" | "thinking";
 
 /**
- * 研究員シオリ — the research partner. Bob haircut, round glasses, lab coat, a dew-drop hairpin. She is an AI and
+ * シオリ — the research partner. Bob haircut, round glasses, lab coat, a dew-drop hairpin. She is an AI and
  * never hides it: the small violet pin on her collar is the AI mark used across the app.
  */
-export function Shiori({ mood = "normal", className, label = "研究員シオリ" }: { mood?: ShioriMood; className?: string; label?: string }) {
+export function Shiori({ mood = "normal", className, label = "シオリ" }: { mood?: ShioriMood; className?: string; label?: string }) {
   const id = `sh${useId().replace(/[^a-zA-Z0-9]/g, "")}`;
   const mouth =
     mood === "smile" ? (
