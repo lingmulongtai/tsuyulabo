@@ -19,6 +19,21 @@ function Invoke-Checked {
     if ($LASTEXITCODE -ne 0) { throw "$Exe $($Arguments -join ' ') failed with exit code $LASTEXITCODE" }
 }
 
+# Docker Desktop may have been quit by hand; start it and wait for the engine instead of failing.
+if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
+    $env:Path = (Join-Path $env:LOCALAPPDATA "Programs\DockerDesktop\resources\bin") + ";" + $env:Path
+}
+docker info --format "{{.ServerVersion}}" *> $null
+if ($LASTEXITCODE -ne 0) {
+    Start-Process (Join-Path $env:LOCALAPPDATA "Programs\DockerDesktop\frontend\Docker Desktop.exe")
+    $engineDeadline = (Get-Date).AddMinutes(4)
+    do {
+        Start-Sleep -Seconds 5
+        docker info --format "{{.ServerVersion}}" *> $null
+    } while ($LASTEXITCODE -ne 0 -and (Get-Date) -lt $engineDeadline)
+    if ($LASTEXITCODE -ne 0) { throw "Docker Desktop did not start within 4 minutes" }
+}
+
 if (-not (Test-Path $EnvFile)) {
     throw "missing $EnvFile; create it once with: uv run python scripts/selfhost/init_env.py"
 }
