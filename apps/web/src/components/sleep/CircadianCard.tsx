@@ -36,12 +36,12 @@ export function CircadianCard({ circadian }: { circadian: components["schemas"][
       <div className="mt-4 space-y-2 text-sm leading-relaxed">
         <TruthBadge kind="game" />
         <p>最近7回のおやすみ・おはようの時間がそろうほど、月が満ちていきます。6〜9時間のおやすみには加点も。記録が少ないあいだは、少しずつたまります。</p>
-        <p>チームのげんき回復は最大1.3倍に。おはよう時にゲージが80以上なら、しずくが20増えます。</p>
+        <p>コロニーのげんき回復は最大1.3倍に。おはよう時にゲージが80以上なら、しずくが20増えます。</p>
         <p className="text-xs text-muted">連続日数は、6〜9時間のおやすみが続いた日数（最大7日）です。日が空いても月は減りません。このゲージはゲームの指標です。</p>
       </div>
       <div className="mt-4 space-y-2 border-t border-line-soft pt-4 text-sm leading-relaxed">
         <TruthBadge kind="real" />
-        <p>ハエの時計遺伝子 period と timeless が作るタンパク質は、自分たちの遺伝子の働きを抑えることで、約24時間のリズムを生みます。脳の時計ニューロンが睡眠や活動のリズムを調整しています。この分子時計の研究は、2017年のノーベル賞につながりました。</p>
+        <p>ハエの時計遺伝子 period と timeless が作るタンパク質は、自分たちの遺伝子の働きを抑えることで、約24時間のリズムを生みます。脳の時計ニューロンが睡眠や活動のリズムを調整しています。この分子時計の発見は、2017年のノーベル賞につながりました。</p>
         <a className="text-xs text-leaf underline" href="https://www.nobelprize.org/prizes/medicine/2017/advanced-information/1000/" target="_blank" rel="noreferrer">ノーベル賞の公式解説（英語）</a>
       </div>
       <Button tone="ai" block className="mt-5" onClick={() => dialog.current?.close()}>わかった</Button>

@@ -1,5 +1,6 @@
 "use client";
 
+import { raisingText } from "@/lib/raising-copy";
 import { useState } from "react";
 import Link from "next/link";
 import { Terrarium } from "../home/Terrarium";
@@ -28,7 +29,7 @@ export function ContestScreen() {
     <QueryState query={current}>{data => <>
       <Card className="space-y-2 bg-tint-leaf p-5">
         <p className="text-xs font-bold text-leaf">{data.week} のお題</p>
-        <h2 className="font-kiwi text-xl">{data.theme}</h2>
+        <h2 className="font-kiwi text-xl">{raisingText(data.theme)}</h2>
         <p className="text-sm text-muted">飾った飼育室と自慢の1匹を出そう。フレンドの投票で決まります。</p>
         <p className="text-xs text-muted">応募締切：{new Date(data.entry_close).toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" })}　投票終了：{new Date(data.vote_close).toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" })}</p>
       </Card>
@@ -66,8 +67,8 @@ function Podium({ data }: { data: ContestResults }) {
   return <Card className="space-y-3 p-4"><h2 className="font-kiwi text-lg">結果 · {data.week}</h2>
     {data.entries.length === 0 && <p className="text-sm text-muted">結果はまだありません。</p>}
     <div className="flex items-end justify-center gap-2" aria-label="上位3位">
-      {winners.map(entry => <div key={entry.id} className={`min-w-0 flex-1 rounded-t-2xl p-2 text-center ${entry.rank === 1 ? "bg-[#fff1bc] pb-7" : entry.rank === 2 ? "bg-[#e7eeec] pb-4" : "bg-[#f4dfcb] pb-2"}`}>
-        <span className="font-kiwi text-lg">{entry.rank === 1 ? "🥇" : entry.rank === 2 ? "🥈" : "🥉"} {entry.rank}位</span>
+      {winners.map(entry => <div key={entry.id} className={`min-w-0 flex-1 rounded-t-2xl p-2 text-center ${entry.rank === 1 ? "bg-tint-banana pb-7" : entry.rank === 2 ? "bg-tint-leaf pb-4" : "bg-surface pb-2"}`}>
+        <span className="font-kiwi text-lg">{entry.rank}位</span>
         <div className="mx-auto max-w-32"><Terrarium stage="adult" researchDay={7} strain={entry.strain as Strain} sex={entry.sex as Sex} layout={entry.layout} /></div>
         <b className="block truncate text-sm">{entry.display_name}</b><span className="text-xs text-muted">{entry.votes}票</span>
       </div>)}

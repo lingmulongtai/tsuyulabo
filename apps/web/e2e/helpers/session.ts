@@ -1,4 +1,4 @@
-import { expect, type Page } from "@playwright/test";
+import { expect, type Page, type Request } from "@playwright/test";
 import type { components } from "../../src/lib/api/schema";
 
 export type Schemas = components["schemas"];
@@ -6,20 +6,38 @@ const apiBase = (process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000").rep
 
 // Observe the application's request, never replace responses or submit care through an API client.
 export async function apiAction<T>(page: Page, path: string, method: string, action: () => Promise<unknown>) {
-  // Only accept requests started by this action, not a previous page's in-flight refetch.
-  // Read the body immediately so a subsequent navigation cannot discard it.
-  const pending = page.waitForRequest(request =>
-    request.url() === `${apiBase}${path}` && request.method() === method).then(async request => {
-    const response = await request.response();
-    expect(response, `${method} ${path} must receive a response`).not.toBeNull();
-    expect(response!.ok(), `${method} ${path}: ${await response!.text()}`).toBeTruthy();
-    return await response!.json() as T;
+  // Observe new requests only, including the client's automatic retry of the same action.
+  // Mutation retries must keep the original idempotency key. Never accept a different action.
+  let first = true;
+  let key: string | undefined;
+  let observe: (request: Request) => void;
+  let timeout: ReturnType<typeof setTimeout> | undefined;
+  const pending = new Promise<T>((resolve, reject) => {
+    timeout = setTimeout(() => reject(new Error(`${method} ${path} did not receive a response`)), 30_000);
+    observe = request => {
+      if (request.url() !== `${apiBase}${path}` || request.method() !== method) return;
+      const requestKey = request.headers()["idempotency-key"];
+      if (first) { first = false; key = requestKey; }
+      if (requestKey !== key) return;
+      void (async () => {
+        try {
+          const response = await request.response();
+          if (!response) return; // Transport may automatically resend a timed-out request.
+          expect(response.ok(), `${method} ${path}: ${await response.text()}`).toBeTruthy();
+          // Read immediately so a subsequent navigation cannot discard the body.
+          resolve(await response.json() as T);
+        } catch (error) { reject(error); }
+      })();
+    };
   });
-  const [data] = await Promise.all([
-    pending,
-    action(),
-  ]);
-  return data;
+  page.on("request", observe!);
+  try {
+    const [data] = await Promise.all([pending, action()]);
+    return data;
+  } finally {
+    clearTimeout(timeout);
+    page.off("request", observe!);
+  }
 }
 
 export async function openGuestHome(page: Page) {
@@ -33,7 +51,7 @@ export async function receiveEgg(page: Page) {
   const week = await apiAction<Schemas["Week"]>(page, "/v1/weeks", "POST", () =>
     page.getByRole("button", { name: "卵を受け取る", exact: true }).click());
   expect(week.id).toBeTruthy();
-  await expect(page.getByRole("heading", { level: 1 })).toContainText("研究1日目");
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("1日目");
   await expect(page.getByRole("button", { name: "卵を受け取る", exact: true })).toHaveCount(0);
   return week;
 }
@@ -56,5 +74,5 @@ export async function advanceTime(page: Page, target: "next_slot" | "next_day" |
 
 export async function returnHome(page: Page) {
   await page.getByRole("link", { name: "ホームへ", exact: true }).click();
-  await expect(page.getByRole("heading", { level: 1 })).toContainText(/研究\d日目/);
+  await expect(page.getByRole("heading", { level: 1 })).toContainText(/\d日目/);
 }

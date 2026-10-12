@@ -1,77 +1,71 @@
 @import "tailwindcss";
 
-/* ------------------------------------------------------------------
-   Design tokens (same palette as the planning document v0.2)
-   ------------------------------------------------------------------ */
+/* Frosted ink, unbleached paper and amber, ready to overlay the vivarium. */
 :root {
-  --bg: #e8f2ef;
-  --surface: #fafdfc;
-  --surface-2: #ffffff;
-  --ink: #1e2c29;
-  --muted: #586b66;
-  --line: #c9dcd6;
-  --line-soft: #dce8e4;
-  --eye: #d7263d;
-  --banana: #e3ae35;
-  --leaf: #1f8579;
-  --ai: #5f4fcf;
-  --tint-eye: rgba(215, 38, 61, 0.08);
-  --tint-leaf: rgba(31, 133, 121, 0.1);
-  --tint-banana: rgba(227, 174, 53, 0.18);
-  --tint-ai: rgba(95, 79, 207, 0.09);
-  --stage: #f4faf8;
-  --stage-glow: #bfe3d9;
-  --shadow: 0 18px 40px -26px rgba(15, 40, 35, 0.55);
-
-  /* expectation colours: white < blue < gold < rainbow */
-  --tier-white: #ffffff;
-  --tier-blue: #7fc8ff;
-  --tier-gold: #ffd54a;
-  --rainbow: conic-gradient(#ff6b8b, #ffc857, #7ee0a1, #5ec8f2, #a78bfa, #ff6b8b);
+  color-scheme: dark;
+  --bg: #141310;
+  --surface: rgba(31, 29, 25, .90);
+  --surface-2: rgba(38, 35, 30, .88);
+  --ink: #f2eadc;
+  --muted: #c1b7a6;
+  --line: #776b57;
+  --line-soft: rgba(195, 179, 150, .28);
+  --eye: #f09a85;
+  --banana: #e7bd78;
+  --leaf: #dfc69d;
+  --ai: #dfc69d;
+  --tint-eye: rgba(240, 154, 133, .13);
+  --tint-leaf: rgba(223, 198, 157, .10);
+  --tint-banana: rgba(231, 189, 120, .13);
+  --tint-ai: rgba(223, 198, 157, .10);
+  --stage: #d5cab4;
+  --stage-glow: #9a825b;
+  --shadow: 0 12px 36px -20px rgba(0, 0, 0, .7);
+  --tier-white: #eee6d8;
+  --tier-blue: #c8c3b8;
+  --tier-gold: #e7bd78;
+  --rainbow: linear-gradient(120deg, #bba58b, #e7bd78, #eee6d8);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #0f1d1a;
-    --surface: #162825;
-    --surface-2: #1b302c;
-    --ink: #e3efec;
-    --muted: #9cb2ac;
-    --line: #28423b;
-    --line-soft: #223a34;
-    --eye: #ff5c70;
-    --banana: #f2c75c;
-    --leaf: #4cc3b3;
-    --ai: #a898ff;
-    --tint-eye: rgba(255, 92, 112, 0.12);
-    --tint-leaf: rgba(76, 195, 179, 0.12);
-    --tint-banana: rgba(242, 199, 92, 0.14);
-    --tint-ai: rgba(168, 152, 255, 0.13);
-    --stage: #dceae6;
-    --stage-glow: #a9d6ca;
-    --shadow: 0 18px 40px -24px rgba(0, 0, 0, 0.8);
-  }
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #ded4c1;
+  --surface: rgba(239, 232, 218, .94);
+  --surface-2: rgba(247, 241, 229, .94);
+  --ink: #29251e;
+  --muted: #655b4b;
+  --line: #97856a;
+  --line-soft: rgba(84, 68, 44, .28);
+  --eye: #a13f2d;
+  --banana: #78551e;
+  --leaf: #6d5635;
+  --ai: #6d5635;
+  --tint-eye: rgba(161, 63, 45, .09);
+  --tint-leaf: rgba(109, 86, 53, .09);
+  --tint-banana: rgba(120, 85, 30, .10);
+  --tint-ai: rgba(109, 86, 53, .09);
 }
 
-:root[data-theme="dark"] {
-  --bg: #0f1d1a;
-  --surface: #162825;
-  --surface-2: #1b302c;
-  --ink: #e3efec;
-  --muted: #9cb2ac;
-  --line: #28423b;
-  --line-soft: #223a34;
-  --eye: #ff5c70;
-  --banana: #f2c75c;
-  --leaf: #4cc3b3;
-  --ai: #a898ff;
-  --tint-eye: rgba(255, 92, 112, 0.12);
-  --tint-leaf: rgba(76, 195, 179, 0.12);
-  --tint-banana: rgba(242, 199, 92, 0.14);
-  --tint-ai: rgba(168, 152, 255, 0.13);
-  --stage: #dceae6;
-  --stage-glow: #a9d6ca;
-  --shadow: 0 18px 40px -24px rgba(0, 0, 0, 0.8);
+@media (prefers-color-scheme: light) {
+:root:not([data-theme="dark"]) {
+  color-scheme: light;
+  --bg: #ded4c1;
+  --surface: rgba(239, 232, 218, .94);
+  --surface-2: rgba(247, 241, 229, .94);
+  --ink: #29251e;
+  --muted: #655b4b;
+  --line: #97856a;
+  --line-soft: rgba(84, 68, 44, .28);
+  --eye: #a13f2d;
+  --banana: #78551e;
+  --leaf: #6d5635;
+  --ai: #6d5635;
+  --tint-eye: rgba(161, 63, 45, .09);
+  --tint-leaf: rgba(109, 86, 53, .09);
+  --tint-banana: rgba(120, 85, 30, .10);
+  --tint-ai: rgba(109, 86, 53, .09);
+}
+
 }
 
 @theme inline {
@@ -91,8 +85,8 @@
   --color-tint-banana: var(--tint-banana);
   --color-tint-ai: var(--tint-ai);
   --color-stage: var(--stage);
-  --font-sans: var(--font-zen-maru), "Hiragino Maru Gothic ProN", "Hiragino Sans", "Yu Gothic", sans-serif;
-  --font-kiwi: var(--font-kiwi-maru), "Hiragino Mincho ProN", "Yu Mincho", serif;
+  --font-sans: var(--font-noto-sans), "Hiragino Sans", "Yu Gothic", sans-serif;
+  --font-kiwi: var(--font-noto-serif), "Hiragino Mincho ProN", "Yu Mincho", serif;
   --font-mono: var(--font-plex-mono), ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
 
@@ -107,7 +101,8 @@ html {
 
 body {
   margin: 0;
-  background: var(--bg);
+  background: radial-gradient(ellipse at 75% 10%, #59452a 0, transparent 40%), radial-gradient(ellipse at 15% 70%, #302c23 0, transparent 55%), var(--bg);
+  background-attachment: fixed;
   color: var(--ink);
   font-family: var(--font-sans);
   line-height: 1.7;
@@ -121,7 +116,7 @@ body {
 }
 
 :focus-visible {
-  outline: 3px solid var(--ai);
+  outline: 2px solid var(--banana);
   outline-offset: 2px;
 }
 
@@ -192,7 +187,7 @@ body {
    Shared effects
    ------------------------------------------------------------------ */
 .rainbow-text {
-  background: linear-gradient(90deg, #ff6b8b, #ffc857, #7ee0a1, #5ec8f2, #a78bfa);
+  background: linear-gradient(90deg, #bba58b, #e7bd78, #eee6d8);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -202,7 +197,7 @@ body {
   transition: transform 0.08s ease, box-shadow 0.08s ease, filter 0.15s ease;
 }
 .press:active {
-  transform: translateY(2px) scale(0.98);
+  transform: translateY(1px);
 }
 
 @keyframes pop-in {
@@ -211,7 +206,7 @@ body {
   100% { transform: scale(1); }
 }
 .pop-in {
-  animation: pop-in 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.3) both;
+  animation: float-up 0.2s ease-out both;
 }
 
 @keyframes float-up {
@@ -369,4 +364,21 @@ body {
   .ts-groom, .ts-proboscis, .bh-walk, .bh-turn_left, .bh-turn_right, .bh-escape, .bh-approach, .bh-avoid {
     animation: none;
   }
+}
+
+/* Readable fallback when transparency is unavailable. */
+.glass-panel { background: var(--surface-2); border: 1px solid var(--line-soft); backdrop-filter: blur(18px); }
+@media (prefers-reduced-transparency: reduce) {
+  :root { --surface: #211e19; --surface-2: #26231e; }
+  :root[data-theme="light"] { --surface: #efe8da; --surface-2: #f7f1e5; }
+  .glass-panel { backdrop-filter: none; }
+}
+@layer base {
+  summary { cursor: pointer; min-height: 44px; display: list-item; align-content: center; }
+  input:not([type="checkbox"]):not([type="radio"]), select, textarea { min-height: 44px; }
+  button, a { touch-action: manipulation; }
+}
+
+@media (prefers-reduced-transparency: reduce) and (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) { --surface: #efe8da; --surface-2: #f7f1e5; }
 }

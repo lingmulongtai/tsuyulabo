@@ -1,16 +1,13 @@
 /** Native disclosure keeps long evidence lists usable with keyboard and without JavaScript. */
-export function EvidenceChips({ evidence }: { evidence: string[] }) {
+export function EvidenceChips({ evidence, detail }: { evidence: string[]; detail?: string }) {
   const ids = [...new Set(evidence)];
-  const chipClass = "rounded-md bg-tint-ai px-1.5 font-mono text-[0.68rem] text-ai";
-  const chip = (id: string) => <span key={id} className={chipClass}>{id.startsWith("#") ? id : `#${id}`}</span>;
-  if (!ids.length) return null;
-  return <div aria-label="回答の根拠" className="mt-1.5 ml-14 flex flex-wrap items-start gap-1">
-    {ids.slice(0, 6).map(chip)}
-    {ids.length > 6 && <details>
-      <summary className={`${chipClass} cursor-pointer list-none focus-visible:outline-2 focus-visible:outline-ai`} aria-label={`残り${ids.length - 6}件の根拠を表示・非表示`}>
-        +{ids.length - 6}件
-      </summary>
-      <div className="mt-1 flex flex-wrap gap-1">{ids.slice(6).map(chip)}</div>
-    </details>}
-  </div>;
+  const chipClass = "rounded-md border border-line-soft px-1.5 font-mono text-[0.68rem] text-muted break-all";
+  const chip = (id: string) => <span key={id} className={chipClass}>{id.includes("#") ? id : `#${id}`}</span>;
+  if (!ids.length && !detail) return null;
+  return <details aria-label="回答の根拠" className="mt-1 text-xs text-muted">
+    <summary className="w-fit pr-4 focus-visible:outline-2">根拠</summary>
+    {detail && <p className="mb-3 leading-relaxed">{detail}</p>}
+    {ids.length > 0 && <p className="mb-2">この答えに使った飼育の記録と、コピーで試した記録です。</p>}
+    <div className="flex flex-wrap gap-1">{ids.map(chip)}</div>
+  </details>;
 }

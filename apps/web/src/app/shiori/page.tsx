@@ -8,7 +8,7 @@ import { useShioriMemo } from "@/lib/api/hooks";
 
 export default function ShioriPage() {
   const memo = useShioriMemo();
-  return <AppShell><CareFrame title="シオリの研究ノート" subtitle="小さな「なんで？」を、いっしょに">
+  return <AppShell><CareFrame title="シオリの飼育メモ" subtitle="小さな「なんで？」を、いっしょに">
     <QueryState query={memo}>{data => data ? <ShioriBubble text={data.text} evidence={data.evidence} /> : <p className="text-sm text-muted">今朝のメモはまだありません。気になることを聞いてみよう。</p>}</QueryState>
     <AskShiori />
   </CareFrame></AppShell>;

@@ -33,8 +33,8 @@ function LivePresentation() {
   const home = useHome();
   return <QueryState query={home}>{data => data.week?.ready_to_eclose ? <ReadyPresentation /> : (
     <Card className="space-y-3 p-5 text-center">
-      <h2 className="font-kiwi text-xl">発表会は、まだこれから</h2>
-      <p className="text-sm text-muted">研究7日目の夜になったら、1週間の記録をいっしょに振り返ろう。</p>
+      <h2 className="font-kiwi text-xl">羽化の日は、まだこれから</h2>
+      <p className="text-sm text-muted">7日目の夜になったら、1週間の記録をいっしょに振り返ろう。</p>
       <Link href="/" className="inline-block font-bold text-leaf underline">ホームへもどる</Link>
     </Card>
   )}</QueryState>;
@@ -49,7 +49,7 @@ function PresentationSession() {
 export default function PresentationPage() {
   return (
     <AppShell hideTabs>
-      <CareFrame title="研究発表会" subtitle="日曜の夜。1週間の結果とランク">
+      <CareFrame title="羽化の日" subtitle="この子と過ごした一週間、育ちを振り返る">
         <Suspense fallback={<LoadingCard />}><PresentationSession /></Suspense>
       </CareFrame>
     </AppShell>

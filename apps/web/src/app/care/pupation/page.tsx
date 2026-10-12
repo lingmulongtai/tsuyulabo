@@ -8,7 +8,7 @@ import * as Sound from "@/game/audio/sound";
 import { buzz } from "@/game/audio/haptics";
 
 export default function PupationPage() {
-  return <AppShell hideTabs><CareFrame title="さなぎの場所えらび" subtitle="落ちついて休める場所を探そう">
+  return <AppShell hideTabs><CareFrame title="さなぎの場所えらび" subtitle="幼虫が落ち着ける場所を選び、羽化を見守る">
     <PuzzleSession kind="pupation_site">{(params, finish) => <>
       <FlyArt stage="wandering" className="mx-auto h-36 w-48" />
       <ShioriBubble title="シオリのヒント" text={params.hint} />

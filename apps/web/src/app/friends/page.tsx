@@ -21,7 +21,7 @@ export default function FriendsPage() {
   const [code, setCode] = useState("");
   const [copyMessage, setCopyMessage] = useState("");
   const [removing, setRemoving] = useState<string | null>(null);
-  return <AppShell><CareFrame title="フレンドの研究室" subtitle="育ったツユを見せあおう">
+  return <AppShell><CareFrame title="フレンドの飼育棚" subtitle="育ったツユを見せあおう">
     <DailyCircuitCard />
     <RaceCard />
     <SumoCard />
@@ -39,7 +39,7 @@ export default function FriendsPage() {
     {add.error && <ErrorCard error={add.error} />}
     <SectionTitle>フレンド</SectionTitle>
     <QueryState query={friends}>{data => <div className="space-y-3">{data.length === 0 && <Card className="p-5 text-sm text-muted">まだフレンドはいません。コードを交換してみよう。</Card>}
-      {data.map(friend => <Card key={friend.id} className="space-y-2 p-4"><Link href={`/friends/${friend.id}`} className="flex items-center justify-between"><span><b>{friend.display_name}</b><span className="block text-xs text-muted">{friend.title || "研究仲間"}</span></span><span className="text-sm font-bold text-leaf">研究室へ →</span></Link>
+      {data.map(friend => <Card key={friend.id} className="space-y-2 p-4"><Link href={`/friends/${friend.id}`} className="flex items-center justify-between"><span><b>{friend.display_name}</b><span className="block text-xs text-muted">{friend.title || "飼育仲間"}</span></span><span className="text-sm font-bold text-leaf">飼育棚へ →</span></Link>
         {removing === friend.id ? <div className="space-y-2 rounded-xl bg-bg p-3"><p className="text-xs">{friend.display_name}さんとのフレンド登録を解除しますか？</p><div className="flex gap-2"><Button size="sm" disabled={remove.isPending} onClick={() => remove.mutate(friend.id, { onSuccess: () => setRemoving(null) })}>解除する</Button><Button size="sm" tone="plain" onClick={() => setRemoving(null)}>やめる</Button></div></div> : <button className="text-xs text-muted underline" onClick={() => setRemoving(friend.id)}>登録を解除</button>}
       </Card>)}
     </div>}</QueryState>

@@ -28,7 +28,7 @@ export function CleaningGame({ params, onFinish }: { params: CleaningParams; onF
     }
   };
   return <Card className="space-y-5 p-5 text-center">
-    <p className="text-sm text-muted">まんなかの緑をねらって、びんを３回トントン！</p>
+    <p className="text-sm text-muted">そうじで汚れを落とします。中央の目印をねらって、びんを3回たたきましょう。</p>
     <button onClick={tap} disabled={!timer.running} aria-label="びんをたたく" className="relative mx-auto block h-56 w-44 rounded-b-[60px] border-4 border-[#9dbbb4] bg-tint-leaf touch-manipulation" style={{ transform: `rotate(${timer.running ? Math.sin(timer.elapsed / 75) * 2 : 0}deg)` }}>
       <span className="absolute -inset-x-3 -top-4 h-8 rounded-xl border-2 border-[#c9bfa9] bg-[#e9e1cf]" />
       <FlyArt stage="larva2" className="absolute bottom-0 w-full" />

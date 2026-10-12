@@ -18,10 +18,10 @@ export default function TeamPage() {
   const collect = useCollect();
   const level = useLevelUp();
   const [reward, setReward] = useState<Schemas["Collection"] | null>(null);
-  return <AppShell><CareFrame title="研究チーム" subtitle="５匹までの仲間と、材料あつめ">
+  return <AppShell><CareFrame title="コロニー" subtitle="５匹までの仲間と、材料あつめ">
     <QueryState query={team}>{data => <>
-      <div className="grid grid-cols-5 gap-2" aria-label="チームの枠">{Array.from({ length: 5 }, (_, i) => <div key={i} className={`grid h-14 place-items-center rounded-2xl border-2 ${data.members[i] ? "border-leaf bg-tint-leaf" : "border-dashed border-line bg-surface"}`}><span className="text-sm font-bold">{data.members[i] ? `${i + 1} ✓` : "＋"}</span></div>)}</div>
-      {data.members.length === 0 && <Card className="p-5 text-sm text-muted">羽化した子を下の飼育室から選んで、チームに入れよう。</Card>}
+      <div className="grid grid-cols-5 gap-2" aria-label="コロニーの枠">{Array.from({ length: 5 }, (_, i) => <div key={i} className={`grid h-14 place-items-center rounded-2xl border-2 ${data.members[i] ? "border-leaf bg-tint-leaf" : "border-dashed border-line bg-surface"}`}><span className="text-sm font-bold">{data.members[i] ? `${i + 1} ✓` : "＋"}</span></div>)}</div>
+      {data.members.length === 0 && <Card className="p-5 text-sm text-muted">羽化した子を下の飼育室から選んで、コロニーに入れよう。</Card>}
       {data.members.map(member => <AdultCard key={member.id} adult={member}>
         <Meter label="げんき" value={member.energy} color="var(--leaf)" />
         <div className="mt-2 rounded-2xl bg-bg p-3 text-sm"><p className="font-bold">材料袋 {Object.values(member.bag).reduce((sum, n) => sum + n, 0)} / {bagCapacity(member.subskills)}</p>
@@ -51,10 +51,10 @@ function TeamPicker({ adults, initial, levelUp, leveling }: { adults: Schemas["A
   return <div className="space-y-3">
     {adults.length === 0 && <Card className="p-5 text-sm text-muted">最初の羽化を楽しみに待とう。育てた子がここに集まります。</Card>}
     {adults.map(adult => <AdultCard adult={adult} key={adult.id}><div className="flex flex-wrap gap-2">
-      <Button size="sm" tone={selected.includes(adult.id) ? "leaf" : "plain"} aria-pressed={selected.includes(adult.id)} disabled={save.isPending || (!selected.includes(adult.id) && selected.length >= 5)} onClick={() => setSelected(ids => ids.includes(adult.id) ? ids.filter(id => id !== adult.id) : [...ids, adult.id])}>{selected.includes(adult.id) ? "選択中 ✓" : "チームに選ぶ"}</Button>
+      <Button size="sm" tone={selected.includes(adult.id) ? "leaf" : "plain"} aria-pressed={selected.includes(adult.id)} disabled={save.isPending || (!selected.includes(adult.id) && selected.length >= 5)} onClick={() => setSelected(ids => ids.includes(adult.id) ? ids.filter(id => id !== adult.id) : [...ids, adult.id])}>{selected.includes(adult.id) ? "選択中 ✓" : "コロニーに選ぶ"}</Button>
       <Button size="sm" tone="banana" disabled={leveling || adult.level >= adult.level_cap} onClick={() => levelUp(adult.id)}>{adult.level >= adult.level_cap ? "レベル上限" : `Lv.UP ・ ${20 * adult.level}しずく`}</Button>
     </div></AdultCard>)}
-    {adults.length > 0 && <Button block tone="leaf" disabled={save.isPending || selected.join() === initial.join()} onClick={() => save.mutate(selected)}>このチームにする（{selected.length}/5）</Button>}
+    {adults.length > 0 && <Button block tone="leaf" disabled={save.isPending || selected.join() === initial.join()} onClick={() => save.mutate(selected)}>このコロニーにする（{selected.length}/5）</Button>}
     {save.error && <ErrorCard error={save.error} retry={() => save.mutate(selected)} />}
   </div>;
 }

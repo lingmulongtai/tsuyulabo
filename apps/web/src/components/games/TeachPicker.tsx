@@ -17,7 +17,7 @@ export function TeachPicker({ remaining, tip, disabled, onPick }: { remaining?: 
     <div className="flex flex-col gap-4">
       <ShioriBubble
         title="しつけのコーチ"
-        text={tip ?? "匂いや光の合図と、あまい・にがいごはんを組み合わせて覚えさせます。パズルが速くきれいに解けるほど、しっかり覚えます。"}
+        text={tip ?? "匂いとごほうびを結びつける練習です。好きになった匂いには寄り、苦手な匂いからは離れるようになります。"}
       />
 
       <section>
@@ -62,7 +62,7 @@ export function TeachPicker({ remaining, tip, disabled, onPick }: { remaining?: 
       </section>
 
       <div className="rounded-2xl bg-bg px-4 py-2 text-xs leading-relaxed text-muted">
-        本物のハエも、匂いとごほうび（または罰）を結びつけて覚えます。覚えるのは脳の「キノコ体」で、ドーパミンがつながりの強さを変えます。
+        同じ練習でも、覚え方はそれぞれ違います。この子の好き・苦手を少しずつ知っていきましょう。
       </div>
 
       <Button tone="ai" size="lg" block disabled={disabled || remaining === 0} onClick={() => onPick(cue, valence)}>

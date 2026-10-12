@@ -261,7 +261,7 @@ export function MealGame({ params, onFinish }: { params: MealParams; onFinish: (
       <div className="flex items-end justify-between px-1">
         <div>
           <div className="text-xs font-bold text-muted">
-            テーマ：<span style={{ color: theme.shade }}>{theme.name}</span>
+            テーマ：<span className="text-banana">{theme.name}</span>
           </div>
           <div className="text-xs text-muted">おいしさ</div>
           <div className="font-mono text-3xl font-medium tabular leading-none">{game.score.toLocaleString("ja-JP")}</div>
@@ -338,7 +338,7 @@ export function MealGame({ params, onFinish }: { params: MealParams; onFinish: (
                 <p className="mb-3 text-sm leading-relaxed">
                   材料ブロックを置いて、
                   <br />
-                  たて・よこの列をそろえて消そう。
+                  列をそろえると、ごはんの配合になります。
                 </p>
                 <Button tone="banana" size="lg" onClick={startCountdown}>
                   スタート

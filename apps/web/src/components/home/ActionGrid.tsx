@@ -11,13 +11,13 @@ interface ActionMeta {
 }
 
 const META: Record<ActionKind, ActionMeta> = {
-  meal: { label: "ごはん", icon: <MealIcon size={34} />, href: "/care/meal", accent: "var(--banana)" },
-  training: { label: "しつけ", icon: <CircuitIcon size={34} />, href: "/care/training", accent: "var(--ai)" },
-  cleaning: { label: "そうじ", icon: <BottleIcon size={34} />, href: "/care/cleaning", accent: "var(--leaf)" },
-  temperature: { label: "温度", icon: <ThermoIcon size={34} />, href: "/care/temperature", accent: "var(--eye)" },
-  pupation_site: { label: "場所えらび", icon: <LeafSpotIcon size={34} />, href: "/care/pupation", accent: "var(--leaf)" },
-  sleep: { label: "おやすみ", icon: <MoonIcon size={34} />, href: "/care/sleep", accent: "#8a7cf0" },
-  wake: { label: "おはよう", icon: <SunIcon size={34} />, href: "/care/sleep", accent: "#e3ae35" },
+  meal: { label: "ごはん", icon: <MealIcon size={24} />, href: "/care/meal", accent: "var(--line)" },
+  training: { label: "しつけ", icon: <CircuitIcon size={24} />, href: "/care/training", accent: "var(--line)" },
+  cleaning: { label: "そうじ", icon: <BottleIcon size={24} />, href: "/care/cleaning", accent: "var(--line)" },
+  temperature: { label: "温度", icon: <ThermoIcon size={24} />, href: "/care/temperature", accent: "var(--line)" },
+  pupation_site: { label: "場所えらび", icon: <LeafSpotIcon size={24} />, href: "/care/pupation", accent: "var(--line)" },
+  sleep: { label: "おやすみ", icon: <MoonIcon size={24} />, href: "/care/sleep", accent: "var(--line)" },
+  wake: { label: "おはよう", icon: <SunIcon size={24} />, href: "/care/sleep", accent: "var(--line)" },
 };
 
 function timeOf(iso?: string | null) {
@@ -30,7 +30,7 @@ function statusText(item: TodoItem) {
   if (item.status === "done") return "済";
   if (item.status === "locked") return item.available_at ? `${timeOf(item.available_at)}から` : "まだ";
   if (item.remaining !== undefined) return `あと${item.remaining}回`;
-  return "できる！";
+  return "世話できます";
 }
 
 /**
@@ -57,15 +57,15 @@ export function ActionGrid({ todo }: { todo: TodoItem[] }) {
             key={item.action}
             href={available ? m.href : "#"}
             aria-disabled={!available}
-            className={`press relative flex aspect-[1/1.12] flex-col items-center justify-center gap-1 rounded-3xl border-2 bg-surface-2 text-sm font-bold ${
-              available ? "border-transparent shadow-[0_4px_0_0_var(--line)]" : "border-line-soft opacity-70 pointer-events-none"
+            tabIndex={available ? undefined : -1}
+            className={`press relative flex aspect-[1/1.12] flex-col items-center justify-center gap-1 glass-panel rounded-xl border text-sm font-medium ${
+              available ? "border-line" : "border-line-soft opacity-70 pointer-events-none"
             }`}
-            style={available ? { boxShadow: `0 4px 0 0 ${m.accent}`, borderColor: m.accent } : undefined}
+            style={available ? { borderColor: m.accent } : undefined}
           >
-            {available && <span className="absolute -top-1.5 right-1.5 size-3 rounded-full bg-eye ring-2 ring-bg motion-safe:animate-bounce" aria-hidden />}
             {m.icon}
             <span>{m.label}</span>
-            <span className={`text-[0.65rem] ${available ? "text-eye" : "text-muted"}`}>{statusText(item)}</span>
+            <span className={`text-[0.65rem] ${available ? "text-ink" : "text-muted"}`}>{statusText(item)}</span>
           </Link>
         );
       })}

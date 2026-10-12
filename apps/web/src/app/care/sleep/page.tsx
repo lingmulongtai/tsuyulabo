@@ -36,6 +36,6 @@ export default function SleepPage() {
         </div>
       </Card>{(start.error || end.error) && <ErrorCard error={start.error ?? end.error} retry={() => night ? start.mutate() : end.mutate()} />}</>;
     }}</QueryState>
-    {end.data && <ResultSheet heading="ぐっすり休めたね" lines={[{ label: "睡眠時間", value: `${end.data.hours.toFixed(1)}時間` }, { label: "しずく", value: `+${end.data.bonus}`, tone: "banana" }, { label: "チームのげんき回復", value: `+${Math.round(Object.values(end.data.energy_recovered).reduce((sum, n) => sum + n, 0))}`, tone: "leaf" }]} primary={{ label: "ホームへ", href: "/" }} />}
+    {end.data && <ResultSheet heading="ぐっすり休めたね" lines={[{ label: "睡眠時間", value: `${end.data.hours.toFixed(1)}時間` }, { label: "しずく", value: `+${end.data.bonus}`, tone: "banana" }, { label: "コロニーのげんき回復", value: `+${Math.round(Object.values(end.data.energy_recovered).reduce((sum, n) => sum + n, 0))}`, tone: "leaf" }]} primary={{ label: "ホームへ", href: "/" }} />}
   </CareFrame></AppShell>;
 }

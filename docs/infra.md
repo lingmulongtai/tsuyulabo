@@ -155,7 +155,7 @@ The workflow uses `pull_request`, never `pull_request_target` to execute contrib
 ## Browser end-to-end tests
 
 The Playwright suite uses the real API and a fresh guest per test. The short smoke spec receives
-an egg; the golden path plays all seven research days, both circuit sizes, cleaning, temperature,
+an egg; the golden path plays all seven raising days, both circuit sizes, cleaning, temperature,
 pupation, presentation, and eclosion, then checks the same adult in `/team` and `/adults/[id]`.
 It plays four real 30-second meals (other meal slots can count as care misses), so allow about
 2–4 minutes. It does not require a particular random reward or rank. Time advances only through
@@ -221,16 +221,18 @@ Allow about 15 minutes. A fresh guest plays all 21 meal slots, 18 three-star tra
 four perfect cleanings, and two perfect temperature games. Meal placements use the shared game
 engine and training uses the golden-path circuit solver. Timing is calculated from public puzzle
 parameters with Playwright's clock; submissions still wait for real elapsed time and are scored
-by the API. No API responses, ranks, rewards, or game records are fabricated. Pupation follows
+by the API. No API responses, ranks, rewards, or game records are fabricated. The observer accepts the
+client's automatic retry only with the same idempotency key, ignores an aborted transport attempt,
+and still fails on server errors or invalid scoring. Pupation follows
 Shiori's public hint, which is only 70% reliable by design; its actual hit/miss is recorded.
 The capture fails if the presentation is below gold, training is below three stars, or timing
 care is below 100 points. Each guest remains in the development database.
 
-Thirteen scenes are saved in both color schemes at a **390 × 844 viewport, device scale 2**
+Fifteen scenes are saved in both color schemes at a **390 × 844 viewport, device scale 2**
 (780 × 1688 pixels). Each pair captures the same state, including a meal line clear, a partial
 training path, and sugar-scenario brain playback. Development overlays are hidden for the media;
 game content is unchanged. `sharp`, already installed by the locked Next.js dependency, encodes
-the screenshots as WebP. The command checks 26 images, each under 150 KB and total under 3 MB.
+the screenshots as WebP. The command checks 30 images, each under 150 KB and total under 3 MB.
 
 - Publishable images: `docs/media/screens/<scene>-<light|dark>.webp`.
 - Publishable video: `docs/media/playthrough.webm`, a silent 75-second highlight edit, under 8 MB. Needs a full FFmpeg (set `FFMPEG_PATH`); Playwright's bundled FFmpeg lacks the `image2pipe` muxer, so without it only the raw recording is kept.
@@ -290,7 +292,7 @@ $env:NEXT_PUBLIC_API_URL = 'http://localhost:8000'
 npm.cmd run dev -w apps/web
 ```
 
-Open `http://localhost:3000`, start a research week, then use the home header's **設定** link.
+Open `http://localhost:3000`, start a raising week, then use the home header's **設定** link.
 Press **この端末で通知を受け取る** and accept the browser prompt. Merely visiting the app
 never requests notification permission. Category and quiet-hour preferences apply to all
 of the user's devices; disabling notifications unregisters only the current browser.
@@ -321,7 +323,7 @@ To test without waiting for the cron, use DevTools → Application → Service W
 with this payload after registration:
 
 ```json
-{"title":"ごはんの時間です","body":"研究室でごはんを作ろう。","url":"/care/meal","tag":"local-test"}
+{"title":"ごはんの時間です","body":"この子のごはんを作りましょう。","url":"/care/meal","tag":"local-test"}
 ```
 
 This tests display and click routing, not provider delivery. To exercise real encryption
@@ -340,7 +342,7 @@ For offline testing, load the app once online and wait until `/sw.js` is activat
 DevTools Network to Offline, then reload or navigate to an app URL. The cached Japanese
 offline shell should appear, with a link to try the home page again. Reconnect and follow
 that link to return to live data. Only `/offline.html` is cached: account data, API responses,
-and mutations are never cached or replayed. Bump `tsuyu-offline-v1` when changing the shell;
+and mutations are never cached or replayed. Bump `tsuyu-offline-v2` when changing the shell;
 the next service-worker activation deletes only older Tsuyu offline caches. `/sw.js` is
 served with no-cache headers and registered with `updateViaCache: 'none'`.
 

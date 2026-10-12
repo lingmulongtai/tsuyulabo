@@ -58,7 +58,7 @@ export function BehaviorFly({
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="relative aspect-[1.4/1] w-full overflow-hidden rounded-[28px] bg-[radial-gradient(circle_at_50%_40%,#ffffff,#e4f4ef_50%,var(--stage-glow))]">
+      <div className="relative aspect-[1.4/1] w-full overflow-hidden rounded-[28px] bg-[radial-gradient(circle_at_50%_40%,#eee6d8,#c3b396_50%,var(--stage-glow))]">
         {current === "escape" && (
           <div className="absolute -top-6 left-1/2 size-40 -translate-x-1/2 rounded-full bg-[#1e2c29]/25 blur-md motion-safe:animate-pulse" aria-hidden />
         )}
@@ -76,10 +76,12 @@ export function BehaviorFly({
         </div>
       </div>
 
+      <p className="text-sm text-muted">この子の動き。{sorted.length ? `よく見られる動き：${BEHAVIOR_LABELS[sorted[0][0]]}。` : "もう少し見守ってみましょう。"}</p>
       {showBars && (
-        <div className="rounded-2xl border border-line-soft bg-surface-2 px-4 py-3">
+        <details className="glass-panel rounded-xl px-4 py-2">
+          <summary className="text-xs text-muted">動きの内訳</summary>
           <div className="mb-1.5 flex items-center gap-1.5 text-xs font-bold text-muted">
-            脳のモデルが選んだ行動 <TruthBadge kind="model" />
+            動きの傾向（育ちのしくみ） <TruthBadge kind="model" />
           </div>
           <ul className="space-y-1">
             {sorted.map(([b, p]) => (
@@ -92,7 +94,7 @@ export function BehaviorFly({
               </li>
             ))}
           </ul>
-        </div>
+        </details>
       )}
     </div>
   );

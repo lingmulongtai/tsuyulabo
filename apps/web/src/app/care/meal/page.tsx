@@ -16,7 +16,7 @@ function MealSession() {
   </PuzzleSession>;
 }
 export default function MealPage() {
-  return <AppShell hideTabs><CareFrame title="ごはんづくり" subtitle="30秒で、材料ブロックの列をそろえて消そう">
+  return <AppShell hideTabs><CareFrame title="ごはんづくり" subtitle="材料を配合して、育つ力になるごはんを作る">
     <Suspense fallback={<LoadingCard />}><MealSession /></Suspense>
   </CareFrame></AppShell>;
 }

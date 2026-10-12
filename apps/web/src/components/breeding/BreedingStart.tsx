@@ -16,9 +16,11 @@ export function BreedingStart() {
   const [picking, setPicking] = useState(false);
   const start = useStartWeek();
   return <Card className="space-y-4 p-5 text-center">
-    <FlyArt stage="egg" className="mx-auto h-32 w-32" />
     <h2 className="font-kiwi text-xl">新しい一週間をはじめよう</h2>
-    <p className="text-sm text-muted">小さな卵から、どんなツユに育つかな。</p>
+    <p className="text-sm text-muted">卵を迎え、ごはんを作り、毎日少しずつ世話をします。同じ育て方でも、この子だけの好き嫌いが育ちます。</p>
+    <details className="text-left text-sm text-muted"><summary>この子との一週間</summary>
+      <ul className="space-y-2 py-2"><li>材料を混ぜてごはんを作ります。びんの底で食べたごはんが、育つ力になります。</li><li>匂いとごほうびを結びつけるしつけで、好き・苦手が変わります。</li><li>そうじで清潔に。温度を合わせると、動きや育つ速さが変わります。</li><li>さなぎの場所を選んで羽化を見守り、育った子から次の世代へつなぎます。</li></ul>
+    </details>
     {!picking ? <>
       <Button block size="lg" disabled={start.isPending} onClick={() => start.mutate()}>{start.isPending ? "卵を受け取り中…" : "卵を受け取る"}</Button>
       <Button block tone="leaf" disabled={start.isPending} onClick={() => { start.reset(); setPicking(true); }}>交配する</Button>

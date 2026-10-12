@@ -1,5 +1,5 @@
 /* The cache contains only the public offline shell, never API or account data. */
-const CACHE = "tsuyu-offline-v1";
+const CACHE = "tsuyu-offline-v2";
 const OFFLINE = "/offline.html";
 const DESTINATIONS = new Set(["/", "/care/meal", "/presentation", "/friends"]);
 
@@ -36,7 +36,7 @@ self.addEventListener("push", (event) => {
   event.waitUntil(self.registration.showNotification(
     typeof payload.title === "string" ? payload.title : "ツユラボからのお知らせ",
     {
-      body: typeof payload.body === "string" ? payload.body : "研究室をのぞいてみよう。",
+      body: typeof payload.body === "string" ? payload.body : "飼育棚で、この子の様子を見てみましょう。",
       icon: "/icon.svg",
       tag: typeof payload.tag === "string" ? payload.tag : "tsuyu",
       data: { url: destination(payload.url) },

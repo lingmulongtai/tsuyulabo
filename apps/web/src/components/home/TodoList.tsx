@@ -5,7 +5,7 @@ import { ACTION_META, statusText } from "./ActionGrid";
 
 const SLOT_LABEL: Record<Slot, string> = { morning: "朝", noon: "昼", night: "夜" };
 
-/** 「きょうのやること」 — everything that can be done today, in order. */
+/** 「今日のお世話」 — everything that can be done today, in order. */
 export function TodoList({ todo }: { todo: TodoItem[] }) {
   return (
     <Card className="px-4 py-3">
@@ -19,14 +19,14 @@ export function TodoList({ todo }: { todo: TodoItem[] }) {
               <span className="flex items-center gap-2">
                 <span
                   className={`grid size-5 place-items-center rounded-full ${
-                    item.status === "done" ? "bg-leaf text-white" : item.status === "available" ? "bg-eye text-white" : "bg-line-soft text-muted"
+                    item.status === "done" ? "bg-tint-leaf text-ink" : item.status === "available" ? "bg-tint-banana text-ink" : "bg-line-soft text-muted"
                   }`}
                 >
-                  {item.status === "done" ? <CheckIcon size={13} /> : item.status === "locked" ? <LockIcon size={11} /> : <span className="size-1.5 rounded-full bg-white" />}
+                  {item.status === "done" ? <CheckIcon size={13} /> : item.status === "locked" ? <LockIcon size={11} /> : <span className="size-1.5 rounded-full bg-banana" />}
                 </span>
                 {label}
               </span>
-              <span className={`text-xs font-bold ${item.status === "available" ? "text-eye" : item.status === "done" ? "text-leaf" : "text-muted"}`}>
+              <span className={`text-xs font-bold ${item.status === "available" ? "text-ink" : item.status === "done" ? "text-leaf" : "text-muted"}`}>
                 {statusText(item)}
               </span>
             </li>

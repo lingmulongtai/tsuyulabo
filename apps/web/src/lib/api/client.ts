@@ -1,3 +1,4 @@
+import { raisingText } from "../raising-copy";
 import createClient from "openapi-fetch";
 import type { components, paths } from "./schema";
 
@@ -12,7 +13,7 @@ export class ApiError extends Error {
   constructor(public readonly status: number, public readonly code: string, message: string,
     public readonly details: ErrorBody["details"] = {}, public readonly retryAfter = 0) {
     super(code === "rate_limited" || code === "server_busy"
-      ? "少し時間をおいてから、もう一度ためしてね。" : message);
+      ? "少し時間をおいてから、もう一度ためしてね。" : raisingText(message));
     this.name = "ApiError";
     this.retryAt = Date.now() + retryAfter * 1000;
   }
@@ -78,7 +79,7 @@ export function createApi(options: { baseUrl?: string; fetch?: typeof fetch; sto
         if (error instanceof ApiError) throw error;
         if (request.signal.aborted) throw error;
         if (attempt < (options.retries ?? 1)) continue;
-        throw new ApiError(0, "offline", "研究所につながりません。接続を確認して、もう一度お試しください。");
+        throw new ApiError(0, "offline", "飼育棚につながりません。接続を確認して、もう一度お試しください。");
       }
     }
   }
@@ -94,7 +95,7 @@ export function createApi(options: { baseUrl?: string; fetch?: typeof fetch; sto
       bootstrap = (async () => {
         const response = await transport(new Request(`${baseUrl.replace(/\/$/, "")}/v1/auth/guest`, {
           method: "POST", headers: { "Content-Type": "application/json", "Idempotency-Key": guestKey! },
-          body: JSON.stringify({ display_name: "研究員" }),
+          body: JSON.stringify({ display_name: "飼い主" }),
         }));
         const data: unknown = await response.json();
         if (!data || typeof data !== "object" || !("token" in data) || typeof data.token !== "string" || !data.token) {
@@ -129,7 +130,7 @@ export function createAction<T>(run: (headers: Record<string, string>) => Promis
 export async function unwrap<T>(request: Promise<{ data?: T; error?: unknown; response: Response }>): Promise<T> {
   const result = await request;
   if (!result.response.ok) throw parseApiError(result.response.status, result.error, result.response.headers.get("Retry-After"));
-  if (result.data === undefined) throw new ApiError(502, "invalid_response", "研究所からのデータを読み取れませんでした。");
+  if (result.data === undefined) throw new ApiError(502, "invalid_response", "飼育棚からのデータを読み取れませんでした。");
   return result.data;
 }
 

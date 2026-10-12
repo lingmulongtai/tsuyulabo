@@ -96,7 +96,7 @@ async def subscribe(
         select(PushSubscription).where(PushSubscription.endpoint == body.endpoint)
     )
     if row is not None and row.user_id != user.id:
-        raise APIError("subscription_conflict", "このブラウザーは別の研究員に登録されています", 409)
+        raise APIError("subscription_conflict", "このブラウザーは別の飼い主に登録されています", 409)
     if row is None:
         count = await session.scalar(
             select(func.count())

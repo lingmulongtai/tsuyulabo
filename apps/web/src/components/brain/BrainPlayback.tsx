@@ -20,6 +20,8 @@ export function BrainPlayback({ activity }: { activity: BrainActivity }) {
   const windowMs = activity.duration_ms / windows;
   return (
     <div className="space-y-3">
+      <Card className="p-4 text-sm">この子のコピーに合図を届けて、反応を見ています。しつけで育った好き・苦手も反応につながります。この子の状態は変わりません。</Card>
+      <details className="space-y-3"><summary className="text-xs text-muted">反応のしくみを詳しく見る</summary>
       <Card className="sticky top-0 z-10 space-y-2 p-3">
         <div className="flex items-center justify-between gap-2">
           <Button size="sm" onClick={() => setPlaying(!playing)} aria-pressed={playing}>{playing ? "一時停止" : "再生"}</Button>
@@ -48,10 +50,11 @@ export function BrainPlayback({ activity }: { activity: BrainActivity }) {
       </Card>
       <Card className="space-y-2 p-4 text-xs text-muted">
         <TruthBadge kind="model" />
-        <p>これは小さな合成配線 toy-v0 のシミュレーションです。本物の脳の測定データではありません。細胞数と重みを簡略化し、この子の個体差と学習済みの重みを使っています。</p>
+        <p>この子の個性と、しつけで育ったつながりを使ったゲーム内の反応です。実際の虫の脳を測定した結果ではありません。</p>
         <p>光るほど発火率が高く、200 Hz 以上で最も明るくなります。線は学習済みの配線の重みを表し、個体ごとの増幅率は含みません。</p>
         <p>DAN はしつけのときに学習を調節します。この観察ではしつけをせず、育てた子の状態も変わりません。</p>
       </Card>
+      </details>
     </div>
   );
 }
