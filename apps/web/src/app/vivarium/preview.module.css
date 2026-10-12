@@ -1,0 +1,33 @@
+.preview { position: fixed; inset: 0; overflow: hidden; background: #33392e; color: #eee9dc; font-family: Arial, "Noto Sans JP", sans-serif; color-scheme: dark; }
+.scene { position: absolute; inset: 0; touch-action: none; }
+.heading { position: absolute; left: 4vw; top: 5vh; pointer-events: none; text-shadow: 0 2px 16px #161b18; }
+.heading > span { font-size: 10px; letter-spacing: .24em; opacity: .6; }
+.heading h1 { margin: 18px 0 10px; font-family: Georgia, "Yu Mincho", serif; font-weight: 400; letter-spacing: .13em; font-size: clamp(20px, 2.5vw, 36px); }
+.heading p { font-size: 12px; opacity: .65; letter-spacing: .06em; }
+.toolbar { position: absolute; left: 4vw; bottom: 10vh; display: flex; gap: 8px; }
+.preview button, .preview select, .preview input:not([type=range]):not([type=checkbox]) { border: 1px solid #e1d7ba33; border-radius: 3px; background: #22291fc4; color: #eee9dc; padding: 8px 10px; font: inherit; font-size: 12px; }
+.preview button { cursor: pointer; min-height: 40px; backdrop-filter: blur(12px); }
+.preview button:hover { background: #555743; }
+.preview :focus-visible { outline: 2px solid #e4c383; outline-offset: 3px; }
+.panel { position: absolute; right: 24px; top: 24px; width: 252px; max-height: calc(100dvh - 100px); overflow-y: auto; border: 1px solid #e1d7ba30; border-radius: 5px; background: #24291fbb; backdrop-filter: blur(20px); box-shadow: 0 10px 40px #0002; }
+.panel summary { padding: 16px; cursor: pointer; font-size: 12px; letter-spacing: .05em; }
+.panel summary small { float: right; opacity: .5; font-size: 10px; }
+.fields { padding: 0 16px 16px; display: grid; gap: 12px; }
+.fields > label { display: grid; grid-template-columns: 1fr auto; gap: 6px; font-size: 11px; color: #e0dccc; }
+.fields select, .fields input:not([type=checkbox]) { grid-column: 1 / -1; width: 100%; min-width: 0; }
+.fields input[type=range] { accent-color: #c8b484; height: 18px; }
+.fields output { font-size: 10px; color: #aaa99a; }
+.fields fieldset { border: 1px solid #d7ceac22; padding: 10px; }
+.fields legend { font-size: 11px; padding: 0 4px; }
+.check { display: inline-flex; align-items: center; gap: 4px; margin: 4px 8px 4px 0; font-size: 10px; }
+.check input { accent-color: #c8b484; }
+.caption { position: absolute; bottom: 25px; left: 4vw; right: 4vw; display: flex; justify-content: space-between; letter-spacing: .16em; font-size: 9px; color: #dedcc07d; pointer-events: none; }
+@media (max-width: 600px) {
+  .heading { top: 28px; left: 22px; }
+  .heading p { display: none; }
+  .panel { top: auto; right: 12px; bottom: 70px; width: 200px; max-height: 36dvh; }
+  .panel summary { padding: 12px; }
+  .toolbar { left: 12px; bottom: 20px; }
+  .caption { bottom: auto; top: 130px; left: 22px; }
+  .caption span { display: none; }
+}
