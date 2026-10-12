@@ -18,11 +18,16 @@
     "gen:api": "node scripts/gen-api.mjs"
   },
   "dependencies": {
+    "@react-three/drei": "^10.7.9",
+    "@react-three/fiber": "^9.8.1",
+    "@react-three/postprocessing": "^3.2.0",
     "@tanstack/react-query": "^5.104.0",
     "next": "16.3.6",
     "openapi-fetch": "^0.17.0",
+    "postprocessing": "^6.39.1",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "three": "^0.184.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.63.0",
@@ -30,6 +35,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/three": "^0.186.0",
     "eslint": "^9",
     "eslint-config-next": "16.3.6",
     "openapi-typescript": "^7.13.0",
