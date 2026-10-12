@@ -5,7 +5,7 @@ import { ApiError } from "@/lib/api/client";
 import { Button, Card } from "./primitives";
 
 export function LoadingCard() {
-  return <Card className="space-y-4 p-6"><p role="status" className="text-sm text-muted">研究ノートを開いています…</p>
+  return <Card className="space-y-4 p-6"><p role="status" className="text-sm text-muted">飼育棚を開いています…</p>
     <div className="h-48 rounded-3xl bg-tint-leaf motion-safe:animate-pulse" />
     <div className="h-6 w-2/3 rounded-full bg-line-soft motion-safe:animate-pulse" />
     <div className="h-12 rounded-2xl bg-line-soft motion-safe:animate-pulse" /></Card>;
@@ -13,7 +13,7 @@ export function LoadingCard() {
 
 export function ErrorCard({ error, retry }: { error: unknown; retry?: () => void }) {
   return <Card className="space-y-3 p-5"><div role="alert">
-    <h2 className="font-kiwi text-lg">{error instanceof ApiError && !error.retryable ? "研究ノートからのお知らせ" : "研究所とつながるのを待っています"}</h2>
+    <h2 className="font-kiwi text-lg">{error instanceof ApiError && !error.retryable ? "飼育棚からのお知らせ" : "飼育棚とつながるのを待っています"}</h2>
     <p className="mt-2 text-sm text-muted">{error instanceof Error ? error.message : "通信を確認して、もう一度お試しください。"}</p>
   </div>{retry && (error instanceof ApiError && error.retryAfter > 0
     ? <CooldownRetry key={error.retryAt} error={error} retry={retry} />
