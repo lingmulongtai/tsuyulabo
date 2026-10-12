@@ -1,0 +1,12 @@
+# The Vercel CLI uploads the whole checkout (it does not read .gitignore). The web build needs
+# only the npm workspaces, so keep large local artefacts and Python services out of the upload.
+ml/
+data/
+eval-results/
+services/
+.venv/
+.uv/
+.tools/
+.codex-runs/
+.pytest_cache/
+.ruff_cache/
