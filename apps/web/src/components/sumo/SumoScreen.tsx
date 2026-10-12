@@ -53,8 +53,8 @@ export function SumoScreen() {
   });
   return <CareFrame title="なわばりずもう" subtitle="オスどうしの、ちいさな押し合い。">
     <Card className="space-y-2 p-4"><div className="flex items-center justify-between"><b>餌場のまわりで勝負</b><TruthBadge kind="real" /></div>
-      <p className="text-sm">本物のオスのショウジョウバエも、餌やなわばりをめぐって突進や翅の威嚇をします。オクトパミンも攻撃行動に関わります。</p>
-      <p className="text-xs text-muted">ここでは脳モデルが動きを決めます。買い物は勝敗に影響しません。</p>
+      <p className="text-sm">育てた子が、餌場のまわりで押し合います。近づく、こらえる、引き下がる。その子の個性が動きに出ます。</p>
+      <p className="text-xs text-muted">生まれつきの個性と育て方から、動きが決まります。買い物は勝敗に影響しません。</p>
     </Card>
     <QueryState query={choices}>{data => <>
       <Card className="p-4 text-sm">きょうはあと <b>{data.remaining} 戦</b> · 連勝 <b>{data.streak}</b></Card>
