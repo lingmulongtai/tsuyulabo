@@ -91,7 +91,7 @@ SUBSKILLS = {
     "drop_bonus": ("しずくボーナス", 0.20),
     "bag_up": ("材料袋アップ", 10),
     "energy_up": ("げんき回復アップ", 0.20),
-    "rp_up": ("研究ポイントアップ", 0.05),
+    "rp_up": ("飼育の経験アップ", 0.05),
 }
 TEAM_CAPACITY = 5
 TEAM_GREAT_BONUS_CAP = 0.10
@@ -124,7 +124,7 @@ SLEEP_SHIZUKU_PER_HOUR = 25
 SLEEP_ENERGY_PER_HOUR = 15
 PRESENTATION_SHIZUKU_DIVISOR = 6
 PRESENTATION_RP_DIVISOR = 40
-CURRENCIES = {"shizuku": "しずく", "research_points": "研究ポイント", "kohaku": "こはく"}
+CURRENCIES = {"shizuku": "しずく", "research_points": "飼育の経験", "kohaku": "こはく"}
 INITIAL_SHIZUKU = 300
 FRIEND_CODE_LENGTH = 8
 FRIEND_CODE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"

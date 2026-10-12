@@ -23,7 +23,7 @@ SLOTS = {
     "right": "ornament",
     "accessory": "accessory",
 }
-THEMES = ("梅雨の研究所", "バナナ祭り", "緑の実験室", "虹の飼育室")
+THEMES = ("梅雨の飼育棚", "バナナ祭り", "緑の飼育棚", "虹の飼育室")
 RANKS = {"normal": 0, "silver": 1, "gold": 2, "rainbow": 3}
 
 

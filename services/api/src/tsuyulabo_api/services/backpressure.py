@@ -24,7 +24,7 @@ async def admit_job(session: AsyncSession, user_id: str, settings: Settings) -> 
     if total >= settings.job_max_total or owned >= settings.job_max_per_user:
         raise APIError(
             "server_busy",
-            "研究所が混み合っています。少し時間をおいてから、もう一度ためしてね",
+            "飼育棚が混み合っています。少し時間をおいてから、もう一度ためしてね",
             503,
             {"retry_after": settings.job_busy_retry_after},
         )
