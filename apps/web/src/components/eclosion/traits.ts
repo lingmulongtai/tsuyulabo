@@ -11,9 +11,9 @@ export const TRAIT_INFO: Record<string, { name: string; note: string }> = {
 };
 
 export function traitName(id: string) {
-  return TRAIT_INFO[id]?.name ?? id;
+  return TRAIT_INFO[id]?.name ?? "新しい個性";
 }
 
-export const TIER_NAMES = ["ノーマル", "グッド", "スーパー", "突然変異！"] as const;
+export const TIER_NAMES = ["羽ばたきのはじまり", "健やかな育ち", "ひときわの育ち", "めずらしい出会い"] as const;
 export const TIER_COLORS = ["#FFFFFF", "#7FC8FF", "#FFD54A", "rainbow"] as const;
 export const RANK_LABELS = { normal: "ノーマル", silver: "シルバー", gold: "ゴールド", rainbow: "にじ" } as const;

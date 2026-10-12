@@ -18,10 +18,10 @@ const DOT = ["#FFFFFF", "#7FC8FF", "#FFD54A", "conic-gradient(#FF6B8B,#FFC857,#7
 function OddsTable({ odds, rank, onRank, demo = false }: { odds: EclosionOdds; rank: Rank; onRank: (rank: Rank) => void; demo?: boolean }) {
   return <Card className="px-4 py-3">
     <div className="mb-2">
-      <h2 className="mb-1.5 font-kiwi">{demo ? "今週のランク" : "確率表のランク"}</h2>
+      <h2 className="mb-1.5 font-kiwi">{demo ? "育ちの評価（デモ）" : "育ちの評価"}</h2>
       <div className="grid grid-cols-4 gap-1">
         {(Object.keys(odds) as Rank[]).map(r => <button key={r} type="button" aria-pressed={rank === r} onClick={() => onRank(r)}
-          className={`whitespace-nowrap rounded-full py-1 text-xs font-bold ${rank === r ? "bg-ink text-bg" : "bg-bg text-muted"}`}>
+          className={`min-h-11 whitespace-nowrap rounded-lg py-1 text-xs font-bold ${rank === r ? "bg-ink text-bg" : "bg-bg text-muted"}`}>
           {RANK_LABELS[r]}
         </button>)}
       </div>
@@ -36,7 +36,7 @@ function OddsTable({ odds, rank, onRank, demo = false }: { odds: EclosionOdds; r
         <td className="text-right font-mono tabular">{odds[rank][i]}%</td>
       </tr>)}</tbody>
     </table>
-    <p className="mt-2 text-xs text-muted">確率はすべて公開しています。本番の羽化は1週間に1回で、お金で回すことはできません。</p>
+    <p className="mt-2 text-xs text-muted">羽化は一週間に一度。この表は、育ちの評価ごとに変わるゲーム内の確率です。</p>
     {!demo && <p className="mt-2 text-xs text-muted">基本の確率です。温度あわせと場所えらびの結果により、ボーナスが加わります。</p>}
   </Card>;
 }
@@ -67,7 +67,7 @@ function LiveEclosion() {
     {eclose.isPending && <p role="status" className="text-center text-sm text-muted">羽化を待っています…</p>}
     {!eclose.isPending && eclose.error && <ErrorCard error={eclose.error} retry={start} />}
     {mapped.error ? <ErrorCard error={mapped.error} /> : null}
-    <PublishedOdds initialRank={data.rank} />
+    <details className="glass-panel rounded-xl p-4"><summary className="text-xs text-muted">羽化のしくみを詳しく</summary><PublishedOdds initialRank={data.rank} /></details>
   </>}</QueryState>;
 }
 
@@ -80,7 +80,7 @@ function DemoEclosion() {
       setResult(null);
       setRun(value => value + 1);
     }} doneLabel="もう一度（デモ）" />
-    <OddsTable odds={ODDS} rank={rank} onRank={setRank} demo />
+    <details className="glass-panel rounded-xl p-4"><summary className="text-xs text-muted">羽化のしくみを詳しく</summary><OddsTable odds={ODDS} rank={rank} onRank={setRank} demo /></details>
   </>;
 }
 
@@ -90,7 +90,7 @@ function EclosionSession() {
 }
 
 export default function EclosionPage() {
-  return <AppShell hideTabs><CareFrame title="羽化" subtitle="1週間がんばったぶん、当たりやすくなる">
+  return <AppShell hideTabs><CareFrame title="羽化" subtitle="卵から育てたこの子が、翅を広げるとき">
     <Suspense fallback={<LoadingCard />}><EclosionSession /></Suspense>
   </CareFrame></AppShell>;
 }
