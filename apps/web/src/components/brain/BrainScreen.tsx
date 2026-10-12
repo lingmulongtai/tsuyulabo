@@ -29,9 +29,9 @@ export function BrainScreen({ flyId }: { flyId: string }) {
     <div className="space-y-4 px-4 py-5">
       <Link href={`/adults/${encodeURIComponent(flyId)}`} className="text-sm text-leaf">← この子のページ</Link>
       <header className="space-y-2">
-        <h1 className="font-kiwi text-2xl">ツユの脳をのぞく</h1>
-        <p className="text-sm text-muted">刺激が届いたら、どの細胞群が光るかな？</p>
-        <p className="text-xs text-muted"><TruthBadge kind="real" /> 実在の細胞名　<TruthBadge kind="model" /> 小さな脳の模型</p>
+        <h1 className="font-kiwi text-2xl">この子の反応</h1>
+        <p className="text-sm text-muted">ごはんや匂い、光への反応には、生まれつきの個性と育て方が表れます。</p>
+        <p className="text-xs text-muted"><TruthBadge kind="real" /> 細胞名は実物から　<TruthBadge kind="model" /> ゲームの育ちのしくみ</p>
       </header>
       <label htmlFor="brain-scenario" className="block text-sm font-bold">何をしてみる？</label>
       <select id="brain-scenario" value={scenario} onChange={(event) => setScenario(event.target.value as Scenario)} className="w-full rounded-2xl border border-line bg-surface-2 p-3 text-sm">

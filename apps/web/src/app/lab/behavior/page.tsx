@@ -11,7 +11,7 @@ export default function BehaviorLabPage() {
   const probs: Partial<Record<Behavior, number>> = { [focus]: 0.72, rest: 0.14, walk: 0.08, feed: 0.06 };
   return (
     <AppShell hideTabs>
-      <CareFrame title="行動のようす" subtitle="神経活動から行動を当てるデコーダーの出力で動く">
+      <CareFrame title="行動のようす" subtitle="歩く、食べる、身づくろい。この子の動きを見てみましょう。">
         <BehaviorFly probs={probs} />
         <div className="grid grid-cols-3 gap-2">
           {(Object.keys(BEHAVIOR_LABELS) as Behavior[]).map((b) => (
@@ -20,7 +20,7 @@ export default function BehaviorLabPage() {
               type="button"
               onClick={() => setFocus(b)}
               aria-pressed={focus === b}
-              className={`whitespace-nowrap rounded-2xl border-2 bg-surface-2 py-2 text-[0.7rem] font-bold ${focus === b ? "border-leaf" : "border-line-soft"}`}
+              className={`whitespace-nowrap min-h-11 rounded-lg border bg-surface-2 py-2 text-[0.7rem] font-bold ${focus === b ? "border-leaf" : "border-line-soft"}`}
             >
               {BEHAVIOR_LABELS[b]}
             </button>

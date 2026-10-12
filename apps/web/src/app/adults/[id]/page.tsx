@@ -13,7 +13,7 @@ export default async function AdultPage({ params }: { params: Promise<{ id: stri
           href={`/adults/${encodeURIComponent(id)}/brain`}
           className="press block rounded-3xl border-2 border-[#5f4fcf] bg-tint-ai px-4 py-3 text-center font-bold text-ai"
         >
-          この子の脳をのぞく →
+          この子の反応を見る →
         </Link>
       </CareFrame>
     </AppShell>

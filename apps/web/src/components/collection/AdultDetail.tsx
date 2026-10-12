@@ -1,13 +1,14 @@
 "use client";
 import { useState } from "react";
 import { useAdult, useLevelUp, useRenameAdult } from "@/lib/api/hooks";
-import { preferencePercent, SKILL_LABELS, SUBSKILL_LABELS, TRAIT_LABELS } from "@/lib/display";
+import { SKILL_LABELS, SUBSKILL_LABELS, TRAIT_LABELS } from "@/lib/display";
+import { preferenceState } from "@/lib/raising-copy";
 import { CUE_INFO } from "@/game/labels";
 import { genotypeNotation, phenotypes } from "@/game/genetics";
 import type { Cue } from "@/game/puzzles/types";
 import { AdultBehavior } from "./AdultBehavior";
 import { STRAIN_LABELS } from "../art/palette";
-import { Button, Card, Meter, SectionTitle, Stars, TruthBadge } from "../ui/primitives";
+import { Button, Card, SectionTitle, Stars, TruthBadge } from "../ui/primitives";
 import { ErrorCard, QueryState } from "../ui/QueryState";
 import { AskShiori } from "../shiori/AskShiori";
 
@@ -24,7 +25,7 @@ export function AdultDetail({ id }: { id: string }) {
     <Card className="p-5 text-center"><AdultBehavior id={id} strain={data.strain} sex={data.sex} />
       <div className="flex items-center justify-center gap-2">
         <h2 className="font-kiwi text-2xl">{data.name} {data.sex === "f" ? "♀" : "♂"}</h2>
-        <button type="button" aria-label="名前を変更" aria-expanded={editing} className="rounded-full border-2 border-line p-2 text-muted hover:bg-bg focus-visible:outline-2 focus-visible:outline-leaf" hidden={editing} onClick={() => { setName(data.name); rename.reset(); setEditing(true); }}>
+        <button type="button" aria-label="名前を変更" aria-expanded={editing} className="grid min-h-11 min-w-11 place-items-center rounded-lg border border-line p-2 text-muted hover:bg-bg focus-visible:outline-2 focus-visible:outline-leaf" hidden={editing} onClick={() => { setName(data.name); rename.reset(); setEditing(true); }}>
           <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m16 3 5 5L8 21H3v-5L16 3Z M13 6l5 5" /></svg>
         </button>
       </div>
@@ -44,11 +45,12 @@ export function AdultDetail({ id }: { id: string }) {
       {!editing && rename.isSuccess && <p role="status" className="mt-2 text-leaf">名前を変更しました！</p>}
       <p className="text-sm text-muted">{STRAIN_LABELS[data.strain].name} ・ {STRAIN_LABELS[data.strain].gene}</p><Stars value={data.stars} />
       <p className="my-3 font-mono text-xl">Lv.{data.level} / {data.level_cap}</p>
-      <Meter label="げんき" value={data.energy} color="var(--leaf)" />
+      <p className="text-sm text-muted">{data.energy < 30 ? "少し疲れています。休ませましょう。" : "元気に過ごしています。"}</p>
       <Button className="mt-4" tone="banana" disabled={level.isPending || data.level >= data.level_cap} onClick={() => level.mutate(id)}>{data.level >= data.level_cap ? "レベル上限" : `レベルアップ ・ ${20 * data.level}しずく`}</Button>
       {level.data && <p role="status" className="mt-2 text-leaf">Lv.{level.data.level}になりました！</p>}
     </Card>
     {level.error && <ErrorCard error={level.error} retry={() => level.mutate(id)} />}
+    <details className="glass-panel rounded-xl p-4"><summary className="text-sm text-muted">受け継いだ系統を詳しく</summary>
     <SectionTitle aside={<TruthBadge kind="real" />}>遺伝子型</SectionTitle>
     <Card className="space-y-3 p-4">
       <p className="text-sm">{data.sex === "f" ? "♀ XX" : "♂ XY"} ・ {data.phenotypes.map(p => STRAIN_LABELS[p].name).join("・")}</p>
@@ -59,15 +61,13 @@ export function AdultDetail({ id }: { id: string }) {
       {data.strain !== "wild" && phenotypes(data.genotype)[0] === "wild" && <p className="text-xs text-muted">以前の記録から引き継いだ個体です。見た目の記録を残し、遺伝子型は野生型から始めています。</p>}
       {data.mutation && <p className="text-xs text-leaf">羽化のときに {data.mutation.locus} の新しい変異が生まれました。</p>}
     </Card>
+    </details>
     <SectionTitle>生まれつきの特性</SectionTitle>
     <Card className="flex flex-wrap gap-2 p-4">{data.traits.map(trait => <span key={trait} className="rounded-full bg-tint-leaf px-3 py-1 text-sm font-bold text-leaf">{TRAIT_LABELS[trait] ?? "新しい特性"}</span>)}</Card>
     <SectionTitle>サブスキル</SectionTitle>
     <Card className="space-y-2 p-4">{[10, 25, 50].map((unlock, index) => <p key={unlock} className={`rounded-xl p-2 text-sm ${data.subskills[index] ? "bg-tint-banana" : "bg-bg text-muted"}`}>Lv.{unlock} ・ {data.subskills[index] ? SUBSKILL_LABELS[data.subskills[index]] ?? "新しいスキル" : "まだひみつ"}</p>)}</Card>
     <SectionTitle>好き・苦手</SectionTitle>
-    <Card className="space-y-4 p-4">{Object.entries(data.preferences).map(([cue, value]) => <div key={cue}>
-      <Meter label={CUE_INFO[cue as Cue]?.name ?? "新しい合図"} value={preferencePercent(value)} hint={value > 0.1 ? "好き" : value < -0.1 ? "苦手" : "どちらでも"} color="linear-gradient(90deg,var(--ai),var(--leaf))" />
-      <p className="flex justify-between text-[0.65rem] text-muted"><span>苦手 −1</span><span>0</span><span>好き +1</span></p>
-    </div>)}{Object.keys(data.preferences).length === 0 && <p className="text-sm text-muted">まだ観察記録がありません。</p>}</Card>
+    <Card className="space-y-3 p-4 text-sm">{Object.entries(data.preferences).map(([cue, value]) => <p key={cue}>{preferenceState(CUE_INFO[cue as Cue]?.name ?? "新しい合図", value)}</p>)}{Object.keys(data.preferences).length === 0 && <p className="text-muted">まだ好き嫌いはわかりません。しつけや日々の様子から、この子を知っていきましょう。</p>}</Card>
     <SectionTitle>とくいワザ</SectionTitle>
     <Card className="p-4 text-sm">{Object.entries(data.skills).filter(([, active]) => active).map(([skill]) => <p key={skill} className="py-1 font-bold text-leaf">✦ {SKILL_LABELS[skill] ?? "新しいワザ"}</p>)}{!Object.values(data.skills).some(Boolean) && <p className="text-muted">まだ見つかっていません。</p>}</Card>
     <Button tone="ai" block aria-expanded={ask} onClick={() => setAsk(value => !value)}>なんで？ シオリに聞く</Button>
