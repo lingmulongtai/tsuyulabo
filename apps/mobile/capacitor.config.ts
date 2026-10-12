@@ -8,7 +8,7 @@ if (parsedUrl.protocol !== "https:") {
 
 const config: CapacitorConfig = {
   appId: "app.tsuyulabo.alpha",
-  appName: "ツユラボ α",
+  appName: "ツユラボ",
   webDir: "www",
   server: {
     url: parsedUrl.toString(),
