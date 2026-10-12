@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 import { openGuestHome, readHome, receiveEgg } from "./helpers/session";
 
-test("guest home renders and an egg starts a persisted research week", async ({ page }) => {
+test("guest home renders and an egg starts a persisted raising week", async ({ page }) => {
   await openGuestHome(page);
   const week = await receiveEgg(page);
   const home = await readHome(page);
