@@ -4,6 +4,9 @@
 
 ## いまの状態（サマリー）
 
+- **2026-10-12 方針転換（オーナー）**: 研究ゲームをやめ、超リアルな 3D（Three.js）の飼育ゲームにする。AI は意味のある所だけ。
+  正は [vision-v2.md](specs/vision-v2.md)。W14〜W17 を `~/.tsuyulabo/drive-v2.sh` が無人で実行中（Codex 実行 → マージ →
+  lint/型/テスト/ビルド → push → Vercel と自宅サーバーに公開。失敗したらそこで止まる）。ログは `~/.tsuyulabo/drive-v2.log`。
 - 日付: 2026-10-01。開発は新しい PC（ROG Zephyrus G14）に移った。**作業場所は `C:\Users\lingm\dev\tsuyulabo`**
   （OneDrive の外）。OneDrive 内の古いコピーは使わない（OneDrive の同期で git が固まった）。セットアップは [NEW_PC.md](NEW_PC.md)。
 - **本番が遊べる**: https://tsuyulabo.vercel.app で育成・フレンドまで遊べる。API は**オーナーの PC で自宅サーバー**として動く
