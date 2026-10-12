@@ -87,7 +87,7 @@ async def pending_messages(
                     key,
                     {
                         "title": "ごはんの時間です",
-                        "body": "研究室でごはんを作ろう。",
+                        "body": "この子のごはんを作りましょう。",
                         "url": "/care/meal",
                         "tag": key,
                     },
@@ -100,7 +100,7 @@ async def pending_messages(
                 key,
                 {
                     "title": "羽化の夜です",
-                    "body": "今週の研究を振り返って、羽化を見届けよう。",
+                    "body": "この子の一週間を振り返って、羽化を見届けましょう。",
                     "url": "/presentation",
                     "tag": key,
                 },
