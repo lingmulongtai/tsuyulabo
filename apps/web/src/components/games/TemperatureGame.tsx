@@ -62,7 +62,7 @@ export function TemperatureGame({ params, onFinish, stage = "egg" }: { params: T
 
   return (
     <Card className="space-y-4 p-5 text-center">
-      <p className="text-sm text-muted">ツユが育ちやすい 25℃ で針を止めよう。</p>
+      <p className="text-sm text-muted">この子が育ちやすい25℃に合わせます。針を目印で止めましょう。</p>
       <div className="relative mx-auto w-full max-w-[300px]">
         <svg viewBox="-24 -26 308 176" className="w-full" aria-hidden>
           <defs>

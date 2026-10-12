@@ -42,7 +42,7 @@ export function PuzzleSession<K extends PuzzleKind>({ kind, practice = false, pr
   const retrySubmit = () => { if (submission && issue.data) submit.mutate({ id: issue.data.puzzle_id, submission }); };
 
   return <>
-    {practicing && <Card className="p-3 text-sm text-muted" >{offline ? "研究所につながらないため、練習モードで遊べます。" : "練習モード"} 育成や報酬には反映されません。<Link href="/" className="ml-2 underline">ホームへ</Link></Card>}
+    {practicing && <Card className="p-3 text-sm text-muted" >{offline ? "飼育棚につながらないため、練習モードで遊べます。" : "練習モード"} 育成や報酬には反映されません。<Link href="/" className="ml-2 underline">ホームへ</Link></Card>}
     {decodeError ? <ErrorCard error={decodeError} /> : null}
     {!practicing && issue.error && <ErrorCard error={issue.error} retry={() => issue.mutate({ kind })} />}
     {!params && !issue.error && !decodeError && <LoadingCard />}
@@ -67,6 +67,7 @@ function PuzzleResult({ kind, result }: { kind: PuzzleKind; result: Result }) {
   return <ResultSheet heading={kind === "pupation_site" ? result.hit ? "ぴったりの場所！" : "ここで見守ってみよう" : "お世話できました！"}
     great={great} greatLabel={kind === "meal" ? "大成功！" : kind === "pupation_site" ? "あたり！" : "PERFECT!"}
     lines={lines} primary={{ label: "ホームへ", href: "/" }}>
+    <p className="mt-3 text-sm text-muted">{kind === "meal" ? "配合したごはんを届けました。育つ力になります。" : kind === "cleaning" ? "びんの汚れを落としました。清潔な環境で過ごせます。" : kind === "temperature" ? "びんの温度を整えました。育つ速さにつながります。" : "さなぎになる場所を選びました。羽化を見守りましょう。"}</p>
     {result.grades && <p className="mt-3 text-sm font-bold text-leaf">{result.grades.map(g => g.toUpperCase()).join(" / ")}</p>}
   </ResultSheet>;
 }

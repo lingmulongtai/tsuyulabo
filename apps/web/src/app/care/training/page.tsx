@@ -7,7 +7,7 @@ import { CareFrame, ResultSheet } from "@/components/games/CareFrame";
 import { TeachPicker } from "@/components/games/TeachPicker";
 import { TrainingGame, type TrainingFinish } from "@/components/games/TrainingGame";
 import { AppShell } from "@/components/shell/AppShell";
-import { Card, Meter } from "@/components/ui/primitives";
+import { Card } from "@/components/ui/primitives";
 import { ErrorCard, LoadingCard } from "@/components/ui/QueryState";
 import { CUE_INFO, VALENCE_INFO } from "@/game/labels";
 import { practiceTraining } from "@/game/practice";
@@ -15,7 +15,8 @@ import type { Cue, TrainingParams, Valence } from "@/game/puzzles/types";
 import { useHome, useIssuePuzzle, useSubmitPuzzle } from "@/lib/api/hooks";
 import { puzzleParams } from "@/lib/api/puzzle";
 import { canPracticeOffline, trainingOutcome, type TrainingOutcome } from "@/lib/api/training-display";
-import { preferencePercent, SKILL_LABELS } from "@/lib/display";
+import { preferenceState } from "@/lib/raising-copy";
+import { SKILL_LABELS } from "@/lib/display";
 
 function TrainingRound({ practice = false, offline = false, round, remaining, locked, onAgain }: {
   practice?: boolean; offline?: boolean; round: number; remaining?: number; locked?: boolean; onAgain: () => void;
@@ -51,7 +52,7 @@ function TrainingRound({ practice = false, offline = false, round, remaining, lo
   };
 
   return <>
-    {practicing && <Card className="p-3 text-sm text-muted">{offline || canPracticeOffline(issue.error) ? "研究所につながらないため、練習モードで遊べます。" : "練習モード"} 育成や報酬には反映されません。</Card>}
+    {practicing && <Card className="p-3 text-sm text-muted">{offline || canPracticeOffline(issue.error) ? "飼育棚につながらないため、練習モードで遊べます。" : "練習モード"} 育成や報酬には反映されません。</Card>}
     {!choice && <TeachPicker remaining={practicing ? undefined : remaining} disabled={!practicing && locked} onPick={pick} />}
     {!choice && locked && !practicing && <Card className="p-3 text-sm text-muted">今日のしつけはお休みです。<Link href="/care/training?practice=1" className="ml-2 underline">練習する</Link></Card>}
     {choice && !practicing && issue.isPending && <LoadingCard />}
@@ -70,11 +71,8 @@ function TrainingRound({ practice = false, offline = false, round, remaining, lo
         ...(outcome?.skillUnlocked ? [{ label: "とくいワザ", value: SKILL_LABELS[outcome.skillUnlocked] ?? "新しいワザ", tone: "leaf" as const }] : []),
       ]}
       primary={{ label: "もう一回", onClick: onAgain }}>
-      {outcome?.association && <div className="mt-3">
-        <Meter label={`${CUE_INFO[outcome.association.cue].short}の新しい好み`} value={preferencePercent(outcome.association.value)} hint={outcome.association.value.toFixed(2)} color="linear-gradient(90deg,var(--ai),var(--leaf))" />
-        <p className="flex justify-between text-xs text-muted"><span>苦手 −1</span><span>0</span><span>+1 好き</span></p>
-      </div>}
-      <p className="mt-2 text-xs text-muted">{practicing ? "練習の結果です。育成には反映されません。" : outcome?.association ? "キノコ体のつながりが変わりました（ゲーム内のモデル）。" : "学習中です。好みはあとから反映されます。"}</p>
+      {outcome?.association && <p className="mt-3 text-sm">{preferenceState(CUE_INFO[outcome.association.cue].name, outcome.association.value)}</p>}
+      <p className="mt-2 text-xs text-muted">{practicing ? "練習の結果です。育成には反映されません。" : outcome?.association ? "この子の好き・苦手に変化がありました。" : "学習中です。好みはあとから反映されます。"}</p>
       <Link href="/" className="mt-3 inline-block text-sm text-muted underline">ホームへ</Link>
     </ResultSheet>}
   </>;
@@ -96,7 +94,7 @@ function TrainingSession() {
 }
 
 export default function TrainingPage() {
-  return <AppShell hideTabs><CareFrame title="しつけ" subtitle="回路パズルで、好き・苦手を教えよう">
+  return <AppShell hideTabs><CareFrame title="しつけ" subtitle="匂いとごほうびを結びつけて、好き・苦手を育てる">
     <Suspense fallback={<LoadingCard />}><TrainingSession /></Suspense>
   </CareFrame></AppShell>;
 }
