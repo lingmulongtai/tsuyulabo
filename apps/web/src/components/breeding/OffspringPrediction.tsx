@@ -11,8 +11,11 @@ export function OffspringPrediction({ mother, father }: { mother: Genotype; fath
   const [locus, setLocus] = useState<Locus>("w");
   const prediction = predictOffspring(mother, father);
   const square = punnettSquare(mother, father, locus);
-  return <section className="space-y-3 rounded-2xl bg-bg p-3 text-left" aria-label="子どもの予測">
+  return <section className="glass-panel space-y-3 rounded-xl p-3 text-left" aria-label="子どもの予測">
     <h3 className="font-kiwi">子どもの予測 <TruthBadge kind="model" /></h3>
+    <p className="text-sm">このふたりから、次の世代へ。どんな姿に育つか、見守りましょう。</p>
+    {prediction.lethalProbability > 0 && <p className="text-sm text-eye">この組み合わせでは、育たない卵もあります。育つ卵を迎えます。</p>}
+    <details className="text-sm"><summary className="text-muted">生まれる子の組み合わせを詳しく</summary>
     <p className="text-xs text-muted">羽化する子の確率です。遺伝子の連鎖と羽化時の新しい突然変異は含みません。</p>
     <table className="w-full text-sm">
       <caption className="sr-only">性別と見た目の確率</caption>
@@ -33,6 +36,7 @@ export function OffspringPrediction({ mother, father }: { mother: Genotype; fath
         <tbody>{square.maternal.map((allele, row) => <tr key={row}><th scope="row" className="border border-line p-2">{allele}</th>{square.paternal.map((other, column) => <td key={column} className="border border-line p-2">{allele}/{other}{allele === "Cy" && other === "Cy" && <span className="block font-sans text-xs text-muted">育たない</span>}</td>)}</tr>)}</tbody>
       </table>
       <p className="mt-2 text-xs text-muted">＋ は野生型。劣性の変異は ＋ と組になると見た目に現れず、次の世代へ受け継がれます。</p>
+    </details>
     </details>
   </section>;
 }
