@@ -82,7 +82,7 @@ export function NotificationSettings() {
   }
 
   return <Card className="space-y-5 p-5">
-    <div><h2 className="font-kiwi text-xl">研究室からのお知らせ</h2>
+    <div><h2 className="font-kiwi text-xl">飼育棚からのお知らせ</h2>
       <p className="mt-2 text-sm text-muted">ごはんの時間や羽化の夜を、そっとお知らせします。</p></div>
     {!ready && !error && <p role="status">設定を読み込み中…</p>}
     {error && <p role="alert" className="text-sm text-eye">{error}</p>}
