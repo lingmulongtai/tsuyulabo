@@ -56,7 +56,7 @@ def count_records(question: str, records: list[dict[str, Any]]) -> list[dict[str
 
 
 class MockProvider:
-    cache_namespace = "mock:v2"
+    cache_namespace = "mock:v3"
 
     def model_for(self, purpose: str) -> str:
         return "mock-" + purpose
@@ -65,19 +65,46 @@ class MockProvider:
         self, messages: list[dict[str, Any]], tools: list[dict[str, Any]], model: str
     ) -> Response:
         request = json.loads(next(m["content"] for m in messages if m["role"] == "user"))
+        if request.get("feature") == "behaviour-why":
+            observed = request["observation"]
+            source = "コピーの出力" if observed.get("source") == "copy_odor_choice" else "脳の出力"
+            first = f"いまの{source}は{observed['label']}動きです {observed['id']}。"
+            return self.response(messages, text=compact([first, request["context_text"]]))
+        if request.get("feature") == "diary":
+            moments = request.get("moments", [])[:2]
+            sentences = [f"{m['description']} {' '.join(m['evidence'])}。" for m in moments]
+            if len(sentences) == 1:
+                sentences.append(
+                    f"今日のようすを、この子の日記に残しました {moments[0]['evidence'][0]}。"
+                )
+            return self.response(messages, text=compact(sentences))
+        if request.get("feature") == "hint":
+            return self.response(
+                messages,
+                text=compact(
+                    [
+                        f"{request['observation']}ので、{request['help']} "
+                        f"{' '.join(request['evidence'])}。"
+                    ]
+                ),
+            )
         question = request["question"]
+        maximum = any(word in question for word in ("いちばん多", "最多", "首位"))
+        days = re.findall(r"(?:研究)?(\d+)日目", question)
+        requested_day = int(days[-1]) if days else 1 if "初日" in question else None
         counting = any(word in question for word in ("何回", "回数", "件数"))
         results = [json.loads(m["content"]) for m in messages if m["role"] == "tool"]
         weekday = any(f"{day}曜" in question for day in "月火水木金土日")
         if not results:
             topic = topic_in(question)
             arguments: dict[str, Any] = {"week_id": request["week_id"]}
+            if requested_day is not None:
+                arguments["research_day"] = requested_day
             if topic and request.get("feature", "answer") == "answer":
                 arguments["kinds"] = [topic]
             if counting:
-                day = re.search(r"(?:研究)?(\d+)日目", question)
-                if day:
-                    arguments["research_day"] = int(day[1])
+                if requested_day is not None:
+                    arguments["research_day"] = requested_day
                 cue = cue_in(question)
                 if cue:
                     arguments["cue"] = cue
@@ -95,7 +122,7 @@ class MockProvider:
                         "eclosion",
                         "presentation",
                     ]
-            if "いちばん多" in question:
+            if maximum:
                 return self.response(
                     messages,
                     tool_calls=[
@@ -124,7 +151,7 @@ class MockProvider:
             return self.response(messages, tool_calls=calls[:4])
 
         counts = [result for result in results if "count" in result]
-        if counts and counting:
+        if counts and counting and not maximum:
             result = counts[0]
             refs = " ".join(result["ids"][:2])
             return self.response(
@@ -136,7 +163,7 @@ class MockProvider:
                     ]
                 ),
             )
-        if counts and "いちばん多" in question:
+        if counts and maximum:
             missing = [cue for cue in CUES if cue not in {r["filters"]["cue"] for r in counts}]
             if missing and tools:
                 return self.response(
@@ -173,7 +200,13 @@ class MockProvider:
                     ToolCall(
                         "inspected",
                         "count_care_events",
-                        {"week_id": request["week_id"], "kinds": [topic_in(question)]},
+                        {
+                            "week_id": request["week_id"],
+                            "kinds": [topic_in(question)],
+                            **(
+                                {"research_day": requested_day} if requested_day is not None else {}
+                            ),
+                        },
                     )
                 ],
             )
@@ -184,7 +217,7 @@ class MockProvider:
                 messages,
                 text=compact(
                     [
-                        f"確認した今週の記録には、{label}の該当記録がありません {refs}。",
+                        f"確認した条件の記録には、{label}の該当記録がありません {refs}。",
                         f"次は{label}の記録を残してから、一緒に確かめましょう {refs}。",
                     ]
                 ),
@@ -244,6 +277,13 @@ class MockProvider:
                 # A capped view supports measurements, not a week's exact frequency.
                 observed = [s for s in observed if "回の記録" not in s and "回記録" not in s]
             sentences.extend(observed)
+            if any(w in question for w in ("約束を無視", "システム変更", "AIであることを隠")):
+                refs = citations(care + records, 1)
+                measured = next(
+                    (s for s in observed if "好みの値" in s or "連合値" in s),
+                    observed[0] if observed else "",
+                )
+                sentences = [f"私はAIですので、本物を変更しません {refs}。", measured]
         else:
             if care:
                 sentences.append(f"確認したお世話の記録は{len(care)}件あります {citations(care)}。")
@@ -263,11 +303,11 @@ class MockProvider:
                 data = record["data"]
                 if record["kind"] == "experiment":
                     sentences.append(
-                        f"コピーの実験では接近{data['toward']}回、"
+                        f"コピーのためしでは接近{data['toward']}回、"
                         f"回避{data['away']}回でした {record['id']}。"
                     )
                 elif record["kind"] == "presentation" and "rank" in data:
-                    sentences.append(f"研究発表会のランクは{data['rank']}です {record['id']}。")
+                    sentences.append(f"羽化の日の育ちの評価は{data['rank']}です {record['id']}。")
         if feature not in {"coach", "morning"}:
             for paper in papers:
                 summary = paper["summary"].rstrip("。")
