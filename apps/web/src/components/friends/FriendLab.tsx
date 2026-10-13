@@ -5,7 +5,7 @@ import { cleanlinessState, hungerState } from "@/lib/raising-copy";
 import { MATERIAL_LABELS } from "@/lib/display";
 import { INGREDIENT_INFO } from "@/game/labels";
 import { AdultCard } from "../collection/AdultCard";
-import { Terrarium } from "../home/Terrarium";
+import { Portrait } from "../vivarium/Portrait";
 import { Button, Card, SectionTitle } from "../ui/primitives";
 import { ErrorCard, QueryState } from "../ui/QueryState";
 import { MatingProposal } from "./MatingProposal";
@@ -20,7 +20,7 @@ export function FriendLab({ id }: { id: string }) {
   const available = inventory.data?.[material] ?? 0;
   return <QueryState query={lab}>{data => <>
     <h2 className="font-kiwi text-xl">{data.user.display_name}さんの飼育棚</h2>
-    {data.week ? <><Terrarium stage={data.week.stage} researchDay={data.week.research_day} moodLabel={data.week.fly.mood_label} /><Card className="p-3 text-center text-sm text-muted">{hungerState(data.week.fly.hunger)} {cleanlinessState(data.week.fly.cleanliness)}</Card></> : <Card className="p-5 text-sm text-muted">今は育成をひとやすみしています。</Card>}
+    {data.week ? <><div className="mx-auto w-full max-w-xs"><Portrait stage={data.week.stage} seed={`friend-week-${id}`} label={`${data.user.display_name}さんが育てている子`} /></div><Card className="p-3 text-center text-sm text-muted">{hungerState(data.week.fly.hunger)} {cleanlinessState(data.week.fly.cleanliness)}</Card></> : <Card className="p-5 text-sm text-muted">今は育成をひとやすみしています。</Card>}
     <Button block tone="eye" disabled={like.isPending || like.isSuccess} onClick={() => like.mutate(id)}>{like.isSuccess ? "いいねしました ♥" : "いいね ♥"}</Button>
     {like.error && <ErrorCard error={like.error} retry={() => like.mutate(id)} />}
     <Card className="space-y-3 p-4"><h3 className="font-kiwi">材料をおすそわけ</h3><p className="text-xs text-muted">1日1回、5個まで。贈ると飼育の経験が10もらえます。</p>

@@ -58,14 +58,19 @@ export function createApi(options: { baseUrl?: string; fetch?: typeof fetch; sto
   const cooldowns = new Map<string, ApiError>();
 
   async function transport(request: Request): Promise<Response> {
-    const scope = `${request.method} ${new URL(request.url).pathname}`;
+    const pathname = new URL(request.url).pathname;
+    const scope = `${request.method} ${pathname}`;
+    // A game write can finish a brain job while the full-screen scene is drawing.
+    const gameWrite = ["POST", "PUT", "PATCH", "DELETE"].includes(request.method) &&
+      !pathname.endsWith("/v1/auth/guest");
+    const deadline = gameWrite ? 30_000 : 12_000;
     for (const [key, error] of cooldowns) if (error.retryAt <= Date.now()) cooldowns.delete(key);
     const cooling = cooldowns.get(scope);
     if (cooling) throw cooling;
     for (let attempt = 0; ; attempt++) {
       try {
         const response = await (options.fetch ?? globalThis.fetch)(new Request(request.clone(), {
-          signal: AbortSignal.any([request.signal, AbortSignal.timeout(12_000)]),
+          signal: AbortSignal.any([request.signal, AbortSignal.timeout(deadline)]),
         }));
         if (!response.ok) {
           const body: unknown = await response.clone().json().catch(() => null);

@@ -13,7 +13,7 @@ export async function apiAction<T>(page: Page, path: string, method: string, act
   let observe: (request: Request) => void;
   let timeout: ReturnType<typeof setTimeout> | undefined;
   const pending = new Promise<T>((resolve, reject) => {
-    timeout = setTimeout(() => reject(new Error(`${method} ${path} did not receive a response`)), 30_000);
+    timeout = setTimeout(() => reject(new Error(`${method} ${path} did not receive a response`)), process.env.E2E_SOFTWARE_WEBGL === "1" ? 75_000 : 30_000);
     observe = request => {
       if (request.url() !== `${apiBase}${path}` || request.method() !== method) return;
       const requestKey = request.headers()["idempotency-key"];
@@ -48,6 +48,7 @@ export async function openGuestHome(page: Page) {
 }
 
 export async function receiveEgg(page: Page) {
+  if (!await page.getByRole("button", { name: "卵を受け取る", exact: true }).isVisible()) await openCareSheet(page);
   const week = await apiAction<Schemas["Week"]>(page, "/v1/weeks", "POST", () =>
     page.getByRole("button", { name: "卵を受け取る", exact: true }).click());
   expect(week.id).toBeTruthy();
@@ -62,6 +63,7 @@ export async function readHome(page: Page) {
 
 export async function advanceTime(page: Page, target: "next_slot" | "next_day" | "eclosion") {
   const panel = page.getByRole("complementary", { name: "開発用の時間操作" });
+  await panel.evaluate(element => { element.style.pointerEvents = ""; });
   await expect(panel, "Build the web with NEXT_PUBLIC_DEV_TOOLS=1").toBeVisible();
   const toggle = panel.getByRole("button", { name: /開発用の時計/ });
   if (await toggle.getAttribute("aria-expanded") !== "true") await toggle.click();
@@ -75,4 +77,12 @@ export async function advanceTime(page: Page, target: "next_slot" | "next_day" |
 export async function returnHome(page: Page) {
   await page.getByRole("link", { name: "ホームへ", exact: true }).click();
   await expect(page.getByRole("heading", { level: 1 })).toContainText(/\d日目/);
+}
+
+/** Full care actions live behind the resting two-action sheet. */
+export async function openCareSheet(page: Page) {
+  const sheet = page.locator("[data-care-sheet]");
+  if (await sheet.count() && await sheet.getAttribute("data-expanded") !== "true") {
+    await sheet.getByRole("button", { name: "今日のお世話をすべて見る", exact: true }).click();
+  }
 }

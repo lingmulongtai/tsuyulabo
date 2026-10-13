@@ -1,12 +1,14 @@
 import { expect, test } from "@playwright/test";
 import { choosePupationSite, playCleaning, playMeal, playTemperature, playTraining } from "./helpers/care";
-import { advanceTime, apiAction, openGuestHome, receiveEgg, type Schemas } from "./helpers/session";
+import { advanceTime, apiAction, openCareSheet, openGuestHome, receiveEgg, type Schemas } from "./helpers/session";
 import { captureVial } from "./helpers/vial-media";
 
 test("a guest raises a fly through day seven and keeps the eclosed adult", async ({ page }) => {
   // Four real timed meals, inline brain runs, and retained video need headroom on slow hosts.
   // Individual UI actions and API responses still have their own short deadlines.
-  test.setTimeout(900_000);
+  test.setTimeout(process.env.E2E_SOFTWARE_WEBGL === "1" ? 1_200_000 : 900_000);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.emulateMedia({ reducedMotion: "reduce" });
   await openGuestHome(page);
   // Start at 04:00 JST regardless of when a developer/nightly run starts.
   await advanceTime(page, "next_day");
@@ -102,5 +104,6 @@ test("a guest raises a fly through day seven and keeps the eclosed adult", async
   await expect(page.locator("[data-home-vial] canvas[data-ready='true']")).toBeVisible({ timeout: 30_000 });
   await expect(page.locator("canvas")).toHaveCount(1);
   await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await openCareSheet(page);
   await expect(page.getByRole("button", { name: "卵を受け取る", exact: true })).toBeEnabled();
 });

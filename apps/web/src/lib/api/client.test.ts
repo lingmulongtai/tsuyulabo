@@ -108,3 +108,18 @@ describe("api client", () => {
     expect(storage.getItem(TOKEN_KEY)).toBeNull();
   });
 });
+
+it.each(["https://unit.test", "https://unit.test/proxy"])(
+  "retains short auth/read deadlines behind %s", async baseUrl => {
+  const timeout = vi.spyOn(AbortSignal, "timeout").mockImplementation(() => new AbortController().signal);
+  try {
+    const fetcher = vi.fn<typeof fetch>(async input => {
+      const request = input as Request;
+      return request.url.endsWith("/auth/guest") ? json({ token: "local-test-token" }, 201) : json({});
+    });
+    const { client } = createApi({ baseUrl, fetch: fetcher, storage: () => memory() });
+    await client.GET("/v1/home");
+    await client.POST("/v1/weeks");
+    expect(timeout.mock.calls.map(([deadline]) => deadline)).toEqual([12_000, 12_000, 30_000]);
+  } finally { timeout.mockRestore(); }
+});

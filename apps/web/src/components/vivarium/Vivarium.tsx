@@ -5,7 +5,7 @@ import { Component, useCallback, useImperativeHandle, useRef, type ReactNode, ty
 import { Fallback } from "./Fallback";
 import type { VivariumHandle, VivariumProps } from "./types";
 
-const Scene = dynamic(() => import("./Scene"), { ssr: false, loading: () => <Fallback message="飼育びんを準備しています" /> });
+const Scene = dynamic(() => import("./Scene"), { ssr: false, loading: () => <Fallback loading message="飼育びんを準備しています" /> });
 class RenderBoundary extends Component<{ children: ReactNode; fallback: ReactNode }, { failed: boolean }> {
   state = { failed: false };
   static getDerivedStateFromError() { return { failed: true }; }
@@ -26,7 +26,7 @@ export function Vivarium({ ref, className, ...props }: VivariumProps & { ref?: R
     if (pending.current.point) controller.pointOfInterest(pending.current.point);
     pending.current = {};
   }, []);
-  return <div className={className} style={{ position: "relative", width: "100%", height: "100%", minHeight: 280, isolation: "isolate" }} aria-label="ショウジョウバエの飼育びん" role="img">
+  return <div className={className} style={{ position: "relative", width: "100%", height: "100%", minHeight: props.snapshot ? 0 : 280, isolation: "isolate" }} aria-label="ショウジョウバエの飼育びん" role="img">
     <RenderBoundary fallback={<Fallback stage={props.stage} />}>
       <Scene {...props} controllerRef={attachController} />
     </RenderBoundary>

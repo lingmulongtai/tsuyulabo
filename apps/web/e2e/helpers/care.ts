@@ -2,11 +2,12 @@ import { expect, type Locator, type Page } from "@playwright/test";
 import { SHAPES } from "../../src/game/puzzles/meal";
 import { puzzleParams } from "../../src/lib/api/puzzle";
 import type { PuzzleKind } from "../../src/game/puzzles/types";
-import { apiAction, returnHome, type Schemas } from "./session";
+import { apiAction, openCareSheet, returnHome, type Schemas } from "./session";
 import { solveTraining } from "./training-solver";
 import { captureVial } from "./vial-media";
 
 async function openPuzzle(page: Page, kind: PuzzleKind) {
+  await openCareSheet(page);
   const route = kind === "pupation_site" ? "pupation" : kind;
   const action = () => page.locator(`a[href="/care/${route}"]`).click();
   if (kind === "training") {
@@ -86,6 +87,9 @@ export async function playMeal(page: Page, capture = false) {
   await page.mouse.move(source.x + source.width / 2, source.y + source.height / 2);
   await page.mouse.down();
   await page.mouse.move(board.x + width * cell / 2, board.y + 56 + height * cell, { steps: 12 });
+  const ghost = await box(page.locator("[data-meal-drag]"));
+  expect(ghost.x).toBeCloseTo(board.x, 0);
+  expect(ghost.y).toBeCloseTo(board.y, 0);
   await page.mouse.up();
   await expect(page.getByRole("button", { name: /のブロック$/ })).toHaveCount(params.hand_size - 1);
   const feed = page.getByRole("button", { name: "ツユにあげる", exact: true });
@@ -101,6 +105,8 @@ export async function playMeal(page: Page, capture = false) {
 
 export async function playTraining(page: Page, expectedSize: number) {
   const puzzle = await openPuzzle(page, "training");
+  // The development-only clock floats over lower board cells on a phone.
+  await page.getByRole("complementary", { name: "開発用の時間操作" }).evaluate(element => { element.style.pointerEvents = "none"; });
   expect(puzzle.kind).toBe("training");
   const params = puzzleParams("training", puzzle.params);
   expect(params.n).toBe(expectedSize);
@@ -115,6 +121,7 @@ export async function playTraining(page: Page, expectedSize: number) {
   const start = point(path[0]);
   await page.mouse.move(start.x, start.y);
   await page.mouse.down();
+  await expect(page.getByText(`1/${params.n * params.n}`, { exact: true })).toBeVisible();
   for (const cell of path.slice(1)) {
     const next = point(cell);
     await page.mouse.move(next.x, next.y, { steps: 2 });
@@ -140,7 +147,7 @@ export async function choosePupationSite(page: Page) {
   await expect(surface.locator("canvas[data-ready='true']")).toBeVisible({ timeout: 30_000 });
   await surface.scrollIntoViewIfNeeded();
   const bounds = await box(surface);
-  await page.mouse.click(bounds.x + bounds.width * 0.5, bounds.y + bounds.height * 0.5);
+  await page.mouse.click(bounds.x + bounds.width * 0.5, bounds.y + bounds.height * 0.25);
   const selected = page.locator("button[aria-pressed='true']");
   await expect(selected).toHaveCount(1);
   const label = await selected.innerText();

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import glass from "../ui/material.module.css";
 import { BookTabIcon, FriendsTabIcon, HomeTabIcon, TeamTabIcon } from "../ui/icons";
 
 const TABS = [
@@ -16,7 +17,7 @@ export function TabBar() {
   return (
     <nav
       aria-label="メインメニュー"
-      className="sticky bottom-0 z-30 grid grid-cols-4 border-t border-line-soft bg-surface-2 backdrop-blur-xl pb-[env(safe-area-inset-bottom)]"
+      className={`${glass.glass} fixed inset-x-0 bottom-0 z-30 grid grid-cols-4 border-x-0 border-b-0 pb-[env(safe-area-inset-bottom)]`}
     >
       {TABS.map(({ href, label, Icon }) => {
         const active = href === "/" ? pathname === "/" : pathname.startsWith(href);

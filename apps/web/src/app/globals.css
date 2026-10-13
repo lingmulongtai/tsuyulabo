@@ -4,8 +4,8 @@
 :root {
   color-scheme: dark;
   --bg: #141310;
-  --surface: rgba(31, 29, 25, .90);
-  --surface-2: rgba(38, 35, 30, .88);
+  --surface: rgba(20, 19, 16, .38);
+  --surface-2: rgba(20, 19, 16, .35);
   --ink: #f2eadc;
   --muted: #c1b7a6;
   --line: #776b57;
@@ -46,27 +46,6 @@
   --tint-ai: rgba(109, 86, 53, .09);
 }
 
-@media (prefers-color-scheme: light) {
-:root:not([data-theme="dark"]) {
-  color-scheme: light;
-  --bg: #ded4c1;
-  --surface: rgba(239, 232, 218, .94);
-  --surface-2: rgba(247, 241, 229, .94);
-  --ink: #29251e;
-  --muted: #655b4b;
-  --line: #97856a;
-  --line-soft: rgba(84, 68, 44, .28);
-  --eye: #a13f2d;
-  --banana: #78551e;
-  --leaf: #6d5635;
-  --ai: #6d5635;
-  --tint-eye: rgba(161, 63, 45, .09);
-  --tint-leaf: rgba(109, 86, 53, .09);
-  --tint-banana: rgba(120, 85, 30, .10);
-  --tint-ai: rgba(109, 86, 53, .09);
-}
-
-}
 
 @theme inline {
   --color-bg: var(--bg);
@@ -377,8 +356,4 @@ body {
   summary { cursor: pointer; min-height: 44px; display: list-item; align-content: center; }
   input:not([type="checkbox"]):not([type="radio"]), select, textarea { min-height: 44px; }
   button, a { touch-action: manipulation; }
-}
-
-@media (prefers-reduced-transparency: reduce) and (prefers-color-scheme: light) {
-  :root:not([data-theme="dark"]) { --surface: #efe8da; --surface-2: #f7f1e5; }
 }
