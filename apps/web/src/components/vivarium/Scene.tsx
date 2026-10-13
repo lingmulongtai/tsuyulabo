@@ -24,7 +24,7 @@ import { useCalmMotion, usePageVisible } from "./lifecycle";
 import { clamp01, displayStage, type Quality, type VivariumHandle, type VivariumProps } from "./types";
 
 const wild = ["wild"] as const;
-function World({ controller, focus, stage = "adult", environment = {}, sex = "f", traits = wild, seed = "tsuyu", paused, calm, selected, onTier, automatic, framing = "wide", onGlassStroke, onGlassPick, wiped, pupationPosition = [0.24, -0.05, 0.94], pour, eclosionProgress }: VivariumProps & { controller: BehaviourController; focus: Vector3; calm: boolean; selected: Quality; automatic: boolean; onTier: (tier: Quality) => void }) {
+function World({ controller, focus, stage = "adult", environment = {}, sex = "f", traits = wild, seed = "tsuyu", paused, calm, selected, onTier, automatic, framing = "wide", composition, onSubjectPick, onGlassStroke, onGlassPick, wiped, pupationPosition = [0.24, -0.05, 0.94], pour, eclosionProgress }: VivariumProps & { controller: BehaviourController; focus: Vector3; calm: boolean; selected: Quality; automatic: boolean; onTier: (tier: Quality) => void }) {
   const organism = useRef<Group>(null);
   const monitor = useMemo(() => new QualityMonitor(), []);
   const metrics = useRef({ seconds: 0, frames: 0 });
@@ -70,13 +70,13 @@ function World({ controller, focus, stage = "adult", environment = {}, sex = "f"
     <Lighting quality={selected} />
     <Medium {...environment} />
     {pour && <group position={[0, 21.5 + 1.075 * verticalMM, 0]} scale={[radialMM, verticalMM, radialMM]}><FoodPour color={environment.food?.color} paused={Boolean(paused)} calm={calm} /></group>}
-    <group ref={organism} scale={organismMM[kind]} position={kind === "pupa" ? toMillimetres(pupationPosition) : groundPosition(controller.pose.position, kind)}>
+    <group ref={organism} onClick={event => { if (onSubjectPick && event.delta < 8) { event.stopPropagation(); onSubjectPick(); } }} scale={organismMM[kind]} position={kind === "pupa" ? toMillimetres(pupationPosition) : groundPosition(controller.pose.position, kind)}>
       {kind === "adult" ? <Adult pose={controller.pose} sex={sex} traits={traits} quality={selected} seed={seed} unfold={eclosionProgress === undefined ? 1 : clamp01((eclosionProgress - 0.25) / 0.65, 0)} /> : kind === "egg" ? <Egg /> : kind === "larva" ? <Larva pose={controller.pose} stage={stage} /> : <Pupa age={environment.pupaAge} />}
     </group>
     {eclosionProgress !== undefined && <group position={toMillimetres(pupationPosition)} scale={organismMM.pupa}><Pupa age={1} opened={Math.min(1, eclosionProgress * 4)} /></group>}
     <Vial humidity={environment.humidity} grime={environment.grime} quality={selected} wiped={wiped} />
     {(onGlassStroke || onGlassPick || wiped) && <GlassCare onGlassStroke={onGlassStroke} onGlassPick={onGlassPick} wiped={wiped} grime={environment.grime} mould={environment.mould} />}
-    <CameraRig framing={framing} focus={focus} calm={calm} paused={Boolean(paused)} interactive={!onGlassStroke && !onGlassPick} subject={kind} />
+    <CameraRig framing={framing} focus={focus} calm={calm} paused={Boolean(paused)} interactive={!onGlassStroke && !onGlassPick} subject={kind} composition={composition} />
     <Post quality={selected} focus={focus} />
   </>;
 }
@@ -103,7 +103,7 @@ export default function Scene({ controllerRef, ...props }: VivariumProps & { con
     return () => element?.removeEventListener("webglcontextlost", handleLost);
   }, []);
   if (lost) return <Fallback stage={props.stage} />;
-  return <Canvas ref={canvas} shadows={budgets[selected].shadows} dpr={budgets[selected].dpr} frameloop={paused ? "demand" : "always"} camera={{ fov: 29, near: 0.1, far: 1600, filmGauge: 4.8, position: [65, 84, 295] }} gl={{ antialias: true, alpha: false, powerPreference: "high-performance", toneMapping: ACESFilmicToneMapping, outputColorSpace: SRGBColorSpace }} fallback={<Fallback stage={props.stage} />} onCreated={({ gl }) => {
+  return <Canvas ref={canvas} shadows={budgets[selected].shadows} dpr={budgets[selected].dpr} frameloop={paused ? "demand" : "always"} camera={{ fov: 29, near: 0.1, far: 1600, filmGauge: 4.8, position: [65, 84, 295] }} gl={{ antialias: true, preserveDrawingBuffer: Boolean(props.snapshot), alpha: false, powerPreference: "high-performance", toneMapping: ACESFilmicToneMapping, outputColorSpace: SRGBColorSpace }} fallback={<Fallback stage={props.stage} />} onCreated={({ gl }) => {
     gl.toneMappingExposure = 1.1;
     gl.info.autoReset = false;
     gl.shadowMap.autoUpdate = false;
