@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { AppShell } from "@/components/shell/AppShell";
 import { CareFrame, ResultSheet } from "@/components/games/CareFrame";
+import { Portrait } from "@/components/vivarium/Portrait";
 import { AdultCard } from "@/components/collection/AdultCard";
 import { Button, Card, Meter, SectionTitle } from "@/components/ui/primitives";
 import { ErrorCard, QueryState } from "@/components/ui/QueryState";
@@ -20,7 +21,10 @@ export default function TeamPage() {
   const [reward, setReward] = useState<Schemas["Collection"] | null>(null);
   return <AppShell><CareFrame title="コロニー" subtitle="５匹までの仲間と、材料あつめ">
     <QueryState query={team}>{data => <>
-      <div className="grid grid-cols-5 gap-2" aria-label="コロニーの枠">{Array.from({ length: 5 }, (_, i) => <div key={i} className={`grid h-14 place-items-center rounded-2xl border-2 ${data.members[i] ? "border-leaf bg-tint-leaf" : "border-dashed border-line bg-surface"}`}><span className="text-sm font-bold">{data.members[i] ? `${i + 1} ✓` : "＋"}</span></div>)}</div>
+      <div className="grid grid-cols-5 gap-2" aria-label="コロニーの枠">{Array.from({ length: 5 }, (_, i) => {
+        const member = data.members[i];
+        return <div key={i} className="overflow-hidden rounded-xl border border-line-soft">{member ? <Portrait stage="adult" seed={member.id} sex={member.sex} traits={member.phenotypes} label={member.name} /> : <div className="grid aspect-square place-items-center text-muted" aria-label={`空き枠 ${i + 1}`}>＋</div>}</div>;
+      })}</div>
       {data.members.length === 0 && <Card className="p-5 text-sm text-muted">羽化した子を下の飼育室から選んで、コロニーに入れよう。</Card>}
       {data.members.map(member => <AdultCard key={member.id} adult={member}>
         <Meter label="げんき" value={member.energy} color="var(--leaf)" />
