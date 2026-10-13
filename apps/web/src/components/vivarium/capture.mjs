@@ -3,9 +3,10 @@ import { chromium } from "@playwright/test";
 import sharp from "sharp";
 import { mkdir, writeFile } from "node:fs/promises";
 import assert from "node:assert/strict";
+import { verifyCloseSubject } from "./capture-validation.mjs";
 
 const base = process.env.VIVARIUM_URL ?? "http://127.0.0.1:3015";
-const browser = await chromium.launch({ headless: true, args: ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"] });
+const browser = await chromium.launch({ headless: true, args: process.env.VIVARIUM_NATIVE_GPU ? [] : ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"] });
 const errors = [], report = { renderer: "", captures: [], checks: [], performance: [] };
 const page = await browser.newPage({ viewport: { width: 1400, height: 1000 }, deviceScaleFactor: 1, reducedMotion: "reduce" });
 page.on("pageerror", error => errors.push(String(error)));
@@ -16,11 +17,14 @@ await mkdir(assets, { recursive: true });
 async function ready(url) {
   await page.goto(base + url, { waitUntil: "networkidle", timeout: 120000 });
   await page.locator("canvas[data-ready=true]").waitFor({ timeout: 120000 });
+  // Allow demand-mode autofocus and post buffers to settle before capturing.
+  await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
 }
 try {
   for (const stage of process.env.VIVARIUM_SKIP_CAPTURES ? [] : ["adult", "egg", "larva", "pupa"]) for (const framing of ["wide", "close"]) {
     await ready(`/vivarium?stage=${stage}&framing=${framing}&quality=high&paused=1&clean=1`);
     const png = await page.screenshot();
+    if (framing === "close") report.checks.push({ stage, visibleSubjectPixels: await verifyCloseSubject(png, stage) });
     const file = `${media}/vivarium-${stage}-${framing}.webp`;
     await sharp(png).webp({ quality: 91 }).toFile(file);
     if (framing === "close") await sharp(png).resize(1000).webp({ quality: 83 }).toFile(`${assets}/fallback-${stage}.webp`);
@@ -35,7 +39,25 @@ try {
   assert(difference / a.length < 3, "system theme altered the scene");
   report.checks.push({ themeMeanChannelDifference: difference / a.length });
 
+  // Remount anatomy inside an existing transmission pass while the scene is paused.
+  await ready("/vivarium?stage=pupa&framing=close&quality=medium&paused=1");
+  const retainedCanvas = await page.locator("canvas").elementHandle();
+  for (const stage of ["larva", "adult", "egg"]) {
+    await page.locator("summary").click();
+    await page.getByLabel("成長段階", { exact: true }).selectOption(stage);
+    await page.locator("summary").click();
+    await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+    assert(await retainedCanvas.evaluate(canvas => canvas.isConnected), "stage change replaced the canvas");
+    report.checks.push({ stageSwap: stage, visibleSubjectPixels: await verifyCloseSubject(await page.screenshot(), stage) });
+  }
+
   await page.setViewportSize({ width: 390, height: 844 });
+  if (!process.env.VIVARIUM_SKIP_CAPTURES) for (const framing of ["wide", "close"]) {
+    await ready('/vivarium?stage=adult&framing=' + framing + '&quality=medium&paused=1');
+    const file = media + '/vivarium-phone-' + framing + '.webp';
+    await sharp(await page.screenshot()).webp({ quality: 91 }).toFile(file);
+    report.captures.push(file);
+  }
   await ready("/vivarium?quality=low&behaviour=rest");
   assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), "mobile overflow");
   await page.locator("summary").click();
@@ -54,7 +76,7 @@ try {
   report.checks.push("390px layout, decoder actions, imperative then controlled action, pause while changing humidity");
 
   await page.emulateMedia({ reducedMotion: "no-preference" });
-  for (const quality of ["low", "medium", "high"]) {
+  for (const quality of (process.env.VIVARIUM_PERF_TIERS ?? "low,medium,high").split(",").filter(Boolean)) {
     await ready(`/vivarium?quality=${quality}&behaviour=walk&clean=1`);
     await page.waitForFunction(() => Number(document.querySelector("canvas")?.dataset.phase) > 2, null, { timeout: 120000 });
     await page.waitForFunction(() => Boolean(document.querySelector("canvas")?.dataset.fps), null, { timeout: 120000 });
