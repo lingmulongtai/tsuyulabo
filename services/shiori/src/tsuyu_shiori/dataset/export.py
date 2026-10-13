@@ -9,6 +9,7 @@ from collections import Counter
 from pathlib import Path
 from typing import Any
 
+from tsuyu_shiori.dataset.companion import INTENTS, companion_questions, companion_trace
 from tsuyu_shiori.dataset.questions import Question, balanced_questions, questions
 from tsuyu_shiori.dataset.traces import oracle_trace
 from tsuyu_shiori.eval import open_questions, synthesize, topic_questions
@@ -75,13 +76,18 @@ def balanced_cases(size: int, first_seed: int) -> list[tuple[int, Question]]:
 
 
 async def export_dataset(
-    out: Path, train_size: int = 4000, valid_size: int = 400, balanced: bool = False
+    out: Path,
+    train_size: int = 4000,
+    valid_size: int = 400,
+    balanced: bool = False,
+    companion: bool = False,
 ) -> dict[str, Any]:
     if not 1 <= train_size <= 98000 or not 1 <= valid_size <= 98000:
         raise ValueError("split sizes must be 1..98000 (keeps seed ranges disjoint)")
     out.mkdir(parents=True, exist_ok=True)
     stats: dict[str, Any] = {
-        "version": 1,
+        "version": 3 if companion else 1,
+        "companion": companion,
         "balanced": balanced,
         "splits": {},
         "token_estimate_method": (
@@ -102,6 +108,14 @@ async def export_dataset(
             for index in range(size):
                 seed = first_seed + index // 98
                 cases.append((seed, questions(seed % 2)[index % 98]))
+        if companion:
+            if split == "test":
+                cases.extend((37, q) for q in companion_questions(2))
+            else:
+                # Replace a regular fraction, retaining disjoint world/phrasing ranges.
+                for index in range(0, len(cases), 5):
+                    seed, _ = cases[index]
+                    cases[index] = (seed, companion_questions(seed % 2)[(index // 5) % 4])
         counts: Counter[str] = Counter()
         lengths = []
         hashes = []
@@ -110,7 +124,11 @@ async def export_dataset(
             (out / f"{split}.meta.jsonl").open("w", encoding="utf-8", newline="\n") as meta,
         ):
             for seed, q in cases:
-                example = await oracle_trace(seed, q)
+                example = (
+                    await companion_trace(seed, q)
+                    if q.intent in INTENTS
+                    else await oracle_trace(seed, q)
+                )
                 line = json.dumps(example, ensure_ascii=False, separators=(",", ":"))
                 digest = hashlib.sha256(line.encode()).hexdigest()
                 chat.write(line + "\n")

@@ -15,13 +15,16 @@ def main() -> None:
     parser.add_argument("--out", type=Path, default=Path("data/shiori-sft"))
     parser.add_argument("--train-size", type=int, default=4000)
     parser.add_argument("--valid-size", type=int, default=400)
+    parser.add_argument("--companion", action="store_true", help="include v3 companion intents")
     parser.add_argument(
         "--balanced", action="store_true", help="thin day counts; both phrasings for the rest"
     )
     args = parser.parse_args()
     try:
         stats = asyncio.run(
-            export_dataset(args.out, args.train_size, args.valid_size, args.balanced)
+            export_dataset(
+                args.out, args.train_size, args.valid_size, args.balanced, args.companion
+            )
         )
     except ValueError as exc:
         parser.error(str(exc))
