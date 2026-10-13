@@ -9,7 +9,7 @@ import { CareFrame } from "@/components/games/CareFrame";
 import { AppShell } from "@/components/shell/AppShell";
 import { Card } from "@/components/ui/primitives";
 import { ErrorCard, LoadingCard, QueryState } from "@/components/ui/QueryState";
-import { useEclose, useOdds, usePresentation } from "@/lib/api/hooks";
+import { useEclose, useHome, useOdds, usePresentation } from "@/lib/api/hooks";
 import { eclosionOdds, eclosionResult, type EclosionOdds } from "@/lib/api/eclosion-display";
 
 type Rank = keyof EclosionOdds;
@@ -52,6 +52,7 @@ function PublishedOdds({ initialRank }: { initialRank: Rank }) {
 }
 
 function LiveEclosion() {
+  const home = useHome();
   const router = useRouter();
   const presentation = usePresentation();
   const eclose = useEclose();
@@ -61,7 +62,7 @@ function LiveEclosion() {
   }, [eclose.data]);
   const start = () => { if (!eclose.isPending && !eclose.data) eclose.mutate(); };
   return <QueryState query={{ ...presentation, error: eclose.data ? null : presentation.error }}>{data => <>
-    <EclosionStage result={mapped.result} onStart={start} onDone={() => {
+    <EclosionStage result={mapped.result} vial={home.data?.vial} onStart={start} onDone={() => {
       if (eclose.data) router.push(`/adults/${encodeURIComponent(eclose.data.adult.id)}`);
     }} />
     {eclose.isPending && <p role="status" className="text-center text-sm text-muted">羽化を待っています…</p>}

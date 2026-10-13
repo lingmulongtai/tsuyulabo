@@ -7,7 +7,7 @@ const response: components["schemas"]["Eclosion"] = {
   adult: { id: "new-adult-id", name: "つゆ", sex: "f", strain: "wild", stars: 4, traits: ["brave", "keen_nose"], skills: {}, level: 1, preferences: {}, genotype: { sex: "f", w: ["+", "+"], y: ["+", "+"], e: ["+", "+"], Cy: ["+", "+"], vg: ["+", "+"] }, phenotypes: ["wild"], mutation: null },
 };
 it("maps the awarded adult and preserves fake-out omens without rerolling", () => {
-  expect(eclosionResult(response)).toEqual({ tier: 2, omen_sequence: [0, 1, 2, 3, 2], adult: { name: "つゆ", sex: "f", strain: "wild", stars: 4, traits: ["brave", "keen_nose"] } });
+  expect(eclosionResult(response)).toMatchObject({ tier: 2, omen_sequence: [0, 1, 2, 3, 2], adult: { id: "new-adult-id", name: "つゆ", sex: "f", strain: "wild", stars: 4, traits: ["brave", "keen_nose"], phenotypes: ["wild"] } });
   expect(response.adult.id).toBe("new-adult-id");
 });
 it("maps each tier and mutant strain", () => {

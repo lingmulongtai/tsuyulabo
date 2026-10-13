@@ -11,8 +11,8 @@ export function eclosionResult(data: components["schemas"]["Eclosion"]): Eclosio
   if (!isTier(data.tier) || !data.omen_sequence.every(isTier)) {
     throw new ApiError(502, "invalid_response", "羽化の予兆を読み取れませんでした。");
   }
-  const { name, strain, sex, stars, traits } = data.adult;
-  return { tier: data.tier, omen_sequence: [...data.omen_sequence], adult: { name, strain, sex, stars, traits: [...traits] } };
+  const { id, name, strain, sex, stars, traits, phenotypes } = data.adult;
+  return { tier: data.tier, omen_sequence: [...data.omen_sequence], vial: data.vial, evaluation: data.evaluation, adult: { id, name, strain, sex, stars, traits: [...traits], phenotypes: [...phenotypes] } };
 }
 
 /** Odds are percentages already; do not scale them as probabilities. */
