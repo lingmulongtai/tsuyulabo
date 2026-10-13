@@ -7,7 +7,6 @@ import { RaceCard } from "../race/RaceCard";
 import { SumoCard } from "../sumo/SumoCard";
 import { CurrencyPill } from "../ui/primitives";
 import { ColonyVivarium } from "./ColonyVivarium";
-import { ShioriBubble } from "./ShioriBubble";
 import { TeamStrip } from "./TeamStrip";
 import { TodoList } from "./TodoList";
 import { WeekStrip } from "./WeekStrip";
@@ -63,8 +62,6 @@ export function HomeScreen({ data, hero, footer }: { data: HomeData; hero?: Reac
         </Link>
       )}
 
-
-      {data.shiori.memo && <ShioriBubble text={data.shiori.memo.text} evidence={data.shiori.memo.evidence} />}
 
       {data.todo.length > 0 && <TodoList todo={data.todo} />}
       <DailyCircuitCard />

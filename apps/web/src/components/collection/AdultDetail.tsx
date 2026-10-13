@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import Link from "next/link";
 import { useAdult, useLevelUp, useRenameAdult } from "@/lib/api/hooks";
 import { SKILL_LABELS, SUBSKILL_LABELS, TRAIT_LABELS } from "@/lib/display";
 import { preferenceState } from "@/lib/raising-copy";
@@ -10,7 +11,6 @@ import { AdultBehavior } from "./AdultBehavior";
 import { STRAIN_LABELS } from "../art/palette";
 import { Button, Card, SectionTitle, Stars, TruthBadge } from "../ui/primitives";
 import { ErrorCard, QueryState } from "../ui/QueryState";
-import { AskShiori } from "../shiori/AskShiori";
 
 export function AdultDetail({ id }: { id: string }) {
   const adult = useAdult(id);
@@ -20,7 +20,6 @@ export function AdultDetail({ id }: { id: string }) {
   const [name, setName] = useState("");
   const trimmedName = name.trim();
   const validName = [...trimmedName].length >= 1 && [...trimmedName].length <= 12 && !/[\p{Cc}\p{Cf}\p{Cs}]/u.test(name);
-  const [ask, setAsk] = useState(false);
   return <QueryState query={adult}>{data => <>
     <Card className="p-5 text-center"><AdultBehavior id={id} strain={data.strain} sex={data.sex} />
       <div className="flex items-center justify-center gap-2">
@@ -70,7 +69,6 @@ export function AdultDetail({ id }: { id: string }) {
     <Card className="space-y-3 p-4 text-sm">{Object.entries(data.preferences).map(([cue, value]) => <p key={cue}>{preferenceState(CUE_INFO[cue as Cue]?.name ?? "新しい合図", value)}</p>)}{Object.keys(data.preferences).length === 0 && <p className="text-muted">まだ好き嫌いはわかりません。しつけや日々の様子から、この子を知っていきましょう。</p>}</Card>
     <SectionTitle>とくいワザ</SectionTitle>
     <Card className="p-4 text-sm">{Object.entries(data.skills).filter(([, active]) => active).map(([skill]) => <p key={skill} className="py-1 font-bold text-leaf">✦ {SKILL_LABELS[skill] ?? "新しいワザ"}</p>)}{!Object.values(data.skills).some(Boolean) && <p className="text-muted">まだ見つかっていません。</p>}</Card>
-    <Button tone="ai" block aria-expanded={ask} onClick={() => setAsk(value => !value)}>なんで？ シオリに聞く</Button>
-    {ask && <AskShiori context={`成虫「${data.name}」（個体ID: ${data.id}）について。`} initialQuestion="この子の好き・苦手は、どうしてこうなったの？" />}
+    <Link href={`/shiori?fly=${encodeURIComponent(id)}`} className="min-h-11 p-3 text-center text-sm underline">この子の観察日記を読む</Link>
   </>}</QueryState>;
 }

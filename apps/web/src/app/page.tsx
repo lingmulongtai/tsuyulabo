@@ -35,7 +35,7 @@ function LiveHome() {
   return (
     <AppShell>
       <div className="py-3"><QueryState query={home}>{data => <HomeScreen data={data} hero={!data.week && <BreedingStart />} footer={<>
-        <Link href="/shiori" className="min-h-11 p-3 text-center text-sm text-muted underline">困ったときはシオリに聞く</Link>
+        <Link href="/shiori" className="min-h-11 p-3 text-center text-sm text-muted underline">観察日記を読む</Link>
         <Link href="/care/meal?practice=1" className="text-center text-sm text-muted underline">ごはんづくりの練習</Link>
       </>} />}</QueryState></div>
     </AppShell>
