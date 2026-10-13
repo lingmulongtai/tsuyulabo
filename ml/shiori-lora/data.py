@@ -21,12 +21,27 @@ def validate_example(row: dict[str, Any]) -> None:
             raise ValueError("function schema needs name and parameters")
         names.add(f["name"])
     messages = row["messages"]
-    if len(messages) < 5 or [m["role"] for m in messages[:2]] != ["system", "user"]:
+    if len(messages) < 3 or [m["role"] for m in messages[:2]] != ["system", "user"]:
         raise ValueError("expected system, user, calls, results, final")
     if messages[-1]["role"] != "assistant" or not messages[-1].get("content"):
         raise ValueError("missing assistant final")
     payload = json.loads(messages[1]["content"])
-    if set(payload) != {"question", "feature", "week_id", "fly_id"}:
+    direct_fields = {
+        "diary": {"feature", "moments"},
+        "hint": {"feature", "observation", "help", "evidence"},
+        "behaviour-why": {"feature", "question", "observation", "context_text", "context_evidence"},
+    }
+    direct = payload.get("feature") in direct_fields
+    if direct:
+        required = direct_fields[payload["feature"]] - {"question"}
+        if not required <= set(payload) <= direct_fields[payload["feature"]]:
+            raise ValueError("invalid companion user payload")
+        if len(messages) != 3 or row["tools"]:
+            raise ValueError("companion phrasing must be a complete tool-free observation")
+    elif set(payload) not in (
+        {"question", "feature", "week_id", "fly_id"},
+        {"question", "feature", "week_id", "fly_id", "now"},
+    ):
         raise ValueError("invalid agent user payload")
     pending: dict[str, str] = {}
     seen = set()
@@ -54,7 +69,7 @@ def validate_example(row: dict[str, Any]) -> None:
                 raise ValueError("tool result must be a JSON object")
         else:
             raise ValueError("unexpected role after user")
-    if pending or not seen or messages[-1].get("tool_calls"):
+    if pending or (not seen and not direct) or messages[-1].get("tool_calls"):
         raise ValueError("incomplete conversation")
 
 
@@ -96,8 +111,8 @@ def load_data(directory: Path) -> tuple[dict[str, list[dict[str, Any]]], dict[st
         t.endswith(":2") or t.startswith("eval:") for t in templates["train"] | templates["valid"]
     ):
         raise ValueError("held-out template leaked into training/validation")
-    if not isinstance(stats.get("max_length"), int) or not 1 <= stats["max_length"] <= 3072:
-        raise ValueError("stats max_length must be 1..3072")
+    if not isinstance(stats.get("max_length"), int) or not 1 <= stats["max_length"] <= 4096:
+        raise ValueError("stats max_length must be 1..4096")
     return rows, stats
 
 
