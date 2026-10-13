@@ -37,7 +37,7 @@ function statusText(item: TodoItem) {
  * The big buttons. One tile per action kind; when several todo items share a kind (e.g. three meals)
  * the most actionable one wins.
  */
-export function ActionGrid({ todo }: { todo: TodoItem[] }) {
+export function ActionGrid({ todo, compact = false }: { todo: TodoItem[]; compact?: boolean }) {
   const rank = { available: 0, locked: 1, done: 2 } as const;
   const byKind = new Map<ActionKind, TodoItem>();
   for (const item of todo) {
@@ -58,12 +58,12 @@ export function ActionGrid({ todo }: { todo: TodoItem[] }) {
             href={available ? m.href : "#"}
             aria-disabled={!available}
             tabIndex={available ? undefined : -1}
-            className={`press relative flex aspect-[1/1.12] flex-col items-center justify-center gap-1 glass-panel rounded-xl border text-sm font-medium ${
+            className={`press relative flex ${compact ? "min-h-11 py-2" : "aspect-[1/1.12]"} flex-col items-center justify-center gap-1 glass-panel rounded-xl border text-sm font-medium ${
               available ? "border-line" : "border-line-soft opacity-70 pointer-events-none"
             }`}
             style={available ? { borderColor: m.accent } : undefined}
           >
-            {m.icon}
+            {!compact && m.icon}
             <span>{m.label}</span>
             <span className={`text-[0.65rem] ${available ? "text-ink" : "text-muted"}`}>{statusText(item)}</span>
           </Link>
