@@ -61,6 +61,14 @@ export UV_LINK_MODE=copy
 export npm_config_cache="$WIN_CLONE\\.npm-cache"
 
 BRIEF="docs/agent-tasks/$TASK.md"
+RESUME=""
+if [ -s .codex-runs/commits.jsonl ]; then
+  # A previous run on this clone stopped halfway (reboot, crash): continue it instead of starting over.
+  RESUME="RESUME: a previous Codex run on this clone stopped before finishing. Inspect git status, the existing
+changes and .codex-runs/commits.jsonl ($(wc -l < .codex-runs/commits.jsonl) entries). Keep the good work, finish the
+remaining parts of the brief, never re-append an entry that is already there, and make sure every changed file is
+covered by exactly one entry before you finish."
+fi
 PROMPT="You are working in a clone of the Tsuyu Labo repo on branch $BRANCH.
 Follow AGENTS.md strictly, including the section 'Committing from the Codex sandbox':
 you cannot write to .git, so do NOT run git add/commit. Instead append one JSON object per atomic
@@ -70,7 +78,9 @@ instead of npm / npx (PowerShell execution policy blocks the .ps1 shims).
 Stay inside this directory. Do not edit docs/HANDOFF.md even if the brief says so (the commander keeps the log;
 put your report in your final message instead).
 The owner explicitly allows you to use your usage reset if your usage limit has 10% or less remaining, so the task
-does not stop halfway. Your task brief follows.
+does not stop halfway.
+$RESUME
+Your task brief follows.
 
 $(cat "$BRIEF")"
 
