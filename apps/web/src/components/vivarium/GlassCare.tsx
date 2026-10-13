@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef } from "react";
 import type { ThreeEvent } from "@react-three/fiber";
 import { CanvasTexture, DoubleSide } from "three";
+import { fromMillimetres, radialMM, toMillimetres, verticalMM } from "./scale";
 import type { VivariumProps } from "./types";
 
 /** Cylindrical mask erased in raycast UVs, independent of camera projection. */
@@ -26,17 +27,18 @@ export function GlassCare({ onGlassStroke, onGlassPick, wiped, grime = 0, mould 
     texture.needsUpdate = true;
   }, [wiped, texture, grime, mould]);
   const stamp = (e: ThreeEvent<PointerEvent>) => { e.stopPropagation(); if (e.uv) onGlassStroke?.(e.uv.x, 1 - e.uv.y); };
-  return <mesh position={[0, 0.02, 0]} renderOrder={8}
+  return <mesh position={toMillimetres([0, 0.02, 0])} renderOrder={8}
     onPointerDown={e => {
       e.stopPropagation(); active.current = e.pointerId;
       (e.target as unknown as { setPointerCapture(id: number): void }).setPointerCapture(e.pointerId);
-      if (onGlassPick) onGlassPick([e.point.x * 0.94, Math.max(-1, Math.min(1.15, e.point.y)), e.point.z * 0.94]);
+      const point = fromMillimetres([e.point.x, e.point.y, e.point.z]);
+      if (onGlassPick) onGlassPick([point[0] * 0.94, Math.max(-1, Math.min(1.15, point[1])), point[2] * 0.94]);
       if (onGlassStroke) stamp(e);
     }}
     onPointerMove={e => { if (active.current === e.pointerId && onGlassStroke) stamp(e); }}
     onPointerUp={e => { active.current = null; (e.target as unknown as { releasePointerCapture(id: number): void }).releasePointerCapture(e.pointerId); }}
     onPointerCancel={() => { active.current = null; }}>
-    <cylinderGeometry args={[1.075, 1.075, 2.26, 64, 1, true, -Math.PI / 2, Math.PI]} />
+    <cylinderGeometry args={[1.075 * radialMM, 1.075 * radialMM, 2.26 * verticalMM, 64, 1, true, -Math.PI / 2, Math.PI]} />
     <meshBasicMaterial map={wiped ? texture : undefined} transparent opacity={wiped ? 0.5 : 0} side={DoubleSide} depthWrite={false} />
   </mesh>;
 }

@@ -5,6 +5,8 @@ import { surfaceTexture } from "./surfaces";
 
 /** Tapered mesonotum with a raised dorsal arch and muted longitudinal markings. */
 export function Thorax({ color }: { color: string }) {
+  const roughness = useMemo(() => surfaceTexture("roughness"), []);
+  useEffect(() => () => roughness.dispose(), [roughness]);
   const texture = useMemo(() => surfaceTexture("body", color), [color]);
   useEffect(() => () => texture.dispose(), [texture]);
   const geometry = useMemo(() => {
@@ -20,5 +22,5 @@ export function Thorax({ color }: { color: string }) {
     geometry.setAttribute("color", new Float32BufferAttribute(colors, 3)); geometry.computeVertexNormals(); return geometry;
   }, [color]);
   useEffect(() => () => geometry.dispose(), [geometry]);
-  return <mesh geometry={geometry} position={[0, 0.095, 0]} castShadow><meshPhysicalMaterial vertexColors bumpMap={texture} bumpScale={0.0012} roughness={0.49} clearcoat={0.08} clearcoatRoughness={0.5} /></mesh>;
+  return <mesh geometry={geometry} position={[0, 0.095, 0]} castShadow><meshPhysicalMaterial vertexColors bumpMap={texture} bumpScale={0.0012}  roughnessMap={roughness} roughness={0.86} clearcoat={0.025} clearcoatRoughness={0.5} /></mesh>;
 }

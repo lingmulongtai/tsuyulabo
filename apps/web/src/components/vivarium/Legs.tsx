@@ -14,19 +14,29 @@ export function Legs({ pose, male }: { pose: Pose; male: boolean }) {
       const side = leg < 3 ? -1 : 1, pair = leg % 3;
       const cycle = pose.phase + (leg % 2 ? Math.PI : 0);
       const stride = Math.min(1, pose.speed * 7);
-      const z = 0.19 - pair * 0.19;
+      const z = 0.17 - pair * 0.16;
       const lift = Math.max(0, Math.sin(cycle)) * 0.12 * stride;
       const grooming = pair === 0 ? pose.groom : 0;
       const tipX = side * (0.35 - grooming * 0.29 - pose.flight * 0.1);
       const tipY = -0.15 + lift + grooming * (0.33 + Math.sin(pose.phase * 3) * 0.04) + pose.flight * 0.1;
       const tipZ = z + (1 - pair) * 0.19 + Math.cos(cycle) * 0.12 * stride + grooming * 0.14;
-      const points = [[side * 0.09, 0.08, z], [side * 0.26, 0.02 + lift * 0.4, z + (1 - pair) * 0.13], [tipX, tipY + 0.055, tipZ], [tipX + side * 0.055, tipY, tipZ + 0.03]];
+      const points = [[side * 0.09, 0.08, z], [side * 0.24, 0.065 + lift * 0.4, z + (1 - pair) * 0.13], [tipX, tipY + 0.055, tipZ], [tipX + side * 0.055, tipY, tipZ + 0.03]];
       for (let segment = 0; segment < 3; segment++) {
         a.fromArray(points[segment]); b.fromArray(points[segment + 1]);
-        dir.subVectors(b, a); object.position.copy(a).add(b).multiplyScalar(0.5);
-        object.quaternion.setFromUnitVectors(up, dir.clone().normalize());
-        object.scale.set(segment === 0 ? 0.012 : 0.006, dir.length(), segment === 0 ? 0.012 : 0.006);
+        dir.subVectors(b, a); const length = dir.length(); object.position.copy(a).add(b).multiplyScalar(0.5);
+        object.quaternion.setFromUnitVectors(up, dir.normalize());
+        object.scale.set(segment === 0 ? 0.008 : 0.0035, length, segment === 0 ? 0.008 : 0.0035);
         object.updateMatrix(); ref.current.setMatrixAt(leg * 3 + segment, object.matrix);
+      }
+      // Short tibial/femoral setae follow each articulated segment in the same draw.
+      for (let hair = 0; hair < 18; hair++) {
+        const segment = Math.floor(hair / 6), t = (hair % 6 + 0.5) / 6;
+        a.fromArray(points[segment]); b.fromArray(points[segment + 1]);
+        object.position.copy(a).lerp(b, t);
+        object.position.x += side * 0.004;
+        object.rotation.set(0.5, 0, side * -0.9);
+        object.scale.set(0.0008, 0.015 + (hair % 3) * 0.004, 0.0008); object.updateMatrix();
+        ref.current.setMatrixAt(60 + leg * 18 + hair, object.matrix);
       }
       // Male sex combs on the first tarsus, following the animated foreleg.
       for (let tooth = 0; tooth < 7; tooth++) {
@@ -36,8 +46,8 @@ export function Legs({ pose, male }: { pose: Pose; male: boolean }) {
       }
     }
     ref.current.instanceMatrix.needsUpdate = true;
-  });
-  return <instancedMesh ref={ref} args={[undefined, undefined, 60]} frustumCulled={false} castShadow>
+  }, -0.5);
+  return <instancedMesh ref={ref} args={[undefined, undefined, 168]} frustumCulled={false} castShadow>
     <cylinderGeometry args={[0.6, 1, 1, 5]} /><meshStandardMaterial color="#594127" roughness={0.8} />
   </instancedMesh>;
 }

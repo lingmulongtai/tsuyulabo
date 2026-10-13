@@ -3,13 +3,11 @@ import type { Quality } from "./types";
 
 export function Lighting({ quality }: { quality: Quality }) {
   return <>
-    <Environment files="/vivarium/studio.hdr" environmentIntensity={0.65} />
-    <ambientLight intensity={0.25} color="#e9ddc2" />
-    <directionalLight position={[-3, 5, 2]} color="#ffe0b6" intensity={2.2} castShadow={quality !== "low"} shadow-radius={3} shadow-mapSize={quality === "high" ? [2048, 2048] : [1024, 1024]} shadow-bias={-0.0003} shadow-normalBias={0.006} shadow-camera-left={-2} shadow-camera-right={2} shadow-camera-top={2} shadow-camera-bottom={-2} shadow-camera-near={0.1} shadow-camera-far={15} />
-    <directionalLight position={[3, 1, 3]} color="#c4d2de" intensity={0.65} />
-    <spotLight position={[0, 3, -4]} color="#ffedce" intensity={25} angle={0.6} penumbra={1} distance={12} />
-    <mesh position={[0, -1.6, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-      <planeGeometry args={[200, 200]} /><meshStandardMaterial color="#373b30" roughness={0.92} />
-    </mesh>
+    <Environment files="/vivarium/studio.hdr" environmentIntensity={0.38} />
+    <ambientLight intensity={0.12} color="#e9ddc2" />
+    {/* Inverse-square irradiance, with distances in mm: intensity scales as mm². */}
+    <spotLight position={[-65,125,85]} color="#ffe0ac" intensity={60000} decay={2} distance={550} angle={0.7} penumbra={0.8} castShadow={quality !== "low"} shadow-radius={3} shadow-mapSize={quality === "high" ? [2048,2048] : [1024,1024]} shadow-bias={-0.00005} shadow-normalBias={0.04} shadow-camera-near={5} shadow-camera-far={300} />
+    <directionalLight position={[90,65,45]} color="#c1d9ee" intensity={0.85} />
+    <pointLight position={[15,95,-65]} color="#ffebc9" intensity={13000} decay={2} distance={350} />
   </>;
 }
