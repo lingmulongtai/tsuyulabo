@@ -30,11 +30,17 @@ export interface VivariumProps {
   /** Stable individual ID controls variation; never used for genetics. */
   seed?: string;
   pointOfInterest?: Point;
-  framing?: "wide" | "close";
+  framing?: "wide" | "close" | "habitat";
+  /** Shift the focused subject above a care sheet without moving its world-space focus. */
+  composition?: "center" | "upper";
+  /** Retain a drawing buffer only while producing a cached portrait. */
+  snapshot?: boolean;
   paused?: boolean;
   className?: string;
   onQualityChange?: (quality: Quality) => void;
   /** Glass raycast coordinates; domain scoring stays on the API. */
+  /** Tap the organism without disabling orbit and zoom gestures. */
+  onSubjectPick?: () => void;
   onGlassStroke?: (u: number, v: number) => void;
   onGlassPick?: (point: Point) => void;
   wiped?: readonly { u: number; v: number }[];
