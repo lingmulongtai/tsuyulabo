@@ -42,7 +42,7 @@ export function EclosionStage({ result, onStart, onDone, doneLabel = "飼育室�
   return <div className="relative overflow-hidden rounded-xl" style={{ height: "max(620px, 82svh)" }} data-eclosion-vial>
     <Vivarium stage={emerging ? "adult" : "pupa"} seed={result?.adult.id ?? "eclosion"} environment={{ ...habitat(saved), pupaAge: 1 }}
       sex={result?.adult.sex} traits={result?.adult.phenotypes ?? (result ? [result.adult.strain] : undefined)}
-      pupationPosition={sitePosition(saved?.pupation_position)} framing="close" behaviour="rest" paused={paused}
+      pupationPosition={sitePosition(saved?.pupation_position)} framing="close" behaviour="rest" paused={paused || !started || !result || completed}
       eclosionProgress={emerging ? progress : undefined} />
     {!started && <div className="glass-panel absolute inset-x-4 bottom-4 space-y-3 rounded-lg p-4 text-center">
       <p className="text-sm">殻の中で、翅を広げる準備が進んでいます。</p>
