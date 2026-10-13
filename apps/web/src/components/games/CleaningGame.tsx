@@ -1,47 +1,40 @@
 "use client";
 import { useRef, useState } from "react";
-import { FlyArt } from "../art/FlyArt";
 import { Button, Card } from "../ui/primitives";
-import { markerPosition, gradeTap } from "@/game/puzzles/cleaning";
-import type { CleaningParams, CleaningSubmission, Grade } from "@/game/puzzles/types";
-import * as Sound from "@/game/audio/sound";
-import { buzz } from "@/game/audio/haptics";
+import { CareVial } from "../vivarium/CareVial";
+import { wipeMask, wipePreview, type WipeStamp, type WipeSubmission } from "@/game/puzzles/wiping";
+import type { CleaningParams } from "@/game/puzzles/types";
 import { useGameTimer } from "./useGameTimer";
 
-export function CleaningGame({ params, onFinish }: { params: CleaningParams; onFinish: (value: CleaningSubmission) => void }) {
+export function CleaningGame({ onFinish }: { params: CleaningParams; onFinish: (value: WipeSubmission) => void }) {
   const timer = useGameTimer(10_000);
-  const taps = useRef<number[]>([]);
-  const [grades, setGrades] = useState<Grade[]>([]);
-  const x = markerPosition(params, timer.elapsed);
-  const tap = () => {
+  const stamps = useRef<WipeStamp[]>([]);
+  const [wiped, setWiped] = useState<WipeStamp[]>([]);
+  const finished = useRef(false);
+  const preview = wipePreview(wiped, timer.elapsed), mask = wipeMask(wiped);
+  const stamp = (u: number, v: number) => {
     const t = timer.now();
-    if (!timer.running || t > 10_000 || taps.current.length >= params.taps || t <= (taps.current.at(-1) ?? -1)) return;
-    taps.current.push(t);
-    const grade = gradeTap(params, t);
-    setGrades(previous => [...previous, grade]);
-    if (grade === "perfect") { Sound.perfect(); buzz([15, 20, 15]); }
-    else if (grade === "good") { Sound.tap(); buzz(15); }
-    else { Sound.bad(); buzz(5); }
-    if (taps.current.length === params.taps) {
-      timer.stop();
-      onFinish({ taps: [...taps.current], elapsed_ms: t });
-    }
+    if (!timer.running || t > 10_000 || stamps.current.length >= 800 || t - (stamps.current.at(-1)?.t ?? -100) < 12) return;
+    stamps.current.push({ u, v, t }); setWiped([...stamps.current]);
   };
-  return <Card className="space-y-5 p-5 text-center">
-    <p className="text-sm text-muted">そうじで汚れを落とします。中央の目印をねらって、びんを3回たたきましょう。</p>
-    <button onClick={tap} disabled={!timer.running} aria-label="びんをたたく" className="relative mx-auto block h-56 w-44 rounded-b-[60px] border-4 border-[#9dbbb4] bg-tint-leaf touch-manipulation" style={{ transform: `rotate(${timer.running ? Math.sin(timer.elapsed / 75) * 2 : 0}deg)` }}>
-      <span className="absolute -inset-x-3 -top-4 h-8 rounded-xl border-2 border-[#c9bfa9] bg-[#e9e1cf]" />
-      <FlyArt stage="larva2" className="absolute bottom-0 w-full" />
-      <span className="absolute left-4 top-8 h-24 w-3 rounded-full bg-white/60" />
-    </button>
-    <div className="relative h-9 overflow-hidden rounded-full bg-line-soft" aria-label="タイミングゾーン">
-      <div className="absolute inset-y-0 bg-tint-leaf" style={{ left: `${(params.zone.center - params.zone.good) * 100}%`, width: `${params.zone.good * 200}%` }} />
-      <div className="absolute inset-y-0 bg-leaf" style={{ left: `${(params.zone.center - params.zone.perfect) * 100}%`, width: `${params.zone.perfect * 200}%` }} />
-      <div className="absolute inset-y-1 w-2 -translate-x-1/2 rounded-full bg-eye shadow" style={{ left: `${x * 100}%` }} />
-    </div>
-    <div aria-live="polite" className="flex h-10 justify-center gap-2">{grades.map((grade, i) => <span key={i} className={`pop-in rounded-xl px-2 py-1 font-mono font-bold ${grade === "miss" ? "bg-tint-eye text-eye" : "bg-tint-leaf text-leaf"}`}>{grade.toUpperCase()}</span>)}</div>
-    {timer.running ? <Button block size="lg" tone="leaf" onClick={tap}>トン！ あと{params.taps - grades.length}回</Button> :
-      <Button block size="lg" tone="leaf" onClick={() => { Sound.init(); taps.current = []; setGrades([]); timer.start(); }}>{timer.expired ? "もう一度スタート" : "スタート"}</Button>}
-    <p className="text-xs text-muted" role="status">{timer.expired ? "時間切れです。もう一度ためしてみよう。" : `残り ${((10_000 - timer.elapsed) / 1000).toFixed(1)} 秒`}</p>
+  const finish = () => {
+    if (finished.current || stamps.current.length < 2) return;
+    finished.current = true; timer.stop();
+    onFinish({ strokes: [...stamps.current], elapsed_ms: Math.min(10_000, timer.now()) });
+  };
+  return <Card className="space-y-3 p-3">
+    <p className="text-sm text-muted">指でガラスを拭いて、曇りと汚れを落としましょう。広く、ていねいに。10秒以内です。</p>
+    <div style={{ touchAction: "none" }}><CareVial onGlassStroke={timer.running ? stamp : undefined} wiped={wiped} /></div>
+    <p role="status" className="text-sm">拭いたところ {Math.round(preview.coverage * 100)}% ・ 残り {((10_000 - timer.elapsed) / 1000).toFixed(1)}秒</p>
+    <details><summary className="min-h-11 text-xs text-muted">静止画・キーボードで拭く</summary>
+      <div className="grid grid-cols-6 overflow-hidden rounded-lg" role="group" aria-label="ガラスの清掃面">
+        {Array.from({ length: 54 }, (_, i) => <button key={i} aria-label={`ガラス ${Math.floor(i / 6) + 1}行${i % 6 + 1}列`} disabled={!timer.running}
+          className="h-8 border border-white/10" style={{ background: mask[Math.floor(i / 6) * 24 + i % 6 * 2] ? "#d8dccb" : "#818566" }}
+          onClick={() => stamp((i % 6 + 0.5) / 6, (Math.floor(i / 6) + 0.5) / 9)} />)}
+      </div>
+    </details>
+    {!timer.running && !timer.expired && <Button block onClick={() => { stamps.current = []; setWiped([]); finished.current = false; timer.start(); }}>スタート</Button>}
+    {(timer.running || timer.expired) && <Button block disabled={wiped.length < 2} onClick={finish}>拭き終わる</Button>}
+    {timer.expired && <p className="text-xs text-muted">拭いた範囲を保存できます。</p>}
   </Card>;
 }
