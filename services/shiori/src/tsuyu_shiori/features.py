@@ -3,6 +3,7 @@ from __future__ import annotations
 from datetime import UTC, datetime, timedelta, timezone
 
 from tsuyu_shiori.agent import Answer, run_agent
+from tsuyu_shiori.companion import intent_provider
 from tsuyu_shiori.gateway import Provider
 from tsuyu_shiori.rag import Retriever
 from tsuyu_shiori.records import Lab, RecordStore
@@ -35,6 +36,7 @@ async def morning_memo(
     fly_id: str,
     now: datetime | None = None,
     provider: Provider | None = None,
+    evaluate_candidate: bool = False,
 ) -> Answer:
     now = now or datetime.now(UTC)
     if now.tzinfo is None:
@@ -53,7 +55,7 @@ async def morning_memo(
     return await run_agent(
         "前日のお世話と前夜の睡眠の朝のメモをお願いします。",
         context,
-        provider=provider,
+        provider=provider if evaluate_candidate else intent_provider("morning", provider),
         feature="morning",
         purpose="journal",
         max_sentences=3,
@@ -88,7 +90,7 @@ async def presentation_host(
 ) -> Answer:
     """The host supplies rank as a persisted presentation care record (data.rank)."""
     return await run_agent(
-        "1週間のお世話と記録されたランクを研究発表会でふり返ってください。",
+        "1週間のお世話と記録された育ちの評価を羽化の日にふり返ってください。",
         ToolContext(store, lab, week_id, fly_id),
         provider=provider,
         feature="presentation",
