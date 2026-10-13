@@ -1,15 +1,11 @@
 "use client";
 import { AppShell } from "@/components/shell/AppShell";
 import { CareFrame } from "@/components/games/CareFrame";
-import { AskShiori } from "@/components/shiori/AskShiori";
-import { ShioriBubble } from "@/components/home/ShioriBubble";
-import { QueryState } from "@/components/ui/QueryState";
-import { useShioriMemo } from "@/lib/api/hooks";
+import { Suspense } from "react";
+import { DiaryScreen } from "@/components/shiori/DiaryScreen";
 
 export default function ShioriPage() {
-  const memo = useShioriMemo();
-  return <AppShell><CareFrame title="シオリの飼育メモ" subtitle="小さな「なんで？」を、いっしょに">
-    <QueryState query={memo}>{data => data ? <ShioriBubble text={data.text} evidence={data.evidence} /> : <p className="text-sm text-muted">今朝のメモはまだありません。気になることを聞いてみよう。</p>}</QueryState>
-    <AskShiori />
+  return <AppShell><CareFrame title="観察日記" subtitle="この子と過ごした日を、読み返す">
+    <Suspense fallback={<p role="status">日記を開いています…</p>}><DiaryScreen /></Suspense>
   </CareFrame></AppShell>;
 }
