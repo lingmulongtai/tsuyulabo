@@ -38,6 +38,8 @@ async def test_all_tables_exist(engine: AsyncEngine) -> None:
         "contest_votes",
         "sleep_sessions",
         "shiori_messages",
+        "diary_entries",
+        "quiet_hints",
         "experiments",
         "jobs",
         "papers",
