@@ -117,10 +117,11 @@ and software-renderer detection. After warmup, sustained <48 fps over three seco
 lowers one tier; it never oscillates upward. Explicit overrides remain fixed. Large
 resume gaps do not count against quality. Slow 300 ms frames do count.
 
-Production browser network inspection found about **1.12 MiB additional JavaScript,
+The isolated W14 preview's production browser network inspection found about **1.12 MiB additional JavaScript,
 312 KiB gzip**, across three route/renderer chunks. The large renderer chunk alone is
 about **1.09 MiB / 303 KiB gzip**. The home route loaded none of those renderer bytes.
-The local HDR is 128 KiB; all eight 1400×1000 review WebPs total about 268 KiB.
+That was before W16 added the live home vial. The local HDR is 128 KiB; all eight
+1400×1000 review WebPs total about 268 KiB.
 These numbers include the Three/Fiber/Drei/postprocessing code, not the shared Next
 runtime. No additional dependency versions in the original lockfile were upgraded.
 
@@ -180,3 +181,111 @@ Visual iteration corrected glossy resin-like eyes, excessive pupal ridges, wire-
 food tracks, intersecting transparent larval segments and mobile framing. The
 committed images are actual procedural WebGL renders, not reference photographs.
 An owner review of the macro realism and physical-phone performance remains necessary.
+
+## W16: the live rearing vial
+
+Home mounts `ColonyVivarium` only after there is an active individual or an owned adult.
+It renders one lazy Three scene at a time; the swipe strip changes the selected vial and
+unmounts the old canvas. Camera orbit gestures and colony swipe gestures have separate
+surfaces. Needs, available care, time of day and pause controls remain in glass panels.
+The original cosmetic inventory remains under 「飼育棚の飾り」.
+
+`CareVial` uses the same current-week ID, API stage and persisted `vial` as home. Meal
+submissions return their verified medium; `CareConsequence` pours it into the substrate
+and drives larval feeding. Accepted care results sit beside the vial rather than covering
+it with a modal, so the pour and the learned odour choice remain visible and interactive.
+A rejected submission cannot show a saved care consequence.
+Temperature uses a glass dial overlay and the existing swinging-needle score;
+touch/release or the stop button
+freezes it. Humidity is a range dial. Preview pace/condensation change before submission;
+the server saves them only on accepted care. Pupation taps select the nearest of the
+three public site heights; confirmation still submits the existing option ID.
+
+`GlassCare` raycasts the fixed-camera front half of the cylinder into a canvas texture.
+Stamps erase its alpha mask. `wiping.ts` previews the same 18×12 cell coverage as Python;
+the API validates the timestamps/coordinates and applies the existing cleaning rewards.
+The disclosure 「静止画・キーボードで拭く」 sends the same stamps when WebGL is unavailable.
+This keeps a usable fallback without pretending the static image reacts in 3D.
+
+`OdourMoment` uses the existing one-trial odour-choice job on the owned brain snapshot.
+Its measured toward/away outcome drives an eight-second approach/avoid moment; a tie
+rests. Hidden documents and the home pause control preserve the remaining observation
+time. Each new job starts a fresh moment even if the outcome is the same. Training waits
+for a queued learning job before enabling observation. No association
+value is converted into a made-up decision. Home's baseline is the decoder's finite
+maximum; it refreshes every 30 seconds only while visible and unpaused.
+
+Eclosion uses the server's saved vial and adult phenotypes. The case opens, the adult
+emerges inward from the chosen site, its wings expand and harden, then evaluation/title appear.
+Pause, visibility suspension, reduced motion and skip are supported. Rewards and adult
+rolls remain in the existing API transaction. Environmental decay is documented in
+`docs/specs/game-rules.md`; these visual scalars do not introduce new growth/reward rules.
+
+Run the updated `week.spec.ts` and `vial-accessibility.spec.ts` against the real API.
+The week runner saves actual home, meal, wiping and eclosion renders to
+`docs/media/v2/integrate-*.webp`. Set `E2E_MEDIA_DIR` to override the destination and
+`E2E_SOFTWARE_WEBGL=1` for reproducible software WebGL. The software renderer is very
+slow; it is not physical-phone performance acceptance. Profile Android/iOS on device
+before claiming the 60 fps target or absence of device-level frame drops.
+
+### Run W16 on Windows
+
+Use three terminals at the repository root. In the API terminal, warm the real brain
+import before announcing server readiness; on a cold Windows host the first lazy import
+can exceed the client's 12-second request timeout. This uses the real engine, not a test
+adapter. Limit its CPU threads to keep the host cool.
+
+```powershell
+New-Item -ItemType Directory -Path .codex-runs -Force | Out-Null
+$env:UV_CACHE_DIR = "$PWD/.uv/cache"
+$env:DATABASE_URL = "sqlite+aiosqlite:///./.codex-runs/game.db"
+$env:TSUYU_DEV_TOOLS = "true"
+$env:RATE_LIMITS_ENABLED = "false"
+$env:CORS_ORIGINS = '["http://127.0.0.1:3116"]'
+$env:OMP_NUM_THREADS = "1"
+$env:MKL_NUM_THREADS = "1"
+$env:OPENBLAS_NUM_THREADS = "1"
+.\.tools\uv.exe run alembic -c services/api/alembic.ini upgrade head
+.\.tools\uv.exe run python -c "import tsuyu_brain.api; import uvicorn; uvicorn.run('tsuyulabo_api.main:app', host='127.0.0.1', port=8116)"
+```
+
+In the web terminal:
+
+```powershell
+$env:NEXT_PUBLIC_API_URL = "http://127.0.0.1:8116"
+$env:NEXT_PUBLIC_DEV_TOOLS = "1"
+npm.cmd run build -w apps/web
+npm.cmd run start -w apps/web -- --port 3116 --hostname 127.0.0.1
+```
+
+In the test terminal:
+
+```powershell
+$env:NEXT_PUBLIC_API_URL = "http://127.0.0.1:8116"
+$env:E2E_BASE_URL = "http://127.0.0.1:3116"
+$env:PLAYWRIGHT_BROWSERS_PATH = "$PWD/.tools/browsers"
+$env:E2E_SOFTWARE_WEBGL = "1"
+npm.cmd run test:e2e -w apps/web -- week.spec.ts vial-accessibility.spec.ts
+```
+
+The API defaults to inline brain jobs for this local run. Queue-mode acceptance needs
+the configured Redis and real worker. The capture helper writes WebP review images,
+not game assets.
+
+### W16 verification (2026-10-13)
+
+- API suite: 486 passed, 1 skipped, 2 excluded eval tests; full run performed once.
+- Repository-wide ruff lint and format check passed (484 Python files).
+- Web lint, typecheck and production build passed; 290 unit tests and 25 E2E-helper
+  tests passed.
+- Real-API Chromium week and WebGL-disabled phone/keyboard/colony tests both passed
+  in the final run (14.9 minutes). Phone checks use a 390×844 browser viewport.
+- SQLite migration round trip reached `0013`, downgraded to `0012`, and returned to
+  `0013`; the non-null JSON vial column and default were inspected. PostgreSQL was
+  not exercised by this local check.
+- A production browser requested no Three renderer chunk on `/settings` or the
+  empty home before receiving an egg. The week test required real ready WebGL
+  canvases on home, care and eclosion; it also checked single-canvas colony rendering.
+- The four `integrate-*.webp` images are actual renders from that week run and were
+  visually inspected. Android/iOS hardware performance and realism acceptance
+  remain open; SwiftShader cannot validate the 60 fps phone target.
