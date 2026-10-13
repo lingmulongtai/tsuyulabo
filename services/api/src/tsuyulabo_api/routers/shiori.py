@@ -4,6 +4,7 @@ from typing import Any
 
 from fastapi import APIRouter, BackgroundTasks, Request
 from pydantic import BaseModel, ConfigDict, Field
+from tsuyulabo_api.routers.companion import router as companion_router
 from tsuyulabo_api.services import memo
 from tsuyulabo_api.services.clock import game_now
 from tsuyulabo_api.services.dispatch import enqueue
@@ -11,11 +12,13 @@ from tsuyulabo_api.services.game import CurrentClock, CurrentUser, Session
 from tsuyulabo_api.services.idempotency import IdempotentRoute
 
 router = APIRouter(prefix="/v1/shiori", route_class=IdempotentRoute)
+router.include_router(companion_router)
 
 
 class AskRequest(BaseModel):
     model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
     question: str = Field(min_length=1, max_length=2000)
+    fly_id: str | None = Field(default=None, min_length=1, max_length=36)
 
 
 @router.get("/memo")
@@ -34,6 +37,14 @@ async def ask(
     session: Session,
     clock: CurrentClock,
 ) -> dict[str, str]:
+    if body.fly_id is not None:
+        from tsuyulabo_api.errors import APIError
+        from tsuyulabo_api.services.shiori_store import SQLRecordStore
+
+        try:
+            await SQLRecordStore(session, user.id).fly_week(body.fly_id)
+        except ValueError as exc:
+            raise APIError("not_found", "この子が見つかりません", 404) from exc
     job = await enqueue(
         session,
         request,
@@ -43,6 +54,7 @@ async def ask(
         {
             "user_id": user.id,
             "question": body.question,
+            "fly_id": body.fly_id,
             "game_now": game_now(clock, user).isoformat(),
         },
     )
