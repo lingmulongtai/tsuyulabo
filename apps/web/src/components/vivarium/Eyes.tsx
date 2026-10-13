@@ -20,9 +20,9 @@ export function Eyes({ white = false }: { white?: boolean }) {
   const facets = useMemo(() => facetTexture(), []);
   useEffect(() => () => facets.dispose(), [facets]);
   return <group>
-    {[-1, 1].map(side => <mesh key={side} position={[side * 0.128, 0.102, 0.333]} rotation={[0.08, side * 0.3, side * -0.18]} scale={[0.095, 0.128, 0.11]}>
+    {[-1, 1].map(side => <mesh key={side} position={[side * 0.119, 0.109, 0.321]} rotation={[0.08, side * 0.3, side * -0.18]} scale={[0.055, 0.087, 0.079]}>
       <sphereGeometry args={[1, 48, 32]} />
-      <meshPhysicalMaterial color={white ? "#e4dbc6" : "#b13213"} map={facets} roughness={0.72} bumpMap={facets} bumpScale={0.004} clearcoat={0.04} clearcoatRoughness={0.6} />
+      <meshPhysicalMaterial color={white ? "#e4dbc6" : "#b13213"} map={facets} roughness={0.78} bumpMap={facets} bumpScale={0.0017} clearcoat={0.015} clearcoatRoughness={0.6} />
     </mesh>)}
   </group>;
 }

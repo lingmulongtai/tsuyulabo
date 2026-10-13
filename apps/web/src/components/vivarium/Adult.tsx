@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
-import { Color, Float32BufferAttribute, LatheGeometry, Mesh, Vector2 } from "three";
+import { Color, Float32BufferAttribute, LatheGeometry, Mesh, MeshStandardMaterial, Vector2 } from "three";
 import { Eyes } from "./Eyes";
 import { Wings } from "./Wings";
 import { Bristles } from "./Bristles";
@@ -15,6 +15,8 @@ export function Adult({ pose, sex, traits, quality, seed, unfold = 1 }: { pose: 
   const abdomenMesh = useRef<Mesh>(null);
   const yellow = traits.includes("yellow"), ebony = traits.includes("ebony");
   const bodyColor = ebony ? "#38332b" : yellow ? "#d2ae42" : "#977044";
+  const roughness = useMemo(() => surfaceTexture("roughness"), []);
+  useEffect(() => () => roughness.dispose(), [roughness]);
   const texture = useMemo(() => surfaceTexture("body", bodyColor), [bodyColor]);
   const abdomen = useMemo(() => {
     const male = sex === "m";
@@ -27,23 +29,35 @@ export function Adult({ pose, sex, traits, quality, seed, unfold = 1 }: { pose: 
     for (let i = 0; i < positions.count; i++) {
       const t = positions.getY(i) / (male ? 0.48 : 0.59);
       const theta = Math.atan2(positions.getX(i), positions.getZ(i));
-      const dark = ((t * 6 + Math.sin(theta * 3) * 0.08) % 1 < 0.3 && positions.getZ(i) > -0.04) || (male && t > 0.67);
-      const c = new Color(dark ? ebony ? "#181a17" : "#3e2f22" : bodyColor).multiplyScalar(0.95 + Math.sin(theta * 7 + t * 85) * 0.04); colors.push(c.r, c.g, c.b);
+      const c = new Color(bodyColor).multiplyScalar(0.95 + Math.sin(theta * 7 + t * 85) * 0.04); colors.push(c.r, c.g, c.b);
     }
     g.setAttribute("color", new Float32BufferAttribute(colors, 3)); return g;
-  }, [sex, bodyColor, ebony]);
+  }, [sex, bodyColor]);
   useEffect(() => () => { abdomen.dispose(); texture.dispose(); }, [abdomen, texture]);
+  const cuticle = useMemo(() => {
+    const material = new MeshStandardMaterial({ vertexColors: true, roughness: 0.87, roughnessMap: roughness, bumpMap: texture, bumpScale: 0.002 });
+    material.onBeforeCompile = shader => {
+      shader.fragmentShader = shader.fragmentShader.replace("#include <color_fragment>", `#include <color_fragment>
+        float theta = vBumpMapUv.x * 6.283185;
+        float phase = fract(vBumpMapUv.y * 6.0 + sin(theta * 3.0) * 0.06);
+        float edge = max(fwidth(phase), 0.012);
+        float band = (1.0 - smoothstep(0.27 - edge, 0.27 + edge, phase)) * smoothstep(-0.3, 0.0, cos(theta));
+        ${sex === "m" ? "band = max(band, smoothstep(0.65, 0.69, vBumpMapUv.y));" : ""}
+        diffuseColor.rgb *= 1.0 - band * ${ebony ? "0.45" : "0.67"};`);
+    };
+    material.customProgramCacheKey = () => "abdomen-bands-" + sex + ebony;
+    return material;
+  }, [sex, ebony, texture, roughness]);
+  useEffect(() => () => cuticle.dispose(), [cuticle]);
   useFrame(() => {
     if (proboscis.current) { proboscis.current.scale.y = 0.3 + pose.feed * 1.9; proboscis.current.position.y = -0.012 - pose.feed * 0.035; }
     if (abdomenMesh.current) abdomenMesh.current.scale.x = 1 + Math.sin(pose.phase * 0.71) * Math.sin(pose.phase * 0.13) * 0.012;
-  });
+  }, -0.5);
   return <group scale={0.58}>
-    <mesh ref={abdomenMesh} position={[0, 0.065, -0.13]} rotation={[-Math.PI / 2, 0, 0]} geometry={abdomen} castShadow>
-      <meshStandardMaterial vertexColors roughness={0.76} bumpMap={texture} bumpScale={0.004} />
-    </mesh>
+    <mesh ref={abdomenMesh} position={[0, 0.065, -0.13]} rotation={[-Math.PI / 2, 0, 0]} geometry={abdomen} material={cuticle} castShadow />
     <Thorax color={bodyColor} />
-    <mesh position={[0, 0.095, 0.294]} scale={[0.151, 0.136, 0.116]} castShadow>
-      <sphereGeometry args={[1, 32, 24]} /><meshStandardMaterial color={ebony ? "#39392e" : "#c39b5e"} roughness={0.73} />
+    <mesh position={[0, 0.095, 0.294]} scale={[0.14, 0.125, 0.108]} castShadow>
+      <sphereGeometry args={[1, 32, 24]} /><meshStandardMaterial color={ebony ? "#39392e" : "#c39b5e"} map={texture}  roughnessMap={roughness} roughness={0.84} />
     </mesh>
     <Eyes white={traits.includes("white")} />
     <Wings curly={traits.includes("curly")} vestigial={traits.includes("vestigial")} pose={pose} unfold={unfold} />
