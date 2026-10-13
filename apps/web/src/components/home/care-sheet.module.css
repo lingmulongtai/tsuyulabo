@@ -1,0 +1,30 @@
+.sheet {
+  position: absolute;
+  z-index: 20;
+  bottom: calc(64px + env(safe-area-inset-bottom));
+  left: 12px;
+  right: 12px;
+  height: clamp(172px, 24dvh, 220px);
+  border-radius: 22px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.sheet[data-expanded="true"] { height: min(72dvh, 680px); }
+.handle {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  min-height: 48px;
+  padding: 14px 16px 4px;
+  width: 100%;
+  touch-action: none;
+}
+.grip { position: absolute; top: 7px; left: calc(50% - 16px); width: 32px; height: 2px; border-radius: 2px; background: #f2eadc66; }
+.content { overflow: auto; overscroll-behavior: contain; min-height: 0; padding: 4px 16px 16px; scrollbar-width: thin; }
+@media (max-height: 500px) {
+  .sheet { height: 140px; bottom: calc(56px + env(safe-area-inset-bottom)); }
+  .sheet[data-expanded="true"] { height: 65dvh; }
+}
