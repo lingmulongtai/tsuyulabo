@@ -152,6 +152,28 @@ export function TrainingGame({ params, onFinish, mode = "training", elapsedTime 
   const cue = CUE_INFO[params.cue];
   const valence = VALENCE_INFO[params.valence];
 
+  if (won && mode === "training") return (
+    <div className="glass-panel rounded-xl p-6 text-center pop-in">
+      {won.stars === 3 && <div className="font-mono text-sm font-bold tracking-[0.3em] text-banana">PERFECT</div>}
+      <div className="font-kiwi text-2xl">つながった！</div>
+      <div className="my-2 flex justify-center gap-2 text-4xl">
+        {[0, 1, 2].map((i) => (
+          <span
+            key={i}
+            className={i < won.stars ? "text-[#ffc83d] pop-in" : "text-line-soft"}
+            style={{ animationDelay: `${450 + i * 280}ms` }}
+          >
+            ★
+          </span>
+        ))}
+      </div>
+      <div className="text-sm text-muted">タイム {(won.elapsedMs / 1000).toFixed(1)}秒</div>
+      <Button className="mt-5" block size="lg" tone="ai" onClick={() => onFinish(won)}>
+        ツユに教える
+      </Button>
+    </div>
+  );
+
   return (
     <div className="flex select-none flex-col gap-3">
       {mode === "training" && <div className="rounded-2xl bg-tint-ai px-4 py-2 text-sm">
@@ -223,29 +245,7 @@ export function TrainingGame({ params, onFinish, mode = "training", elapsedTime 
         </button>
       </div>
 
-      {won && mode === "training" && (
-        <div className="fixed inset-0 z-50 grid place-items-center bg-[#10201d]/55 p-6 backdrop-blur-[2px]">
-          <div className="w-full max-w-sm rounded-[28px] bg-surface-2 p-6 text-center shadow-2xl pop-in">
-            {won.stars === 3 && <div className="font-mono text-sm font-bold tracking-[0.3em] text-banana">PERFECT</div>}
-            <div className="font-kiwi text-2xl">つながった！</div>
-            <div className="my-2 flex justify-center gap-2 text-4xl">
-              {[0, 1, 2].map((i) => (
-                <span
-                  key={i}
-                  className={i < won.stars ? "text-[#ffc83d] pop-in" : "text-line-soft"}
-                  style={{ animationDelay: `${450 + i * 280}ms` }}
-                >
-                  ★
-                </span>
-              ))}
-            </div>
-            <div className="text-sm text-muted">タイム {(won.elapsedMs / 1000).toFixed(1)}秒</div>
-            <Button className="mt-5" block size="lg" tone="ai" onClick={() => onFinish(won)}>
-              ツユに教える
-            </Button>
-          </div>
-        </div>
-      )}
+
     </div>
   );
 }
