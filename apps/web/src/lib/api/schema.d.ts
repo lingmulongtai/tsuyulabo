@@ -738,6 +738,91 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/shiori/diary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read Diary */
+        get: operations["read_diary_v1_shiori_diary_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/shiori/flies/{fly_id}/hint": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read Hint */
+        get: operations["read_hint_v1_shiori_flies__fly_id__hint_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/shiori/flies/{fly_id}/why": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Why */
+        post: operations["why_v1_shiori_flies__fly_id__why_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/shiori/hints/{hint_id}/dismiss": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Dismiss Hint */
+        post: operations["dismiss_hint_v1_shiori_hints__hint_id__dismiss_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/shiori/individuals": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Individuals */
+        get: operations["individuals_v1_shiori_individuals_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/shiori/memo": {
         parameters: {
             query?: never;
@@ -1100,6 +1185,8 @@ export interface components {
         };
         /** AskRequest */
         AskRequest: {
+            /** Fly Id */
+            fly_id?: string | null;
             /** Question */
             question: string;
         };
@@ -1347,6 +1434,49 @@ export interface components {
             /** Path */
             path: number[];
         };
+        /** DiaryMoment */
+        DiaryMoment: {
+            /** At */
+            at: string;
+            /** Behaviour */
+            behaviour: string;
+            /** Environment */
+            environment: {
+                [key: string]: unknown;
+            };
+            /**
+             * Phenotypes
+             * @default []
+             */
+            phenotypes: string[];
+            /** Record Id */
+            record_id: string;
+            /** Seed */
+            seed: string | null;
+            /** Sex */
+            sex?: ("f" | "m") | null;
+            /** Stage */
+            stage: string;
+        };
+        /** DiaryResponse */
+        DiaryResponse: {
+            /**
+             * Ai Label
+             * @default AI
+             */
+            ai_label: string;
+            /** Day */
+            day: string;
+            /** Evidence */
+            evidence: string[];
+            /** Id */
+            id: string;
+            snapshot: components["schemas"]["DiaryMoment"];
+            /** Text */
+            text: string;
+            /** Week Id */
+            week_id: string;
+        };
         /** EndpointRequest */
         EndpointRequest: {
             /** Endpoint */
@@ -1396,6 +1526,20 @@ export interface components {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
         };
+        /** HintResponse */
+        HintResponse: {
+            /**
+             * Ai Label
+             * @default AI
+             */
+            ai_label: string;
+            /** Evidence */
+            evidence: string[];
+            /** Id */
+            id: string;
+            /** Text */
+            text: string;
+        };
         /** HomeResponse */
         HomeResponse: {
             /** Balances */
@@ -1423,10 +1567,21 @@ export interface components {
             todo: {
                 [key: string]: unknown;
             }[];
+            /** Vial */
+            vial?: {
+                [key: string]: unknown;
+            } | null;
             /** Week */
             week: {
                 [key: string]: unknown;
             } | null;
+        };
+        /** IndividualResponse */
+        IndividualResponse: {
+            /** Id */
+            id: string;
+            /** Name */
+            name: string;
         };
         /** IssueRequest */
         IssueRequest: {
@@ -1797,6 +1952,30 @@ export interface components {
         VoteBody: {
             /** Entry Id */
             entry_id: string;
+        };
+        /** WhyRequest */
+        WhyRequest: {
+            /** Behaviour */
+            behaviour?: ("rest" | "walk" | "feed" | "groom" | "approach" | "avoid" | "escape" | "turn_left" | "turn_right" | "fly") | null;
+            /**
+             * Source
+             * @default brain_decoder
+             * @enum {string}
+             */
+            source: "brain_decoder" | "copy_odor_choice";
+        };
+        /** WhyResponse */
+        WhyResponse: {
+            /** Ai Label */
+            ai_label: string;
+            /** Disclaimer */
+            disclaimer: string;
+            /** Evidence */
+            evidence: string[];
+            /** Observation Id */
+            observation_id: string;
+            /** Text */
+            text: string;
         };
         Vial: {
             food: {
@@ -3538,6 +3717,160 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    read_diary_v1_shiori_diary_get: {
+        parameters: {
+            query: {
+                fly_id: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DiaryResponse"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    read_hint_v1_shiori_flies__fly_id__hint_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                fly_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HintResponse"] | null;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    why_v1_shiori_flies__fly_id__why_post: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+            };
+            path: {
+                fly_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["WhyRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WhyResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    dismiss_hint_v1_shiori_hints__hint_id__dismiss_post: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+            };
+            path: {
+                hint_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: boolean;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    individuals_v1_shiori_individuals_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IndividualResponse"][];
                 };
             };
         };

@@ -24,7 +24,15 @@ from tsuyulabo_api.services.brain_state import snapshot as brain_snapshot
 from tsuyulabo_api.services.brain_state import store as store_brain
 from tsuyulabo_api.services.breeding import draw_egg
 from tsuyulabo_api.services.clock import game_now
-from tsuyulabo_api.services.game import Brain, CurrentClock, CurrentUser, Session, reward, rng
+from tsuyulabo_api.services.game import (
+    Brain,
+    CurrentClock,
+    CurrentUser,
+    Session,
+    record_care,
+    reward,
+    rng,
+)
 from tsuyulabo_api.services.idempotency import IdempotentRoute
 
 router = APIRouter(prefix="/v1/weeks", route_class=IdempotentRoute)
@@ -158,6 +166,23 @@ async def eclose(
         await reward(session, user.id, currency, result[currency], "presentation", week.id)
     week.status, week.eclosed_at, week.adult_id = "eclosed", now, adult.id
     week.rank, week.points = result["rank"], result["points"]
+    await record_care(
+        session,
+        user.id,
+        week.id,
+        week.started_at,
+        now,
+        "eclosion",
+        {
+            "traits": list(roll.traits),
+            "stage": "adult",
+            "vial": larva.vial,
+            "rank": week.rank,
+            "fly_id": adult.id,
+            "sex": adult.sex.lower(),
+            "phenotypes": genetics.phenotypes(adult.genotype),
+        },
+    )
     for friend_id in await session.scalars(
         select(Friendship.friend_id).where(Friendship.user_id == user.id)
     ):

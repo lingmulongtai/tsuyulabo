@@ -16,6 +16,7 @@ from tsuyulabo_api.settings import Settings
 
 from . import jobs
 from .config import WorkerConfig
+from .diary import nightly_diaries
 from .push import send_reminders
 from .schedule import nightly_memos
 
@@ -78,7 +79,9 @@ async def run_brain_job(
 
 
 async def nightly_journal(ctx: dict[str, Any]) -> dict[str, Any]:
-    return await nightly_memos(sessions=ctx["sessions"], provider=ctx.get("provider"))
+    diaries = await nightly_diaries(sessions=ctx["sessions"], provider=ctx.get("provider"))
+    memos = await nightly_memos(sessions=ctx["sessions"], provider=ctx.get("provider"))
+    return {"diaries": diaries, "memos": memos}
 
 
 async def slot_push(ctx: dict[str, Any]) -> dict[str, Any]:

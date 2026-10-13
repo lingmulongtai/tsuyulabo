@@ -1,15 +1,16 @@
 "use client";
 import { useState } from "react";
-import { useJob, useShioriAsk } from "@/lib/api/hooks";
+import { useJob } from "@/lib/api/hooks";
+import { useDiaryAsk } from "./hooks";
 import { shioriAnswer } from "@/lib/display";
 import { ShioriBubble } from "../home/ShioriBubble";
 import { Button, Card, TruthBadge } from "../ui/primitives";
 import { ErrorCard } from "../ui/QueryState";
 
-export function AskShiori({ initialQuestion = "", context = "" }: { initialQuestion?: string; context?: string }) {
+export function AskShiori({ initialQuestion = "", context = "", flyId }: { initialQuestion?: string; context?: string; flyId?: string }) {
   const [question, setQuestion] = useState(initialQuestion);
   const [jobId, setJobId] = useState<string>();
-  const ask = useShioriAsk();
+  const ask = useDiaryAsk();
   const job = useJob(jobId);
   const working = ask.isPending || Boolean(jobId && (!job.data || ["pending", "running"].includes(job.data.status)) && !job.error);
   const answer = shioriAnswer(job.data?.result ?? null);
@@ -17,7 +18,7 @@ export function AskShiori({ initialQuestion = "", context = "" }: { initialQuest
     const text = question.trim();
     if (!text || working) return;
     setJobId(undefined);
-    ask.mutate(`${context}${text}`, { onSuccess: data => setJobId(data.job_id) });
+    ask.mutate({ question: `${context}${text}`, fly_id: flyId }, { onSuccess: data => setJobId(data.job_id) });
   };
   return <div className="space-y-4">
     <Card className="space-y-3 p-4">

@@ -57,6 +57,8 @@ def build_world(seed: int) -> ToolContext:
                         )
         states = {cue: round(rng.uniform(-0.9, 0.9), 2) for cue in CUES}
         for cue, value in states.items():
+            if cue in {"yeast", "blue_light"}:
+                continue  # Copy output does not make an unmeasured association a fact.
             store.add(
                 Record(
                     f"#a-{cue}",

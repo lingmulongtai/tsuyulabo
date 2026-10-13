@@ -56,3 +56,14 @@ def test_assistant_mask_keeps_tool_calls_but_excludes_tool_results():
     assert supervised == "tool_call<|im_end|>answer<|im_end|>"
     with pytest.raises(ValueError, match="never truncate"):
         data.encode_assistant(row, Tokenizer(), 2)
+
+
+async def test_v3_direct_intents_and_morning_tools_pass_gpu_data_validation(tmp_path):
+    await export_dataset(tmp_path, 40, 40, balanced=True, companion=True)
+    rows, stats = data.load_data(tmp_path)
+    assert stats["version"] == 3
+    assert len(rows["test"]) == 163
+    broken = deepcopy(next(row for row in rows["train"] if not row["tools"]))
+    broken["messages"][1]["content"] = '{"feature":"hint","question":"no measured observation"}'
+    with pytest.raises(ValueError, match="companion user payload"):
+        data.validate_example(broken)

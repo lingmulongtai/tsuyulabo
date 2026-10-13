@@ -23,7 +23,7 @@ KINDS = {
     "pupation_site": "場所えらび",
     "sleep": "睡眠",
     "eclosion": "羽化・特性",
-    "presentation": "研究発表会",
+    "presentation": "羽化の日",
 }
 WORDS = {
     "presentation": ("発表会", "ランク"),
@@ -136,7 +136,7 @@ def observations(
             detail = f"特性は「{'・'.join(traits)}」" if traits else "羽化"
             sentences.append(f"{detail}が記録されています {latest['id']}。")
         elif topic == "presentation" and "rank" in data:
-            sentences.append(f"研究発表会のランクは{data['rank']}です {latest['id']}。")
+            sentences.append(f"羽化の日の育ちの評価は{data['rank']}です {latest['id']}。")
         else:
             detail = f"、直近のスコアは{data['score']}" if data.get("score") is not None else ""
             sentences.append(f"{label}は{len(selected)}回{detail}です {refs}。")

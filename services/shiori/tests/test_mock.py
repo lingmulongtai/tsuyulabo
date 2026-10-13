@@ -44,7 +44,7 @@ async def test_empty_results_do_not_fabricate() -> None:
         {"role": "tool", "content": '{"records":[]}'},
     ]
     assert not (await MockProvider().complete(messages, [], "mock")).text
-    assert default_provider().cache_namespace == "mock:v2"
+    assert default_provider().cache_namespace == "mock:v3"
 
 
 async def test_learning_question_follows_latest_cue_without_dumping_46_records() -> None:

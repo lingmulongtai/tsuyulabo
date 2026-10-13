@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from tsuyulabo_api.db.base import Base
+from tsuyulabo_api.db.companion import DiaryEntry, QuietHint
 from tsuyulabo_api.db.contest import ContestEntry, ContestVote, Decoration, DecorationLayout
 from tsuyulabo_api.db.daily_circuit import DailyCircuitAttempt
 from tsuyulabo_api.db.economy import IdempotencyKey, Inventory, LedgerAccount, LedgerEntry
@@ -32,6 +33,7 @@ __all__ = [
     "Decoration",
     "DecorationLayout",
     "DailyCircuitAttempt",
+    "DiaryEntry",
     "Experiment",
     "Friendship",
     "Gift",
@@ -53,6 +55,7 @@ __all__ = [
     "Puzzle",
     "PushDelivery",
     "PushSubscription",
+    "QuietHint",
     "ShioriMessage",
     "SleepSession",
     "SumoBout",

@@ -124,6 +124,19 @@
       "AskRequest": {
         "additionalProperties": false,
         "properties": {
+          "fly_id": {
+            "anyOf": [
+              {
+                "maxLength": 36,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fly Id"
+          },
           "question": {
             "maxLength": 2000,
             "minLength": 1,
@@ -740,6 +753,120 @@
         "title": "DailySubmitRequest",
         "type": "object"
       },
+      "DiaryMoment": {
+        "properties": {
+          "at": {
+            "title": "At",
+            "type": "string"
+          },
+          "behaviour": {
+            "title": "Behaviour",
+            "type": "string"
+          },
+          "environment": {
+            "additionalProperties": true,
+            "title": "Environment",
+            "type": "object"
+          },
+          "phenotypes": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Phenotypes",
+            "type": "array"
+          },
+          "record_id": {
+            "title": "Record Id",
+            "type": "string"
+          },
+          "seed": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Seed"
+          },
+          "sex": {
+            "anyOf": [
+              {
+                "enum": [
+                  "f",
+                  "m"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sex"
+          },
+          "stage": {
+            "title": "Stage",
+            "type": "string"
+          }
+        },
+        "required": [
+          "record_id",
+          "at",
+          "seed",
+          "stage",
+          "behaviour",
+          "environment"
+        ],
+        "title": "DiaryMoment",
+        "type": "object"
+      },
+      "DiaryResponse": {
+        "properties": {
+          "ai_label": {
+            "default": "AI",
+            "title": "Ai Label",
+            "type": "string"
+          },
+          "day": {
+            "title": "Day",
+            "type": "string"
+          },
+          "evidence": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Evidence",
+            "type": "array"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "snapshot": {
+            "$ref": "#/components/schemas/DiaryMoment"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          },
+          "week_id": {
+            "title": "Week Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "week_id",
+          "day",
+          "text",
+          "evidence",
+          "snapshot"
+        ],
+        "title": "DiaryResponse",
+        "type": "object"
+      },
       "EndpointRequest": {
         "additionalProperties": false,
         "properties": {
@@ -859,6 +986,37 @@
         "title": "HTTPValidationError",
         "type": "object"
       },
+      "HintResponse": {
+        "properties": {
+          "ai_label": {
+            "default": "AI",
+            "title": "Ai Label",
+            "type": "string"
+          },
+          "evidence": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Evidence",
+            "type": "array"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "text",
+          "evidence"
+        ],
+        "title": "HintResponse",
+        "type": "object"
+      },
       "HomeResponse": {
         "properties": {
           "balances": {
@@ -906,6 +1064,18 @@
             "title": "Todo",
             "type": "array"
           },
+          "vial": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Vial"
+          },
           "week": {
             "anyOf": [
               {
@@ -930,6 +1100,24 @@
           "circadian"
         ],
         "title": "HomeResponse",
+        "type": "object"
+      },
+      "IndividualResponse": {
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ],
+        "title": "IndividualResponse",
         "type": "object"
       },
       "IssueRequest": {
@@ -2036,6 +2224,81 @@
           "entry_id"
         ],
         "title": "VoteBody",
+        "type": "object"
+      },
+      "WhyRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "behaviour": {
+            "anyOf": [
+              {
+                "enum": [
+                  "rest",
+                  "walk",
+                  "feed",
+                  "groom",
+                  "approach",
+                  "avoid",
+                  "escape",
+                  "turn_left",
+                  "turn_right",
+                  "fly"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Behaviour"
+          },
+          "source": {
+            "default": "brain_decoder",
+            "enum": [
+              "brain_decoder",
+              "copy_odor_choice"
+            ],
+            "title": "Source",
+            "type": "string"
+          }
+        },
+        "title": "WhyRequest",
+        "type": "object"
+      },
+      "WhyResponse": {
+        "properties": {
+          "ai_label": {
+            "title": "Ai Label",
+            "type": "string"
+          },
+          "disclaimer": {
+            "title": "Disclaimer",
+            "type": "string"
+          },
+          "evidence": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Evidence",
+            "type": "array"
+          },
+          "observation_id": {
+            "title": "Observation Id",
+            "type": "string"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "text",
+          "evidence",
+          "ai_label",
+          "disclaimer",
+          "observation_id"
+        ],
+        "title": "WhyResponse",
         "type": "object"
       }
     }
@@ -3949,6 +4212,230 @@
           }
         },
         "summary": "Ask"
+      }
+    },
+    "/v1/shiori/diary": {
+      "get": {
+        "operationId": "read_diary_v1_shiori_diary_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "fly_id",
+            "required": true,
+            "schema": {
+              "title": "Fly Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/DiaryResponse"
+                  },
+                  "title": "Response Read Diary V1 Shiori Diary Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Read Diary"
+      }
+    },
+    "/v1/shiori/flies/{fly_id}/hint": {
+      "get": {
+        "operationId": "read_hint_v1_shiori_flies__fly_id__hint_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "fly_id",
+            "required": true,
+            "schema": {
+              "title": "Fly Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/HintResponse"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Response Read Hint V1 Shiori Flies  Fly Id  Hint Get"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Read Hint"
+      }
+    },
+    "/v1/shiori/flies/{fly_id}/why": {
+      "post": {
+        "operationId": "why_v1_shiori_flies__fly_id__why_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "fly_id",
+            "required": true,
+            "schema": {
+              "title": "Fly Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Idempotency-Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WhyRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WhyResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Why"
+      }
+    },
+    "/v1/shiori/hints/{hint_id}/dismiss": {
+      "post": {
+        "operationId": "dismiss_hint_v1_shiori_hints__hint_id__dismiss_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "hint_id",
+            "required": true,
+            "schema": {
+              "title": "Hint Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Idempotency-Key",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "boolean"
+                  },
+                  "title": "Response Dismiss Hint V1 Shiori Hints  Hint Id  Dismiss Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Dismiss Hint"
+      }
+    },
+    "/v1/shiori/individuals": {
+      "get": {
+        "operationId": "individuals_v1_shiori_individuals_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/IndividualResponse"
+                  },
+                  "title": "Response Individuals V1 Shiori Individuals Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Individuals"
       }
     },
     "/v1/shiori/memo": {

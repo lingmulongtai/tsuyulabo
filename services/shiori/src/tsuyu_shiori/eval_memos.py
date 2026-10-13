@@ -32,6 +32,7 @@ async def evaluate_memos(provider: Provider | None = None) -> dict[str, Any]:
             fly_id="eval-fly",
             now=now,
             provider=provider,
+            evaluate_candidate=True,
         )
         verification = answer.provider_verification or answer.verification
         results.append(

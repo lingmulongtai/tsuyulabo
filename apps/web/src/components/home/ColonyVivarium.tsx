@@ -10,6 +10,8 @@ import { usePageVisible } from "../vivarium/lifecycle";
 import type { Cue } from "@/game/puzzles/types";
 import { CUE_INFO } from "@/game/labels";
 import { ActionGrid } from "./ActionGrid";
+import { QuietHint } from "../shiori/QuietHint";
+import { BehaviourWhy } from "../shiori/BehaviourWhy";
 
 export function ColonyVivarium({ data }: { data: HomeData }) {
   const adults = useAdults();
@@ -21,6 +23,7 @@ export function ColonyVivarium({ data }: { data: HomeData }) {
   const visible = usePageVisible();
   const [paused, setPaused] = useState(false);
   const [odourAction, setOdourAction] = useState<Behaviour>();
+  const [whyFor, setWhyFor] = useState<string>();
   const brain = useBehavior(id);
   const refresh = brain.refetch;
   useEffect(() => {
@@ -48,12 +51,16 @@ export function ColonyVivarium({ data }: { data: HomeData }) {
   return <section aria-label="コロニーの飼育びん" className="relative overflow-hidden rounded-xl" style={{ height: "max(650px, calc(100svh - 140px))" }} data-home-vial>
     <div className="absolute inset-x-0 top-0 bottom-[240px]"><Vivarium key={id} seed={id || "empty"} stage={shownAdult ? "adult" : data.fly?.stage ?? "egg"} sex={shownAdult?.sex} traits={shownAdult?.phenotypes}
       environment={habitat(saved)} pupationPosition={sitePosition(saved?.pupation_position)} behaviour={odourAction ?? decodedBehaviour(brain.data)} paused={paused}
-      pointOfInterest={odourAction ? [0.48, -1.08, -0.2] : undefined} /></div>
+      pointOfInterest={odourAction ? [0.48, -1.08, -0.2] : undefined}
+      onGlassPick={() => setWhyFor(id)} /></div>
     <div className="absolute inset-x-3 top-3 flex justify-between gap-2 text-sm">
       <div className="glass-panel rounded-lg p-3"><p>{shownAdult?.name ?? (data.fly ? "この子の一週間" : "卵を迎える準備")}</p><p className="text-xs text-muted">{data.clock.slot === "night" ? "夜" : data.clock.slot === "morning" ? "朝" : "昼"} ・ {shownAdult ? "成虫" : data.fly?.mood_label}</p></div>
       <button className="glass-panel h-11 rounded-lg px-3 text-xs" aria-pressed={paused} onClick={() => setPaused(value => !value)}>{paused ? "動きを再開" : "動きを一時停止"}</button>
     </div>
     <div className="absolute inset-x-3 bottom-3 space-y-2">
+      {id && <button type="button" className="glass-panel min-h-11 rounded-lg px-3 text-xs" aria-expanded={whyFor === id} onClick={() => setWhyFor(whyFor === id ? undefined : id)}>この子を選ぶ</button>}
+      {whyFor === id && <BehaviourWhy key={`${id}:${odourAction ? "odor" : "brain"}:${odourAction ?? decodedBehaviour(brain.data)}`} flyId={id} behaviour={odourAction ?? decodedBehaviour(brain.data)} source={odourAction ? "copy_odor_choice" : "brain_decoder"} onClose={() => setWhyFor(undefined)} />}
+      {id && <QuietHint key={`hint-${id}`} flyId={id} />}
       {ids.length > 1 && <div className="glass-panel flex min-h-11 items-center justify-between rounded-lg px-2" style={{ touchAction: "pan-y" }} onPointerDown={e => { if ((e.target as Element).closest("button")) return; start.current = e.clientX; e.currentTarget.setPointerCapture(e.pointerId); }} onPointerUp={e => { if (start.current !== null && Math.abs(e.clientX - start.current) > 40) move(e.clientX < start.current ? 1 : -1); start.current = null; }} onPointerCancel={() => { start.current = null; }}>
         <button className="min-h-11 px-3" aria-label="前のびん" onClick={() => move(-1)}>←</button><span className="text-xs">{ids.indexOf(id) + 1} / {ids.length} ・ 左右にスワイプ</span><button className="min-h-11 px-3" aria-label="次のびん" onClick={() => move(1)}>→</button>
       </div>}

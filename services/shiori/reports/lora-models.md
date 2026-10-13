@@ -47,3 +47,17 @@ changes (weekday counts 43%, why 0%, missing 0%), which is why v2 replaced it.
 Add oracle traces for morning memos (journal purpose), maxima with the cue name, unmeasured cues ("no association
 yet → run a copy experiment"), injection answers that state the AI identity, and research questions; then retrain and
 re-evaluate on the same 159 questions plus memos before switching the journal model.
+
+### W17 v3 preparation (2026-10-13)
+
+The caretaker prompt, per-intent runtime fallback, companion fact evaluation and balanced
+v3 generator are implemented. `data/shiori-sft-v3` contains 4,000 train / 400 valid /
+163 test traces; diary, hint, behaviour-why and morning each have 200 training cases.
+Unmeasured yeast/blue-light cues are absent from measured association records; copied
+choices retain separate evidence. Maxima and injection oracle answers keep cue names
+and explicit AI identity. Mock passes the original 61-question gate plus 13 companion checks.
+
+Production has **not** switched: questions retain the configured v2 model and the new
+intents use Mock unless individually accepted. No v3 GPU training or live Ollama acceptance
+has been performed. Follow the W17 v3 commands in `ml/shiori-lora/README.md`; offline
+data/dry-run evidence does not establish model quality. See `companion-v3.md` for delivery details.

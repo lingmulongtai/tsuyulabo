@@ -15,7 +15,7 @@ async def today(session: AsyncSession, user_id: str, now: datetime) -> dict[str,
         select(ShioriMessage)
         .where(
             ShioriMessage.user_id == user_id,
-            ShioriMessage.role == "memo",
+            ShioriMessage.role.in_(["memo", "morning_memo"]),
             ShioriMessage.created_at >= start,
             ShioriMessage.created_at < start + timedelta(days=1),
         )

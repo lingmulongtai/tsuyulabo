@@ -111,7 +111,7 @@ def observation_answer(q: Question, results: list[dict[str, Any]], pattern: int)
         detail = f"直近の睡眠は{data['hours']:.1f}時間"
     elif q.intent == "presentation":
         rank = {"normal": "ノーマル", "silver": "シルバー", "gold": "ゴールド", "rainbow": "にじ"}
-        detail = f"研究発表会のランクは{rank.get(data['rank'], data['rank'])}"
+        detail = f"羽化の日の育ちの評価は{rank.get(data['rank'], data['rank'])}"
     elif q.intent == "eclosion":
         detail = f"羽化した特性は「{'・'.join(data['traits'])}」"
     elif q.intent == "success":
