@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { buzz } from "@/game/audio/haptics";
 import * as Sound from "@/game/audio/sound";
 import { INGREDIENT_INFO } from "@/game/labels";
@@ -255,8 +256,33 @@ export function MealGame({ params, onFinish }: { params: MealParams; onFinish: (
 
   const theme = INGREDIENT_INFO[params.theme];
 
+  if (phase === "over") return (
+    <div className="glass-panel rounded-xl p-6 text-center">
+      <div className="font-kiwi text-2xl">できあがり！</div>
+      <div className="mt-1 text-sm text-muted">おいしさ</div>
+      <div className="font-mono text-5xl tabular">{game.score.toLocaleString("ja-JP")}</div>
+      <div className="mt-3 grid grid-cols-3 gap-2 text-sm">
+        <div className="rounded-2xl bg-tint-leaf py-2">
+          <div className="text-xs text-muted">ライン</div>
+          <div className="font-mono text-lg">{game.lines}</div>
+        </div>
+        <div className="rounded-2xl bg-tint-eye py-2">
+          <div className="text-xs text-muted">最大コンボ</div>
+          <div className="font-mono text-lg">{game.max_combo}</div>
+        </div>
+        <div className="rounded-2xl bg-tint-banana py-2">
+          <div className="text-xs text-muted">{theme.name}</div>
+          <div className="font-mono text-lg">{game.theme_cells}</div>
+        </div>
+      </div>
+      <Button className="mt-5" block size="lg" onClick={submit}>
+        ツユにあげる
+      </Button>
+    </div>
+  );
+
   return (
-    <div className="flex select-none flex-col gap-3 touch-none">
+    <div className="flex select-none flex-col gap-3 touch-pan-y">
       {/* HUD */}
       <div className="flex items-end justify-between px-1">
         <div>
@@ -331,7 +357,7 @@ export function MealGame({ params, onFinish }: { params: MealParams; onFinish: (
           </div>
         )}
 
-        {phase !== "playing" && phase !== "over" && (
+        {phase !== "playing" && (
           <div className="absolute inset-0 grid place-items-center rounded-3xl bg-[#1e2c29]/55 backdrop-blur-[2px]">
             {phase === "ready" ? (
               <div className="text-center text-white">
@@ -379,7 +405,7 @@ export function MealGame({ params, onFinish }: { params: MealParams; onFinish: (
                 e.preventDefault();
                 beginDrag(p, e);
               }}
-              className={`grid h-full place-items-center rounded-2xl transition ${selected === p ? "bg-tint-banana ring-2 ring-banana" : ""} ${placed || dragging ? "opacity-0" : ""}`}
+              className={`grid h-full touch-none place-items-center rounded-2xl transition ${selected === p ? "bg-tint-banana ring-2 ring-banana" : ""} ${placed || dragging ? "opacity-0" : ""}`}
               aria-label={`${INGREDIENT_INFO[piece.ingredient].name}のブロック`}
             >
               <div className="grid gap-[2px]" style={{ gridTemplateColumns: `repeat(${w}, 16px)`, gridTemplateRows: `repeat(${h}, 16px)` }}>
@@ -393,34 +419,9 @@ export function MealGame({ params, onFinish }: { params: MealParams; onFinish: (
       </div>
 
       {/* floating dragged piece */}
-      {drag?.moved && <DragGhost p={drag.p} x={drag.x} y={drag.y} params={params} cell={drag.cell} />}
+      {drag?.moved && createPortal(<DragGhost p={drag.p} x={drag.x} y={drag.y} params={params} cell={drag.cell} />, document.body)}
 
-      {phase === "over" && (
-        <div className="fixed inset-0 z-50 grid place-items-center bg-[#10201d]/60 p-6 backdrop-blur-sm">
-          <div className="w-full max-w-sm rounded-[28px] bg-surface-2 p-6 text-center shadow-2xl pop-in">
-            <div className="font-kiwi text-2xl">できあがり！</div>
-            <div className="mt-1 text-sm text-muted">おいしさ</div>
-            <div className="font-mono text-5xl tabular">{game.score.toLocaleString("ja-JP")}</div>
-            <div className="mt-3 grid grid-cols-3 gap-2 text-sm">
-              <div className="rounded-2xl bg-tint-leaf py-2">
-                <div className="text-xs text-muted">ライン</div>
-                <div className="font-mono text-lg">{game.lines}</div>
-              </div>
-              <div className="rounded-2xl bg-tint-eye py-2">
-                <div className="text-xs text-muted">最大コンボ</div>
-                <div className="font-mono text-lg">{game.max_combo}</div>
-              </div>
-              <div className="rounded-2xl bg-tint-banana py-2">
-                <div className="text-xs text-muted">{theme.name}</div>
-                <div className="font-mono text-lg">{game.theme_cells}</div>
-              </div>
-            </div>
-            <Button className="mt-5" block size="lg" onClick={submit}>
-              ツユにあげる
-            </Button>
-          </div>
-        </div>
-      )}
+
     </div>
   );
 }
@@ -430,7 +431,7 @@ function DragGhost({ p, x, y, params, cell }: { p: number; x: number; y: number;
   const { h, w } = shapeSize(p, params);
   return (
     <div
-      className="pointer-events-none fixed z-40 grid gap-[3px] drop-shadow-xl"
+      data-meal-drag className="pointer-events-none fixed z-40 grid gap-[3px] drop-shadow-xl"
       style={{
         left: x - (w * cell) / 2,
         top: y - GHOST_LIFT - h * cell,
