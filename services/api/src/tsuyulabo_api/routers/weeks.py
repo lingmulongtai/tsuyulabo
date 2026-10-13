@@ -176,6 +176,8 @@ async def eclose(
         )
     return {
         "omen_sequence": roll.omen_sequence,
+        "vial": larva.vial,
+        "evaluation": result,
         "tier": roll.tier,
         "lethal_redraws": week.lethal_redraws,
         "adult": {

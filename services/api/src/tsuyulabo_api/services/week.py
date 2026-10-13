@@ -7,7 +7,7 @@ from typing import Any
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from tsuyulabo_api.db.models import Adult, CareEvent, LarvaState, Puzzle, TeamSlot, Week
-from tsuyulabo_api.domain import adults, care_miss, lifecycle, presentation, stats
+from tsuyulabo_api.domain import adults, care_miss, lifecycle, presentation, stats, vial
 from tsuyulabo_api.domain.clock import research_day
 from tsuyulabo_api.domain.events import CareEvent as DomainEvent
 from tsuyulabo_api.domain.puzzles import pupation_site
@@ -75,6 +75,7 @@ async def evaluate(session: AsyncSession, week: Week, now: datetime) -> LarvaSta
     computed = stats.decay(state_stats(state), week.started_at, now)
     state.hunger, state.cleanliness = computed.hunger, computed.cleanliness
     state.hunger_zero_since = computed.hunger_zero_since
+    state.vial = vial.settle(state.vial, now, state.hunger, state.cleanliness)
     state.last_computed_at = now
     state.stage = lifecycle.stage_at(week.started_at, now)
     if ("pupation_site", 5, None) in keys and not any(e.kind == "pupation_default" for e in log):
@@ -84,7 +85,9 @@ async def evaluate(session: AsyncSession, week: Week, now: datetime) -> LarvaSta
             .order_by(Puzzle.issued_at.desc())
             .limit(1)
         )
-        params = puzzle.params if puzzle else pupation_site.generate(rng(), {})[0]
+        params = vial.sites(puzzle.params if puzzle else pupation_site.generate(rng(), {})[0])
+        choice = care_miss.default_pupation_choice(params["options"])
+        state.vial = vial.apply(state.vial, "pupation_site", params, {"choice": choice}, {}, now)
         await record_care(
             session,
             week.user_id,
@@ -92,7 +95,7 @@ async def evaluate(session: AsyncSession, week: Week, now: datetime) -> LarvaSta
             week.started_at,
             now,
             "pupation_default",
-            {"choice": care_miss.default_pupation_choice(params["options"])},
+            {"choice": choice},
         )
     summary = presentation.summarize(log, keys)
     week.points, week.rank = summary.points, summary.rank
@@ -132,6 +135,14 @@ async def payload(session: AsyncSession, week: Week, now: datetime) -> dict[str,
         "care_miss": week.care_miss,
         "points_so_far": week.points,
         "fly": state_stats(state).display() | {"stage": state.stage, "growth": state.growth},
+        "vial": state.vial
+        | {
+            "pupa_age": max(0, min(1, (research_day(week.started_at, now) - 6) / 2)),
+            "learning_pending": any(
+                e.kind == "training" and e.payload.get("learning_status") == "pending"
+                for e in records
+            ),
+        },
         "days": [
             {
                 "research_day": day,

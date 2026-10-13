@@ -7,9 +7,16 @@ from fastapi import APIRouter, Request
 from pydantic import BaseModel, ConfigDict, model_validator
 from tsuyulabo_api.db.models import Puzzle
 from tsuyulabo_api.domain import constants as c
-from tsuyulabo_api.domain import lifecycle, stats
+from tsuyulabo_api.domain import lifecycle, stats, vial
 from tsuyulabo_api.domain.clock import research_day, slot_of
-from tsuyulabo_api.domain.puzzles import cleaning, meal, pupation_site, temperature, training
+from tsuyulabo_api.domain.puzzles import (
+    cleaning,
+    meal,
+    pupation_site,
+    temperature,
+    training,
+    wiping,
+)
 from tsuyulabo_api.domain.puzzles.common import verify_wall_clock
 from tsuyulabo_api.errors import APIError
 from tsuyulabo_api.services import week as service
@@ -66,6 +73,10 @@ async def issue(
     await check_available(session, week, now, body.kind)
     day = research_day(week.started_at, now)
     params, secret = MODULES[body.kind].generate(rng(), body.model_dump() | {"research_day": day})
+    if body.kind == "cleaning":
+        params = params | {"interaction": "wipe"}
+    elif body.kind == "pupation_site":
+        params = vial.sites(params)
     # Keep game-window identity separate from real issue/expiry timestamps.
     secret = secret | {"research_day": day, "slot": slot_of(now)}
     puzzle = Puzzle(
@@ -114,14 +125,22 @@ async def submit(
         raise APIError("puzzle_expired", "お世話の時間帯が変わりました", 409)
     state = await service.evaluate(session, week, now)
     await check_available(session, week, now, puzzle.kind)
-    verified = MODULES[puzzle.kind].verify(puzzle.params, body)
+    if puzzle.kind == "temperature" and "humidity" in body:
+        humidity = body["humidity"]
+        if type(humidity) not in (int, float) or not 0 <= humidity <= 1:
+            raise APIError("invalid_submission", "湿度が不正です", 422)
+    verified = (
+        wiping.verify(body)
+        if puzzle.kind == "cleaning" and "strokes" in body
+        else MODULES[puzzle.kind].verify(puzzle.params, body)
+    )
     if verified.valid:
         # Training reports only elapsed time; other games report explicit action times.
         last_t = body.get("elapsed_ms", 0)
         if puzzle.kind == "meal":
             last_t = max((m["t"] for m in body["moves"]), default=0)
         elif puzzle.kind == "cleaning":
-            last_t = body["taps"][-1]
+            last_t = body["strokes"][-1]["t"] if "strokes" in body else body["taps"][-1]
         elif puzzle.kind == "temperature":
             last_t = body["stop_ms"]
         verified_time = verify_wall_clock(puzzle.issued_at, clock.now(), last_t)
@@ -176,6 +195,9 @@ async def submit(
                 state.skills = state.skills | {skill: True}
     elif puzzle.kind == "pupation_site":
         result |= pupation_site.roll(random, puzzle.params, puzzle.secret, body)
+    state.vial = vial.apply(state.vial, puzzle.kind, puzzle.params, body, result, now)
+    state.vial = vial.settle(state.vial, now, state.hunger, state.cleanliness)
+    result["vial"] = state.vial
     event = await record_care(session, user.id, week.id, week.started_at, now, puzzle.kind, result)
     result = result | {"seq": event.seq, "event_id": event.id}
     if puzzle.kind == "training" and request.app.state.settings.brain_mode == "queue":
