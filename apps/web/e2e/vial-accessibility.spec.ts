@@ -1,8 +1,8 @@
 import { expect, test } from "@playwright/test";
-import { advanceTime, apiAction, openGuestHome, receiveEgg, type Schemas } from "./helpers/session";
+import { advanceTime, apiAction, openCareSheet, openGuestHome, receiveEgg, type Schemas } from "./helpers/session";
 
 test("phone fallback supports glass wiping and a single swipeable colony surface", async ({ page }) => {
-  test.setTimeout(120_000);
+  test.setTimeout(process.env.E2E_SOFTWARE_WEBGL === "1" ? 240_000 : 120_000);
   await page.setViewportSize({ width: 390, height: 844 });
   await page.addInitScript(() => {
     const original = HTMLCanvasElement.prototype.getContext;
@@ -18,6 +18,7 @@ test("phone fallback supports glass wiping and a single swipeable colony surface
   await expect(page.locator("[data-vivarium-fallback]")).toBeVisible();
   await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await advanceTime(page, "next_day");
+  await openCareSheet(page);
   const puzzle = await apiAction<Schemas["Puzzle"]>(page, "/v1/puzzles", "POST", () => page.locator('a[href="/care/cleaning"]').click());
   await page.getByText("静止画・キーボードで拭く", { exact: true }).click();
   await page.getByRole("button", { name: "スタート", exact: true }).click();
@@ -47,8 +48,9 @@ test("phone fallback supports glass wiping and a single swipeable colony surface
   const strip = home.locator("div").filter({ has: page.getByRole("button", { name: "前のびん", exact: true }) }).last();
   const bounds = await strip.boundingBox();
   expect(bounds).not.toBeNull();
-  await page.mouse.move(bounds!.x + 80, bounds!.y + 20); await page.mouse.down();
-  await page.mouse.move(bounds!.x + 200, bounds!.y + 20, { steps: 5 }); await page.mouse.up();
+  const label = (await strip.locator("span").boundingBox())!;
+  await page.mouse.move(label.x + label.width / 2, label.y + label.height / 2); await page.mouse.down();
+  await page.mouse.move(label.x + label.width / 2 + 70, label.y + label.height / 2, { steps: 5 }); await page.mouse.up();
   await expect(home).toContainText("この子の一週間");
   await expect(home.locator("[data-vivarium-fallback]")).toHaveCount(1);
   await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
