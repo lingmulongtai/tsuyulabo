@@ -1,4 +1,4 @@
-# Vivarium (W14)
+# Vivarium (W18 realism pass)
 
 An isolated, client-rendered macro habitat. Open `/vivarium`; expand 「飼育びんの設定」
 to review the four stages, decoder actions, expressed traits, habitat and quality.
@@ -56,10 +56,11 @@ function HabitatPreview() {
 - Environmental scalars are normalized **0–1**, clamped with finite defaults.
   `pupaAge` darkens the case. Food color is a CSS/Three color; moisture changes its
   sheen, yeast changes surface colonies, mould adds patches, grime increases haze.
-- Coordinates are illustrative world units, **not measured millimetres**. Y is up;
-  food surface is `-1.075`, inner vial radius about `1.065`. The organism is kept
-  inside using a radius budget that includes wings. The source may be outside its
-  reachable footprint. `pointOfInterest` supplies the odour/light position.
+- Public coordinates remain the W16 care/decoder units: food `-1.075`, radius
+  `1.065`, Y up. `scale.ts` converts these to **millimetres only at the render
+  boundary**, and inverts raycast picks before calling consumers. Stored pupation
+  sites, wiping UVs and `pointOfInterest` need no migration. Body sizes use separate
+  uniform anatomical scales; ground clearance and emergence offsets are physical.
 - Props apply when they change. Imperative commands take effect immediately; only
   calls made before mounting are queued, consumed once. Prop changes subsequently
   take precedence. Changing `seed` or `stage` resets motor state.
@@ -70,117 +71,155 @@ function HabitatPreview() {
   stop the continuous render loop. WebGL absence, context loss and render errors
   show a stage-specific static render; reload to retry a lost context.
 
-## Rendering
+## W18 reference study
 
-The vial uses a closed lathed wall/base/lip profile, physical transmission, IOR 1.48,
-thin refraction and a procedural scratch/fingerprint roughness map. A rounded foam
-plug has pore texture and instanced fibres. Refractive water droplets (IOR 1.333)
-increase nonlinearly with humidity. Native Three transmission and alpha blending
-are a deliberate approximation for nested transparent surfaces; this is not a
-path-traced multi-layer optical simulation.
+Inspected these real photographs during the pass; **none of their pixels are shipped**:
 
-Cornmeal uses generated albedo/bump texture, recessed tunnel patterns, wet clearcoat,
-and instanced yeast/mould. Adults have a shaped, marked thorax; banded, tapered
-abdomen; compound-eye hexagonal bump/albedo; instanced bristles and articulated
-legs. Wing membranes use physical thin-film interference with spatially varying
-180–620 nm thickness and separate veins. Larvae have a continuous deforming cuticle,
-internal gut/tracheal detail, volume absorption and an inexpensive scattering-rim
-approximation (not full subsurface transport). Eggs have paired respiratory filaments;
-pupae have shallow case segmentation and age-dependent pigmentation.
+- [Masur, laboratory culture vial, MPI-CBG (2011)](https://commons.wikimedia.org/wiki/File:Drosophila_melanogaster_laboratory_culture-vial.jpg):
+  a tall narrow vessel, small adults, a deep compressed plug, food confined to the bottom,
+  a raised wet edge and restrained glass highlights. Used for relative scale and composition.
+- [MIKROMAN6 / Getty Images, Drosophila close-up in Knowable (2018)](https://knowablemagazine.org/content/article/living-world/2018/tricks-and-traits-let-insects-take-flight):
+  the image immediately above “Halteres: more than gyroscopes” shows fine eye facets,
+  sparse long bristles over dense short setae, slender articulated legs, translucent veins
+  and uneven matte cuticle. Used for material and anatomy detail, not as a texture.
 
-The motor controller blends actions and bounds time steps after suspension. A stable
-individual seed changes steering, stride cadence, breathing phase and flight-burst
-duration. Adults use alternating tripod groups, moving forelegs for grooming and an
-extending proboscis for feeding. Larval contractions travel down the continuous skin;
-feeding/burrowing lowers it into the medium. No React state is updated every frame.
+The requested 25 mm diameter / 95 mm vessel height and approximately 2.5 mm female body
+length are explicit scene targets, not measurements inferred from an uncalibrated photo.
 
-Warm key, cool fill, rim and an original 256×128 RGBE studio environment supply light.
-ACES tone mapping and sRGB output are explicit. High adds SSAO, autofocus DOF, subtle
-bloom, vignette and grain; medium drops SSAO and lowers post/DPR cost. The HDR is CC0;
-see [`public/vivarium/LICENSE.md`](../../../public/vivarium/LICENSE.md).
-Regenerate it from the repository root with:
+## Rendering and physical scale
 
-```powershell
-node apps/web/src/components/vivarium/generate-environment.mjs
-```
+- One renderer unit is **1 mm**. The vial has a 0.7 mm wall, a 1.5 mm bottom and a
+  rolled rim. The food extends from 1.5 to 21.5 mm, plus a 0.65 mm wall meniscus.
+  Egg body is 0.5 mm, mature larva 4 mm, pupa about 3 mm. Instar scaling is retained.
+  The adult is deliberately tiny in the wide view; optical framing provides magnification.
+- Cornmeal has actual height relief, pits and a recessed wandering tunnel. The side
+  follows the meniscus without an open seam. Seeded meal grain, dark damp patches,
+  wet clearcoat breakup and instanced yeast/mould respond to the original habitat props.
+  Edge sheen is an inexpensive scattering approximation, not volumetric food transport.
+- Adults have smaller eyes/head proportions, tapered articulated legs with attached
+  setae, abdomen/thorax/head bristles, separate cuticle roughness, and antialiased
+  pigmented abdominal bands. Compound-eye facets remain a bump/albedo lattice.
+  Resting wings slope along the abdomen; veins follow the same surface. Dielectric
+  membrane alpha and thin-film strength increase only at grazing angles. Curly,
+  vestigial, white, yellow, ebony and sex differences remain supported.
+- The cotton core uses tangled fibre/pore detail plus 800 surface fibres at medium
+  (1,700 high; 200 low). Condensation clusters predominantly near the upper wall.
+- Medium/high glass uses one 1024² offscreen buffer (one/three samples respectively),
+  including translucent organisms and food. Native transmission alone erased eggs,
+  pupae and larval skin behind the glass; the buffer preserves the complete subject.
+  The outer shell and rolled mouth use thickness-based refraction, IOR 1.48 and faint
+  roughness smudges. Low uses a cheap alpha glass approximation; droplets use alpha
+  and clearcoat to avoid another full transmission pass. This is not path tracing.
+- An original procedurally painted, softly blurred cool window and warm lamp background
+  sits behind a real bench plane. The existing original studio HDR supplies reflections.
+  Warm key and rim lights have inverse-square falloff in mm; cool fill remains soft.
+- The camera stays outside the wall. A 4.8 mm virtual sensor and stage-specific fields
+  of view provide macro framing. DOF derives from focal length and focus distance in mm
+  (f/5.6, 0.003 mm circle of confusion), bounded to 1.1–24 mm for readable inspection.
+  This small-distance approximation is an artistic optical model, not calibrated lens data.
+  The default wide composition reserves the top fifth for the title and lower space
+  for controls. Medium/high retain DOF; high adds AO. Both use subtle bloom/grain.
+- Original pause, visibility, reduced-motion, action controller, context-loss and
+  WebGL-unavailable fallbacks remain. Larval organs share one instanced draw and
+  paused deformation is skipped. Camera and leg updates reuse scratch vectors. A single
+  shadow map update is shared by the refraction and main passes; pose and tracking
+  update before the buffer capture so both views use the same frame.
+
+## Before / after
+
+These are actual WebGL renders at 1400×1000, high quality, paused, same seeded subject.
+“Before” preserves the checked-in W16 captures; camera framing intentionally changes
+with physical scale. No photographic reference is embedded in these comparisons.
+
+| Stage / framing | Before | After |
+| --- | --- | --- |
+| adult wide | <img alt="W16 adult wide" width="280" src="../../../../../docs/media/v2/before-w18/vivarium-adult-wide.webp"> | <img alt="W18 adult wide" width="280" src="../../../../../docs/media/v2/vivarium-adult-wide.webp"> |
+| adult close | <img alt="W16 adult close" width="280" src="../../../../../docs/media/v2/before-w18/vivarium-adult-close.webp"> | <img alt="W18 adult close" width="280" src="../../../../../docs/media/v2/vivarium-adult-close.webp"> |
+| egg wide | <img alt="W16 egg wide" width="280" src="../../../../../docs/media/v2/before-w18/vivarium-egg-wide.webp"> | <img alt="W18 egg wide" width="280" src="../../../../../docs/media/v2/vivarium-egg-wide.webp"> |
+| egg close | <img alt="W16 egg close" width="280" src="../../../../../docs/media/v2/before-w18/vivarium-egg-close.webp"> | <img alt="W18 egg close" width="280" src="../../../../../docs/media/v2/vivarium-egg-close.webp"> |
+| larva wide | <img alt="W16 larva wide" width="280" src="../../../../../docs/media/v2/before-w18/vivarium-larva-wide.webp"> | <img alt="W18 larva wide" width="280" src="../../../../../docs/media/v2/vivarium-larva-wide.webp"> |
+| larva close | <img alt="W16 larva close" width="280" src="../../../../../docs/media/v2/before-w18/vivarium-larva-close.webp"> | <img alt="W18 larva close" width="280" src="../../../../../docs/media/v2/vivarium-larva-close.webp"> |
+| pupa wide | <img alt="W16 pupa wide" width="280" src="../../../../../docs/media/v2/before-w18/vivarium-pupa-wide.webp"> | <img alt="W18 pupa wide" width="280" src="../../../../../docs/media/v2/vivarium-pupa-wide.webp"> |
+| pupa close | <img alt="W16 pupa close" width="280" src="../../../../../docs/media/v2/before-w18/vivarium-pupa-close.webp"> | <img alt="W18 pupa close" width="280" src="../../../../../docs/media/v2/vivarium-pupa-close.webp"> |
+
+Phone composition at 390×844, medium, with the real overlay:
+
+| Wide | Close |
+| --- | --- |
+| <img alt="Phone wide composition" width="250" src="../../../../../docs/media/v2/vivarium-phone-wide.webp"> | <img alt="Phone close composition" width="250" src="../../../../../docs/media/v2/vivarium-phone-close.webp"> |
 
 ## Budgets and measurements
 
-| Tier | Max DPR | Hairs | Maximum droplets at 100% humidity | Shadows | Post |
+| Tier | Max DPR | Body hairs | Max droplets | Shadow map | Post |
 | --- | ---: | ---: | ---: | --- | --- |
-| high | 1.75 | 420 | 110 | 2048 map | DOF, SSAO, bloom, grain, vignette |
-| medium | 1.25 | 180 | 48 | 1024 map | DOF, bloom, grain, vignette |
+| high | 1.75 | 420 | 110 | 2048 | DOF, AO, bloom, grain, vignette |
+| medium | 1.25 | 180 | 48 | 1024 | DOF, bloom, grain, vignette |
 | low | 1 | 65 | 16 | off | off |
 
-Auto starts conservatively from hardware concurrency, reported memory, coarse pointer
-and software-renderer detection. After warmup, sustained <48 fps over three seconds
-lowers one tier; it never oscillates upward. Explicit overrides remain fixed. Large
-resume gaps do not count against quality. Slow 300 ms frames do count.
+Auto quality still lowers a tier after sustained <48 fps, without oscillation; explicit
+quality stays fixed. Hidden documents stop rendering and reduced motion slows the motor.
 
-The isolated W14 preview's production browser network inspection found about **1.12 MiB additional JavaScript,
-312 KiB gzip**, across three route/renderer chunks. The large renderer chunk alone is
-about **1.09 MiB / 303 KiB gzip**. The home route loaded none of those renderer bytes.
-That was before W16 added the live home vial. The local HDR is 128 KiB; all eight
-1400×1000 review WebPs total about 268 KiB.
-These numbers include the Three/Fiber/Drei/postprocessing code, not the shared Next
-runtime. No additional dependency versions in the original lockfile were upgraded.
+Production measurement on 2026-10-13: Chromium / Three r184, Windows ANGLE Vulkan
+**SwiftShader**, 390×844 CSS pixels, DPR 1, adult walking, explicit quality,
+reduced motion disabled. Each result uses 60 RAF intervals after 15 warmup intervals.
+Draw/triangle counts are the renderer's complete previous-frame snapshot, including
+refraction, shadow and post passes (not unique geometry).
 
-Target: 60 fps at medium on a mid-range phone. **That hardware acceptance remains
-unverified.** The headless SwiftShader software renderer used for repeatable screenshots
-is not a proxy for a phone GPU. Measurements and limitations from the final run are
-recorded below; do not present them as device acceptance or as photographic ground truth.
-
-2026-10-12, production Next build, Chromium 153 headless, Windows, ANGLE Vulkan
-SwiftShader, 390×844 CSS pixels, adult walking, no reduced-motion preference,
-60 `requestAnimationFrame` intervals after 15 warmup intervals:
-
-| Tier | Mean fps | p95 frame time | Draw calls including passes | Triangles including passes |
+| Tier | Mean fps | p95 frame ms | Draw calls | Submitted triangles |
 | --- | ---: | ---: | ---: | ---: |
-| low | 2.79 | 683 ms | 56 | 111,620 |
-| medium | 1.83 | 1,183 ms | 89 | 130,300 |
-| high | 0.71 | 2,683 ms | 124 | 208,356 |
+| low | 6.35 | 300.1 | 54 | 66,094 |
+| medium | 2.20 | 1,016.6 | 61 | 107,876 |
+| high | 0.97 | 2,000.0 | 61 | 123,216 |
 
-This software-only run is very slow; it confirms the relative tier cost, not the
-60 fps target. Medium's current scene budget is under 100 total draw calls and
-150k triangles including passes. Physical Android/iOS GPU profiling and visual
-acceptance of the requested photographic realism remain open. These are procedural
-anatomical approximations, not scanned specimens or a fully validated optical model.
+Sharing the shadow update reduced the medium snapshot from 116 calls / 215,372
+triangles to 61 / 107,876. This is a pass-count reduction, not a portable speedup
+claim; software timing is noisy. Low remains the automatic software-renderer choice.
+The current medium result does **not** meet 60 fps in this measured environment.
 
-## Verification and reproducibility
+**60 fps on a physical mid-range phone remains unverified.** A 390×844 desktop browser
+viewport and SwiftShader timings cannot establish Android/iOS hardware acceptance.
+Owner review of photographic realism also remains necessary: this is procedural anatomy,
+not a specimen scan. In particular glass is screen-space refraction, eye facets are mapped
+rather than separate lenses, and translucency is an approximation.
 
-From `apps/web`: `npm.cmd run lint`, `npm.cmd run typecheck`, `npm.cmd run test`,
-`npm.cmd run build`. The suite includes controller trajectories, action blending,
-stage normalization, reduced motion, phenotype flight capability and sustained
-frame-time quality selection. Final result: **274 tests across 28 files passed**;
-lint, typecheck and production build passed. Browser checks passed for all nine
-decoder actions plus flight, imperative/controlled precedence, pause during habitat
-editing, no horizontal overflow at 390px, context loss, and WebGL disabled. A paused
-pupal capture had exactly zero mean channel difference between light/dark system themes.
+## Verification and reproduction
 
-To reproduce screenshots and browser checks from the repository root:
+From the repository root (Windows):
 
 ```powershell
+npm.cmd run lint -w apps/web
+npm.cmd run typecheck -w apps/web
+npm.cmd run test -w apps/web
+npm.cmd run test:e2e:helpers -w apps/web
+npm.cmd run build -w apps/web
 $env:PLAYWRIGHT_BROWSERS_PATH = "$PWD/.tools/browsers"
 npx.cmd playwright install chromium
-npm.cmd run build -w apps/web
-npm.cmd run start -w apps/web -- --port 3015
-# In another terminal, with the same PLAYWRIGHT_BROWSERS_PATH:
-$env:VIVARIUM_URL = "http://127.0.0.1:3015"
+npm.cmd run start -w apps/web -- --port 3018 --hostname 127.0.0.1
+# Another terminal, with the same browser path:
+$env:VIVARIUM_URL = "http://127.0.0.1:3018"
 node apps/web/src/components/vivarium/capture.mjs
 ```
 
-The capture runner writes `docs/media/v2/vivarium-{stage}-{wide|close}.webp` and
-four fallback assets, compares light/dark system themes, checks a 390px viewport,
-all decoder actions, imperative/controlled precedence, pause, WebGL absence/context
-loss, and samples 60 frames per quality tier after warmup. Its machine-readable
-report is `.codex-runs/vivarium-report.json` (ignored). To repeat only browser checks,
-set `VIVARIUM_SKIP_CAPTURES=1`. Do not rebuild `.next` while testing a running
-production server; restart it after a build.
+The runner saves eight stage images, two phone compositions and four static fallbacks.
+It checks theme independence, phone controls, decoder actions, prop/imperative precedence,
+pause while editing humidity, paused stage swaps without replacing the canvas, context
+loss and WebGL absence. A default-fixture colour
+mask in the macro region rejects missing animals, in addition to the blank-image check;
+this is a regression guard, not a photographic-realism score. It samples 60 frame
+intervals per tier after 15 warmup intervals and writes the renderer name and results
+to ignored `.codex-runs/vivarium-report.json`. `VIVARIUM_SKIP_CAPTURES=1` skips image
+writes; `VIVARIUM_PERF_TIERS=medium` limits profiling; `VIVARIUM_NATIVE_GPU=1` removes
+the software-renderer flags, but still does not make a desktop browser a physical phone.
+Do not rebuild while a production server is serving the previous build.
 
-Visual iteration corrected glossy resin-like eyes, excessive pupal ridges, wire-like
-food tracks, intersecting transparent larval segments and mobile framing. The
-committed images are actual procedural WebGL renders, not reference photographs.
-An owner review of the macro realism and physical-phone performance remains necessary.
+W18 checks: web lint, explicit typecheck and production build passed; **300 unit tests
+in 38 files** and **25 E2E-helper tests in 3 files** passed. Production Chromium captures
+and the interactions above passed without JavaScript or WebGL shader errors.
+
+Regression coverage includes scale anchors, care-coordinate round trips, foot contact,
+physical emergence clearance, upward food normals and recessed surface relief.
+No W18 server/gameplay behavior changed; the W16 real-API week run below is historical,
+not a claim that the complete server integration suite was rerun during this visual pass.
 
 ## W16: the live rearing vial
 
