@@ -11,7 +11,7 @@ export function FoodPour({ color, paused, calm }: { color?: string; paused: bool
     group.current.visible = t < 1;
     group.current.position.y = 1.2 - t * 2.25;
     group.current.scale.set(0.9 + t * 0.1, Math.max(0.02, 0.5 * Math.sin(t * Math.PI)), 1);
-  });
+  }, -0.5);
   return <group ref={group} position={[0, 1.2, 0]}>
     <mesh><cylinderGeometry args={[0.045, 0.13, 1.8, 12]} /><meshStandardMaterial color={color ?? "#bda45c"} roughness={0.45} /></mesh>
   </group>;
