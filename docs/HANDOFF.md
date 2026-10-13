@@ -5,8 +5,15 @@
 ## いまの状態（サマリー）
 
 - **2026-10-12 方針転換（オーナー）**: 研究ゲームをやめ、超リアルな 3D（Three.js）の飼育ゲームにする。AI は意味のある所だけ。
-  正は [vision-v2.md](specs/vision-v2.md)。W14〜W17 を `~/.tsuyulabo/drive-v2.sh` が無人で実行中（Codex 実行 → マージ →
-  lint/型/テスト/ビルド → push → Vercel と自宅サーバーに公開。失敗したらそこで止まる）。ログは `~/.tsuyulabo/drive-v2.log`。
+  正は [vision-v2.md](specs/vision-v2.md)。**W14〜W19 は 2026-10-13 にすべて本番公開済み**（3D の飼育びん、言葉の総入れ替え、
+  お世話をびんの中に、日記・ひとこと・どうして？、リアルさの仕上げ、画面いっぱいの没入 UI）。無人実行は
+  `~/.tsuyulabo/drive-v2*.sh`（再開できる。印は `~/.tsuyulabo/drive-v2.state/`、ログ `~/.tsuyulabo/drive-v2.log`）。
+  Codex の進み具合ページ: `https://ozg14.tail4204cd.ts.net:8443/`（tailnet のみ、`~/.tsuyulabo/codex-status.py`）。
+  次の候補: シオリ v3 の学習（`ml/shiori-lora/README.md` の W17 v3 の手順、データは `data/shiori-sft-v3`）。
+- **この PC の運用**: タスク スケジューラは `tsuyulabo-autostart`（サインイン時に Docker Desktop と進み具合ページを起動）と
+  `tsuyulabo-backup`（毎朝 5:00）だけ。どちらも `wscript ~/.tsuyulabo/hidden.vbs` で**画面を出さずに**動かす。
+  **10 分ごとの監視は、画面が前に出て邪魔なのでオーナーの指示で削除した。定期的に画面が出るものは入れない。**
+  2026-10-13 に、Windows Update の再起動と WSL の停止で本番が 2 回止まった（Docker Desktop を起動し直して復旧）。
 - 日付: 2026-10-01。開発は新しい PC（ROG Zephyrus G14）に移った。**作業場所は `C:\Users\lingm\dev\tsuyulabo`**
   （OneDrive の外）。OneDrive 内の古いコピーは使わない（OneDrive の同期で git が固まった）。セットアップは [NEW_PC.md](NEW_PC.md)。
 - **本番が遊べる**: https://tsuyulabo.vercel.app で育成・フレンドまで遊べる。API は**オーナーの PC で自宅サーバー**として動く
