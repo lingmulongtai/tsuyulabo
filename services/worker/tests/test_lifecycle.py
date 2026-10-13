@@ -14,7 +14,10 @@ from tsuyulabo_api.db.models import Job, ShioriMessage, Week
 
 async def test_batch_continues_after_one_user_fails(
     sessions: async_sessionmaker[AsyncSession],
+    monkeypatch,
 ) -> None:
+    monkeypatch.setenv("SHIORI_ACCEPTED_INTENTS", "morning")
+
     class FailingForOneUser(MockProvider):
         async def complete(self, messages: list, tools: list, model: str) -> Response:
             request = json.loads(next(m["content"] for m in messages if m["role"] == "user"))
