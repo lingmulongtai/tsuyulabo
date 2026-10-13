@@ -22,6 +22,7 @@ export default defineConfig({
     video: "retain-on-failure",
     timezoneId: "Asia/Tokyo",
     locale: "ja-JP",
+    launchOptions: process.env.E2E_SOFTWARE_WEBGL === "1" ? { args: ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"] } : undefined,
   },
   projects: [{
     name: "chromium",

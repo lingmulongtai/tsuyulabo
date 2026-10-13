@@ -1798,6 +1798,25 @@ export interface components {
             /** Entry Id */
             entry_id: string;
         };
+        Vial: {
+            food: {
+                color: string;
+                moisture: number;
+                yeast: number;
+                nutrition: number;
+            };
+            humidity: number;
+            temperature: number;
+            mould: number;
+            grime: number;
+            pace: number;
+            updated_at: string;
+            fed_at: string;
+            pupation_position: number[];
+            pupa_age?: number;
+            cue?: string;
+            learning_pending?: boolean;
+        };
         Genotype: {
             /** @enum {string} */
             sex: "m" | "f";
@@ -1849,6 +1868,7 @@ export interface components {
             started_at: string;
             status: string;
             fly: components["schemas"]["Fly"];
+            vial?: components["schemas"]["Vial"];
             days: {
                 research_day: number;
                 events: {
@@ -1887,6 +1907,7 @@ export interface components {
                 locus: "w" | "y" | "e" | "Cy" | "vg";
                 copy: number;
             } | null;
+            vial?: components["schemas"]["Vial"];
             week_id: string;
             subskills: string[];
             level_cap: number;
@@ -1913,6 +1934,7 @@ export interface components {
             evidence: string[];
         };
         HomeData: {
+            vial?: components["schemas"]["Vial"] | null;
             circadian: components["schemas"]["CircadianResponse"];
             clock: {
                 game_now: string;
@@ -1953,6 +1975,7 @@ export interface components {
             expires_at: string;
         };
         PuzzleResult: {
+            vial?: components["schemas"]["Vial"];
             valid?: boolean;
             score?: number;
             lines?: number;
@@ -1983,6 +2006,8 @@ export interface components {
             research_points: number;
         };
         Eclosion: {
+            vial?: components["schemas"]["Vial"];
+            evaluation?: components["schemas"]["Presentation"];
             omen_sequence: number[];
             tier: number;
             lethal_redraws: number;

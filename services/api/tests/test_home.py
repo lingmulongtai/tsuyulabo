@@ -15,6 +15,7 @@ async def test_home_aggregate_todo_and_memo(sessions: Any) -> None:
             "clock",
             "week",
             "fly",
+            "vial",
             "todo",
             "balances",
             "team",

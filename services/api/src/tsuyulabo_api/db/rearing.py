@@ -52,6 +52,8 @@ class LarvaState(Base):
     preferences: Mapped[dict[str, float]] = mapped_column(JSON, default=dict, server_default="{}")
     skills: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, server_default="{}")
 
+    vial: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, server_default="{}")
+
 
 class CareEvent(Base):
     __tablename__ = "care_events"

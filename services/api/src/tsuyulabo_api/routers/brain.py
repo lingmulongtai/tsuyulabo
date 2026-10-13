@@ -4,9 +4,10 @@ from typing import Literal
 
 from fastapi import APIRouter, BackgroundTasks, Query, Request
 from pydantic import BaseModel, ConfigDict, Field
+from sqlalchemy import select
 from starlette.concurrency import run_in_threadpool
 from tsuyulabo_api.db.base import new_id
-from tsuyulabo_api.db.models import Adult, Week
+from tsuyulabo_api.db.models import Adult, CareEvent, Week
 from tsuyulabo_api.errors import APIError
 from tsuyulabo_api.routers.zukan import BEHAVIORS
 from tsuyulabo_api.services import week as week_service
@@ -90,6 +91,13 @@ async def experiment(
     clock: CurrentClock,
 ) -> dict[str, str]:
     snapshot, _ = await fly_state(fly_id, user, session, clock)
+    adult = await session.get(Adult, fly_id)
+    week_id = adult.week_id if adult is not None else fly_id
+    records = await session.scalars(
+        select(CareEvent).where(CareEvent.week_id == week_id, CareEvent.kind == "training")
+    )
+    if any(event.payload.get("learning_status") == "pending" for event in records):
+        raise APIError("learning_pending", "しつけを覚えているところです。少し待ってください", 409)
     params = body.model_dump() | {
         "user_id": user.id,
         "fly_id": fly_id,

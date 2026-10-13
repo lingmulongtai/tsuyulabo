@@ -1,7 +1,9 @@
 "use client";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { Button, Card } from "../ui/primitives";
-import { Egg, Pupa } from "../art/Stages";
+import { CareVial } from "../vivarium/CareVial";
+import { useHome } from "@/lib/api/hooks";
+import { habitat } from "@/game/vial";
 import { needleTemp, scoreTemperature } from "@/game/puzzles/temperature";
 import type { TemperatureParams, TemperatureSubmission } from "@/game/puzzles/types";
 import * as Sound from "@/game/audio/sound";
@@ -42,6 +44,9 @@ function readoutColor(temp: number) {
  * the score comes from how far the needle is from it when stopped.
  */
 export function TemperatureGame({ params, onFinish, stage = "egg" }: { params: TemperatureParams; onFinish: (value: TemperatureSubmission) => void; stage?: "egg" | "pupa" }) {
+  const home = useHome();
+  const [humidity, setHumidity] = useState<number | null>(null);
+  const moisture = humidity ?? home.data?.vial?.humidity ?? 0.65;
   const timer = useGameTimer(600_000);
   const finished = useRef(false);
   const temp = needleTemp(params, timer.elapsed);
@@ -56,14 +61,16 @@ export function TemperatureGame({ params, onFinish, stage = "egg" }: { params: T
     else if (grade === "good") Sound.tap();
     else Sound.bad();
     buzz(20);
-    onFinish({ stop_ms: t, elapsed_ms: t });
+    onFinish({ stop_ms: t, elapsed_ms: t, humidity: moisture });
   };
   const needle = polar(angleOf(temp), R - 14);
 
   return (
     <Card className="space-y-4 p-5 text-center">
-      <p className="text-sm text-muted">この子が育ちやすい25℃に合わせます。針を目印で止めましょう。</p>
-      <div className="relative mx-auto w-full max-w-[300px]">
+      <p className="text-sm text-muted">ダイヤルに触れて、針を25℃で止めましょう。湿度を回すと、ガラスの水滴が変わります。</p>
+      <CareVial stage={home.data?.fly?.stage ?? stage} environment={{ ...habitat(home.data?.vial), temperature: temp, humidity: moisture }}>
+      <div className="glass-panel absolute right-3 top-3 w-[min(58%,220px)] rounded-lg p-2">
+      <div className="relative mx-auto w-full max-w-[300px] touch-none" onPointerDown={event => { event.currentTarget.setPointerCapture(event.pointerId); }} onPointerUp={stop}>
         <svg viewBox="-24 -26 308 176" className="w-full" aria-hidden>
           <defs>
             <linearGradient id="thermoArc" x1="0" y1="0" x2="1" y2="0">
@@ -88,12 +95,16 @@ export function TemperatureGame({ params, onFinish, stage = "egg" }: { params: T
           <circle cx={CX} cy={CY} r={9} fill="var(--ink)" />
           <circle cx={CX} cy={CY} r={3.5} fill="var(--surface-2)" />
         </svg>
-        <div className="absolute inset-x-0 bottom-[-10px] mx-auto w-16">{stage === "pupa" ? <Pupa eyeShow={0.4} className="w-full" /> : <Egg className="w-full" />}</div>
       </div>
-      <div className="font-mono text-4xl tabular" style={{ color: readoutColor(temp) }}>
+      <label className="block text-sm">湿度 {Math.round(moisture * 100)}%
+        <input type="range" aria-label="湿度ダイヤル" min={20} max={95} step={1} value={Math.round(moisture * 100)} onChange={event => setHumidity(Number(event.target.value) / 100)} className="block w-full min-h-11 accent-amber-700" />
+      </label>
+      <div className="font-mono text-2xl tabular" style={{ color: readoutColor(temp) }}>
         {temp.toFixed(1)}
         <span className="text-lg">℃</span>
       </div>
+      </div>
+      </CareVial>
       <div className="flex justify-between px-2 text-xs text-muted">
         <span>ひんやり</span>
         <span className="font-bold text-leaf">ぴったり 25℃</span>

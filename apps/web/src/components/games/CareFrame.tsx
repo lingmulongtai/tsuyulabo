@@ -42,6 +42,7 @@ export function ResultSheet({
   lines,
   children,
   primary,
+  inline = false,
 }: {
   heading: string;
   great?: boolean;
@@ -49,6 +50,7 @@ export function ResultSheet({
   lines: EffectLine[];
   children?: ReactNode;
   primary: { label: string; href?: string; onClick?: () => void };
+  inline?: boolean;
 }) {
   useEffect(() => {
     if (!great) return;
@@ -59,7 +61,7 @@ export function ResultSheet({
   const toneClass = { leaf: "text-leaf", eye: "text-eye", banana: "text-banana", ai: "text-ai" } as const;
 
   return (
-    <div className="fixed inset-0 z-50 grid place-items-center bg-black/60 p-6 backdrop-blur-sm">
+    <div className={inline ? "grid place-items-center" : "fixed inset-0 z-50 grid place-items-center bg-black/60 p-6 backdrop-blur-sm"}>
       <div className="relative w-full max-w-sm overflow-hidden glass-panel rounded-xl p-6 text-center shadow-2xl pop-in">
         {great && (
           <div className="absolute inset-x-0 top-0 h-28 bg-[radial-gradient(circle_at_50%_0%,rgba(255,213,74,.45),transparent_70%)]" aria-hidden />

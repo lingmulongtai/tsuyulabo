@@ -269,3 +269,21 @@
 - 無効な例も入れる（`"expected": { "valid": false, "reason": "cell_occupied" }`）。`reason` の値は両実装で共通:
   `not_in_hand`, `already_placed`, `out_of_bounds`, `cell_occupied`, `time_exceeded`, `non_monotonic_time`,
   `wrong_length`, `not_adjacent`, `revisit`, `bad_start`, `bad_end`, `checkpoint_order`, `wrong_tap_count`.
+# v2 のガラス拭き入力（W16）
+
+新規のそうじ問題には`interaction="wipe"`を追加する。既存のタイミング問題のparamsと
+`taps`入力は互換性のため保持する。報酬ルール・3領域の加点（perfect=34, good=22,
+miss=5、合計最大100）と育成日・回数は変えない。v2の入力判定だけを指で拭く操作へ変える。
+
+`{strokes:[{u,v,t},...],elapsed_ms}`を提出する。u,vはガラス前面のraycast UVを0〜1で表す。
+18行×12列のマスクのセル中心から半径0.12以内を消す。連続サンプルを直線補間しないため、
+指を離したときの飛び移りは汚れを消さない。静止画・キーボード操作でも同じスタンプを送る。
+2〜800個、有限座標、厳密に増加する整数ms、サンプル間隔12ms以上、全操作・elapsedが10秒以内。
+最終スタンプの時刻も従来どおりサーバー時計と照合する。偽のscore/coverageは無視する。
+
+各縦領域（6行×12列）ごとに、75%以上を7秒以内で拭くとperfect、45%以上はgood、その他miss。
+PythonとTypeScriptは同じ計算を実装する。3D maskが消えても、提出失敗時は保存されたびんを
+清掃済みにしない。再送は同じ冪等キーを使う。
+
+温度・湿度はダイヤルの見せ方にする。温度の採点は従来の針・`stop_ms`契約を保持し、
+触れて止める操作またはボタンで提出する。湿度の調節は表示環境だけに作用し、得点を増やさない。

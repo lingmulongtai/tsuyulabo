@@ -9,6 +9,7 @@ import type { PuzzleContracts, PuzzleKind } from "@/game/puzzles/types";
 import { ErrorCard, LoadingCard } from "../ui/QueryState";
 import { Card } from "../ui/primitives";
 import { ResultSheet, type EffectLine } from "./CareFrame";
+import { CareConsequence } from "./CareConsequence";
 
 type Result = components["schemas"]["PuzzleResult"];
 export function PuzzleSession<K extends PuzzleKind>({ kind, practice = false, practiceParams, children }: {
@@ -48,7 +49,7 @@ export function PuzzleSession<K extends PuzzleKind>({ kind, practice = false, pr
     {!params && !issue.error && !decodeError && <LoadingCard />}
     {params && !submission && practiceScore === null && children(params, finish)}
     {submission && !submit.data && (submit.error ? <ErrorCard error={submit.error} retry={retrySubmit} /> : <LoadingCard />)}
-    {submit.data && <PuzzleResult kind={kind} result={submit.data} />}
+    {submit.data && <><CareConsequence kind={kind} result={submit.data} /><PuzzleResult kind={kind} result={submit.data} /></>}
     {practiceScore !== null && <ResultSheet heading="練習おつかれさま！" lines={[{ label: "おいしさ", value: String(practiceScore) }]} primary={{ label: "ホームへ", href: "/" }}><p className="mt-2 text-sm text-muted">練習の結果です。育成には反映されません。</p></ResultSheet>}
   </>;
 }
@@ -64,7 +65,7 @@ function PuzzleResult({ kind, result }: { kind: PuzzleKind; result: Result }) {
   }
   if (result.hit !== undefined) lines.push({ label: "羽化へのボーナス", value: result.hit ? "あり" : "なし" });
   const great = result.great_success ?? (result.hit ?? (result.score === 100));
-  return <ResultSheet heading={kind === "pupation_site" ? result.hit ? "ぴったりの場所！" : "ここで見守ってみよう" : "お世話できました！"}
+  return <ResultSheet inline heading={kind === "pupation_site" ? result.hit ? "ぴったりの場所！" : "ここで見守ってみよう" : "お世話できました！"}
     great={great} greatLabel={kind === "meal" ? "大成功！" : kind === "pupation_site" ? "あたり！" : "PERFECT!"}
     lines={lines} primary={{ label: "ホームへ", href: "/" }}>
     <p className="mt-3 text-sm text-muted">{kind === "meal" ? "配合したごはんを届けました。育つ力になります。" : kind === "cleaning" ? "びんの汚れを落としました。清潔な環境で過ごせます。" : kind === "temperature" ? "びんの温度を整えました。育つ速さにつながります。" : "さなぎになる場所を選びました。羽化を見守りましょう。"}</p>

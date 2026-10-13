@@ -53,7 +53,7 @@ export interface CleaningParams {
   readonly zone: { readonly center: number; readonly perfect: number; readonly good: number };
   readonly phase: number;
 }
-export interface CleaningSubmission { readonly taps: readonly number[]; readonly elapsed_ms: number }
+export type CleaningSubmission = { readonly taps: readonly number[]; readonly elapsed_ms: number } | import("./wiping").WipeSubmission;
 export type CleaningVerifyResult = VerifyResult<{
   readonly score: number;
   readonly grades: readonly Grade[];
@@ -64,13 +64,14 @@ export interface TemperatureParams {
   readonly amp_c: number;
   readonly phase: number;
 }
-export interface TemperatureSubmission { readonly stop_ms: number; readonly elapsed_ms: number }
+export interface TemperatureSubmission { readonly stop_ms: number; readonly elapsed_ms: number; readonly humidity?: number }
 export interface TemperatureScore { readonly score: number; readonly grade: Grade }
 export type TemperatureVerifyResult = VerifyResult<TemperatureScore>;
 
 export interface PupationSiteParams {
   readonly options: readonly {
     readonly id: string; readonly label: string; readonly detail: string;
+    readonly position?: readonly number[];
   }[];
   readonly hint: string;
 }

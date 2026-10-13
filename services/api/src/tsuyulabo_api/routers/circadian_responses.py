@@ -18,6 +18,7 @@ class HomeResponse(BaseModel):
     clock: dict[str, Any]
     week: dict[str, Any] | None
     fly: dict[str, Any] | None
+    vial: dict[str, Any] | None = None
     todo: list[dict[str, Any]]
     balances: dict[str, int]
     team: dict[str, Any]

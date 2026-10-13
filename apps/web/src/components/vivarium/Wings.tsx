@@ -3,7 +3,7 @@ import { useFrame } from "@react-three/fiber";
 import { CatmullRomCurve3, DataTexture, DoubleSide, Group, RGBAFormat, Shape, ShapeGeometry, TubeGeometry, Vector3 } from "three";
 import type { Pose } from "./controller";
 
-export function Wings({ curly, vestigial, pose }: { curly: boolean; vestigial: boolean; pose: Pose }) {
+export function Wings({ curly, vestigial, pose, unfold = 1 }: { curly: boolean; vestigial: boolean; pose: Pose; unfold?: number }) {
   const left = useRef<Group>(null), right = useRef<Group>(null);
   const thickness = useMemo(() => {
     const data = new Uint8Array(64 * 128 * 4);
@@ -31,10 +31,10 @@ export function Wings({ curly, vestigial, pose }: { curly: boolean; vestigial: b
       group.rotation.y = sign * (0.2 + pose.flight * 0.9);
     }
   });
-  return <group position={[0, 0.23, -0.025]} scale={vestigial ? 0.28 : 1}>
+  return <group position={[0, 0.23, -0.025]} scale={(vestigial ? 0.28 : 1) * (0.12 + 0.88 * unfold)}>
     {[-1, 1].map(sign => <group key={sign} ref={sign < 0 ? left : right} scale={[sign, 1, 1]}>
       <mesh geometry={geometry.sheet}>
-        <meshPhysicalMaterial color="#ddd9c9" side={DoubleSide} transparent opacity={0.5} depthWrite={false} metalness={0.22} roughness={0.18} transmission={0.15} thickness={0.001} ior={1.52} iridescence={1} iridescenceIOR={1.36} iridescenceThicknessRange={[180, 620]} iridescenceThicknessMap={thickness} />
+        <meshPhysicalMaterial color="#ddd9c9" side={DoubleSide} transparent opacity={0.2 + unfold * 0.3} depthWrite={false} metalness={0.22} roughness={0.5 - unfold * 0.32} transmission={0.15} thickness={0.001} ior={1.52} iridescence={1} iridescenceIOR={1.36} iridescenceThicknessRange={[180, 620]} iridescenceThicknessMap={thickness} />
       </mesh>
       {geometry.veins.map((vein,i) => <mesh key={i} geometry={vein}><meshStandardMaterial color="#736850" transparent opacity={0.72} roughness={0.7} /></mesh>)}
     </group>)}

@@ -6,6 +6,7 @@ import { Suspense, useRef, useState } from "react";
 import { CareFrame, ResultSheet } from "@/components/games/CareFrame";
 import { TeachPicker } from "@/components/games/TeachPicker";
 import { TrainingGame, type TrainingFinish } from "@/components/games/TrainingGame";
+import { TrainingConsequence } from "@/components/games/TrainingConsequence";
 import { AppShell } from "@/components/shell/AppShell";
 import { Card } from "@/components/ui/primitives";
 import { ErrorCard, LoadingCard } from "@/components/ui/QueryState";
@@ -62,7 +63,9 @@ function TrainingRound({ practice = false, offline = false, round, remaining, lo
     {finish && !practicing && !submit.data && (submit.error ? <ErrorCard error={submit.error} retry={() => {
       if (issue.data) submit.mutate({ id: issue.data.puzzle_id, submission: { ...finish.submission } });
     }} /> : <LoadingCard />)}
+    {params && finish && !practicing && submit.data && <TrainingConsequence cue={params.cue} result={submit.data} />}
     {params && finish && (practicing || outcome) && <ResultSheet
+      inline={!practicing}
       heading={practicing ? "練習おつかれさま！" : "覚えた！"}
       great={outcome?.hirameki} greatLabel="ひらめき！"
       lines={[

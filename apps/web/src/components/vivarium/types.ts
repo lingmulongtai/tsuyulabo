@@ -12,6 +12,8 @@ export interface Habitat {
   grime?: number;
   /** Normalized development within the pupal stage. */
   pupaAge?: number;
+  temperature?: number;
+  pace?: number;
 }
 export interface VivariumHandle {
   setBehaviour(behaviour: Behaviour): void;
@@ -32,6 +34,13 @@ export interface VivariumProps {
   paused?: boolean;
   className?: string;
   onQualityChange?: (quality: Quality) => void;
+  /** Glass raycast coordinates; domain scoring stays on the API. */
+  onGlassStroke?: (u: number, v: number) => void;
+  onGlassPick?: (point: Point) => void;
+  wiped?: readonly { u: number; v: number }[];
+  pupationPosition?: Point;
+  pour?: boolean;
+  eclosionProgress?: number;
 }
 export const clamp01 = (value: number | undefined, fallback: number): number =>
   value === undefined || !Number.isFinite(value) ? fallback : Math.max(0, Math.min(1, value));

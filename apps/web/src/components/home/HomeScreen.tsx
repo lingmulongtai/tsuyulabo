@@ -1,23 +1,24 @@
+"use client";
 import Link from "next/link";
+import { useAdults } from "@/lib/api/hooks";
 import type { HomeData } from "@/lib/types";
 import { DailyCircuitCard } from "../daily/DailyCircuitCard";
 import { RaceCard } from "../race/RaceCard";
 import { SumoCard } from "../sumo/SumoCard";
-import { CurrencyPill, Card } from "../ui/primitives";
-import { cleanlinessState, hungerState } from "@/lib/raising-copy";
-import { ActionGrid } from "./ActionGrid";
+import { CurrencyPill } from "../ui/primitives";
+import { ColonyVivarium } from "./ColonyVivarium";
 import { ShioriBubble } from "./ShioriBubble";
 import { TeamStrip } from "./TeamStrip";
-import { DecorationEditor } from "./DecorationEditor";
 import { TodoList } from "./TodoList";
 import { WeekStrip } from "./WeekStrip";
+import { DecorationEditor } from "./DecorationEditor";
 
 const SLOT_GREETING = { morning: "おはよう", noon: "こんにちは", night: "こんばんは" } as const;
 
 /** `hero` is shown right under the header (e.g. the "receive an egg" call to action when no week is running). */
 export function HomeScreen({ data, hero, footer }: { data: HomeData; hero?: React.ReactNode; footer?: React.ReactNode }) {
-  const { clock, week, fly, balances } = data;
-  const night = clock.slot === "night";
+  const adults = useAdults();
+  const { clock, week, balances } = data;
 
   return (
     <div className="flex flex-col gap-4 px-4 pt-[max(14px,env(safe-area-inset-top))]">
@@ -46,6 +47,8 @@ export function HomeScreen({ data, hero, footer }: { data: HomeData; hero?: Reac
 
       {hero}
 
+      {(data.fly || Boolean(adults.data?.length)) && <ColonyVivarium data={data} />}
+
       {week?.ready_to_eclose && (
         <Link
           href="/presentation"
@@ -60,27 +63,16 @@ export function HomeScreen({ data, hero, footer }: { data: HomeData; hero?: Reac
         </Link>
       )}
 
-      {week && fly ? (
-        <DecorationEditor stage={fly.stage} researchDay={week.research_day} moodLabel={fly.mood_label} night={night} />
-      ) : null}
-
-      {fly && (fly.stage.startsWith("larva") || fly.stage === "wandering") && (
-        <Card className="space-y-1 px-4 py-3 text-sm">
-          <p>{hungerState(fly.hunger)}</p>
-          <p>{cleanlinessState(fly.cleanliness)}</p>
-          <p className="text-muted">今の様子：{fly.mood_label}</p>
-        </Card>
-      )}
 
       {data.shiori.memo && <ShioriBubble text={data.shiori.memo.text} evidence={data.shiori.memo.evidence} />}
 
-      {data.todo.length > 0 && <ActionGrid todo={data.todo} />}
       {data.todo.length > 0 && <TodoList todo={data.todo} />}
       <DailyCircuitCard />
       <RaceCard />
       <SumoCard />
       <Link href="/contest" className="rounded-2xl bg-tint-leaf p-4 text-center font-bold text-leaf">今週の見た目コンテストを見る →</Link>
       <TeamStrip team={data.team} />
+      {week && data.fly && <details className="glass-panel rounded-lg p-3 text-sm"><summary>飼育棚の飾り</summary><div className="pt-3"><DecorationEditor stage={data.fly.stage} researchDay={week.research_day} moodLabel={data.fly.mood_label} night={clock.slot === "night"} /></div></details>}
       <details className="text-xs text-muted"><summary>飼育の経験</summary><CurrencyPill kind="research" value={balances.research_points} /></details>
       {footer}
     </div>

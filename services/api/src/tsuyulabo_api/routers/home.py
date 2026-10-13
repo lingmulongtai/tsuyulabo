@@ -36,6 +36,7 @@ async def home(
         },
         "week": None,
         "fly": None,
+        "vial": None,
         "todo": [],
         "balances": await balances(session, user.id),
         "team": team.payload(await team.settle(session, user.id, now, brain)),
@@ -58,6 +59,7 @@ async def home(
             )
         }
         result["fly"] = detail["fly"]
+        result["vial"] = detail["vial"]
         usage = service.domain_events(await service.events(session, week))
         for item in lifecycle.action_availability(week.started_at, now, usage):
             todo = asdict(item)

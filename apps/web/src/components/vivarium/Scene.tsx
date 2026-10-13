@@ -13,21 +13,29 @@ import { Lighting } from "./Lighting";
 import { CameraRig } from "./CameraRig";
 import { Post } from "./Post";
 import { Fallback } from "./Fallback";
+import { GlassCare } from "./GlassCare";
+import { FoodPour } from "./FoodPour";
 import { BehaviourController } from "./controller";
+import { carePose } from "./care-pose";
 import { budgets, initialQuality, QualityMonitor } from "./quality";
 import { useCalmMotion, usePageVisible } from "./lifecycle";
-import { displayStage, type Quality, type VivariumHandle, type VivariumProps } from "./types";
+import { clamp01, displayStage, type Quality, type VivariumHandle, type VivariumProps } from "./types";
 
 const wild = ["wild"] as const;
-function World({ controller, focus, stage = "adult", environment = {}, sex = "f", traits = wild, seed = "tsuyu", paused, calm, selected, onTier, automatic, framing = "wide" }: VivariumProps & { controller: BehaviourController; focus: Vector3; calm: boolean; selected: Quality; automatic: boolean; onTier: (tier: Quality) => void }) {
+function World({ controller, focus, stage = "adult", environment = {}, sex = "f", traits = wild, seed = "tsuyu", paused, calm, selected, onTier, automatic, framing = "wide", onGlassStroke, onGlassPick, wiped, pupationPosition = [0.24, -0.05, 0.94], pour, eclosionProgress }: VivariumProps & { controller: BehaviourController; focus: Vector3; calm: boolean; selected: Quality; automatic: boolean; onTier: (tier: Quality) => void }) {
   const organism = useRef<Group>(null);
   const monitor = useMemo(() => new QualityMonitor(), []);
   const metrics = useRef({ seconds: 0, frames: 0 });
   const kind = displayStage(stage);
   useFrame((state, dt) => {
-    const pose = paused ? controller.pose : controller.update(dt, stage, calm, !traits.includes("vestigial"));
+    const thermalPace = Math.max(0.3, Math.min(1.5, ((environment.temperature ?? 25) - 12) / 13));
+    const pose = paused ? controller.pose : controller.update(dt * thermalPace * clamp01(environment.pace, 1), stage, calm, !traits.includes("vestigial"));
     if (organism.current) {
-      if (kind === "pupa") { organism.current.position.set(0.24, -0.05, 0.94); organism.current.rotation.set(0, 0, 0); }
+      if (kind === "pupa") { organism.current.position.set(...pupationPosition); organism.current.rotation.set(0, 0, 0); }
+      else if (stage === "wandering" || eclosionProgress !== undefined) {
+        const care = carePose(pupationPosition, pose.phase, eclosionProgress);
+        organism.current.position.set(...care.position); organism.current.rotation.set(...care.rotation as [number, number, number]);
+      }
       else { organism.current.position.set(...pose.position); organism.current.rotation.y = pose.heading; }
       focus.set(organism.current.position.x, organism.current.position.y + ({ pupa: 0.2, adult: 0.045, larva: -0.035, egg: -0.052 }[kind]), organism.current.position.z);
       if (kind === "adult") focus.set(focus.x + Math.sin(pose.heading) * 0.12, focus.y, focus.z + Math.cos(pose.heading) * 0.12);
@@ -55,11 +63,14 @@ function World({ controller, focus, stage = "adult", environment = {}, sex = "f"
     <fog attach="fog" args={["#33392e", 12, 35]} />
     <Lighting quality={selected} />
     <Medium {...environment} />
+    {pour && <FoodPour color={environment.food?.color} paused={Boolean(paused)} calm={calm} />}
     <group ref={organism} position={kind === "pupa" ? [0.24, -0.05, 0.94] : [0, -0.99, 0.12]}>
-      {kind === "adult" ? <Adult pose={controller.pose} sex={sex} traits={traits} quality={selected} seed={seed} /> : kind === "egg" ? <Egg /> : kind === "larva" ? <Larva pose={controller.pose} stage={stage} /> : <Pupa age={environment.pupaAge} />}
+      {kind === "adult" ? <Adult pose={controller.pose} sex={sex} traits={traits} quality={selected} seed={seed} unfold={eclosionProgress === undefined ? 1 : clamp01((eclosionProgress - 0.25) / 0.65, 0)} /> : kind === "egg" ? <Egg /> : kind === "larva" ? <Larva pose={controller.pose} stage={stage} /> : <Pupa age={environment.pupaAge} />}
     </group>
-    <Vial humidity={environment.humidity} grime={environment.grime} quality={selected} />
-    <CameraRig framing={framing} focus={focus} calm={calm} paused={Boolean(paused)} subject={kind} />
+    {eclosionProgress !== undefined && <group position={[...pupationPosition]}><Pupa age={1} opened={Math.min(1, eclosionProgress * 4)} /></group>}
+    <Vial humidity={environment.humidity} grime={environment.grime} quality={selected} wiped={wiped} />
+    {(onGlassStroke || onGlassPick || wiped) && <GlassCare onGlassStroke={onGlassStroke} onGlassPick={onGlassPick} wiped={wiped} grime={environment.grime} mould={environment.mould} />}
+    <CameraRig framing={framing} focus={focus} calm={calm} paused={Boolean(paused)} interactive={!onGlassStroke && !onGlassPick} subject={kind} />
     <Post quality={selected} focus={focus} />
   </>;
 }

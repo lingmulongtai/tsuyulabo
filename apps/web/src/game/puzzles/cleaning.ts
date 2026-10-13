@@ -1,5 +1,6 @@
 import type { CleaningParams, CleaningSubmission, CleaningVerifyResult, Grade } from "./types";
 import { timesReason } from "./timing";
+import { wipePreview } from "./wiping";
 
 export function markerPosition(params: CleaningParams, tMs: number): number {
   const remainder = (tMs / params.period_ms + params.phase) % 1;
@@ -16,6 +17,16 @@ export function gradeTap(params: CleaningParams, tMs: number): Grade {
 export function verifyCleaning(
   params: CleaningParams, submission: CleaningSubmission,
 ): CleaningVerifyResult {
+  if ("strokes" in submission) {
+    const reason = timesReason(submission.strokes.map(p => p.t), submission.elapsed_ms, true, 10000);
+    if (reason) return { valid: false, reason };
+    if (submission.elapsed_ms > 10000) return { valid: false, reason: "time_exceeded" };
+    if (submission.strokes.length < 2 || submission.strokes.length > 800) return { valid: false, reason: "wrong_length" };
+    if (submission.strokes.some(p => !Number.isFinite(p.u + p.v) || p.u < 0 || p.u > 1 || p.v < 0 || p.v > 1)) return { valid: false, reason: "out_of_bounds" };
+    if (submission.strokes.some((p, i, all) => i > 0 && p.t - all[i - 1].t < 12)) return { valid: false, reason: "non_monotonic_time" };
+    const { score, grades } = wipePreview(submission.strokes, submission.elapsed_ms);
+    return { valid: true, score, grades };
+  }
   if (!Array.isArray(submission.taps) || submission.taps.length !== params.taps) {
     return { valid: false, reason: "wrong_tap_count" };
   }

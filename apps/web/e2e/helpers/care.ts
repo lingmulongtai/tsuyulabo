@@ -4,6 +4,7 @@ import { puzzleParams } from "../../src/lib/api/puzzle";
 import type { PuzzleKind } from "../../src/game/puzzles/types";
 import { apiAction, returnHome, type Schemas } from "./session";
 import { solveTraining } from "./training-solver";
+import { captureVial } from "./vial-media";
 
 async function openPuzzle(page: Page, kind: PuzzleKind) {
   const route = kind === "pupation_site" ? "pupation" : kind;
@@ -34,30 +35,41 @@ async function box(locator: Locator) {
 
 export async function playTemperature(page: Page) {
   const puzzle = await openPuzzle(page, "temperature");
+  await page.getByRole("slider", { name: "湿度ダイヤル" }).focus();
+  await page.getByRole("slider", { name: "湿度ダイヤル" }).press("ArrowRight");
   await page.getByRole("button", { name: "スタート", exact: true }).click();
   const result = await submit(page, puzzle, () =>
     page.getByRole("button", { name: "ここでストップ！", exact: true }).click());
   // Timing and random phase affect the score; acceptance of real input is the contract.
   expect(result.score).toBeGreaterThanOrEqual(0);
   expect(result.score).toBeLessThanOrEqual(100);
+  expect(result.vial?.humidity).toBeGreaterThanOrEqual(0.2);
   await expect(page.getByText("お世話できました！", { exact: true })).toBeVisible();
   await returnHome(page);
 }
 
-export async function playCleaning(page: Page) {
+export async function playCleaning(page: Page, capture = false) {
   const puzzle = await openPuzzle(page, "cleaning");
+  const surface = page.locator("[data-care-vial]");
+  await expect(surface.locator("canvas[data-ready='true']")).toBeVisible({ timeout: 30_000 });
   await page.getByRole("button", { name: "スタート", exact: true }).click();
-  // The large tap control stays still while the bottle itself shakes.
-  await page.getByRole("button", { name: "トン！ あと3回", exact: true }).click();
-  await page.getByRole("button", { name: "トン！ あと2回", exact: true }).click();
+  await surface.scrollIntoViewIfNeeded();
+  const bounds = await box(surface);
+  await page.mouse.move(bounds.x + bounds.width * 0.46, bounds.y + bounds.height * 0.4);
+  await page.mouse.down();
+  for (let i = 0; i < 6; i++) await page.mouse.move(bounds.x + bounds.width * (0.46 + i * 0.02), bounds.y + bounds.height * (0.4 + i * 0.03), { steps: 2 });
+  await page.mouse.up();
+  await expect(page.getByRole("button", { name: "拭き終わる", exact: true })).toBeEnabled();
+  if (capture) await captureVial(page, "cleaning", "[data-care-vial]");
   const result = await submit(page, puzzle, () =>
-    page.getByRole("button", { name: "トン！ あと1回", exact: true }).click());
+    page.getByRole("button", { name: "拭き終わる", exact: true }).click());
   expect(result.grades).toHaveLength(3);
   expect(result.score).toBeGreaterThanOrEqual(15);
+  expect(result.vial?.grime).toBeLessThanOrEqual(1);
   await returnHome(page);
 }
 
-export async function playMeal(page: Page) {
+export async function playMeal(page: Page, capture = false) {
   const puzzle = await openPuzzle(page, "meal");
   const params = puzzleParams("meal", puzzle.params);
   const shape = SHAPES[params.pieces[0].shape];
@@ -81,7 +93,10 @@ export async function playMeal(page: Page) {
   const result = await submit(page, puzzle, () => feed.click());
   expect(result.score).toBe(shape.length);
   expect(result.effects?.hunger).toBeGreaterThan(0);
+  expect(result.vial?.food.nutrition).toBeGreaterThan(0);
+  if (capture) await captureVial(page, "meal-vial", "[data-care-vial]");
   await returnHome(page);
+  return result;
 }
 
 export async function playTraining(page: Page, expectedSize: number) {
@@ -111,15 +126,28 @@ export async function playTraining(page: Page, expectedSize: number) {
   expect(result.stars).toBeGreaterThanOrEqual(1);
   expect(result.stars).toBeLessThanOrEqual(3);
   await expect(page.getByText("覚えた！", { exact: true })).toBeVisible();
+  const observe = page.getByRole("button", { name: /を置く$/, exact: false });
+  await expect(observe).toBeEnabled();
+  await observe.click();
+  await expect(page.getByRole("status").filter({ hasText: /寄っていった|離れていった|じっとしていた/ })).toBeVisible({ timeout: 30_000 });
   await returnHome(page);
 }
 
 export async function choosePupationSite(page: Page) {
   const puzzle = await openPuzzle(page, "pupation_site");
   const params = puzzleParams("pupation_site", puzzle.params);
-  const option = params.options[0];
-  const result = await submit(page, puzzle, () => page.getByRole("button")
-    .filter({ hasText: option.label }).filter({ hasText: option.detail }).click());
+  const surface = page.locator("[data-care-vial]");
+  await expect(surface.locator("canvas[data-ready='true']")).toBeVisible({ timeout: 30_000 });
+  await surface.scrollIntoViewIfNeeded();
+  const bounds = await box(surface);
+  await page.mouse.click(bounds.x + bounds.width * 0.5, bounds.y + bounds.height * 0.5);
+  const selected = page.locator("button[aria-pressed='true']");
+  await expect(selected).toHaveCount(1);
+  const label = await selected.innerText();
+  const option = params.options.find(value => label.includes(value.label) && label.includes(value.detail));
+  expect(option).toBeDefined();
+  const result = await submit(page, puzzle, () => page.getByRole("button", { name: "この場所で見守る", exact: true }).click());
   expect(typeof result.hit).toBe("boolean"); // The correct answer is deliberately server-only.
+  expect(result.vial?.pupation_position).toEqual(option!.position);
   await returnHome(page);
 }
