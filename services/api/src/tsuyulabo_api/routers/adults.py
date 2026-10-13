@@ -6,8 +6,9 @@ from unicodedata import category
 from fastapi import APIRouter
 from pydantic import BaseModel, Field, field_validator
 from sqlalchemy import select
-from tsuyulabo_api.db.models import Adult
+from tsuyulabo_api.db.models import Adult, CareEvent, LarvaState
 from tsuyulabo_api.domain import adults as rules
+from tsuyulabo_api.domain import vial
 from tsuyulabo_api.errors import APIError
 from tsuyulabo_api.services import adults, team
 from tsuyulabo_api.services.clock import game_now
@@ -16,6 +17,16 @@ from tsuyulabo_api.services.idempotency import IdempotentRoute
 from tsuyulabo_api.services.ledger import get_account, transfer
 
 router = APIRouter(prefix="/v1/adults", route_class=IdempotentRoute)
+
+
+async def habitat_payload(adult: Adult, session: Session, now: Any) -> dict[str, Any]:
+    state = await session.get(LarvaState, adult.week_id)
+    records = await session.scalars(
+        select(CareEvent).where(CareEvent.week_id == adult.week_id, CareEvent.kind == "training")
+    )
+    return vial.settle(state.vial if state else {}, now, adult.energy, 100) | {
+        "learning_pending": any(e.payload.get("learning_status") == "pending" for e in records)
+    }
 
 
 class RenameAdult(BaseModel):
@@ -33,11 +44,18 @@ class RenameAdult(BaseModel):
 
 @router.patch("/{adult_id}")
 async def rename(
-    adult_id: str, body: RenameAdult, user: CurrentUser, session: Session, brain: Brain
+    adult_id: str,
+    body: RenameAdult,
+    user: CurrentUser,
+    session: Session,
+    brain: Brain,
+    clock: CurrentClock,
 ) -> dict[str, Any]:
     adult = await adults.owned(session, user.id, adult_id)
     adult.name = body.name
-    return adults.payload(adult, brain)
+    return adults.payload(adult, brain) | {
+        "vial": await habitat_payload(adult, session, game_now(clock, user))
+    }
 
 
 @router.get("")
@@ -47,6 +65,7 @@ async def list_adults(
     await team.settle(session, user.id, game_now(clock, user), brain)
     return [
         adults.payload(adult, brain)
+        | {"vial": await habitat_payload(adult, session, game_now(clock, user))}
         for adult in await session.scalars(
             select(Adult).where(Adult.user_id == user.id).order_by(Adult.created_at.desc())
         )
@@ -59,7 +78,9 @@ async def detail(
 ) -> dict[str, Any]:
     adult = await adults.owned(session, user.id, adult_id)
     await team.settle(session, user.id, game_now(clock, user), brain)
-    return adults.payload(adult, brain)
+    return adults.payload(adult, brain) | {
+        "vial": await habitat_payload(adult, session, game_now(clock, user))
+    }
 
 
 @router.post("/{adult_id}/level-up")
