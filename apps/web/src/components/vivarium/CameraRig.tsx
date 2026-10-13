@@ -5,7 +5,7 @@ import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import { PerspectiveCamera, Vector3 } from "three";
 import type { Point } from "./types";
 
-export function CameraRig({ framing, focus, calm, paused, subject = "adult" }: { framing: "wide" | "close"; focus: Vector3; calm: boolean; paused: boolean; subject?: "egg" | "larva" | "pupa" | "adult" }) {
+export function CameraRig({ framing, focus, calm, paused, interactive = true, subject = "adult" }: { framing: "wide" | "close"; focus: Vector3; calm: boolean; paused: boolean; interactive?: boolean; subject?: "egg" | "larva" | "pupa" | "adult" }) {
   const controls = useRef<OrbitControlsImpl>(null);
   const camera = useThree(state => state.camera);
   const aspect = useThree(state => state.size.width / state.size.height);
@@ -14,7 +14,7 @@ export function CameraRig({ framing, focus, calm, paused, subject = "adult" }: {
   const initialized = useRef(false);
   useEffect(() => {
     const target = framing === "close" ? focus : new Vector3(0, -0.02, 0);
-    const offset = new Vector3(...(framing === "close" ? [1.3, 0.85, 1.75] : [4.1, 2.3, 6.7]) as [number, number, number]);
+    const offset = new Vector3(...(!interactive ? [0, 0.4, 8] : framing === "close" ? [1.3, 0.85, 1.75] : [4.1, 2.3, 6.7]) as [number, number, number]);
     offset.multiplyScalar(Math.max(1, (framing === "wide" ? 0.75 : 0.6) / aspect));
     camera.position.copy(target).add(offset);
     if (camera instanceof PerspectiveCamera) {
@@ -23,7 +23,7 @@ export function CameraRig({ framing, focus, calm, paused, subject = "adult" }: {
     }
     controls.current?.target.copy(target); camera.lookAt(target); controls.current?.update();
     previousFocus.current.copy(focus); initialized.current = true;
-  }, [camera, framing, focus, subject, aspect]);
+  }, [camera, framing, focus, subject, aspect, interactive]);
   useFrame((_, dt) => {
     if (!controls.current || !initialized.current) return;
     if (framing === "close" && !interacting.current) {
@@ -37,9 +37,9 @@ export function CameraRig({ framing, focus, calm, paused, subject = "adult" }: {
       const factor = 1.24 / Math.max(radial, 0.001);
       camera.position.set(camera.position.x * factor, camera.position.y, camera.position.z * factor);
     }
-    controls.current.autoRotate = !calm && !paused && !interacting.current && framing === "wide";
+    controls.current.autoRotate = interactive && !calm && !paused && !interacting.current && framing === "wide";
     controls.current.autoRotateSpeed = 0.13 * Math.min(dt * 60, 3);
   });
   const target: Point = [0, -0.02, 0];
-  return <OrbitControls ref={controls} makeDefault target={target} enablePan={false} enableDamping dampingFactor={0.08} minDistance={1.45} maxDistance={16} minPolarAngle={0.2} maxPolarAngle={Math.PI * 0.48} autoRotateSpeed={0.13} onStart={() => { interacting.current = true; }} onEnd={() => { interacting.current = false; }} />;
+  return <OrbitControls ref={controls} makeDefault enabled={interactive} target={target} enablePan={false} enableDamping dampingFactor={0.08} minDistance={1.45} maxDistance={16} minPolarAngle={0.2} maxPolarAngle={Math.PI * 0.48} autoRotateSpeed={0.13} onStart={() => { interacting.current = true; }} onEnd={() => { interacting.current = false; }} />;
 }

@@ -10,7 +10,7 @@ import { surfaceTexture } from "./surfaces";
 import type { Pose } from "./controller";
 import type { Phenotype, Quality } from "./types";
 
-export function Adult({ pose, sex, traits, quality, seed }: { pose: Pose; sex: "f" | "m"; traits: readonly Phenotype[]; quality: Quality; seed: string }) {
+export function Adult({ pose, sex, traits, quality, seed, unfold = 1 }: { pose: Pose; sex: "f" | "m"; traits: readonly Phenotype[]; quality: Quality; seed: string; unfold?: number }) {
   const proboscis = useRef<Mesh>(null);
   const abdomenMesh = useRef<Mesh>(null);
   const yellow = traits.includes("yellow"), ebony = traits.includes("ebony");
@@ -46,7 +46,7 @@ export function Adult({ pose, sex, traits, quality, seed }: { pose: Pose; sex: "
       <sphereGeometry args={[1, 32, 24]} /><meshStandardMaterial color={ebony ? "#39392e" : "#c39b5e"} roughness={0.73} />
     </mesh>
     <Eyes white={traits.includes("white")} />
-    <Wings curly={traits.includes("curly")} vestigial={traits.includes("vestigial")} pose={pose} />
+    <Wings curly={traits.includes("curly")} vestigial={traits.includes("vestigial")} pose={pose} unfold={unfold} />
     <Bristles quality={quality} seed={seed} />
     <Legs pose={pose} male={sex === "m"} />
     <mesh ref={proboscis} position={[0, -0.01, 0.369]} rotation={[-0.4, 0, 0]}><capsuleGeometry args={[0.022, 0.06, 4, 8]} /><meshStandardMaterial color="#6b4930" roughness={0.65} /></mesh>
