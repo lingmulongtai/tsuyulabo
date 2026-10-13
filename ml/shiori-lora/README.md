@@ -208,3 +208,67 @@ Windows offline tests, complete synthetic generation, Mock evaluation and stdlib
 are the available evidence. No WSL session, GPU training, CPU weight merge, GGUF conversion,
 Ollama import or live LLM evaluation was run by this task. Real GPU memory, convergence,
 latency and contract accuracy must be checked by the commander using the commands above.
+
+## W17: retrain LoRA v3 without changing production v2
+
+Generate the caretaker prompt and the balanced v3 intents on Windows:
+
+```powershell
+.\.tools\uv.exe run python -m tsuyu_shiori.dataset --balanced --companion --out data/shiori-sft-v3
+.\.tools\uv.exe run python ml/shiori-lora/train.py --dry-run --data data/shiori-sft-v3 --out .codex-runs/lora-v3-dry-run
+.\.tools\uv.exe run python -m tsuyu_shiori.eval --provider mock
+```
+
+This produces 4,000 train / 400 valid / 163 test traces. Each new intent (diary, hint,
+behaviour-why, morning) has 200 training traces; the original 159 test cases remain
+with four companion cases added. Direct phrasing receives trusted, cited observations;
+morning examples retain native tool calls and the preceding-day/night window. Unmeasured
+yeast/blue-light associations stay absent while copied trials have their own evidence.
+Maxima name the cue, and injection replies identify the AI. Data and metadata remain ignored.
+The longer caretaker prompt increases the estimate to a 3,840-token limit. Validation allows
+up to 4,096, but real tokenization must still pass without truncation. Repeat the GPU smoke
+run; the old 6 GB acceptance does not establish v3 memory use.
+
+Use the pinned WSL environment from §2–4. Set these task-specific paths in **WSL**:
+
+```bash
+export REPO=/mnt/c/Users/lingm/dev/tsuyulabo-agents/W17-companion
+export RUN="$HOME/shiori-gpu"
+source "$RUN/venv/bin/activate"
+python "$REPO/ml/shiori-lora/train.py" --dry-run \
+  --base "$RUN/base-2b" --data "$REPO/data/shiori-sft-v3" --out "$RUN/adapter-v3-smoke"
+python "$REPO/ml/shiori-lora/train.py" \
+  --base "$RUN/base-2b" --data "$REPO/data/shiori-sft-v3" --out "$RUN/adapter-v3-smoke" --max-steps 2
+python "$REPO/ml/shiori-lora/train.py" \
+  --base "$RUN/base-2b" --data "$REPO/data/shiori-sft-v3" --out "$RUN/adapter-v3" --epochs 1 --lr 0.0002
+python "$REPO/ml/shiori-lora/export.py" \
+  --adapter "$RUN/adapter-v3" --out "$RUN/export-v3" --llama-cpp "$RUN/llama.cpp"
+mkdir -p "$REPO/ml/shiori-lora/artifacts/ollama-v3"
+cp "$RUN/export-v3/shiori-Q4_K_M.gguf" "$RUN/export-v3/export.json" "$REPO/ml/shiori-lora/artifacts/ollama-v3/"
+```
+
+Then **Windows PowerShell** (inspect the native Qwen template as in §5):
+
+```powershell
+$v3BaseModelfile = (ollama show qwen3.5:2b-q4_K_M --modelfile) -join "`n"
+[System.IO.File]::WriteAllText((Join-Path $PWD 'ml/shiori-lora/artifacts/ollama-v3/base.Modelfile'), $v3BaseModelfile, [System.Text.UTF8Encoding]::new($false))
+.\.tools\uv.exe run python ml/shiori-lora/modelfile.py --base-modelfile ml/shiori-lora/artifacts/ollama-v3/base.Modelfile --gguf ml/shiori-lora/artifacts/ollama-v3/shiori-Q4_K_M.gguf --out ml/shiori-lora/artifacts/ollama-v3/Modelfile
+ollama create tsuyu-shiori:2b-lora-v3 -f ml/shiori-lora/artifacts/ollama-v3/Modelfile
+$env:SHIORI_LIVE_EVAL = '1'
+$env:OLLAMA_NUM_CTX = '4096'
+.\.tools\uv.exe run python -m tsuyu_shiori.eval --provider ollama --qa-model tsuyu-shiori:2b-lora-v3 --journal-model tsuyu-shiori:2b-lora-v3 --test-file data/shiori-sft-v3/test.jsonl
+.\.tools\uv.exe run python -m tsuyu_shiori.eval_memos --provider ollama --journal-model tsuyu-shiori:2b-lora-v3 --output eval-results/shiori-memos-v3.json
+Remove-Item Env:SHIORI_LIVE_EVAL
+```
+
+Review original output before fallback: existing QA gates, held-out `passed` and per-intent
+scores, all 13 companion fact checks, and all three morning memos with correct dates/sleep
+lengths. Specifically reject invented unmeasured values even when the cited ID exists,
+maxima without cue names, missing AI identity after injection, and incorrect paper evidence.
+Record GPU peak memory, loss, tokenizer length, latency and the llama.cpp revision.
+**Do not activate a candidate based on training loss or Mock success.**
+
+Until these pass, keep `OLLAMA_QA_MODEL=tsuyu-shiori:2b-lora-v2` and leave
+`SHIORI_ACCEPTED_INTENTS` unset. After acceptance, set the QA/journal candidate names and
+add only accepted intent names (`diary,hint,behaviour-why,morning`) to that allowlist.
+Removing an intent immediately returns that surface to Mock; existing QA routing is independent.
