@@ -323,6 +323,10 @@ def main() -> None:
     safe_model = "".join(c if c.isalnum() or c in "-_." else "-" for c in model)
     directory = args.output_dir or Path(f"eval-results/shiori-{args.provider}-{safe_model}")
     report = asyncio.run(evaluate(provider, seed=args.seed, limit=args.limit, progress=True))
+    from tsuyu_shiori.eval_companion import evaluate_companion
+
+    report["companion"] = asyncio.run(evaluate_companion(provider))
+    report["passed"] = report["passed"] and report["companion"]["passed"]
     if args.test_file is not None:
         from tsuyu_shiori.eval_dataset import evaluate_file
 
@@ -331,9 +335,9 @@ def main() -> None:
         summary = {k: v for k, v in report["heldout"].items() if k != "results"}
         print(json.dumps({"heldout": summary}, ensure_ascii=False, indent=2))
     write_report(report, directory)
-    print(
-        json.dumps({k: v for k, v in report.items() if k not in {"results", "heldout"}}, indent=2)
-    )
+    summary = {k: v for k, v in report.items() if k not in {"results", "heldout", "companion"}}
+    summary["companion"] = {k: v for k, v in report["companion"].items() if k != "results"}
+    print(json.dumps(summary, indent=2))
     raise SystemExit(0 if report["passed"] else 1)
 
 

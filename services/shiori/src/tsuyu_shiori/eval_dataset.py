@@ -9,9 +9,11 @@ from pathlib import Path
 from time import perf_counter
 from typing import Any
 
+from tsuyu_shiori.dataset.companion import INTENTS, companion_trace
 from tsuyu_shiori.dataset.questions import Question
 from tsuyu_shiori.dataset.traces import oracle_trace, replay
 from tsuyu_shiori.dataset.world import build_world
+from tsuyu_shiori.eval_companion import evaluate_trace
 from tsuyu_shiori.eval_grading import (
     ABSENCE,
     action_count,
@@ -130,6 +132,26 @@ async def evaluate_file(provider: Provider, path: Path, limit: int | None = None
         seed = provenance["seed"]
         if seed != 37 or not (q.template_id.endswith(":2") or q.template_id.startswith("eval:")):
             raise ValueError("expected seed 37 and eval/held-out test templates")
+        if q.intent in INTENTS:
+            if example != await companion_trace(seed, q):
+                raise ValueError("test example does not match companion provenance")
+            evaluated = await evaluate_trace(provider, seed, q)
+            verification = evaluated["verification"]
+            kept += verification["kept"]
+            dropped += verification["dropped"]
+            results.append(
+                {
+                    "question": q.text,
+                    "intent": q.intent,
+                    "template_id": q.template_id,
+                    "correct": evaluated["correct"],
+                    "delivered_correct": evaluated["correct"],
+                    "readability": readability(evaluated["text"], verification["dropped"]),
+                    "fallback_used": False,
+                    "text": evaluated["text"],
+                }
+            )
+            continue
         if example != await oracle_trace(seed, q):
             raise ValueError("test example does not match oracle provenance")
         expected = expected_facts(q, await replay(example, build_world(seed)))
