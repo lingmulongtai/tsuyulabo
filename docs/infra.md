@@ -197,7 +197,7 @@ Without a stack, validate discovery with `npm.cmd run test:e2e -w @tsuyulabo/web
 HTML reports live in `apps/web/playwright-report/`; failed tests retain screenshots, videos, and
 traces in `apps/web/test-results/`. Open a trace with `npx.cmd playwright show-trace <trace.zip>`.
 
-`.github/workflows/e2e.yml` runs only on manual dispatch and nightly at 18:23 UTC (03:23 JST).
+`.github/workflows/e2e.yml` runs only on manual dispatch.
 It builds the Compose backend, builds/starts the web with dev tools enabled, runs the suite, and
 uploads reports, failure traces, and service logs for 14 days even on failure. It uses no paid
 provider credentials. Browser installation and reporting follow the
@@ -205,8 +205,9 @@ provider credentials. Browser installation and reporting follow the
 
 ## README screenshots and play video
 
-The media suite is an explicit opt-in, separate from smoke/nightly CI. The default Playwright
-config ignores `capture.spec.ts`; `e2e/capture.config.ts` selects only the `capture` project.
+The media suite is an explicit opt-in, separate from the smoke and golden-path CI suite. The
+default Playwright config ignores `capture.spec.ts`; `e2e/capture.config.ts` selects only the
+`capture` project.
 Start the real local stack above with both dev-tool flags enabled, then run from the root:
 
 ```powershell
