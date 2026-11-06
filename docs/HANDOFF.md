@@ -198,3 +198,5 @@ git push
   あわせて API に Private Network Access の応答を追加。Playwright で本番のゲスト作成とホーム表示を確認。
   CPU が冷えない PC なので api / worker を 2 コアずつに制限。電源モードをバランスにしたらローカル LLM が 2.7 → 42 トークン/秒に。
   W9-shiori-local を Codex（gpt-6.1-sol）に投入。
+- 2026-11-06 Codex: オーナーの指示で `.github/workflows/e2e.yml` の定期実行を停止し、手動実行は残した。
+  `docs/infra.md` を更新。YAML と差分を検証し、ジョブの変更がないことを確認。E2E の実行やサーバーの操作はしていない。
