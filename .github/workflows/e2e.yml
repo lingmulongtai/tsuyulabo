@@ -2,8 +2,6 @@ name: End-to-end week
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "23 18 * * *" # 03:23 JST daily; never runs on push/PR.
 
 permissions:
   contents: read
