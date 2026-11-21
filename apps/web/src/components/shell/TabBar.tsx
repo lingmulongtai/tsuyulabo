@@ -26,11 +26,11 @@ export function TabBar() {
             key={href}
             href={href}
             aria-current={active ? "page" : undefined}
-            className={`flex flex-col items-center gap-0.5 pt-2 pb-2.5 text-[0.7rem] font-medium transition-colors min-h-14 ${
+            className={`flex flex-col items-center justify-center gap-1 pt-2 pb-2.5 text-[11px] font-medium transition-colors min-h-14 ${
               active ? "text-banana" : "text-muted hover:text-ink"
             }`}
           >
-            <Icon size={24} />
+            <Icon size={20} />
             {label}
           </Link>
         );

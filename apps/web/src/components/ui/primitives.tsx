@@ -10,12 +10,12 @@ function cx(...parts: Array<string | false | null | undefined>) {
 type Tone = "eye" | "leaf" | "banana" | "ai" | "plain";
 
 const TONES: Record<Tone, string> = {
-  // Neutral controls share one attention colour for warnings.
-  eye: "bg-[#e7bd78] text-[#29251e] border border-banana",
-  leaf: "bg-surface-2 text-ink border border-line",
-  banana: "bg-[#e7bd78] text-[#29251e] border border-banana",
-  ai: "bg-surface-2 text-ink border border-line",
-  plain: "bg-surface-2 text-ink border border-line-soft",
+  // Single warm amber accent for primary actions; crisp neutral chrome for secondary actions.
+  eye: "bg-[#e2b76e] text-[#1a1814] border border-[#e2b76e] hover:bg-[#e8c383]",
+  leaf: "bg-surface-2 text-ink border border-line-soft hover:border-line",
+  banana: "bg-[#e2b76e] text-[#1a1814] border border-[#e2b76e] hover:bg-[#e8c383]",
+  ai: "bg-surface-2 text-ink border border-line-soft hover:border-line",
+  plain: "bg-surface-2 text-ink border border-line-soft hover:border-line",
 };
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -25,12 +25,12 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 export function Button({ tone = "eye", size = "md", block, className, children, ...rest }: ButtonProps) {
-  const sizes = { sm: "min-h-11 px-3 text-sm rounded-lg", md: "min-h-12 px-5 text-sm rounded-xl", lg: "min-h-14 px-6 text-base rounded-xl" };
+  const sizes = { sm: "min-h-11 px-3.5 text-sm rounded-lg", md: "min-h-12 px-5 text-sm rounded-lg", lg: "min-h-14 px-6 text-base rounded-xl" };
   return (
     <button
       type="button"
       className={cx(
-        "press inline-flex items-center justify-center gap-2 font-medium tracking-wide select-none backdrop-blur",
+        "press inline-flex items-center justify-center gap-2 font-medium select-none",
         "disabled:opacity-50 disabled:cursor-not-allowed",
         TONES[tone],
         sizes[size],
@@ -57,12 +57,12 @@ export function Meter({ label, value, color, hint }: { label: string; value: num
   const low = v < 30;
   return (
     <div className="min-w-0">
-      <div className="flex items-baseline justify-between text-xs font-bold text-muted">
+      <div className="flex items-baseline justify-between text-xs font-medium text-muted">
         <span>{label}</span>
         <span className={cx("tabular font-mono", low ? "text-eye" : "text-ink")}>{hint ?? `${v}%`}</span>
       </div>
-      <div className="mt-1 h-1 rounded-full bg-line-soft overflow-hidden" role="meter" aria-label={label} aria-valuenow={v} aria-valuemin={0} aria-valuemax={100}>
-        <div className="h-full rounded-full transition-[width] duration-700 ease-out" style={{ width: `${v}%`, background: color }} />
+      <div className="mt-1.5 h-1 rounded-full bg-line-soft overflow-hidden" role="meter" aria-label={label} aria-valuenow={v} aria-valuemin={0} aria-valuemax={100}>
+        <div className="h-full rounded-full transition-[width] duration-300 ease-out" style={{ width: `${v}%`, background: color }} />
       </div>
     </div>
   );
@@ -73,24 +73,24 @@ export function Meter({ label, value, color, hint }: { label: string; value: num
 export type TruthKind = "real" | "model" | "game" | "ai";
 
 const TRUTH: Record<TruthKind, { label: string; className: string }> = {
-  real: { label: "本物", className: "bg-tint-leaf text-leaf" },
-  model: { label: "育ちのしくみ", className: "bg-tint-banana text-banana" },
-  game: { label: "ゲーム", className: "bg-tint-eye text-eye" },
-  ai: { label: "AI", className: "bg-tint-ai text-ai" },
+  real: { label: "本物", className: "bg-tint-leaf text-leaf border border-line-soft" },
+  model: { label: "育ちのしくみ", className: "bg-tint-banana text-banana border border-line-soft" },
+  game: { label: "ゲーム", className: "bg-tint-eye text-eye border border-line-soft" },
+  ai: { label: "AI", className: "bg-tint-ai text-ai border border-line-soft" },
 };
 
 export function TruthBadge({ kind }: { kind: TruthKind }) {
   const t = TRUTH[kind];
-  return <span className={cx("inline-flex items-center rounded-full px-2 py-px text-[0.68rem] font-bold leading-5", t.className)}>{t.label}</span>;
+  return <span className={cx("inline-flex items-center rounded-md px-2 py-0.5 text-[11px] font-medium leading-4", t.className)}>{t.label}</span>;
 }
 
 /* ------------------------------------------------------------------ Currency */
 
 export function CurrencyPill({ kind, value }: { kind: "shizuku" | "research" | "kohaku"; value: number }) {
-  const icon = kind === "shizuku" ? <DropIcon size={18} /> : kind === "kohaku" ? <AmberIcon size={18} /> : <FlaskIcon size={18} className="text-leaf" />;
+  const icon = kind === "shizuku" ? <DropIcon size={16} /> : kind === "kohaku" ? <AmberIcon size={16} /> : <FlaskIcon size={16} className="text-leaf" />;
   const label = kind === "shizuku" ? "しずく" : kind === "kohaku" ? "こはく" : "飼育の経験";
   return (
-    <span className="inline-flex items-center gap-1 rounded-full bg-surface-2/85 border border-line-soft pl-1.5 pr-2.5 h-8 text-sm font-bold backdrop-blur" title={label}>
+    <span className="inline-flex items-center gap-1.5 rounded-lg bg-surface-2 border border-line-soft px-2.5 h-8 text-xs font-medium" title={label}>
       {icon}
       <span className="tabular font-mono">{value.toLocaleString("ja-JP")}</span>
       <span className="sr-only">{label}</span>
